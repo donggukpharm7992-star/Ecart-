@@ -252,9 +252,8 @@ export function makeChecklistState(prefix: string, sections: string[]) {
   return normalizeChecklistRows(inventory.checklist)
     .filter((item) => sections.includes(item.section))
     .map((item, index) => {
-      const isItem4 = item.text.includes("잉여약") && item.text.includes("보관");
-      const isEcartItem = item.section === "E-cart";
-      const shouldDefaultGood = isItem4 || (isEcartItem && !item.text.includes("사유"));
+      const isNoteOrReason = item.text.startsWith("*") || item.text.includes("사유") || item.text.startsWith("이상 시");
+      const shouldDefaultGood = !isNoteOrReason;
       return {
         ...item,
         id: `${prefix}-${index}`,
@@ -555,9 +554,8 @@ function normalizeChecklistRows<T extends { id?: string; note?: string; section:
       text = text.replace("비품이외의 잉여약을 보관하고 있다.", "비품이외의 잉여약을 보관하고 있지 않다.");
     }
     let status = item.status;
-    const isItem4 = text.includes("잉여약") && text.includes("보관");
-    const isEcartItem = item.section === "E-cart";
-    const shouldDefaultGood = isItem4 || (isEcartItem && !text.includes("사유"));
+    const isNoteOrReason = text.startsWith("*") || text.includes("사유") || text.startsWith("이상 시");
+    const shouldDefaultGood = !isNoteOrReason;
     if (shouldDefaultGood && (status === undefined || status === "")) {
       status = "good" as CheckStatus;
     }

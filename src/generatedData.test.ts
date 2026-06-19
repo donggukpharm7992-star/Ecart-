@@ -60,17 +60,24 @@ describe("generated inventory data corrections", () => {
     expect(bySheet.get("NR")?.sourceUpdatedAt).toBe("26.04.14");
   });
 
-  it("defaults item 4 check status to 'good' for all rooms", () => {
+  it("defaults stock checklist items to 'good' except for note and reason rows", () => {
     const defaultChecklist = getStockChecklistDefaultState({}, "61W");
-    const item4 = defaultChecklist.find((item) => item.text.includes("4. 비품이외의 잉여약"));
-    expect(item4).toBeDefined();
-    expect(item4?.status).toBe("good");
+    const nonReasonItems = defaultChecklist.filter((item) => !item.text.startsWith("*") && !item.text.includes("사유"));
+    const reasonItems = defaultChecklist.filter((item) => item.text.startsWith("*") || item.text.includes("사유"));
+
+    expect(nonReasonItems.length).toBeGreaterThan(0);
+    for (const item of nonReasonItems) {
+      expect(item.status).toBe("good");
+    }
+    for (const item of reasonItems) {
+      expect(item.status).toBe("");
+    }
   });
 
   it("defaults E-cart checklist items to 'good' except for the reason row", () => {
     const ecartChecklist = makeChecklistState("ecart-general:42", ["E-cart"]);
-    const nonReasonItems = ecartChecklist.filter((item) => !item.text.includes("사유"));
-    const reasonItems = ecartChecklist.filter((item) => item.text.includes("사유"));
+    const nonReasonItems = ecartChecklist.filter((item) => !item.text.startsWith("*") && !item.text.includes("사유") && !item.text.startsWith("이상 시"));
+    const reasonItems = ecartChecklist.filter((item) => item.text.startsWith("*") || item.text.includes("사유") || item.text.startsWith("이상 시"));
 
     expect(nonReasonItems.length).toBeGreaterThan(0);
     for (const item of nonReasonItems) {
