@@ -1274,20 +1274,34 @@ button {
     font-size: 11px !important;
   }
 
+  .inspection-table th:nth-child(1),
+  .inspection-table td:nth-child(1) {
+    width: 25px !important;
+    padding: 3px 2px !important;
+  }
+
   .inspection-table th:nth-child(2),
   .inspection-table td:nth-child(2) {
-    width: 60px;
-    font-size: 11px;
+    width: 45px !important;
+    font-size: 10px !important;
+    word-break: break-all;
+  }
+
+  .inspection-table th:nth-child(3),
+  .inspection-table td:nth-child(3) {
+    max-width: 95px !important;
+    word-break: break-all !important;
+    white-space: normal !important;
   }
 
   .inspection-table th:nth-child(4),
   .inspection-table td:nth-child(4) {
-    width: 55px;
+    width: 45px !important;
   }
 
   .inspection-table th:nth-child(5),
   .inspection-table td:nth-child(5) {
-    width: 50px;
+    width: 45px !important;
   }
 
   .inspection-table td:nth-child(5) .badge {
@@ -1303,7 +1317,13 @@ button {
 
   .inspection-table th:nth-child(6),
   .inspection-table td:nth-child(6) {
-    width: 105px;
+    width: 85px !important;
+  }
+
+  .inspection-table th:nth-child(7),
+  .inspection-table td:nth-child(7) {
+    width: 30px !important;
+    padding: 3px 2px !important;
   }
 
   .inspection-table .date-input {
@@ -1533,20 +1553,34 @@ button {
   font-size: 11px !important;
 }
 
+.mobile-mode .inspection-table th:nth-child(1),
+.mobile-mode .inspection-table td:nth-child(1) {
+  width: 25px !important;
+  padding: 3px 2px !important;
+}
+
 .mobile-mode .inspection-table th:nth-child(2),
 .mobile-mode .inspection-table td:nth-child(2) {
-  width: 60px !important;
-  font-size: 11px !important;
+  width: 45px !important;
+  font-size: 10px !important;
+  word-break: break-all !important;
+}
+
+.mobile-mode .inspection-table th:nth-child(3),
+.mobile-mode .inspection-table td:nth-child(3) {
+  max-width: 95px !important;
+  word-break: break-all !important;
+  white-space: normal !important;
 }
 
 .mobile-mode .inspection-table th:nth-child(4),
 .mobile-mode .inspection-table td:nth-child(4) {
-  width: 55px !important;
+  width: 45px !important;
 }
 
 .mobile-mode .inspection-table th:nth-child(5),
 .mobile-mode .inspection-table td:nth-child(5) {
-  width: 50px !important;
+  width: 45px !important;
 }
 
 .mobile-mode .inspection-table td:nth-child(5) .badge {
@@ -1562,7 +1596,13 @@ button {
 
 .mobile-mode .inspection-table th:nth-child(6),
 .mobile-mode .inspection-table td:nth-child(6) {
-  width: 105px !important;
+  width: 85px !important;
+}
+
+.mobile-mode .inspection-table th:nth-child(7),
+.mobile-mode .inspection-table td:nth-child(7) {
+  width: 30px !important;
+  padding: 3px 2px !important;
 }
 
 .mobile-mode .inspection-table .date-input {
