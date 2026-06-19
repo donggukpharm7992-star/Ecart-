@@ -275,6 +275,63 @@ function makeEcartInspectionState(tab: EcartTab, key: string): EcartInspectionSt
   };
 }
 
+function getStockChecklistDefaultState(
+  prev: Record<string, ChecklistState[]>,
+  roomId: string
+): ChecklistState[] {
+  const current = prev[roomId];
+  if (current) return normalizeChecklistRows(current);
+
+  const base = makeStockChecklist(roomId);
+  const w42 = prev["42W"];
+  if (roomId !== "42W" && w42) {
+    const w42Norm = normalizeChecklistRows(w42);
+    return normalizeChecklistRows(base).map((item, index) => {
+      const w42Item = w42Norm[index];
+      return {
+        ...item,
+        status: w42Item ? w42Item.status : item.status,
+        note: w42Item ? w42Item.note : item.note,
+      };
+    });
+  }
+  return normalizeChecklistRows(base);
+}
+
+function getEcartDefaultState(
+  prev: Record<string, EcartInspectionState>,
+  tab: EcartTab,
+  key: string
+): EcartInspectionState {
+  const current = prev[key];
+  if (current) return normalizeEcartInspectionState(current);
+
+  const base = makeEcartInspectionState(tab, key);
+  const w42 = prev["general:42"];
+  if (key !== "general:42" && w42) {
+    const w42Norm = normalizeEcartInspectionState(w42);
+    const w42ItemMap = new Map(w42Norm.items.map((item) => [item.code, item]));
+    const items = base.items.map((item) => {
+      const w42Item = w42ItemMap.get(item.code);
+      return {
+        ...item,
+        checked: w42Item ? w42Item.checked : item.checked,
+        expiryDate: w42Item ? w42Item.expiryDate : item.expiryDate,
+      };
+    });
+    const checklist = base.checklist.map((item, index) => {
+      const w42Check = w42Norm.checklist[index];
+      return {
+        ...item,
+        status: w42Check ? w42Check.status : item.status,
+        note: w42Check ? w42Check.note : item.note,
+      };
+    });
+    return { items, checklist };
+  }
+  return normalizeEcartInspectionState(base);
+}
+
 function buildEcartTargets(departments: string[]): EcartTarget[] {
   const targets: EcartTarget[] = [];
   const seen = new Set<string>();
@@ -652,8 +709,7 @@ export function App() {
       : nicuTarget;
   const activeEcartKey = makeEcartKey(activeEcartTab, activeEcartTarget.id);
   const activeEcartState = useMemo(() => {
-    const current = ecartByTarget[activeEcartKey] ?? makeEcartInspectionState(activeEcartTab, activeEcartKey);
-    return normalizeEcartInspectionState(current);
+    return getEcartDefaultState(ecartByTarget, activeEcartTab, activeEcartKey);
   }, [activeEcartKey, activeEcartTab, ecartByTarget]);
 
   const masterRows = useMemo(() => buildMasterRows(stockDrugs, stockAllocations), [stockAllocations, stockDrugs]);
@@ -671,7 +727,7 @@ export function App() {
       const item = {
         ...allocation,
         drug,
-        checked: checkedStock[key] ?? false,
+        checked: checkedStock[key] !== undefined ? checkedStock[key] : (checkedStock[stockKey("42W", allocation.drugCode)] ?? false),
         expiryDate: stockExpiry[key] ?? "",
       };
       const roomItems = itemsByRoom.get(allocation.roomId) ?? [];
@@ -693,7 +749,9 @@ export function App() {
   const currentEcartItems = activeEcartState.items.filter((item) =>
     [item.code, item.name, item.dosage].join(" ").toLowerCase().includes(query.trim().toLowerCase()),
   );
-  const currentStockChecklist = normalizeChecklistRows(stockChecklistByRoom[activeRoom] ?? makeStockChecklist(activeRoom));
+  const currentStockChecklist = useMemo(() => {
+    return getStockChecklistDefaultState(stockChecklistByRoom, activeRoom);
+  }, [activeRoom, stockChecklistByRoom]);
   const currentChecklist = mainCategory === "stock" ? currentStockChecklist : activeEcartState.checklist;
 
   const selectedMasterRow = filteredMasterRows[0];
@@ -724,13 +782,13 @@ export function App() {
       if (ecartLink) {
         const key = makeEcartKey(ecartLink.tab, ecartLink.targetId);
         linkedEcartKeys.add(key);
-        ecartChecklist = normalizeEcartInspectionState(ecartByTarget[key] ?? makeEcartInspectionState(ecartLink.tab, key)).checklist;
+        ecartChecklist = getEcartDefaultState(ecartByTarget, ecartLink.tab, key).checklist;
       }
 
       return {
         id: room.id,
         label: room.label,
-        stockChecklist: normalizeChecklistRows(stockChecklistByRoom[room.id] ?? makeStockChecklist(room.id)),
+        stockChecklist: getStockChecklistDefaultState(stockChecklistByRoom, room.id),
         ecartChecklist,
       };
     });
@@ -770,7 +828,7 @@ export function App() {
         .map(([key, target]) => ({
           id: target.id,
           label: target.label,
-          checklist: normalizeEcartInspectionState(ecartByTarget[key] ?? makeEcartInspectionState(target.tab, key)).checklist,
+          checklist: getEcartDefaultState(ecartByTarget, target.tab, key).checklist,
         })),
       commonGuidance: ROUND_SUMMARY_COMMON_GUIDANCE,
     });
@@ -1014,7 +1072,7 @@ export function App() {
 
   function updateActiveEcartItems(updater: (items: EditableEcartItem[]) => EditableEcartItem[]) {
     setEcartByTarget((prev) => {
-      const current = prev[activeEcartKey] ?? makeEcartInspectionState(activeEcartTab, activeEcartKey);
+      const current = getEcartDefaultState(prev, activeEcartTab, activeEcartKey);
       return { ...prev, [activeEcartKey]: { ...current, items: updater(current.items) } };
     });
   }
@@ -1030,21 +1088,21 @@ export function App() {
 
   function updateStockChecklistNoteForRoom(roomId: string, id: string, note: string) {
     setStockChecklistByRoom((prev) => {
-      const current = normalizeChecklistRows(prev[roomId] ?? makeStockChecklist(roomId));
+      const current = getStockChecklistDefaultState(prev, roomId);
       return { ...prev, [roomId]: updateChecklistRows(current, id, { note }) };
     });
   }
 
   function updateStockChecklistStatusForRoom(roomId: string, id: string, status: CheckStatus) {
     setStockChecklistByRoom((prev) => {
-      const current = normalizeChecklistRows(prev[roomId] ?? makeStockChecklist(roomId));
+      const current = getStockChecklistDefaultState(prev, roomId);
       return { ...prev, [roomId]: updateChecklistRows(current, id, { status }) };
     });
   }
 
   function updateEcartChecklistNote(id: string, note: string) {
     setEcartByTarget((prev) => {
-      const current = prev[activeEcartKey] ?? makeEcartInspectionState(activeEcartTab, activeEcartKey);
+      const current = getEcartDefaultState(prev, activeEcartTab, activeEcartKey);
       return {
         ...prev,
         [activeEcartKey]: {
@@ -1057,7 +1115,7 @@ export function App() {
 
   function updateEcartChecklistStatus(id: string, status: CheckStatus) {
     setEcartByTarget((prev) => {
-      const current = prev[activeEcartKey] ?? makeEcartInspectionState(activeEcartTab, activeEcartKey);
+      const current = getEcartDefaultState(prev, activeEcartTab, activeEcartKey);
       return {
         ...prev,
         [activeEcartKey]: {
@@ -1189,7 +1247,8 @@ export function App() {
           onCheck={(roomId, drugCode) =>
             setCheckedStock((prev) => {
               const key = stockKey(roomId, drugCode);
-              return { ...prev, [key]: !prev[key] };
+              const currentVal = prev[key] !== undefined ? prev[key] : (prev[stockKey("42W", drugCode)] ?? false);
+              return { ...prev, [key]: !currentVal };
             })
           }
           onExpiry={(roomId, drugCode, value) => setStockExpiry((prev) => ({ ...prev, [stockKey(roomId, drugCode)]: value }))}
@@ -1257,7 +1316,7 @@ export function App() {
               className: "report-card print-preview-report",
               room,
               items: stockItemsByRoom.get(room.id) ?? [],
-              checklist: normalizeChecklistRows(stockChecklistByRoom[room.id] ?? makeStockChecklist(room.id)),
+              checklist: getStockChecklistDefaultState(stockChecklistByRoom, room.id),
               showEcartLink: false,
             })}
           </div>
