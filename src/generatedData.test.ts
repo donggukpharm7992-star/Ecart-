@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import rawInventory from "./data/inventory.generated.json";
 import type { InventoryData } from "./types";
+import { getStockChecklistDefaultState, makeChecklistState } from "./App";
 
 const inventory = rawInventory as InventoryData;
 
@@ -12,6 +13,12 @@ describe("generated inventory data corrections", () => {
     expect(nakclDrugs[0].code).toBe("XNAK20");
     expect(inventory.stock.allocations.filter((allocation) => allocation.drugCode.includes("NaKCl"))).toHaveLength(0);
     expect(inventory.stock.allocations.filter((allocation) => allocation.drugCode === "XNAK20")).toHaveLength(2);
+  });
+
+  it("updates checklist item 4 text to '보관하고 있지 않다'", () => {
+    const texts = inventory.checklist.map((item) => item.text);
+    const item4 = texts.find((text) => text.includes("4. 비품이외의 잉여약"));
+    expect(item4).toBe("4. 비품이외의 잉여약을 보관하고 있지 않다.");
   });
 
   it("keeps real checklist items while excluding only label-only rows", () => {
@@ -51,5 +58,26 @@ describe("generated inventory data corrections", () => {
     expect(bySheet.get("HBEF")?.sourceUpdatedAt).toBe("26.03.26");
     expect(bySheet.get("OS")?.sourceUpdatedAt).toBe("26.06.10");
     expect(bySheet.get("NR")?.sourceUpdatedAt).toBe("26.04.14");
+  });
+
+  it("defaults item 4 check status to 'good' for all rooms", () => {
+    const defaultChecklist = getStockChecklistDefaultState({}, "61W");
+    const item4 = defaultChecklist.find((item) => item.text.includes("4. 비품이외의 잉여약"));
+    expect(item4).toBeDefined();
+    expect(item4?.status).toBe("good");
+  });
+
+  it("defaults E-cart checklist items to 'good' except for the reason row", () => {
+    const ecartChecklist = makeChecklistState("ecart-general:42", ["E-cart"]);
+    const nonReasonItems = ecartChecklist.filter((item) => !item.text.includes("사유"));
+    const reasonItems = ecartChecklist.filter((item) => item.text.includes("사유"));
+
+    expect(nonReasonItems.length).toBeGreaterThan(0);
+    for (const item of nonReasonItems) {
+      expect(item.status).toBe("good");
+    }
+    for (const item of reasonItems) {
+      expect(item.status).toBe("");
+    }
   });
 });

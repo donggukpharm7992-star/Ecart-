@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-18T16:49:33+09:00",
+  "generatedAt": "2026-06-19T17:33:21+09:00",
   "sourceFiles": {
     "stockWorkbook": "병동별비품현황 202606.xlsx",
     "ecartWorkbook": "20260302E-cart 약품목록_ cortisolu 삭제.xlsx",
@@ -12,7 +12,7 @@
     "ecartGeneralItemCount": 19,
     "ecartNicuItemCount": 29,
     "ecartDepartmentCount": 31,
-    "checklistItemCount": 28
+    "checklistItemCount": 29
   },
   "stock": {
     "drugs": [
@@ -403,8 +403,8 @@
         "spec": "",
         "storage": "밀봉용기, 동결을 피하여 냉장(2~8℃) 보관, 차광 보관.",
         "note": "",
-        "warning": "유사모양",
-        "storageType": "ROOM"
+        "warning": "",
+        "storageType": "REFRIGERATED"
       },
       {
         "code": "X10CAFS5",
@@ -434,7 +434,7 @@
         "storage": "차광한 밀봉용기, 실온(1~30℃)보관",
         "note": "",
         "warning": "",
-        "storageType": "REFRIGERATED"
+        "storageType": "LIGHT_PROTECTED"
       },
       {
         "code": "XCZEDO",
@@ -443,7 +443,7 @@
         "spec": "10VIA/BOX",
         "storage": "밀봉용기, 실온보관",
         "note": "",
-        "warning": "고위험의약품",
+        "warning": "",
         "storageType": "ROOM"
       },
       {
@@ -453,7 +453,7 @@
         "spec": "10VIA/BOX",
         "storage": "밀봉용기, 실온보관",
         "note": "",
-        "warning": "고위험의약품",
+        "warning": "",
         "storageType": "ROOM"
       },
       {
@@ -2743,351 +2743,351 @@
         "label": "42W",
         "sourceColumn": "42W",
         "sourceSheet": "42",
+        "sourceUpdatedAt": "24.05.16",
         "allocationCount": 15,
-        "totalQuantity": 47,
-        "sourceUpdatedAt": "24.05.16"
+        "totalQuantity": 47
       },
       {
         "id": "61W",
         "label": "61W",
         "sourceColumn": "61W",
         "sourceSheet": "61",
+        "sourceUpdatedAt": "26.04.22",
         "allocationCount": 17,
-        "totalQuantity": 37,
-        "sourceUpdatedAt": "26.04.22"
+        "totalQuantity": 37
       },
       {
         "id": "62W",
         "label": "62W",
         "sourceColumn": "62W",
         "sourceSheet": "62",
+        "sourceUpdatedAt": "23.01.17",
         "allocationCount": 17,
-        "totalQuantity": 41,
-        "sourceUpdatedAt": "23.01.17"
+        "totalQuantity": 41
       },
       {
         "id": "71W",
         "label": "71W",
         "sourceColumn": "71W",
         "sourceSheet": "71",
+        "sourceUpdatedAt": "25.06.11",
         "allocationCount": 15,
-        "totalQuantity": 36,
-        "sourceUpdatedAt": "25.06.11"
+        "totalQuantity": 36
       },
       {
         "id": "72W",
         "label": "72W",
         "sourceColumn": "72W",
         "sourceSheet": "72",
+        "sourceUpdatedAt": "26.06.01",
         "allocationCount": 15,
-        "totalQuantity": 35,
-        "sourceUpdatedAt": "26.06.01"
+        "totalQuantity": 35
       },
       {
         "id": "81W",
         "label": "81W",
         "sourceColumn": "81W",
         "sourceSheet": "81",
+        "sourceUpdatedAt": "25.10.16",
         "allocationCount": 10,
-        "totalQuantity": 37,
-        "sourceUpdatedAt": "25.10.16"
+        "totalQuantity": 37
       },
       {
         "id": "82W",
         "label": "82W",
         "sourceColumn": "82W",
         "sourceSheet": "82",
+        "sourceUpdatedAt": "26.03.06",
         "allocationCount": 12,
-        "totalQuantity": 26,
-        "sourceUpdatedAt": "26.03.06"
+        "totalQuantity": 26
       },
       {
         "id": "91W",
         "label": "91W",
         "sourceColumn": "91W",
         "sourceSheet": "91",
+        "sourceUpdatedAt": "24.03.18",
         "allocationCount": 2,
-        "totalQuantity": 5,
-        "sourceUpdatedAt": "24.03.18"
+        "totalQuantity": 5
       },
       {
         "id": "92W",
         "label": "92W",
         "sourceColumn": "92W",
         "sourceSheet": "92",
+        "sourceUpdatedAt": "25.07.18",
         "allocationCount": 17,
-        "totalQuantity": 44,
-        "sourceUpdatedAt": "25.07.18"
+        "totalQuantity": 44
       },
       {
         "id": "101W",
         "label": "101W",
         "sourceColumn": "101W",
         "sourceSheet": "101",
+        "sourceUpdatedAt": "25.06.11",
         "allocationCount": 16,
-        "totalQuantity": 46,
-        "sourceUpdatedAt": "25.06.11"
+        "totalQuantity": 46
       },
       {
         "id": "102W",
         "label": "102W",
         "sourceColumn": "102W",
         "sourceSheet": "102",
+        "sourceUpdatedAt": "26.05.04",
         "allocationCount": 11,
-        "totalQuantity": 28,
-        "sourceUpdatedAt": "26.05.04"
+        "totalQuantity": 28
       },
       {
         "id": "111W",
         "label": "111W",
         "sourceColumn": "111W",
         "sourceSheet": "111",
+        "sourceUpdatedAt": "24.11.07",
         "allocationCount": 10,
-        "totalQuantity": 20,
-        "sourceUpdatedAt": "24.11.07"
+        "totalQuantity": 20
       },
       {
         "id": "112W",
         "label": "112W",
         "sourceColumn": "112W",
         "sourceSheet": "112",
+        "sourceUpdatedAt": "23.02.28",
         "allocationCount": 12,
-        "totalQuantity": 41,
-        "sourceUpdatedAt": "23.02.28"
+        "totalQuantity": 41
       },
       {
         "id": "121W",
         "label": "121W",
         "sourceColumn": "121W",
         "sourceSheet": "121",
+        "sourceUpdatedAt": "",
         "allocationCount": 1,
-        "totalQuantity": 5,
-        "sourceUpdatedAt": ""
+        "totalQuantity": 5
       },
       {
         "id": "SICU",
         "label": "SICU",
         "sourceColumn": "SICU",
         "sourceSheet": "SICU",
+        "sourceUpdatedAt": "25.07.28",
         "allocationCount": 41,
-        "totalQuantity": 197,
-        "sourceUpdatedAt": "25.07.28"
+        "totalQuantity": 197
       },
       {
         "id": "MICU",
         "label": "MICU",
         "sourceColumn": "MICU",
         "sourceSheet": "MICU",
+        "sourceUpdatedAt": "26.05.22",
         "allocationCount": 32,
-        "totalQuantity": 141,
-        "sourceUpdatedAt": "26.05.22"
+        "totalQuantity": 141
       },
       {
         "id": "AN",
         "label": "AN",
         "sourceColumn": "AN",
         "sourceSheet": "AN",
+        "sourceUpdatedAt": "26.06.17",
         "allocationCount": 58,
-        "totalQuantity": 1170,
-        "sourceUpdatedAt": "26.06.17"
+        "totalQuantity": 1170
       },
       {
         "id": "DRL",
         "label": "DRL",
         "sourceColumn": "DRL",
         "sourceSheet": "DRL",
+        "sourceUpdatedAt": "25.12.01",
         "allocationCount": 22,
-        "totalQuantity": 97,
-        "sourceUpdatedAt": "25.12.01"
+        "totalQuantity": 97
       },
       {
         "id": "OR",
         "label": "OR",
         "sourceColumn": "OR",
         "sourceSheet": "OR",
+        "sourceUpdatedAt": "25.12.01",
         "allocationCount": 21,
-        "totalQuantity": 255,
-        "sourceUpdatedAt": "25.12.01"
+        "totalQuantity": 255
       },
       {
         "id": "NICU",
         "label": "NICU",
         "sourceColumn": "NICU",
         "sourceSheet": "NICU",
+        "sourceUpdatedAt": "26.01.19",
         "allocationCount": 3,
-        "totalQuantity": 7,
-        "sourceUpdatedAt": "26.01.19"
+        "totalQuantity": 7
       },
       {
         "id": "AER",
         "label": "AER",
         "sourceColumn": "AER",
         "sourceSheet": "AER",
+        "sourceUpdatedAt": "26.04.30",
         "allocationCount": 34,
-        "totalQuantity": 142,
-        "sourceUpdatedAt": "26.04.30"
+        "totalQuantity": 142
       },
       {
         "id": "신속대응팀",
         "label": "신속대응팀",
         "sourceColumn": "신속대응팀",
         "sourceSheet": "RRT",
+        "sourceUpdatedAt": "26.02.09",
         "allocationCount": 1,
-        "totalQuantity": 2,
-        "sourceUpdatedAt": "26.02.09"
+        "totalQuantity": 2
       },
       {
         "id": "HBEF심혈관조영실",
         "label": "HBEF심혈관조영실",
         "sourceColumn": "HBEF심혈관조영실",
         "sourceSheet": "HBEF",
+        "sourceUpdatedAt": "26.03.26",
         "allocationCount": 30,
-        "totalQuantity": 143,
-        "sourceUpdatedAt": "26.03.26"
+        "totalQuantity": 143
       },
       {
         "id": "ADR",
         "label": "ADR",
         "sourceColumn": "ADR",
         "sourceSheet": "ADR",
+        "sourceUpdatedAt": "25.12.03",
         "allocationCount": 34,
-        "totalQuantity": 273,
-        "sourceUpdatedAt": "25.12.03"
+        "totalQuantity": 273
       },
       {
         "id": "DSR",
         "label": "DSR",
         "sourceColumn": "DSR",
         "sourceSheet": "DSR",
+        "sourceUpdatedAt": "25.07.18",
         "allocationCount": 8,
-        "totalQuantity": 21,
-        "sourceUpdatedAt": "25.07.18"
+        "totalQuantity": 21
       },
       {
         "id": "PED",
         "label": "PED",
         "sourceColumn": "PED",
         "sourceSheet": "PED",
+        "sourceUpdatedAt": "26.05.19",
         "allocationCount": 28,
-        "totalQuantity": 90,
-        "sourceUpdatedAt": "26.05.19"
+        "totalQuantity": 90
       },
       {
         "id": "체외순환실",
         "label": "체외순환실",
         "sourceColumn": "체외순환실",
         "sourceSheet": "HEART",
+        "sourceUpdatedAt": "23.03.21",
         "allocationCount": 0,
-        "totalQuantity": 0,
-        "sourceUpdatedAt": "23.03.21"
+        "totalQuantity": 0
       },
       {
         "id": "외래주사실",
         "label": "외래주사실",
         "sourceColumn": "외래주사실",
         "sourceSheet": "INJ",
+        "sourceUpdatedAt": "26.06.08",
         "allocationCount": 83,
-        "totalQuantity": 284,
-        "sourceUpdatedAt": "26.06.08"
+        "totalQuantity": 284
       },
       {
         "id": "영상의학과",
         "label": "영상의학과",
         "sourceColumn": "영상의학과",
         "sourceSheet": "DRO",
+        "sourceUpdatedAt": "26.06.10",
         "allocationCount": 6,
-        "totalQuantity": 18,
-        "sourceUpdatedAt": "26.06.10"
+        "totalQuantity": 18
       },
       {
         "id": "안과",
         "label": "안과",
         "sourceColumn": "안과",
         "sourceSheet": "OT",
+        "sourceUpdatedAt": "26.03.09",
         "allocationCount": 5,
-        "totalQuantity": 16,
-        "sourceUpdatedAt": "26.03.09"
+        "totalQuantity": 16
       },
       {
         "id": "재활의학과",
         "label": "재활의학과",
         "sourceColumn": "재활의학과",
         "sourceSheet": "RH",
+        "sourceUpdatedAt": "",
         "allocationCount": 1,
-        "totalQuantity": 2,
-        "sourceUpdatedAt": ""
+        "totalQuantity": 2
       },
       {
         "id": "산부인과",
         "label": "산부인과",
         "sourceColumn": "산부인과",
         "sourceSheet": "OG",
+        "sourceUpdatedAt": "22.12.15",
         "allocationCount": 1,
-        "totalQuantity": 10,
-        "sourceUpdatedAt": "22.12.15"
+        "totalQuantity": 10
       },
       {
         "id": "난임클리닉",
         "label": "난임클리닉",
         "sourceColumn": "난임클리닉",
         "sourceSheet": "난임",
+        "sourceUpdatedAt": "",
         "allocationCount": 1,
-        "totalQuantity": 4,
-        "sourceUpdatedAt": ""
+        "totalQuantity": 4
       },
       {
         "id": "이비인후과",
         "label": "이비인후과",
         "sourceColumn": "이비인후과",
         "sourceSheet": "OL",
+        "sourceUpdatedAt": "23.02.03",
         "allocationCount": 2,
-        "totalQuantity": 33,
-        "sourceUpdatedAt": "23.02.03"
+        "totalQuantity": 33
       },
       {
         "id": "피부과",
         "label": "피부과",
         "sourceColumn": "피부과",
         "sourceSheet": "DM",
+        "sourceUpdatedAt": "",
         "allocationCount": 2,
-        "totalQuantity": 4,
-        "sourceUpdatedAt": ""
+        "totalQuantity": 4
       },
       {
         "id": "소화기병검사실",
         "label": "소화기병검사실",
         "sourceColumn": "소화기병검사실",
         "sourceSheet": "GICLA",
+        "sourceUpdatedAt": "24.06.17",
         "allocationCount": 3,
-        "totalQuantity": 7,
-        "sourceUpdatedAt": "24.06.17"
+        "totalQuantity": 7
       },
       {
         "id": "정형외과",
         "label": "정형외과",
         "sourceColumn": "정형외과",
         "sourceSheet": "OS",
+        "sourceUpdatedAt": "26.06.10",
         "allocationCount": 5,
-        "totalQuantity": 72,
-        "sourceUpdatedAt": "26.06.10"
+        "totalQuantity": 72
       },
       {
         "id": "신경과",
         "label": "신경과",
         "sourceColumn": "신경과",
         "sourceSheet": "NR",
+        "sourceUpdatedAt": "26.04.14",
         "allocationCount": 3,
-        "totalQuantity": 10,
-        "sourceUpdatedAt": "26.04.14"
+        "totalQuantity": 10
       },
       {
         "id": "비뇨기과",
         "label": "비뇨기과",
         "sourceColumn": "비뇨기과",
         "sourceSheet": "UR",
+        "sourceUpdatedAt": "26.02.25",
         "allocationCount": 1,
-        "totalQuantity": 15,
-        "sourceUpdatedAt": "26.02.25"
+        "totalQuantity": 15
       }
     ],
     "allocations": [
@@ -6478,7 +6478,7 @@
     },
     {
       "section": "비품약",
-      "text": "4. 비품이외의 잉여약을 보관하고 있다."
+      "text": "4. 비품이외의 잉여약을 보관하고 있지 않다."
     },
     {
       "section": "비품약",

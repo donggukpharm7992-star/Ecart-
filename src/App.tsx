@@ -248,15 +248,20 @@ const ROUND_SUMMARY_COMMON_GUIDANCE = [
   "5. 24시간 근무하지 않는 부서에서 냉장약이 있는 경우 주말이나 휴일도 냉장고 MIN/MAX를 확인하여 2-8도를 유지해 주십시오.",
 ].join("\n");
 
-function makeChecklistState(prefix: string, sections: string[]) {
+export function makeChecklistState(prefix: string, sections: string[]) {
   return normalizeChecklistRows(inventory.checklist)
     .filter((item) => sections.includes(item.section))
-    .map((item, index) => ({
-      ...item,
-      id: `${prefix}-${index}`,
-      status: "" as CheckStatus,
-      note: "",
-    }));
+    .map((item, index) => {
+      const isItem4 = item.text.includes("잉여약") && item.text.includes("보관");
+      const isEcartItem = item.section === "E-cart";
+      const shouldDefaultGood = isItem4 || (isEcartItem && !item.text.includes("사유"));
+      return {
+        ...item,
+        id: `${prefix}-${index}`,
+        status: (shouldDefaultGood ? "good" : "") as CheckStatus,
+        note: "",
+      };
+    });
 }
 
 function makeStockChecklist(roomId: string) {
@@ -275,7 +280,7 @@ function makeEcartInspectionState(tab: EcartTab, key: string): EcartInspectionSt
   };
 }
 
-function getStockChecklistDefaultState(
+export function getStockChecklistDefaultState(
   prev: Record<string, ChecklistState[]>,
   roomId: string
 ): ChecklistState[] {
@@ -545,13 +550,18 @@ function normalizeChecklistRows<T extends { id?: string; note?: string; section:
   const rows: T[] = [];
   for (const item of items) {
     if (isChecklistLabelOnly(item.text)) continue;
-    if (item.text.startsWith("2-1 ") && item.text.includes(" 2-2 ")) {
-      const [first, second] = item.text.split(" 2-2 ", 2);
-      rows.push(makeChecklistSibling(item, "2-1", first));
-      rows.push(makeChecklistSibling(item, "2-2", `2-2 ${second}`));
+    let text = item.text;
+    if (text.includes("비품이외의 잉여약을 보관하고 있다.")) {
+      text = text.replace("비품이외의 잉여약을 보관하고 있다.", "비품이외의 잉여약을 보관하고 있지 않다.");
+    }
+    const normalizedItem = { ...item, text };
+    if (text.startsWith("2-1 ") && text.includes(" 2-2 ")) {
+      const [first, second] = text.split(" 2-2 ", 2);
+      rows.push(makeChecklistSibling(normalizedItem, "2-1", first));
+      rows.push(makeChecklistSibling(normalizedItem, "2-2", `2-2 ${second}`));
       continue;
     }
-    rows.push(item);
+    rows.push(normalizedItem);
   }
 
   const stockKindIndex = rows.findIndex((item) => item.section === "비품약" && item.text.replace(/\s+/g, "") === "비품약종류일치");
@@ -1087,20 +1097,67 @@ export function App() {
   }
 
   function updateStockChecklistNoteForRoom(roomId: string, id: string, note: string) {
+    const stockChecklist = getStockChecklistDefaultState(stockChecklistByRoom, roomId);
+    const index = stockChecklist.findIndex((item) => item.id === id);
+
     setStockChecklistByRoom((prev) => {
       const current = getStockChecklistDefaultState(prev, roomId);
       return { ...prev, [roomId]: updateChecklistRows(current, id, { note }) };
     });
+
+    const ecartLink = stockRoomEcartLinks.get(roomId);
+    if (ecartLink && index >= 0) {
+      const ecartKey = makeEcartKey(ecartLink.tab, ecartLink.targetId);
+      setEcartByTarget((prev) => {
+        const currentEcart = getEcartDefaultState(prev, ecartLink.tab, ecartKey);
+        if (index < currentEcart.checklist.length) {
+          const ecartId = currentEcart.checklist[index].id;
+          return {
+            ...prev,
+            [ecartKey]: {
+              ...currentEcart,
+              checklist: updateChecklistRows(currentEcart.checklist, ecartId, { note }),
+            },
+          };
+        }
+        return prev;
+      });
+    }
   }
 
   function updateStockChecklistStatusForRoom(roomId: string, id: string, status: CheckStatus) {
+    const stockChecklist = getStockChecklistDefaultState(stockChecklistByRoom, roomId);
+    const index = stockChecklist.findIndex((item) => item.id === id);
+
     setStockChecklistByRoom((prev) => {
       const current = getStockChecklistDefaultState(prev, roomId);
       return { ...prev, [roomId]: updateChecklistRows(current, id, { status }) };
     });
+
+    const ecartLink = stockRoomEcartLinks.get(roomId);
+    if (ecartLink && index >= 0) {
+      const ecartKey = makeEcartKey(ecartLink.tab, ecartLink.targetId);
+      setEcartByTarget((prev) => {
+        const currentEcart = getEcartDefaultState(prev, ecartLink.tab, ecartKey);
+        if (index < currentEcart.checklist.length) {
+          const ecartId = currentEcart.checklist[index].id;
+          return {
+            ...prev,
+            [ecartKey]: {
+              ...currentEcart,
+              checklist: updateChecklistRows(currentEcart.checklist, ecartId, { status }),
+            },
+          };
+        }
+        return prev;
+      });
+    }
   }
 
   function updateEcartChecklistNote(id: string, note: string) {
+    const currentEcart = getEcartDefaultState(ecartByTarget, activeEcartTab, activeEcartKey);
+    const index = currentEcart.checklist.findIndex((item) => item.id === id);
+
     setEcartByTarget((prev) => {
       const current = getEcartDefaultState(prev, activeEcartTab, activeEcartKey);
       return {
@@ -1111,9 +1168,27 @@ export function App() {
         },
       };
     });
+
+    const roomId = [...stockRoomEcartLinks.entries()].find(
+      ([_, link]) => makeEcartKey(link.tab, link.targetId) === activeEcartKey
+    )?.[0];
+
+    if (roomId && index >= 0) {
+      setStockChecklistByRoom((prev) => {
+        const currentStock = getStockChecklistDefaultState(prev, roomId);
+        if (index < currentStock.length) {
+          const stockId = currentStock[index].id;
+          return { ...prev, [roomId]: updateChecklistRows(currentStock, stockId, { note }) };
+        }
+        return prev;
+      });
+    }
   }
 
   function updateEcartChecklistStatus(id: string, status: CheckStatus) {
+    const currentEcart = getEcartDefaultState(ecartByTarget, activeEcartTab, activeEcartKey);
+    const index = currentEcart.checklist.findIndex((item) => item.id === id);
+
     setEcartByTarget((prev) => {
       const current = getEcartDefaultState(prev, activeEcartTab, activeEcartKey);
       return {
@@ -1124,6 +1199,21 @@ export function App() {
         },
       };
     });
+
+    const roomId = [...stockRoomEcartLinks.entries()].find(
+      ([_, link]) => makeEcartKey(link.tab, link.targetId) === activeEcartKey
+    )?.[0];
+
+    if (roomId && index >= 0) {
+      setStockChecklistByRoom((prev) => {
+        const currentStock = getStockChecklistDefaultState(prev, roomId);
+        if (index < currentStock.length) {
+          const stockId = currentStock[index].id;
+          return { ...prev, [roomId]: updateChecklistRows(currentStock, stockId, { status }) };
+        }
+        return prev;
+      });
+    }
   }
 
   function updateRoundSummaryDraft(patch: Partial<Omit<RoundSummaryDraft, "rows">>) {

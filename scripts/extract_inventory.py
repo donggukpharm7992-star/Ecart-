@@ -275,12 +275,14 @@ def parse_checklist(checklist_path: Path) -> list[dict[str, str]]:
         if first.startswith("[") and first.endswith("]"):
             current_section = first.strip("[]")
             rest = " ".join(nonempty[1:])
-            if rest:
+            if rest and not is_checklist_label_row(rest):
                 items.append({"section": current_section, "text": rest})
             continue
         if "병동 비품약&E-cart 점검 체크리스트" in first or "점검 내용을" in first:
             continue
         text = " ".join(nonempty)
+        if text.startswith("4. 비품이외의 잉여약을 보관하고 있다."):
+            text = "4. 비품이외의 잉여약을 보관하고 있지 않다."
         if text and current_section and not is_checklist_label_row(text):
             if text.startswith("2-1 ") and " 2-2 " in text:
                 first, second = text.split(" 2-2 ", 1)
