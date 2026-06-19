@@ -1282,15 +1282,20 @@ button {
 
   .inspection-table th:nth-child(4),
   .inspection-table td:nth-child(4) {
-    max-width: 70px;
+    width: 55px;
   }
 
-  .inspection-table td:nth-child(4) .badge {
+  .inspection-table th:nth-child(5),
+  .inspection-table td:nth-child(5) {
+    width: 50px;
+  }
+
+  .inspection-table td:nth-child(5) .badge {
     white-space: normal;
     text-align: center;
     word-break: break-all;
-    padding: 2px 4px;
-    font-size: 10px;
+    padding: 2px 3px;
+    font-size: 9px;
     line-height: 1.1;
     display: block !important;
     min-height: auto;
@@ -1536,15 +1541,20 @@ button {
 
 .mobile-mode .inspection-table th:nth-child(4),
 .mobile-mode .inspection-table td:nth-child(4) {
-  max-width: 70px !important;
+  width: 55px !important;
 }
 
-.mobile-mode .inspection-table td:nth-child(4) .badge {
+.mobile-mode .inspection-table th:nth-child(5),
+.mobile-mode .inspection-table td:nth-child(5) {
+  width: 50px !important;
+}
+
+.mobile-mode .inspection-table td:nth-child(5) .badge {
   white-space: normal !important;
   text-align: center !important;
   word-break: break-all !important;
-  padding: 2px 4px !important;
-  font-size: 10px !important;
+  padding: 2px 3px !important;
+  font-size: 9px !important;
   line-height: 1.1 !important;
   display: block !important;
   min-height: auto !important;

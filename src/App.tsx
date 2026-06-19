@@ -2132,8 +2132,8 @@ function StockReportTable({
             <th>점검</th>
             <th>코드</th>
             <th>약품명</th>
-            <th>주의사항</th>
             <th>수량</th>
+            <th>주의사항</th>
             <th>3개월 미만</th>
             <th>삭제</th>
           </tr>
@@ -2240,8 +2240,8 @@ function GroupRows({
               <small>{item.drug.storage}</small>
               {storageBadge(item.drug)}
             </td>
-            <td>{warningBadge(item.drug.warning)}</td>
             <td>{countInput(item, onCount)}</td>
+            <td>{warningBadge(item.drug.warning)}</td>
             <td>
               <input
                 className="date-input"
@@ -2283,8 +2283,8 @@ function EcartReportTable({
             <th>점검</th>
             <th>코드</th>
             <th>약품명</th>
-            <th>용량</th>
             <th>수량</th>
+            <th>용량</th>
             <th>3개월 미만</th>
             <th>삭제</th>
           </tr>
@@ -2306,7 +2306,6 @@ function EcartReportTable({
                 <td>
                   <strong>{item.name}</strong>
                 </td>
-                <td>{item.dosage || "-"}</td>
                 <td>
                   <input
                     className="count-input"
@@ -2316,6 +2315,7 @@ function EcartReportTable({
                     onChange={(event) => onCount(item.id, event.target.value)}
                   />
                 </td>
+                <td>{item.dosage || "-"}</td>
                 <td>
                   <input className="date-input" type="date" value={item.expiryDate} onChange={(event) => onExpiry(item.id, event.target.value)} />
                 </td>
