@@ -4,12 +4,14 @@ import {
   Download,
   FileText,
   ListChecks,
+  Monitor,
   PackagePlus,
   Plus,
   Printer,
   RefreshCw,
   Search,
   Siren,
+  Smartphone,
   Trash2,
   X,
 } from "lucide-react";
@@ -577,6 +579,7 @@ export function App() {
   });
   const [newRoomName, setNewRoomName] = useState("");
   const [renameDrugForm, setRenameDrugForm] = useState({ oldCode: "", newCode: "" });
+  const [isMobileMode, setIsMobileMode] = useState(false);
   const [pdfStatus, setPdfStatus] = useState<PdfStatus>("idle");
   const [pdfDownload, setPdfDownload] = useState<PdfDownloadResult | null>(null);
   const [showPrintPreview, setShowPrintPreview] = useState(false);
@@ -1380,7 +1383,7 @@ export function App() {
   }
 
   return (
-    <div className="app-page">
+    <div className={`app-page ${isMobileMode ? "mobile-mode" : ""}`}>
       <header className="app-header">
         <div>
           <p>병동 비품약 & E-cart 점검</p>
@@ -1390,6 +1393,10 @@ export function App() {
           <button className={`admin-toggle ${showRoundSummary ? "danger" : ""}`} onClick={toggleRoundSummaryView}>
             <FileText size={18} />
             {showRoundSummary ? "점검 현황판으로 돌아가기" : "병동 순회 점검표"}
+          </button>
+          <button className={`admin-toggle ${isMobileMode ? "active" : ""}`} onClick={() => setIsMobileMode(!isMobileMode)}>
+            {isMobileMode ? <Monitor size={18} /> : <Smartphone size={18} />}
+            {isMobileMode ? "PC 화면 보기" : "모바일 화면 보기"}
           </button>
           <button className={`admin-toggle ${showMaster ? "danger" : ""}`} onClick={toggleMasterView}>
             <Database size={18} />

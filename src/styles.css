@@ -1324,3 +1324,79 @@ button {
     page-break-after: auto;
   }
 }
+
+/* Mobile Mode Simulation on Desktop */
+.app-page.mobile-mode {
+  max-width: 520px;
+  margin: 0 auto;
+  border-left: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.08);
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+/* Force mobile styles when mobile-mode is active */
+.mobile-mode .summary-grid {
+  grid-template-columns: 1fr !important;
+}
+
+.mobile-mode .assignment-form,
+.mobile-mode .master-add-grid,
+.mobile-mode .master-grid {
+  grid-template-columns: 1fr !important;
+}
+
+.mobile-mode .section-toolbar,
+.mobile-mode .toolbar-actions,
+.mobile-mode .app-header {
+  align-items: stretch !important;
+  flex-direction: column !important;
+}
+
+.mobile-mode .stock-guide-floor {
+  grid-template-columns: 1fr !important;
+  gap: 8px !important;
+}
+
+.mobile-mode .search-box {
+  width: 100% !important;
+}
+
+.mobile-mode .primary-tabs {
+  grid-template-columns: 1fr !important;
+}
+
+.mobile-mode .add-form-grid {
+  grid-template-columns: 1fr !important;
+}
+
+.mobile-mode .report-card {
+  padding: 12px !important;
+}
+
+.mobile-mode .print-preview-backdrop {
+  padding: 8px !important;
+}
+
+.mobile-mode .print-preview-toolbar,
+.mobile-mode .preview-actions {
+  align-items: stretch !important;
+  flex-direction: column !important;
+}
+
+.mobile-mode .preview-actions > * {
+  width: 100% !important;
+}
+
+.mobile-mode .app-header h1 {
+  font-size: 22px !important;
+}
+
+/* Mobile View adjustments for active state button */
+.admin-toggle.active {
+  background-color: #0f766e !important;
+  color: #fff !important;
+  border-color: #0f766e !important;
+}
+
