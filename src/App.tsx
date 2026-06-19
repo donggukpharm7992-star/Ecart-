@@ -554,7 +554,14 @@ function normalizeChecklistRows<T extends { id?: string; note?: string; section:
     if (text.includes("비품이외의 잉여약을 보관하고 있다.")) {
       text = text.replace("비품이외의 잉여약을 보관하고 있다.", "비품이외의 잉여약을 보관하고 있지 않다.");
     }
-    const normalizedItem = { ...item, text };
+    let status = item.status;
+    const isItem4 = text.includes("잉여약") && text.includes("보관");
+    const isEcartItem = item.section === "E-cart";
+    const shouldDefaultGood = isItem4 || (isEcartItem && !text.includes("사유"));
+    if (shouldDefaultGood && (status === undefined || status === "")) {
+      status = "good" as CheckStatus;
+    }
+    const normalizedItem = { ...item, text, status };
     if (text.startsWith("2-1 ") && text.includes(" 2-2 ")) {
       const [first, second] = text.split(" 2-2 ", 2);
       rows.push(makeChecklistSibling(normalizedItem, "2-1", first));
