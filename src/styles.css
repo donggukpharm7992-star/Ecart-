@@ -1198,6 +1198,10 @@ button {
     flex-direction: column;
   }
 
+  .header-actions {
+    justify-content: flex-start;
+  }
+
   .stock-guide-floor {
     grid-template-columns: 1fr;
     gap: 8px;
@@ -1398,5 +1402,9 @@ button {
   background-color: #0f766e !important;
   color: #fff !important;
   border-color: #0f766e !important;
+}
+
+.mobile-mode .header-actions {
+  justify-content: flex-start !important;
 }
 
