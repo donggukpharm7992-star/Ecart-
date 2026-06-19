@@ -1249,7 +1249,7 @@ button {
 
   /* Mobile inspection table sizing and scroll */
   .inspection-table-wrap {
-    max-height: 60vh;
+    max-height: 74vh;
     overflow-y: auto;
     border: 1px solid var(--line);
     border-radius: 7px;
@@ -1470,7 +1470,7 @@ button {
 
 /* Mobile Mode Simulation Column widths & Sticky Headers */
 .mobile-mode .inspection-table-wrap {
-  max-height: 60vh !important;
+  max-height: 74vh !important;
   overflow-y: auto !important;
   border: 1px solid var(--line) !important;
   border-radius: 7px !important;
