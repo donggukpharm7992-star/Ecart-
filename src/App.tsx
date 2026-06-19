@@ -849,6 +849,43 @@ export function App() {
     });
   }, [currentStockRooms, ecartByTarget, stockChecklistByRoom]);
   const activeRoundSummaryDraft = roundSummaryDraft ?? generatedRoundSummaryDraft;
+
+  const lastGeneratedDraftRef = useRef<RoundSummaryDraft | null>(null);
+
+  useEffect(() => {
+    if (!roundSummaryDraft) {
+      lastGeneratedDraftRef.current = generatedRoundSummaryDraft;
+      return;
+    }
+    const lastGen = lastGeneratedDraftRef.current;
+    if (lastGen) {
+      const updatedRows = roundSummaryDraft.rows.map((row) => {
+        const genRow = generatedRoundSummaryDraft.rows.find((r) => r.id === row.id);
+        const lastGenRow = lastGen.rows.find((r) => r.id === row.id);
+        if (genRow && lastGenRow) {
+          if (genRow.result !== lastGenRow.result || genRow.details !== lastGenRow.details) {
+            return {
+              ...row,
+              result: genRow.result,
+              details: genRow.details,
+            };
+          }
+        }
+        return row;
+      });
+      const hasChange = updatedRows.some((row, i) => {
+        const prevRow = roundSummaryDraft.rows[i];
+        return row.result !== prevRow.result || row.details !== prevRow.details;
+      });
+      if (hasChange) {
+        setRoundSummaryDraft({
+          ...roundSummaryDraft,
+          rows: updatedRows,
+        });
+      }
+    }
+    lastGeneratedDraftRef.current = generatedRoundSummaryDraft;
+  }, [generatedRoundSummaryDraft, roundSummaryDraft]);
   const summaryGrid = (
     <section className="summary-grid" aria-label="전체 요약">
       <MetricCard
