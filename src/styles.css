@@ -1265,7 +1265,8 @@ button {
 
   .inspection-table {
     min-width: auto !important;
-    width: 100%;
+    width: 100% !important;
+    table-layout: fixed !important;
   }
 
   .inspection-table th,
@@ -1289,6 +1290,7 @@ button {
 
   .inspection-table th:nth-child(3),
   .inspection-table td:nth-child(3) {
+    width: 95px !important;
     max-width: 95px !important;
     word-break: break-all !important;
     white-space: normal !important;
@@ -1545,6 +1547,7 @@ button {
 .mobile-mode .inspection-table {
   min-width: auto !important;
   width: 100% !important;
+  table-layout: fixed !important;
 }
 
 .mobile-mode .inspection-table th,
@@ -1568,6 +1571,7 @@ button {
 
 .mobile-mode .inspection-table th:nth-child(3),
 .mobile-mode .inspection-table td:nth-child(3) {
+  width: 95px !important;
   max-width: 95px !important;
   word-break: break-all !important;
   white-space: normal !important;
