@@ -17,6 +17,14 @@ import {
 } from "lucide-react";
 import { Fragment, type ChangeEvent, type FormEvent, type ReactNode, type RefObject, useEffect, useMemo, useRef, useState } from "react";
 import rawInventory from "./data/inventory.generated.json";
+import { isForcedRefrigeratedDrug, isHighRiskDrug, normalizeDrugWarning } from "./drugRules";
+import {
+  loadRemoteState,
+  saveRemoteState,
+  shouldApplyRemoteState,
+  type GithubSyncConfig,
+  type RemoteStateEnvelope,
+} from "./githubSync";
 import {
   buildMasterRows,
   compareStockDrugsByName,
@@ -33,6 +41,15 @@ import type { ChecklistItem, EcartItem, InventoryData, StockAllocation, StockDru
 
 const inventory = rawInventory as InventoryData;
 const STORAGE_KEY = "hospital-inventory-app-state-v2";
+const LOCAL_UPDATED_AT_KEY = "hospital-inventory-local-updated-at-v1";
+const SYNC_CONFIG_KEY = "hospital-inventory-github-sync-v1";
+const SYNC_CLIENT_KEY = "hospital-inventory-sync-client-v1";
+const GITHUB_SYNC_TARGET = {
+  owner: "oleroseparosc-code",
+  repo: "Ecart-",
+  branch: "main",
+  path: "app-state/shared-state.json",
+};
 const STOCK_CODE_REPLACEMENTS = new Map([["0.9% NaKCl 20mEq/100ml btl", "XNAK20"]]);
 const STOCK_FIELD_CORRECTIONS = new Map<
   string,
@@ -40,12 +57,9 @@ const STOCK_FIELD_CORRECTIONS = new Map<
 >([
   ["XBPCA5W", { warning: "" }],
   ["XEPIN", { storageType: "ROOM" }],
-  ["XKPHMB", { warning: "고위험의약품" }],
   ["XMEXO", { warning: "유사모양" }],
   ["XMVH", { storageType: "REFRIGERATED" }],
-  ["XNA40", { warning: "고위험의약품" }],
 ]);
-const FORCE_REFRIGERATED_CODES = new Set(["BCG-H", "XADH", "XCFACT120", "XMVH", "XNICORA", "XOXYT", "XPGE110"]);
 const FORCE_ROOM_STORAGE_CODES = new Set(["XEPIN"]);
 const ECART_GENERAL_CORRECTIONS = new Map(
   [
@@ -101,6 +115,7 @@ type PersistedAppState = {
   ecartByTarget: Record<string, EcartInspectionState>;
   roundSummaryDraft: RoundSummaryDraft | null;
   stockRoomUpdatedAt: Record<string, string>;
+  uninspectedRoomIds: string[];
 };
 
 type NewDrugForm = {
@@ -113,6 +128,18 @@ type NewDrugForm = {
 };
 
 type PdfStatus = "idle" | "generating" | "ready" | "error";
+type SyncMode = "off" | "idle" | "syncing" | "synced" | "error";
+
+type StoredSyncConfig = {
+  enabled: boolean;
+  token: string;
+};
+
+type SyncStatus = {
+  mode: SyncMode;
+  message: string;
+  lastSyncedAt?: string;
+};
 
 type StockGuideEntry = {
   label: string;
@@ -378,16 +405,49 @@ function loadPersistedState(): Partial<PersistedAppState> {
   }
 }
 
+function loadSyncConfig(): StoredSyncConfig {
+  if (typeof window === "undefined") return { enabled: false, token: "" };
+  try {
+    const raw = window.localStorage.getItem(SYNC_CONFIG_KEY);
+    return raw ? { enabled: false, token: "", ...(JSON.parse(raw) as Partial<StoredSyncConfig>) } : { enabled: false, token: "" };
+  } catch {
+    return { enabled: false, token: "" };
+  }
+}
+
+function getSyncClientId() {
+  if (typeof window === "undefined") return "server";
+  const current = window.localStorage.getItem(SYNC_CLIENT_KEY);
+  if (current) return current;
+  const next =
+    typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID()
+      : `client-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  window.localStorage.setItem(SYNC_CLIENT_KEY, next);
+  return next;
+}
+
+function loadLocalUpdatedAt() {
+  if (typeof window === "undefined") return new Date(0).toISOString();
+  const savedUpdatedAt = window.localStorage.getItem(LOCAL_UPDATED_AT_KEY);
+  if (savedUpdatedAt) return savedUpdatedAt;
+  return window.localStorage.getItem(STORAGE_KEY) ? new Date().toISOString() : new Date(0).toISOString();
+}
+
 function normalizeStockCode(code: string, productName = "") {
   return STOCK_CODE_REPLACEMENTS.get(code) ?? STOCK_CODE_REPLACEMENTS.get(productName) ?? code;
 }
 
 function normalizeStockDrug(drug: StockDrug): StockDrug {
   const code = normalizeStockCode(drug.code, drug.productName);
-  return {
+  const corrected = {
     ...drug,
     ...STOCK_FIELD_CORRECTIONS.get(code),
     code,
+  };
+  return {
+    ...corrected,
+    warning: normalizeDrugWarning(corrected),
   };
 }
 
@@ -463,6 +523,7 @@ function normalizePersistedState(state: Partial<PersistedAppState>): Partial<Per
       ? Object.fromEntries(Object.entries(state.stockChecklistByRoom).map(([roomId, rows]) => [roomId, normalizeChecklistRows(rows)]))
       : undefined,
     ecartByTarget,
+    uninspectedRoomIds: Array.isArray(state.uninspectedRoomIds) ? state.uninspectedRoomIds : undefined,
   };
 }
 
@@ -479,7 +540,7 @@ function isRefrigeratedStorage(storage: string) {
 
 function isRefrigerated(drug: StockDrug) {
   if (FORCE_ROOM_STORAGE_CODES.has(drug.code)) return false;
-  if (FORCE_REFRIGERATED_CODES.has(drug.code)) return true;
+  if (isForcedRefrigeratedDrug(drug)) return true;
   return isRefrigeratedStorage(drug.storage);
 }
 
@@ -505,7 +566,7 @@ function storageBadge(drug: StockDrug) {
 
 function warningBadge(text: string) {
   if (!text) return <span className="empty">-</span>;
-  const tone = text.includes("고위험") || text.includes("용량") ? "red" : "amber";
+  const tone = text.includes("고위험") ? "red" : "amber";
   return <span className={`badge ${tone}`}>{text}</span>;
 }
 
@@ -637,10 +698,12 @@ export function App() {
   const [stockRoomUpdatedAt, setStockRoomUpdatedAt] = useState<Record<string, string>>(
     persistedState.stockRoomUpdatedAt ?? {},
   );
+  const [uninspectedRoomIds, setUninspectedRoomIds] = useState<string[]>(persistedState.uninspectedRoomIds ?? []);
   const [query, setQuery] = useState("");
   const [masterQuery, setMasterQuery] = useState("");
   const [targetRooms, setTargetRooms] = useState<string[]>([]);
   const [newAssignment, setNewAssignment] = useState({ drugCode: "", count: 1 });
+  const [assignmentDrugQuery, setAssignmentDrugQuery] = useState("");
   const [newDrug, setNewDrug] = useState<NewDrugForm>({
     code: "",
     genericName: "",
@@ -652,15 +715,27 @@ export function App() {
   const [newRoomName, setNewRoomName] = useState("");
   const [renameDrugForm, setRenameDrugForm] = useState({ oldCode: "", newCode: "" });
   const [isMobileMode, setIsMobileMode] = useState(false);
+  const [syncConfig, setSyncConfig] = useState<StoredSyncConfig>(() => loadSyncConfig());
+  const [syncTokenDraft, setSyncTokenDraft] = useState(() => loadSyncConfig().token);
+  const [showSyncSettings, setShowSyncSettings] = useState(false);
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>({ mode: "off", message: "동기화 꺼짐" });
   const [pdfStatus, setPdfStatus] = useState<PdfStatus>("idle");
   const [pdfDownload, setPdfDownload] = useState<PdfDownloadResult | null>(null);
   const [showPrintPreview, setShowPrintPreview] = useState(false);
   const [printPreviewMode, setPrintPreviewMode] = useState<PrintPreviewMode>("single");
   const reportRef = useRef<HTMLDivElement>(null);
   const printPreviewRef = useRef<HTMLDivElement>(null);
+  const syncClientId = useMemo(getSyncClientId, []);
+  const remoteShaRef = useRef<string | undefined>(undefined);
+  const syncInitializedRef = useRef(false);
+  const applyingRemoteRef = useRef(false);
+  const didHydrateRef = useRef(false);
+  const pushTimerRef = useRef<number | undefined>(undefined);
+  const localUpdatedAtRef = useRef(loadLocalUpdatedAt());
+  const latestStateRef = useRef<PersistedAppState | null>(null);
 
-  useEffect(() => {
-    const state: PersistedAppState = {
+  const persistedAppState = useMemo<PersistedAppState>(
+    () => ({
       stockDrugs,
       stockRooms,
       stockAllocations,
@@ -670,19 +745,178 @@ export function App() {
       ecartByTarget,
       roundSummaryDraft,
       stockRoomUpdatedAt,
+      uninspectedRoomIds,
+    }),
+    [
+      checkedStock,
+      ecartByTarget,
+      roundSummaryDraft,
+      stockAllocations,
+      stockChecklistByRoom,
+      stockDrugs,
+      stockExpiry,
+      stockRoomUpdatedAt,
+      stockRooms,
+      uninspectedRoomIds,
+    ],
+  );
+
+  const githubSyncConfig = useMemo<GithubSyncConfig | null>(() => {
+    const token = syncConfig.token.trim();
+    if (!syncConfig.enabled || !token) return null;
+    return { ...GITHUB_SYNC_TARGET, token };
+  }, [syncConfig.enabled, syncConfig.token]);
+
+  function applyPersistedAppState(nextState: Partial<PersistedAppState>) {
+    const normalized = normalizePersistedState(nextState);
+    applyingRemoteRef.current = true;
+    if (normalized.stockDrugs) setStockDrugs(dedupeStockDrugs(normalized.stockDrugs));
+    if (normalized.stockRooms) setStockRooms(normalizeStockRooms(normalized.stockRooms).filter((room) => !hiddenStockRooms.has(room.id)));
+    if (normalized.stockAllocations) {
+      setStockAllocations(normalizeStockAllocations(normalized.stockAllocations).filter((allocation) => !hiddenStockRooms.has(allocation.roomId)));
+    }
+    if (normalized.checkedStock) setCheckedStock(normalized.checkedStock);
+    if (normalized.stockExpiry) setStockExpiry(normalized.stockExpiry);
+    if (normalized.stockChecklistByRoom) setStockChecklistByRoom(normalized.stockChecklistByRoom);
+    if (normalized.ecartByTarget) setEcartByTarget(normalized.ecartByTarget);
+    if ("roundSummaryDraft" in normalized) setRoundSummaryDraft(normalized.roundSummaryDraft ?? null);
+    if (normalized.stockRoomUpdatedAt) setStockRoomUpdatedAt(normalized.stockRoomUpdatedAt);
+    if (normalized.uninspectedRoomIds) setUninspectedRoomIds(normalized.uninspectedRoomIds);
+  }
+
+  async function pullRemoteState(config = githubSyncConfig, forceApply = false) {
+    if (!config) return false;
+    setSyncStatus({ mode: "syncing", message: "원격 상태 확인 중..." });
+    const remote = await loadRemoteState<PersistedAppState>(config);
+    syncInitializedRef.current = true;
+    if (!remote) {
+      setSyncStatus({ mode: "idle", message: "원격 상태 없음. 다음 수정 시 생성됩니다." });
+      scheduleRemotePush();
+      return false;
+    }
+    remoteShaRef.current = remote.sha;
+    const shouldApply =
+      forceApply ||
+      shouldApplyRemoteState({
+        remoteUpdatedAt: remote.envelope.updatedAt,
+        localUpdatedAt: localUpdatedAtRef.current,
+        remoteClientId: remote.envelope.clientId,
+        clientId: syncClientId,
+      });
+    if (shouldApply) {
+      localUpdatedAtRef.current = remote.envelope.updatedAt;
+      window.localStorage.setItem(LOCAL_UPDATED_AT_KEY, remote.envelope.updatedAt);
+      applyPersistedAppState(remote.envelope.state);
+      setSyncStatus({ mode: "synced", message: "원격 변경 반영됨", lastSyncedAt: new Date().toISOString() });
+      return true;
+    }
+    if (Date.parse(localUpdatedAtRef.current || "1970-01-01T00:00:00.000Z") > Date.parse(remote.envelope.updatedAt)) {
+      setSyncStatus({ mode: "idle", message: "로컬 변경 원격 저장 대기" });
+      scheduleRemotePush();
+      return false;
+    }
+    setSyncStatus({ mode: "synced", message: "최신 상태", lastSyncedAt: new Date().toISOString() });
+    return false;
+  }
+
+  async function pushRemoteState(config = githubSyncConfig) {
+    if (!config || !latestStateRef.current) return;
+    const updatedAt = new Date().toISOString();
+    const envelope: RemoteStateEnvelope<PersistedAppState> = {
+      version: 1,
+      updatedAt,
+      clientId: syncClientId,
+      state: latestStateRef.current,
     };
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  }, [
-    checkedStock,
-    ecartByTarget,
-    roundSummaryDraft,
-    stockAllocations,
-    stockChecklistByRoom,
-    stockDrugs,
-    stockExpiry,
-    stockRoomUpdatedAt,
-    stockRooms,
-  ]);
+    setSyncStatus({ mode: "syncing", message: "원격 저장 중..." });
+    try {
+      const result = await saveRemoteState(config, envelope, remoteShaRef.current);
+      remoteShaRef.current = result.sha;
+      localUpdatedAtRef.current = updatedAt;
+      window.localStorage.setItem(LOCAL_UPDATED_AT_KEY, updatedAt);
+      setSyncStatus({ mode: "synced", message: "모든 기기에 동기화됨", lastSyncedAt: new Date().toISOString() });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "원격 저장 실패";
+      setSyncStatus({ mode: "error", message });
+      throw error;
+    }
+  }
+
+  function scheduleRemotePush() {
+    if (!githubSyncConfig || !syncInitializedRef.current) return;
+    if (pushTimerRef.current) window.clearTimeout(pushTimerRef.current);
+    pushTimerRef.current = window.setTimeout(() => {
+      pushTimerRef.current = undefined;
+      void pushRemoteState().catch(() => undefined);
+    }, 800);
+  }
+
+  useEffect(() => {
+    latestStateRef.current = persistedAppState;
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(persistedAppState));
+    if (!didHydrateRef.current) {
+      didHydrateRef.current = true;
+      return;
+    }
+    if (!applyingRemoteRef.current) {
+      const updatedAt = new Date().toISOString();
+      localUpdatedAtRef.current = updatedAt;
+      window.localStorage.setItem(LOCAL_UPDATED_AT_KEY, updatedAt);
+      scheduleRemotePush();
+    } else {
+      applyingRemoteRef.current = false;
+    }
+  }, [persistedAppState]);
+
+  useEffect(() => {
+    window.localStorage.setItem(SYNC_CONFIG_KEY, JSON.stringify(syncConfig));
+  }, [syncConfig]);
+
+  useEffect(() => {
+    if (!githubSyncConfig) {
+      syncInitializedRef.current = false;
+      setSyncStatus({ mode: "off", message: "동기화 꺼짐" });
+      return undefined;
+    }
+
+    let cancelled = false;
+    syncInitializedRef.current = false;
+    void pullRemoteState(githubSyncConfig).catch((error) => {
+      if (cancelled) return;
+      setSyncStatus({ mode: "error", message: error instanceof Error ? error.message : "원격 동기화 실패" });
+      syncInitializedRef.current = true;
+    });
+    const poller = window.setInterval(() => {
+      void pullRemoteState(githubSyncConfig).catch((error) => {
+        setSyncStatus({ mode: "error", message: error instanceof Error ? error.message : "원격 동기화 실패" });
+      });
+    }, 3500);
+    return () => {
+      cancelled = true;
+      window.clearInterval(poller);
+    };
+  }, [githubSyncConfig, syncClientId]);
+
+  useEffect(() => {
+    return () => {
+      if (pushTimerRef.current) window.clearTimeout(pushTimerRef.current);
+    };
+  }, []);
+
+  const syncStatusText = useMemo(() => {
+    if (syncStatus.lastSyncedAt) {
+      return `${syncStatus.message} · ${new Date(syncStatus.lastSyncedAt).toLocaleTimeString("ko-KR", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      })}`;
+    }
+    return syncStatus.message;
+  }, [syncStatus.lastSyncedAt, syncStatus.message]);
+
+  useEffect(() => {
+    setSyncTokenDraft(syncConfig.token);
+  }, [syncConfig.token]);
 
   useEffect(() => {
     return () => {
@@ -732,6 +966,15 @@ export function App() {
     () => masterRows.filter((row) => matchesMaster(row, masterQuery.trim().toLowerCase())),
     [masterRows, masterQuery],
   );
+  const selectedAssignmentDrug = useMemo(
+    () => stockDrugs.find((drug) => drug.code === newAssignment.drugCode),
+    [newAssignment.drugCode, stockDrugs],
+  );
+  const assignmentDrugMatches = useMemo(() => {
+    const value = assignmentDrugQuery.trim();
+    if (!value) return [];
+    return stockDrugs.filter((drug) => matchesDrug(drug, value)).slice(0, 18);
+  }, [assignmentDrugQuery, stockDrugs]);
 
   const stockItemsByRoom = useMemo(() => {
     const itemsByRoom = new Map<string, EditableStockItem[]>();
@@ -959,6 +1202,36 @@ export function App() {
     });
   }
 
+  function saveSyncSettings(event: FormEvent) {
+    event.preventDefault();
+    const token = syncTokenDraft.trim();
+    setSyncConfig({ enabled: Boolean(token), token });
+    setShowSyncSettings(false);
+  }
+
+  function disableSync() {
+    setSyncConfig({ enabled: false, token: "" });
+    setSyncTokenDraft("");
+    remoteShaRef.current = undefined;
+    syncInitializedRef.current = false;
+    if (pushTimerRef.current) {
+      window.clearTimeout(pushTimerRef.current);
+      pushTimerRef.current = undefined;
+    }
+  }
+
+  function forcePullRemote() {
+    void pullRemoteState(githubSyncConfig, true).catch((error) => {
+      setSyncStatus({ mode: "error", message: error instanceof Error ? error.message : "원격 가져오기 실패" });
+    });
+  }
+
+  function forcePushRemote() {
+    void pushRemoteState().catch((error) => {
+      setSyncStatus({ mode: "error", message: error instanceof Error ? error.message : "원격 저장 실패" });
+    });
+  }
+
   function openGuideEntry(item: StockGuideEntry) {
     if (item.stockRoomId && !item.ecartOnly) {
       goToStockRoom(item.stockRoomId);
@@ -971,6 +1244,10 @@ export function App() {
 
   function markStockRoomsEdited(roomIds: string[]) {
     setStockRoomUpdatedAt((prev) => markRoomsUpdated(prev, roomIds));
+  }
+
+  function toggleUninspectedRoom(roomId: string) {
+    setUninspectedRoomIds((prev) => (prev.includes(roomId) ? prev.filter((id) => id !== roomId) : [...prev, roomId]));
   }
 
   function updateStockCount(roomId: string, drugCode: string, value: string) {
@@ -996,6 +1273,7 @@ export function App() {
     });
     markStockRoomsEdited(targetRooms);
     setNewAssignment({ drugCode: "", count: 1 });
+    setAssignmentDrugQuery("");
     setTargetRooms([]);
   }
 
@@ -1592,12 +1870,54 @@ export function App() {
             {isMobileMode ? <Monitor size={18} /> : <Smartphone size={18} />}
             {isMobileMode ? "PC 화면 보기" : "모바일 화면 보기"}
           </button>
+          <button className={`admin-toggle sync ${syncStatus.mode}`} onClick={() => setShowSyncSettings((prev) => !prev)}>
+            <RefreshCw size={18} />
+            동기화 설정
+          </button>
           <button className={`admin-toggle ${showMaster ? "danger" : ""}`} onClick={toggleMasterView}>
             <Database size={18} />
             {showMaster ? "점검 현황판으로 돌아가기" : "전체 약품 마스터 관리"}
           </button>
         </div>
       </header>
+
+      {showSyncSettings && (
+        <section className="sync-panel">
+          <form onSubmit={saveSyncSettings}>
+            <div>
+              <strong>기기 간 실시간 동기화</strong>
+              <p>
+                private GitHub 저장소의 <code>app-state/shared-state.json</code>에 입력 내용을 저장하고 3.5초마다 다른 기기의 변경을
+                확인합니다.
+              </p>
+            </div>
+            <label>
+              GitHub 토큰
+              <input
+                type="password"
+                value={syncTokenDraft}
+                onChange={(event) => setSyncTokenDraft(event.target.value)}
+                placeholder="Contents 읽기/쓰기 권한이 있는 fine-grained token"
+              />
+            </label>
+            <div className="sync-actions">
+              <button className="submit-button" type="submit">
+                저장 후 동기화 시작
+              </button>
+              <button className="secondary-button" type="button" onClick={forcePullRemote} disabled={!githubSyncConfig}>
+                원격 내용 가져오기
+              </button>
+              <button className="secondary-button" type="button" onClick={forcePushRemote} disabled={!githubSyncConfig}>
+                현재 내용 올리기
+              </button>
+              <button className="secondary-button danger-light" type="button" onClick={disableSync}>
+                동기화 끄기
+              </button>
+            </div>
+          </form>
+          <div className={`sync-status ${syncStatus.mode}`}>{syncStatusText}</div>
+        </section>
+      )}
 
       {!showMaster && !showRoundSummary && (
         <div className="primary-tabs">
@@ -1624,20 +1944,43 @@ export function App() {
                 <PackagePlus size={24} />
               </div>
               <form className="assignment-form" onSubmit={addAssignment}>
-                <label>
-                  약품코드
-                  <select
-                    value={newAssignment.drugCode}
-                    onChange={(event) => setNewAssignment((prev) => ({ ...prev, drugCode: event.target.value }))}
-                  >
-                    <option value="">약품 선택</option>
-                    {stockDrugs.map((drug) => (
-                      <option key={drug.code} value={drug.code}>
-                        {drug.code} · {drugTitle(drug)}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                <div className="drug-picker">
+                  <label>
+                    약품 검색
+                    <input
+                      value={assignmentDrugQuery}
+                      onChange={(event) => setAssignmentDrugQuery(event.target.value)}
+                      placeholder="약품명, 코드, 성분명 검색"
+                    />
+                  </label>
+                  {selectedAssignmentDrug && (
+                    <div className="selected-drug-pill">
+                      선택됨: <strong>{selectedAssignmentDrug.code}</strong> · {drugTitle(selectedAssignmentDrug)}
+                    </div>
+                  )}
+                  {assignmentDrugQuery.trim() && (
+                    <div className="drug-search-results">
+                      {assignmentDrugMatches.length === 0 ? (
+                        <span className="empty">검색 결과 없음</span>
+                      ) : (
+                        assignmentDrugMatches.map((drug) => (
+                          <button
+                            type="button"
+                            key={drug.code}
+                            className={newAssignment.drugCode === drug.code ? "selected" : ""}
+                            onClick={() => {
+                              setNewAssignment((prev) => ({ ...prev, drugCode: drug.code }));
+                              setAssignmentDrugQuery(`${drug.code} ${drugTitle(drug)}`);
+                            }}
+                          >
+                            <strong>{drug.code}</strong>
+                            <span>{drugTitle(drug)}</span>
+                          </button>
+                        ))
+                      )}
+                    </div>
+                  )}
+                </div>
                 <label>
                   수량
                   <input
@@ -1873,7 +2216,9 @@ export function App() {
                 activeId={activeRoom}
                 getId={(room) => room.id}
                 getLabel={(room) => `${room.label} (${room.allocationCount})`}
+                getClassName={(room) => (uninspectedRoomIds.includes(room.id) ? "uninspected" : "")}
                 onSelect={(room) => setActiveRoom(room.id)}
+                onDoubleClick={(room) => toggleUninspectedRoom(room.id)}
                 tone="stock"
               />
             ) : (
@@ -2085,14 +2430,18 @@ function TabStrip<T>({
   activeId,
   getId,
   getLabel,
+  getClassName,
   onSelect,
+  onDoubleClick,
   tone,
 }: {
   items: T[];
   activeId: string;
   getId: (item: T) => string;
   getLabel: (item: T) => string;
+  getClassName?: (item: T) => string;
   onSelect: (item: T) => void;
+  onDoubleClick?: (item: T) => void;
   tone: "stock" | "ecart";
 }) {
   return (
@@ -2100,7 +2449,12 @@ function TabStrip<T>({
       {items.map((item) => {
         const id = getId(item);
         return (
-          <button key={id} className={id === activeId ? "active" : ""} onClick={() => onSelect(item)}>
+          <button
+            key={id}
+            className={[id === activeId ? "active" : "", getClassName?.(item) ?? ""].filter(Boolean).join(" ")}
+            onClick={() => onSelect(item)}
+            onDoubleClick={() => onDoubleClick?.(item)}
+          >
             {getLabel(item)}
           </button>
         );
@@ -2235,7 +2589,7 @@ function GroupRows({
             </td>
             <td className="code">{item.drugCode}</td>
             <td>
-              <strong className={item.drug.warning.includes("고위험") ? "high-risk-drug-name" : undefined}>{drugTitle(item.drug)}</strong>
+              <strong className={isHighRiskDrug(item.drug) ? "high-risk-drug-name" : undefined}>{drugTitle(item.drug)}</strong>
               <span>{item.drug.genericName}</span>
               <small>{item.drug.storage}</small>
               {storageBadge(item.drug)}

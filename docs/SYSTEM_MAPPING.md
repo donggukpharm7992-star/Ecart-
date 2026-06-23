@@ -35,8 +35,11 @@ This app previews a pharmacist ward inventory workflow with real Excel data. The
 3. Show summary metrics from the generated data.
 4. Let the user select a stock room and filter/search its assigned drugs.
 5. Let the user inspect the full registered drug master, E-cart lists, and checklist source.
-6. Persist user edits in localStorage: stock counts, expiry checks, room checklists, E-cart target checklists, edited room update dates, and the editable round-summary draft.
-7. Build the round-summary report from bad checklist statuses and manual note text, then print/PDF it through the shared preview flow.
+6. Persist user edits in localStorage: stock counts, expiry checks, room checklists, E-cart target checklists, edited room update dates, uninspected stock-room flags, and the editable round-summary draft.
+7. Optional cross-device sync stores the same persisted app state in the private GitHub repository at `app-state/shared-state.json` through the GitHub Contents API.
+   - A per-device fine-grained token is stored only in that browser's localStorage.
+   - The app polls for newer remote updates and pushes local edits after changes settle.
+8. Build the round-summary report from bad checklist statuses and manual note text, then print/PDF it through the shared preview flow.
 
 ## Update Rule
 When Excel files change, run `npm run generate:data` and `npm run validate:data`. The UI should update from generated data without editing React components.
