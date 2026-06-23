@@ -18,13 +18,7 @@ import {
 import { Fragment, type ChangeEvent, type FormEvent, type ReactNode, type RefObject, useEffect, useMemo, useRef, useState } from "react";
 import rawInventory from "./data/inventory.generated.json";
 import { isForcedRefrigeratedDrug, isHighRiskDrug, normalizeDrugWarning } from "./drugRules";
-import {
-  loadRemoteState,
-  saveRemoteState,
-  shouldApplyRemoteState,
-  type GithubSyncConfig,
-  type RemoteStateEnvelope,
-} from "./githubSync";
+import { shouldApplyRemoteState, type RemoteStateEnvelope } from "./githubSync";
 import {
   buildMasterRows,
   compareStockDrugsByName,
@@ -37,20 +31,13 @@ import {
 import { downloadElementAsPdf, type PdfDownloadResult } from "./reportPdf";
 import { effectiveRoomUpdatedAt, formatRoomUpdatedAt, markRoomsUpdated } from "./roomUpdateDate";
 import { buildRoundSummaryDraft, type RoundSummaryDraft, type RoundSummaryRow } from "./roundSummary";
-import { createStoredSyncConfig, type StoredSyncConfig } from "./syncSettings";
+import { loadServerState, saveServerState } from "./serverSync";
 import type { ChecklistItem, EcartItem, InventoryData, StockAllocation, StockDrug, StockRoom } from "./types";
 
 const inventory = rawInventory as InventoryData;
 const STORAGE_KEY = "hospital-inventory-app-state-v2";
 const LOCAL_UPDATED_AT_KEY = "hospital-inventory-local-updated-at-v1";
-const SYNC_CONFIG_KEY = "hospital-inventory-github-sync-v1";
 const SYNC_CLIENT_KEY = "hospital-inventory-sync-client-v1";
-const GITHUB_SYNC_TARGET = {
-  owner: "oleroseparosc-code",
-  repo: "Ecart-",
-  branch: "main",
-  path: "app-state/shared-state.json",
-};
 const STOCK_CODE_REPLACEMENTS = new Map([["0.9% NaKCl 20mEq/100ml btl", "XNAK20"]]);
 const STOCK_FIELD_CORRECTIONS = new Map<
   string,
@@ -405,16 +392,6 @@ function loadPersistedState(): Partial<PersistedAppState> {
   }
 }
 
-function loadSyncConfig(): StoredSyncConfig {
-  if (typeof window === "undefined") return { enabled: false, token: "" };
-  try {
-    const raw = window.localStorage.getItem(SYNC_CONFIG_KEY);
-    return raw ? { enabled: false, token: "", ...(JSON.parse(raw) as Partial<StoredSyncConfig>) } : { enabled: false, token: "" };
-  } catch {
-    return { enabled: false, token: "" };
-  }
-}
-
 function getSyncClientId() {
   if (typeof window === "undefined") return "server";
   const current = window.localStorage.getItem(SYNC_CLIENT_KEY);
@@ -715,10 +692,8 @@ export function App() {
   const [newRoomName, setNewRoomName] = useState("");
   const [renameDrugForm, setRenameDrugForm] = useState({ oldCode: "", newCode: "" });
   const [isMobileMode, setIsMobileMode] = useState(false);
-  const [syncConfig, setSyncConfig] = useState<StoredSyncConfig>(() => loadSyncConfig());
-  const [syncTokenDraft, setSyncTokenDraft] = useState(() => loadSyncConfig().token);
   const [showSyncSettings, setShowSyncSettings] = useState(false);
-  const [syncStatus, setSyncStatus] = useState<SyncStatus>({ mode: "off", message: "자동 저장 꺼짐" });
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>({ mode: "syncing", message: "자동 저장 서버 연결 중..." });
   const [pdfStatus, setPdfStatus] = useState<PdfStatus>("idle");
   const [pdfDownload, setPdfDownload] = useState<PdfDownloadResult | null>(null);
   const [showPrintPreview, setShowPrintPreview] = useState(false);
@@ -763,12 +738,6 @@ export function App() {
     ],
   );
 
-  const githubSyncConfig = useMemo<GithubSyncConfig | null>(() => {
-    const token = syncConfig.token.trim();
-    if (!syncConfig.enabled || !token) return null;
-    return { ...GITHUB_SYNC_TARGET, token };
-  }, [syncConfig.enabled, syncConfig.token]);
-
   function applyPersistedAppState(nextState: Partial<PersistedAppState>) {
     const normalized = normalizePersistedState(nextState);
     applyingRemoteRef.current = true;
@@ -786,19 +755,18 @@ export function App() {
     if (normalized.uninspectedRoomIds) setUninspectedRoomIds(normalized.uninspectedRoomIds);
   }
 
-  async function pullRemoteState(config = githubSyncConfig, forceApply = false, options: PullRemoteOptions = {}) {
-    if (!config) return false;
+  async function pullRemoteState(forceApply = false, options: PullRemoteOptions = {}) {
     if (pullInFlightRef.current) {
-      if (!options.silent) setSyncStatus({ mode: "idle", message: "이미 원격 확인 중입니다. 잠시 뒤 다시 눌러 주세요." });
+      if (!options.silent) setSyncStatus({ mode: "idle", message: "이미 자동 저장 상태를 확인 중입니다." });
       return false;
     }
     pullInFlightRef.current = true;
-    if (!options.silent) setSyncStatus({ mode: "syncing", message: "원격 상태 확인 중..." });
+    if (!options.silent) setSyncStatus({ mode: "syncing", message: "자동 저장 상태 확인 중..." });
     try {
-      const remote = await loadRemoteState<PersistedAppState>(config);
+      const remote = await loadServerState<PersistedAppState>();
       syncInitializedRef.current = true;
       if (!remote) {
-        setSyncStatus({ mode: "idle", message: "원격 상태 없음. 다음 수정 시 생성됩니다." });
+        setSyncStatus({ mode: "idle", message: "저장된 상태 없음. 다음 수정 시 자동 생성됩니다." });
         scheduleRemotePush();
         return false;
       }
@@ -815,11 +783,11 @@ export function App() {
         localUpdatedAtRef.current = remote.envelope.updatedAt;
         window.localStorage.setItem(LOCAL_UPDATED_AT_KEY, remote.envelope.updatedAt);
         applyPersistedAppState(remote.envelope.state);
-        setSyncStatus({ mode: "synced", message: "원격 변경 반영됨", lastSyncedAt: new Date().toISOString() });
+        setSyncStatus({ mode: "synced", message: "다른 기기 변경 반영됨", lastSyncedAt: new Date().toISOString() });
         return true;
       }
       if (Date.parse(localUpdatedAtRef.current || "1970-01-01T00:00:00.000Z") > Date.parse(remote.envelope.updatedAt)) {
-        setSyncStatus({ mode: "idle", message: "로컬 변경 원격 저장 대기" });
+        setSyncStatus({ mode: "idle", message: "로컬 변경 자동 저장 대기" });
         scheduleRemotePush();
         return false;
       }
@@ -836,8 +804,8 @@ export function App() {
     }
   }
 
-  async function pushRemoteState(config = githubSyncConfig) {
-    if (!config || !latestStateRef.current) return;
+  async function pushRemoteState() {
+    if (!latestStateRef.current) return;
     const updatedAt = new Date().toISOString();
     const envelope: RemoteStateEnvelope<PersistedAppState> = {
       version: 1,
@@ -845,22 +813,21 @@ export function App() {
       clientId: syncClientId,
       state: latestStateRef.current,
     };
-    setSyncStatus({ mode: "syncing", message: "원격 저장 중..." });
+    setSyncStatus({ mode: "syncing", message: "자동 저장 중..." });
     try {
-      const result = await saveRemoteState(config, envelope, remoteShaRef.current);
+      const result = await saveServerState(envelope);
       remoteShaRef.current = result.sha;
       localUpdatedAtRef.current = updatedAt;
       window.localStorage.setItem(LOCAL_UPDATED_AT_KEY, updatedAt);
       setSyncStatus({ mode: "synced", message: "자동 저장 완료", lastSyncedAt: new Date().toISOString() });
     } catch (error) {
-      const message = error instanceof Error ? error.message : "원격 저장 실패";
+      const message = error instanceof Error ? error.message : "자동 저장 실패";
       setSyncStatus({ mode: "error", message });
       throw error;
     }
   }
 
   function scheduleRemotePush() {
-    if (!githubSyncConfig) return;
     if (!syncInitializedRef.current) {
       pendingPushRef.current = true;
       setSyncStatus({ mode: "idle", message: "자동 저장 준비 중... 변경 내용은 곧 저장됩니다." });
@@ -892,34 +859,24 @@ export function App() {
   }, [persistedAppState]);
 
   useEffect(() => {
-    window.localStorage.setItem(SYNC_CONFIG_KEY, JSON.stringify(syncConfig));
-  }, [syncConfig]);
-
-  useEffect(() => {
-    if (!githubSyncConfig) {
-      syncInitializedRef.current = false;
-      pendingPushRef.current = false;
-      setSyncStatus({ mode: "off", message: "자동 저장 꺼짐" });
-      return undefined;
-    }
-
     let cancelled = false;
     syncInitializedRef.current = false;
-    void pullRemoteState(githubSyncConfig).catch((error) => {
+    setSyncStatus({ mode: "syncing", message: "자동 저장 서버 연결 중..." });
+    void pullRemoteState().catch((error) => {
       if (cancelled) return;
-      setSyncStatus({ mode: "error", message: error instanceof Error ? error.message : "원격 동기화 실패" });
+      setSyncStatus({ mode: "error", message: error instanceof Error ? error.message : "자동 저장 서버 연결 실패" });
       syncInitializedRef.current = true;
     });
     const poller = window.setInterval(() => {
-      void pullRemoteState(githubSyncConfig, false, { silent: true }).catch((error) => {
-        setSyncStatus({ mode: "error", message: error instanceof Error ? error.message : "원격 동기화 실패" });
+      void pullRemoteState(false, { silent: true }).catch((error) => {
+        setSyncStatus({ mode: "error", message: error instanceof Error ? error.message : "자동 저장 서버 연결 실패" });
       });
     }, 3500);
     return () => {
       cancelled = true;
       window.clearInterval(poller);
     };
-  }, [githubSyncConfig, syncClientId]);
+  }, [syncClientId]);
 
   useEffect(() => {
     return () => {
@@ -937,10 +894,6 @@ export function App() {
     }
     return syncStatus.message;
   }, [syncStatus.lastSyncedAt, syncStatus.message]);
-
-  useEffect(() => {
-    setSyncTokenDraft(syncConfig.token);
-  }, [syncConfig.token]);
 
   useEffect(() => {
     return () => {
@@ -1224,25 +1177,6 @@ export function App() {
       if (next) setShowMaster(false);
       return next;
     });
-  }
-
-  function saveSyncSettings(event: FormEvent) {
-    event.preventDefault();
-    const result = createStoredSyncConfig(syncTokenDraft);
-    setSyncConfig(result.config);
-    setSyncStatus({ mode: result.mode, message: result.message });
-  }
-
-  function disableSync() {
-    setSyncConfig({ enabled: false, token: "" });
-    setSyncTokenDraft("");
-    remoteShaRef.current = undefined;
-    syncInitializedRef.current = false;
-    pendingPushRef.current = false;
-    if (pushTimerRef.current) {
-      window.clearTimeout(pushTimerRef.current);
-      pushTimerRef.current = undefined;
-    }
   }
 
   function openGuideEntry(item: StockGuideEntry) {
@@ -1885,7 +1819,7 @@ export function App() {
           </button>
           <button className={`admin-toggle sync ${syncStatus.mode}`} onClick={() => setShowSyncSettings((prev) => !prev)}>
             <RefreshCw size={18} />
-            자동 저장 설정
+            자동 저장 상태
           </button>
           <button className={`admin-toggle ${showMaster ? "danger" : ""}`} onClick={toggleMasterView}>
             <Database size={18} />
@@ -1896,32 +1830,15 @@ export function App() {
 
       {showSyncSettings && (
         <section className="sync-panel">
-          <form onSubmit={saveSyncSettings}>
+          <div className="sync-panel-content">
             <div>
               <strong>GitHub 자동 저장</strong>
               <p>
-                앱 안에서 입력하거나 수정한 내용은 private GitHub 저장소의 <code>app-state/shared-state.json</code>에 자동 저장되고,
-                다른 기기에서는 자동으로 새 내용을 확인합니다.
+                PC에서 실행 중인 앱 서버가 <code>app-state/shared-state.json</code>을 자동 저장하고 GitHub로 push합니다.
+                PC와 핸드폰은 같은 PC 서버 주소로 접속하면 같은 내용을 봅니다.
               </p>
             </div>
-            <label>
-              GitHub 토큰
-              <input
-                type="password"
-                value={syncTokenDraft}
-                onChange={(event) => setSyncTokenDraft(event.target.value)}
-                placeholder="Contents 읽기/쓰기 권한이 있는 fine-grained token"
-              />
-            </label>
-            <div className="sync-actions">
-              <button className="submit-button" type="submit">
-                자동 저장 시작
-              </button>
-              <button className="secondary-button danger-light" type="button" onClick={disableSync}>
-                자동 저장 끄기
-              </button>
-            </div>
-          </form>
+          </div>
           <div className={`sync-status ${syncStatus.mode}`}>{syncStatusText}</div>
         </section>
       )}

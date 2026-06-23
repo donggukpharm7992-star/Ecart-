@@ -7,7 +7,7 @@
     "generate:data": "py scripts/extract_inventory.py",
     "validate:data": "py scripts/validate_inventory.py",
     "test": "vitest run --no-watch --reporter=basic --testTimeout=10000 --config vitest.config.ts",
-    "dev": "vite --host 127.0.0.1",
+    "dev": "vite --host 0.0.0.0",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 127.0.0.1"
   },
@@ -21,6 +21,7 @@
     "vite": "^6.0.1"
   },
   "devDependencies": {
+    "@types/node": "^26.0.0",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "vitest": "^4.1.9"
