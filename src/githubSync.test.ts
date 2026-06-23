@@ -1,5 +1,12 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { buildGithubContentsUrl, decodeBase64Utf8, encodeBase64Utf8, loadRemoteState, shouldApplyRemoteState } from "./githubSync";
+import {
+  buildGithubContentsUrl,
+  decodeBase64Utf8,
+  encodeBase64Utf8,
+  loadRemoteState,
+  shouldApplyRemoteState,
+  shouldPushLocalState,
+} from "./githubSync";
 
 const originalFetch = globalThis.fetch;
 
@@ -51,6 +58,24 @@ describe("github sync helpers", () => {
         localUpdatedAt: "2026-06-23T10:00:00.000Z",
         remoteClientId: "pc",
         clientId: "pc",
+      }),
+    ).toBe(false);
+  });
+
+  it("pushes local state only when this session has unsaved edits", () => {
+    expect(
+      shouldPushLocalState({
+        localUpdatedAt: "2026-06-23T10:00:10.000Z",
+        remoteUpdatedAt: "2026-06-23T10:00:05.000Z",
+        hasUnsavedLocalChanges: true,
+      }),
+    ).toBe(true);
+
+    expect(
+      shouldPushLocalState({
+        localUpdatedAt: "2026-06-23T10:00:10.000Z",
+        remoteUpdatedAt: "2026-06-23T10:00:05.000Z",
+        hasUnsavedLocalChanges: false,
       }),
     ).toBe(false);
   });

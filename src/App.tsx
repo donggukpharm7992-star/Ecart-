@@ -18,7 +18,7 @@ import {
 import { Fragment, type ChangeEvent, type FormEvent, type ReactNode, type RefObject, useEffect, useMemo, useRef, useState } from "react";
 import rawInventory from "./data/inventory.generated.json";
 import { isForcedRefrigeratedDrug, isHighRiskDrug, normalizeDrugWarning } from "./drugRules";
-import { shouldApplyRemoteState, type RemoteStateEnvelope } from "./githubSync";
+import { shouldApplyRemoteState, shouldPushLocalState, type RemoteStateEnvelope } from "./githubSync";
 import {
   buildMasterRows,
   compareStockDrugsByName,
@@ -707,6 +707,7 @@ export function App() {
   const pullInFlightRef = useRef(false);
   const applyingRemoteRef = useRef(false);
   const didHydrateRef = useRef(false);
+  const hasUnsavedLocalChangesRef = useRef(false);
   const pushTimerRef = useRef<number | undefined>(undefined);
   const localUpdatedAtRef = useRef(loadLocalUpdatedAt());
   const latestStateRef = useRef<PersistedAppState | null>(null);
@@ -781,12 +782,20 @@ export function App() {
         });
       if (shouldApply) {
         localUpdatedAtRef.current = remote.envelope.updatedAt;
+        hasUnsavedLocalChangesRef.current = false;
+        pendingPushRef.current = false;
         window.localStorage.setItem(LOCAL_UPDATED_AT_KEY, remote.envelope.updatedAt);
         applyPersistedAppState(remote.envelope.state);
         setSyncStatus({ mode: "synced", message: "다른 기기 변경 반영됨", lastSyncedAt: new Date().toISOString() });
         return true;
       }
-      if (Date.parse(localUpdatedAtRef.current || "1970-01-01T00:00:00.000Z") > Date.parse(remote.envelope.updatedAt)) {
+      if (
+        shouldPushLocalState({
+          localUpdatedAt: localUpdatedAtRef.current,
+          remoteUpdatedAt: remote.envelope.updatedAt,
+          hasUnsavedLocalChanges: hasUnsavedLocalChangesRef.current || pendingPushRef.current,
+        })
+      ) {
         setSyncStatus({ mode: "idle", message: "로컬 변경 자동 저장 대기" });
         scheduleRemotePush();
         return false;
@@ -818,6 +827,7 @@ export function App() {
       const result = await saveServerState(envelope);
       remoteShaRef.current = result.sha;
       localUpdatedAtRef.current = updatedAt;
+      hasUnsavedLocalChangesRef.current = false;
       window.localStorage.setItem(LOCAL_UPDATED_AT_KEY, updatedAt);
       setSyncStatus({ mode: "synced", message: "자동 저장 완료", lastSyncedAt: new Date().toISOString() });
     } catch (error) {
@@ -851,6 +861,7 @@ export function App() {
     if (!applyingRemoteRef.current) {
       const updatedAt = new Date().toISOString();
       localUpdatedAtRef.current = updatedAt;
+      hasUnsavedLocalChangesRef.current = true;
       window.localStorage.setItem(LOCAL_UPDATED_AT_KEY, updatedAt);
       scheduleRemotePush();
     } else {

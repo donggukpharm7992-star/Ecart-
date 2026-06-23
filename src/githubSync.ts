@@ -67,6 +67,19 @@ export function shouldApplyRemoteState({
   return Date.parse(remoteUpdatedAt) > Date.parse(localUpdatedAt || "1970-01-01T00:00:00.000Z");
 }
 
+export function shouldPushLocalState({
+  localUpdatedAt,
+  remoteUpdatedAt,
+  hasUnsavedLocalChanges,
+}: {
+  localUpdatedAt: string;
+  remoteUpdatedAt: string;
+  hasUnsavedLocalChanges: boolean;
+}) {
+  if (!hasUnsavedLocalChanges) return false;
+  return Date.parse(localUpdatedAt || "1970-01-01T00:00:00.000Z") > Date.parse(remoteUpdatedAt || "1970-01-01T00:00:00.000Z");
+}
+
 function githubHeaders(config: GithubSyncConfig) {
   return {
     Accept: "application/vnd.github+json",
