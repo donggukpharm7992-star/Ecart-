@@ -37,7 +37,6 @@ import {
 import { downloadElementAsPdf, type PdfDownloadResult } from "./reportPdf";
 import { effectiveRoomUpdatedAt, formatRoomUpdatedAt, markRoomsUpdated } from "./roomUpdateDate";
 import { buildRoundSummaryDraft, type RoundSummaryDraft, type RoundSummaryRow } from "./roundSummary";
-import { getSyncActionAvailability, getSyncDeviceMode } from "./syncUi";
 import type { ChecklistItem, EcartItem, InventoryData, StockAllocation, StockDrug, StockRoom } from "./types";
 
 const inventory = rawInventory as InventoryData;
@@ -720,11 +719,10 @@ export function App() {
   const [newRoomName, setNewRoomName] = useState("");
   const [renameDrugForm, setRenameDrugForm] = useState({ oldCode: "", newCode: "" });
   const [isMobileMode, setIsMobileMode] = useState(false);
-  const [viewportWidth, setViewportWidth] = useState(() => (typeof window === "undefined" ? 1024 : window.innerWidth));
   const [syncConfig, setSyncConfig] = useState<StoredSyncConfig>(() => loadSyncConfig());
   const [syncTokenDraft, setSyncTokenDraft] = useState(() => loadSyncConfig().token);
   const [showSyncSettings, setShowSyncSettings] = useState(false);
-  const [syncStatus, setSyncStatus] = useState<SyncStatus>({ mode: "off", message: "동기화 꺼짐" });
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>({ mode: "off", message: "자동 저장 꺼짐" });
   const [pdfStatus, setPdfStatus] = useState<PdfStatus>("idle");
   const [pdfDownload, setPdfDownload] = useState<PdfDownloadResult | null>(null);
   const [showPrintPreview, setShowPrintPreview] = useState(false);
@@ -774,15 +772,7 @@ export function App() {
     if (!syncConfig.enabled || !token) return null;
     return { ...GITHUB_SYNC_TARGET, token };
   }, [syncConfig.enabled, syncConfig.token]);
-  const hasManualSyncToken = Boolean(syncTokenDraft.trim() || syncConfig.token.trim());
-  const syncDeviceMode = useMemo(
-    () => getSyncDeviceMode({ isMobileMode, viewportWidth }),
-    [isMobileMode, viewportWidth],
-  );
-  const syncActions = useMemo(
-    () => getSyncActionAvailability({ mode: syncDeviceMode, hasToken: hasManualSyncToken }),
-    [hasManualSyncToken, syncDeviceMode],
-  );
+  const canStartAutoSync = Boolean(syncTokenDraft.trim());
 
   function applyPersistedAppState(nextState: Partial<PersistedAppState>) {
     const normalized = normalizePersistedState(nextState);
@@ -866,7 +856,7 @@ export function App() {
       remoteShaRef.current = result.sha;
       localUpdatedAtRef.current = updatedAt;
       window.localStorage.setItem(LOCAL_UPDATED_AT_KEY, updatedAt);
-      setSyncStatus({ mode: "synced", message: "모든 기기에 동기화됨", lastSyncedAt: new Date().toISOString() });
+      setSyncStatus({ mode: "synced", message: "자동 저장 완료", lastSyncedAt: new Date().toISOString() });
     } catch (error) {
       const message = error instanceof Error ? error.message : "원격 저장 실패";
       setSyncStatus({ mode: "error", message });
@@ -878,7 +868,7 @@ export function App() {
     if (!githubSyncConfig) return;
     if (!syncInitializedRef.current) {
       pendingPushRef.current = true;
-      setSyncStatus({ mode: "idle", message: "자동 동기화 준비 중... 변경 내용은 곧 저장됩니다." });
+      setSyncStatus({ mode: "idle", message: "자동 저장 준비 중... 변경 내용은 곧 저장됩니다." });
       return;
     }
     pendingPushRef.current = false;
@@ -914,7 +904,7 @@ export function App() {
     if (!githubSyncConfig) {
       syncInitializedRef.current = false;
       pendingPushRef.current = false;
-      setSyncStatus({ mode: "off", message: "동기화 꺼짐" });
+      setSyncStatus({ mode: "off", message: "자동 저장 꺼짐" });
       return undefined;
     }
 
@@ -940,13 +930,6 @@ export function App() {
     return () => {
       if (pushTimerRef.current) window.clearTimeout(pushTimerRef.current);
     };
-  }, []);
-
-  useEffect(() => {
-    const updateViewportWidth = () => setViewportWidth(window.innerWidth);
-    updateViewportWidth();
-    window.addEventListener("resize", updateViewportWidth);
-    return () => window.removeEventListener("resize", updateViewportWidth);
   }, []);
 
   const syncStatusText = useMemo(() => {
@@ -1265,39 +1248,6 @@ export function App() {
       window.clearTimeout(pushTimerRef.current);
       pushTimerRef.current = undefined;
     }
-  }
-
-  function getManualSyncConfig() {
-    const token = syncTokenDraft.trim() || syncConfig.token.trim();
-    if (!token) {
-      setSyncStatus({ mode: "error", message: "GitHub 토큰을 먼저 입력해 주세요." });
-      return null;
-    }
-    return { ...GITHUB_SYNC_TARGET, token };
-  }
-
-  function forcePullRemote() {
-    const config = getManualSyncConfig();
-    if (!config) return;
-    void pullRemoteState(config, true)
-      .then(() => {
-        setSyncConfig({ enabled: true, token: config.token });
-      })
-      .catch((error) => {
-        setSyncStatus({ mode: "error", message: error instanceof Error ? error.message : "원격 가져오기 실패" });
-      });
-  }
-
-  function forcePushRemote() {
-    const config = getManualSyncConfig();
-    if (!config) return;
-    void pushRemoteState(config)
-      .then(() => {
-        setSyncConfig({ enabled: true, token: config.token });
-      })
-      .catch((error) => {
-        setSyncStatus({ mode: "error", message: error instanceof Error ? error.message : "원격 저장 실패" });
-      });
   }
 
   function openGuideEntry(item: StockGuideEntry) {
@@ -1940,7 +1890,7 @@ export function App() {
           </button>
           <button className={`admin-toggle sync ${syncStatus.mode}`} onClick={() => setShowSyncSettings((prev) => !prev)}>
             <RefreshCw size={18} />
-            동기화 설정
+            자동 저장 설정
           </button>
           <button className={`admin-toggle ${showMaster ? "danger" : ""}`} onClick={toggleMasterView}>
             <Database size={18} />
@@ -1953,10 +1903,10 @@ export function App() {
         <section className="sync-panel">
           <form onSubmit={saveSyncSettings}>
             <div>
-              <strong>기기 간 실시간 동기화</strong>
+              <strong>GitHub 자동 저장</strong>
               <p>
-                private GitHub 저장소의 <code>app-state/shared-state.json</code>에 입력 내용을 저장하고 3.5초마다 다른 기기의 변경을
-                확인합니다.
+                앱 안에서 입력하거나 수정한 내용은 private GitHub 저장소의 <code>app-state/shared-state.json</code>에 자동 저장되고,
+                다른 기기에서는 자동으로 새 내용을 확인합니다.
               </p>
             </div>
             <label>
@@ -1969,21 +1919,11 @@ export function App() {
               />
             </label>
             <div className="sync-actions">
-              <button className="submit-button" type="submit">
-                저장 후 동기화 시작
+              <button className="submit-button" type="submit" disabled={!canStartAutoSync}>
+                자동 저장 시작
               </button>
-              {syncActions.showPull && (
-                <button className="secondary-button" type="button" onClick={forcePullRemote} disabled={!syncActions.canPull}>
-                  원격 내용 가져오기
-                </button>
-              )}
-              {syncActions.showPush && (
-                <button className="secondary-button" type="button" onClick={forcePushRemote} disabled={!syncActions.canPush}>
-                  현재 내용 올리기
-                </button>
-              )}
               <button className="secondary-button danger-light" type="button" onClick={disableSync}>
-                동기화 끄기
+                자동 저장 끄기
               </button>
             </div>
           </form>
