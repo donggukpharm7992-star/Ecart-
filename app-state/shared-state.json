@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-23T08:34:45.948Z",
+  "updatedAt": "2026-06-23T08:35:05.152Z",
   "clientId": "27b103e8-74b5-4f17-8ba7-bee6a156a0fa",
   "state": {
     "stockDrugs": [
@@ -6077,7 +6077,7 @@
         {
           "section": "비품약",
           "text": "2. 병동 자체 관리 대장과 약제팀에서 제공한 관리 대장의 목록이 일치 한다.",
-          "status": "good",
+          "status": "bad",
           "id": "stock-AER-2",
           "note": "하단 서랍 씰링 되어 있지 않음"
         },
@@ -6905,7 +6905,7 @@
           {
             "section": "E-cart",
             "text": "2. E-cart가 규정에 맞게 잘 봉인되어 있으며 봉인일이 표시 되어 있다.",
-            "status": "good",
+            "status": "bad",
             "id": "ecart-general:AER-1-2",
             "note": "하단 서랍 씰링 되어 있지 않음"
           },
