@@ -18,7 +18,7 @@ import {
 import { Fragment, type ChangeEvent, type FormEvent, type ReactNode, type RefObject, useEffect, useMemo, useRef, useState } from "react";
 import rawInventory from "./data/inventory.generated.json";
 import { isForcedRefrigeratedDrug, isHighRiskDrug, normalizeDrugWarning } from "./drugRules";
-import { shouldApplyRemoteState, shouldPushLocalState, type RemoteStateEnvelope } from "./githubSync";
+import { shouldApplyRemoteState, shouldMarkLocalChange, shouldPushLocalState, type RemoteStateEnvelope } from "./githubSync";
 import {
   buildMasterRows,
   compareStockDrugsByName,
@@ -859,13 +859,13 @@ export function App() {
       didHydrateRef.current = true;
       return;
     }
-    if (!applyingRemoteRef.current) {
+    if (shouldMarkLocalChange({ syncInitialized: syncInitializedRef.current, applyingRemote: applyingRemoteRef.current })) {
       const updatedAt = new Date().toISOString();
       localUpdatedAtRef.current = updatedAt;
       hasUnsavedLocalChangesRef.current = true;
       window.localStorage.setItem(LOCAL_UPDATED_AT_KEY, updatedAt);
       scheduleRemotePush();
-    } else {
+    } else if (applyingRemoteRef.current) {
       applyingRemoteRef.current = false;
     }
   }, [persistedAppState]);

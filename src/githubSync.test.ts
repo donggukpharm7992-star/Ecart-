@@ -5,6 +5,7 @@ import {
   encodeBase64Utf8,
   loadRemoteState,
   shouldApplyRemoteState,
+  shouldMarkLocalChange,
   shouldPushLocalState,
 } from "./githubSync";
 
@@ -90,6 +91,12 @@ describe("github sync helpers", () => {
         hasUnsavedLocalChanges: false,
       }),
     ).toBe(false);
+  });
+
+  it("does not mark startup or remote-apply changes as local edits", () => {
+    expect(shouldMarkLocalChange({ syncInitialized: false, applyingRemote: false })).toBe(false);
+    expect(shouldMarkLocalChange({ syncInitialized: true, applyingRemote: true })).toBe(false);
+    expect(shouldMarkLocalChange({ syncInitialized: true, applyingRemote: false })).toBe(true);
   });
 
   it("times out stalled GitHub load requests", async () => {
