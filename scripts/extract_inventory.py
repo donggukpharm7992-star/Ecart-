@@ -132,6 +132,10 @@ def is_checklist_label_row(text: str) -> bool:
     return re.sub(r"\s+", "", text) in CHECKLIST_LABEL_ROWS
 
 
+def is_retired_checklist_row(text: str) -> bool:
+    return "E-cart" in text and "\uc8fc 2\ud68c" in text and "\uad00\ub9ac\ub300\uc7a5" in text
+
+
 def find_workbook(keyword: str) -> Path:
     matches = [p for p in ROOT.glob("*.xlsx") if keyword in p.name and not p.name.startswith("~$")]
     if not matches:
@@ -275,7 +279,7 @@ def parse_checklist(checklist_path: Path) -> list[dict[str, str]]:
         if first.startswith("[") and first.endswith("]"):
             current_section = first.strip("[]")
             rest = " ".join(nonempty[1:])
-            if rest and not is_checklist_label_row(rest):
+            if rest and not is_checklist_label_row(rest) and not is_retired_checklist_row(rest):
                 items.append({"section": current_section, "text": rest})
             continue
         if "병동 비품약&E-cart 점검 체크리스트" in first or "점검 내용을" in first:
@@ -283,7 +287,7 @@ def parse_checklist(checklist_path: Path) -> list[dict[str, str]]:
         text = " ".join(nonempty)
         if text.startswith("4. 비품이외의 잉여약을 보관하고 있다."):
             text = "4. 비품이외의 잉여약을 보관하고 있지 않다."
-        if text and current_section and not is_checklist_label_row(text):
+        if text and current_section and not is_checklist_label_row(text) and not is_retired_checklist_row(text):
             if text.startswith("2-1 ") and " 2-2 " in text:
                 first, second = text.split(" 2-2 ", 1)
                 items.append({"section": current_section, "text": first})

@@ -87,4 +87,12 @@ describe("generated inventory data corrections", () => {
       expect(item.status).toBe("");
     }
   });
+
+  it("excludes the retired twice-weekly E-cart management log checklist row", () => {
+    const generatedTexts = inventory.checklist.filter((item) => item.section === "E-cart").map((item) => item.text);
+    const defaultTexts = makeChecklistState("ecart-general:42", ["E-cart"]).map((item) => item.text);
+
+    expect(generatedTexts.some((text) => text.includes("주 2회 점검한 E-cart 관리대장"))).toBe(false);
+    expect(defaultTexts.some((text) => text.includes("주 2회 점검한 E-cart 관리대장"))).toBe(false);
+  });
 });

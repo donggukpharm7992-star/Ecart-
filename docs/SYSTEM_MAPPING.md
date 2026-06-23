@@ -26,6 +26,7 @@ This app previews a pharmacist ward inventory workflow with real Excel data. The
 - `ecart.nicuItems`: NICU-specific E-cart list.
 - `checklist`: normalized checklist rows.
   - Label-only `양호 불량` rows are excluded; `수량 일치` remains a real checklist item.
+  - Retired E-cart twice-weekly management-log rows are excluded during import.
   - Split combined `2-1`/`2-2` rows and append 냉장약 item 6 for annual refrigerator thermometer verification.
   - Apply pharmacy policy corrections for E-cart labels, warning labels, and storage grouping overrides.
 

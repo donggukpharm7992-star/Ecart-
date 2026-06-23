@@ -569,6 +569,10 @@ function isChecklistLabelOnly(text: string) {
   return compact === "양호불량";
 }
 
+function isRetiredChecklistRow(text: string) {
+  return text.includes("E-cart") && text.includes("주 2회") && text.includes("관리대장");
+}
+
 function makeChecklistSibling<T extends { id?: string; note?: string; section: string; status?: CheckStatus; text: string }>(
   item: T,
   suffix: string,
@@ -587,6 +591,7 @@ function normalizeChecklistRows<T extends { id?: string; note?: string; section:
   const rows: T[] = [];
   for (const item of items) {
     if (isChecklistLabelOnly(item.text)) continue;
+    if (isRetiredChecklistRow(item.text)) continue;
     let text = item.text;
     if (text.includes("비품이외의 잉여약을 보관하고 있다.")) {
       text = text.replace("비품이외의 잉여약을 보관하고 있다.", "비품이외의 잉여약을 보관하고 있지 않다.");

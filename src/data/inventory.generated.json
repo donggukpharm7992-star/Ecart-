@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-19T17:33:21+09:00",
+  "generatedAt": "2026-06-23T17:40:44+09:00",
   "sourceFiles": {
     "stockWorkbook": "병동별비품현황 202606.xlsx",
     "ecartWorkbook": "20260302E-cart 약품목록_ cortisolu 삭제.xlsx",
@@ -12,7 +12,7 @@
     "ecartGeneralItemCount": 19,
     "ecartNicuItemCount": 29,
     "ecartDepartmentCount": 31,
-    "checklistItemCount": 29
+    "checklistItemCount": 28
   },
   "stock": {
     "drugs": [
@@ -6523,10 +6523,6 @@
     {
       "section": "E-cart",
       "text": "1. E-cart 약품의 종류와 수량을 주 1회 점검한 E-cart 관리대장 점검 기록이 있다."
-    },
-    {
-      "section": "E-cart",
-      "text": "1. E-cart 약품의 종류와 수량을 주 2회 점검한 E-cart 관리대장 점검 기록이 있다."
     },
     {
       "section": "E-cart",
