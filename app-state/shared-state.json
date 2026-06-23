@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-23T23:27:42.771Z",
-  "clientId": "27b103e8-74b5-4f17-8ba7-bee6a156a0fa",
+  "updatedAt": "2026-06-23T23:56:07.797Z",
+  "clientId": "0e20e4ad-cc33-493d-83fd-55b68a4dd063",
   "state": {
     "stockDrugs": [
       {
@@ -2723,6 +2723,16 @@
         "note": "",
         "warning": "",
         "storageType": "REFRIGERATED"
+      },
+      {
+        "code": "XIDARU5W",
+        "genericName": "",
+        "productName": "Zavedos 5mg inj (영상의학과)",
+        "spec": "",
+        "storage": "실온보관",
+        "note": "",
+        "warning": "",
+        "storageType": "ROOM"
       },
       {
         "code": "XGOSE",
@@ -6869,7 +6879,7 @@
         {
           "section": "청구약",
           "text": "4. 청구약품 보관 장소에 약품명 라벨링이 되어 있다.",
-          "status": "",
+          "status": "good",
           "id": "stock-영상의학과-22",
           "note": ""
         }
