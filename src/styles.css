@@ -121,7 +121,7 @@ button {
 .sync-panel form {
   width: min(1440px, 100%);
   display: grid;
-  grid-template-columns: minmax(240px, 1.2fr) minmax(260px, 1fr) auto;
+  grid-template-columns: minmax(220px, 1.2fr) minmax(220px, 1fr) auto;
   gap: 12px;
   align-items: end;
   margin: 0 auto;
@@ -172,6 +172,20 @@ button {
   border-color: #fecaca;
   color: #991b1b;
   background: #fff1f3;
+}
+
+@media (max-width: 820px) {
+  .sync-panel form {
+    grid-template-columns: 1fr;
+  }
+
+  .sync-actions {
+    align-items: stretch;
+  }
+
+  .sync-actions button {
+    flex: 1 1 160px;
+  }
 }
 
 .primary-tabs {

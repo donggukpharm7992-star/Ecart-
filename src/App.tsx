@@ -37,6 +37,7 @@ import {
 import { downloadElementAsPdf, type PdfDownloadResult } from "./reportPdf";
 import { effectiveRoomUpdatedAt, formatRoomUpdatedAt, markRoomsUpdated } from "./roomUpdateDate";
 import { buildRoundSummaryDraft, type RoundSummaryDraft, type RoundSummaryRow } from "./roundSummary";
+import { createStoredSyncConfig, type StoredSyncConfig } from "./syncSettings";
 import type { ChecklistItem, EcartItem, InventoryData, StockAllocation, StockDrug, StockRoom } from "./types";
 
 const inventory = rawInventory as InventoryData;
@@ -129,11 +130,6 @@ type NewDrugForm = {
 
 type PdfStatus = "idle" | "generating" | "ready" | "error";
 type SyncMode = "off" | "idle" | "syncing" | "synced" | "error";
-
-type StoredSyncConfig = {
-  enabled: boolean;
-  token: string;
-};
 
 type SyncStatus = {
   mode: SyncMode;
@@ -772,7 +768,6 @@ export function App() {
     if (!syncConfig.enabled || !token) return null;
     return { ...GITHUB_SYNC_TARGET, token };
   }, [syncConfig.enabled, syncConfig.token]);
-  const canStartAutoSync = Boolean(syncTokenDraft.trim());
 
   function applyPersistedAppState(nextState: Partial<PersistedAppState>) {
     const normalized = normalizePersistedState(nextState);
@@ -1233,9 +1228,9 @@ export function App() {
 
   function saveSyncSettings(event: FormEvent) {
     event.preventDefault();
-    const token = syncTokenDraft.trim();
-    setSyncConfig({ enabled: Boolean(token), token });
-    setShowSyncSettings(false);
+    const result = createStoredSyncConfig(syncTokenDraft);
+    setSyncConfig(result.config);
+    setSyncStatus({ mode: result.mode, message: result.message });
   }
 
   function disableSync() {
@@ -1919,7 +1914,7 @@ export function App() {
               />
             </label>
             <div className="sync-actions">
-              <button className="submit-button" type="submit" disabled={!canStartAutoSync}>
+              <button className="submit-button" type="submit">
                 자동 저장 시작
               </button>
               <button className="secondary-button danger-light" type="button" onClick={disableSync}>
