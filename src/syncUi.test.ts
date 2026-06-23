@@ -9,13 +9,13 @@ describe("sync UI mode", () => {
   });
 
   it("shows upload only on mobile and remote pull only on PC", () => {
-    expect(getSyncActionAvailability({ mode: "mobile", hasConfig: true })).toEqual({
+    expect(getSyncActionAvailability({ mode: "mobile", hasToken: true })).toEqual({
       showPull: false,
       showPush: true,
       canPull: false,
       canPush: true,
     });
-    expect(getSyncActionAvailability({ mode: "pc", hasConfig: true })).toEqual({
+    expect(getSyncActionAvailability({ mode: "pc", hasToken: true })).toEqual({
       showPull: true,
       showPush: false,
       canPull: true,
@@ -24,7 +24,12 @@ describe("sync UI mode", () => {
   });
 
   it("keeps the visible action disabled until sync is configured", () => {
-    expect(getSyncActionAvailability({ mode: "mobile", hasConfig: false }).canPush).toBe(false);
-    expect(getSyncActionAvailability({ mode: "pc", hasConfig: false }).canPull).toBe(false);
+    expect(getSyncActionAvailability({ mode: "mobile", hasToken: false }).canPush).toBe(false);
+    expect(getSyncActionAvailability({ mode: "pc", hasToken: false }).canPull).toBe(false);
+  });
+
+  it("enables the visible action when a token has been typed but not saved yet", () => {
+    expect(getSyncActionAvailability({ mode: "mobile", hasToken: true }).canPush).toBe(true);
+    expect(getSyncActionAvailability({ mode: "pc", hasToken: true }).canPull).toBe(true);
   });
 });

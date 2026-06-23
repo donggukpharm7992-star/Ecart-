@@ -12,11 +12,11 @@ export function getSyncDeviceMode({
   return isMobileMode || viewportWidth <= MOBILE_VIEWPORT_WIDTH ? "mobile" : "pc";
 }
 
-export function getSyncActionAvailability({ mode, hasConfig }: { mode: SyncDeviceMode; hasConfig: boolean }) {
+export function getSyncActionAvailability({ mode, hasToken }: { mode: SyncDeviceMode; hasToken: boolean }) {
   return {
     showPull: mode === "pc",
     showPush: mode === "mobile",
-    canPull: mode === "pc" && hasConfig,
-    canPush: mode === "mobile" && hasConfig,
+    canPull: mode === "pc" && hasToken,
+    canPush: mode === "mobile" && hasToken,
   };
 }

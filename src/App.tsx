@@ -773,13 +773,14 @@ export function App() {
     if (!syncConfig.enabled || !token) return null;
     return { ...GITHUB_SYNC_TARGET, token };
   }, [syncConfig.enabled, syncConfig.token]);
+  const hasManualSyncToken = Boolean(syncTokenDraft.trim() || syncConfig.token.trim());
   const syncDeviceMode = useMemo(
     () => getSyncDeviceMode({ isMobileMode, viewportWidth }),
     [isMobileMode, viewportWidth],
   );
   const syncActions = useMemo(
-    () => getSyncActionAvailability({ mode: syncDeviceMode, hasConfig: Boolean(githubSyncConfig) }),
-    [githubSyncConfig, syncDeviceMode],
+    () => getSyncActionAvailability({ mode: syncDeviceMode, hasToken: hasManualSyncToken }),
+    [hasManualSyncToken, syncDeviceMode],
   );
 
   function applyPersistedAppState(nextState: Partial<PersistedAppState>) {
@@ -1253,16 +1254,37 @@ export function App() {
     }
   }
 
+  function getManualSyncConfig() {
+    const token = syncTokenDraft.trim() || syncConfig.token.trim();
+    if (!token) {
+      setSyncStatus({ mode: "error", message: "GitHub 토큰을 먼저 입력해 주세요." });
+      return null;
+    }
+    return { ...GITHUB_SYNC_TARGET, token };
+  }
+
   function forcePullRemote() {
-    void pullRemoteState(githubSyncConfig, true).catch((error) => {
-      setSyncStatus({ mode: "error", message: error instanceof Error ? error.message : "원격 가져오기 실패" });
-    });
+    const config = getManualSyncConfig();
+    if (!config) return;
+    void pullRemoteState(config, true)
+      .then(() => {
+        setSyncConfig({ enabled: true, token: config.token });
+      })
+      .catch((error) => {
+        setSyncStatus({ mode: "error", message: error instanceof Error ? error.message : "원격 가져오기 실패" });
+      });
   }
 
   function forcePushRemote() {
-    void pushRemoteState().catch((error) => {
-      setSyncStatus({ mode: "error", message: error instanceof Error ? error.message : "원격 저장 실패" });
-    });
+    const config = getManualSyncConfig();
+    if (!config) return;
+    void pushRemoteState(config)
+      .then(() => {
+        setSyncConfig({ enabled: true, token: config.token });
+      })
+      .catch((error) => {
+        setSyncStatus({ mode: "error", message: error instanceof Error ? error.message : "원격 저장 실패" });
+      });
   }
 
   function openGuideEntry(item: StockGuideEntry) {
