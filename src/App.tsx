@@ -734,6 +734,7 @@ export function App() {
   const syncClientId = useMemo(getSyncClientId, []);
   const remoteShaRef = useRef<string | undefined>(undefined);
   const syncInitializedRef = useRef(false);
+  const pendingPushRef = useRef(false);
   const pullInFlightRef = useRef(false);
   const applyingRemoteRef = useRef(false);
   const didHydrateRef = useRef(false);
@@ -843,6 +844,10 @@ export function App() {
       return false;
     } finally {
       pullInFlightRef.current = false;
+      if (syncInitializedRef.current && pendingPushRef.current && latestStateRef.current) {
+        pendingPushRef.current = false;
+        scheduleRemotePush();
+      }
     }
   }
 
@@ -870,7 +875,13 @@ export function App() {
   }
 
   function scheduleRemotePush() {
-    if (!githubSyncConfig || !syncInitializedRef.current) return;
+    if (!githubSyncConfig) return;
+    if (!syncInitializedRef.current) {
+      pendingPushRef.current = true;
+      setSyncStatus({ mode: "idle", message: "자동 동기화 준비 중... 변경 내용은 곧 저장됩니다." });
+      return;
+    }
+    pendingPushRef.current = false;
     if (pushTimerRef.current) window.clearTimeout(pushTimerRef.current);
     pushTimerRef.current = window.setTimeout(() => {
       pushTimerRef.current = undefined;
@@ -902,6 +913,7 @@ export function App() {
   useEffect(() => {
     if (!githubSyncConfig) {
       syncInitializedRef.current = false;
+      pendingPushRef.current = false;
       setSyncStatus({ mode: "off", message: "동기화 꺼짐" });
       return undefined;
     }
@@ -1248,6 +1260,7 @@ export function App() {
     setSyncTokenDraft("");
     remoteShaRef.current = undefined;
     syncInitializedRef.current = false;
+    pendingPushRef.current = false;
     if (pushTimerRef.current) {
       window.clearTimeout(pushTimerRef.current);
       pushTimerRef.current = undefined;

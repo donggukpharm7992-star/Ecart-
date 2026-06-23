@@ -39,6 +39,7 @@ This app previews a pharmacist ward inventory workflow with real Excel data. The
 7. Optional cross-device sync stores the same persisted app state in the private GitHub repository at `app-state/shared-state.json` through the GitHub Contents API.
    - A per-device fine-grained token is stored only in that browser's localStorage.
    - The app polls for newer remote updates and pushes local edits after changes settle.
+   - Master drug, room, and allocation edits are queued for automatic push even while initial remote checking is still in progress.
 8. Build the round-summary report from bad checklist statuses and manual note text, then print/PDF it through the shared preview flow.
 
 ## Update Rule
