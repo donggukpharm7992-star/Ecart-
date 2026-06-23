@@ -779,6 +779,7 @@ export function App() {
           localUpdatedAt: localUpdatedAtRef.current,
           remoteClientId: remote.envelope.clientId,
           clientId: syncClientId,
+          hasUnsavedLocalChanges: hasUnsavedLocalChangesRef.current || pendingPushRef.current,
         });
       if (shouldApply) {
         localUpdatedAtRef.current = remote.envelope.updatedAt;
@@ -824,7 +825,7 @@ export function App() {
     };
     setSyncStatus({ mode: "syncing", message: "자동 저장 중..." });
     try {
-      const result = await saveServerState(envelope);
+      const result = await saveServerState(envelope, { baseSha: remoteShaRef.current });
       remoteShaRef.current = result.sha;
       localUpdatedAtRef.current = updatedAt;
       hasUnsavedLocalChangesRef.current = false;

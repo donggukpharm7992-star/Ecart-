@@ -4,6 +4,7 @@ type ServerSyncOptions = {
   baseUrl?: string;
   timeoutMs?: number;
   retryDelayMs?: number;
+  baseSha?: string;
 };
 
 const DEFAULT_SERVER_TIMEOUT_MS = 12000;
@@ -36,7 +37,7 @@ function waitForRetry(delayMs: number) {
 }
 
 function isTransientSaveStatus(status: number) {
-  return status === 408 || status === 409 || status === 429 || status >= 500;
+  return status === 408 || status === 429 || status >= 500;
 }
 
 export async function loadServerState<T>(options: ServerSyncOptions = {}): Promise<RemoteStateResult<T> | null> {
@@ -61,6 +62,7 @@ async function saveServerStateOnce<T>(
   envelope: RemoteStateEnvelope<T>,
   options: ServerSyncOptions = {},
 ): Promise<RemoteSaveResult> {
+  const body = options.baseSha ? { envelope, baseSha: options.baseSha } : envelope;
   const response = await fetchServerState(
     buildAppStateApiUrl(options.baseUrl),
     {
@@ -68,7 +70,7 @@ async function saveServerStateOnce<T>(
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(envelope),
+      body: JSON.stringify(body),
     },
     options.timeoutMs,
   );

@@ -27,14 +27,40 @@ async function runGit(args: string[]) {
   return execFileAsync("git", args, { cwd: rootDir, windowsHide: true });
 }
 
+class StateConflictError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "StateConflictError";
+  }
+}
+
 function stateSha(content: string) {
   return createHash("sha256").update(content).digest("hex");
 }
 
+function parseSavePayload(body: string) {
+  const parsed = JSON.parse(body);
+  if (parsed && typeof parsed === "object" && "envelope" in parsed) {
+    return { envelope: parsed.envelope, baseSha: typeof parsed.baseSha === "string" ? parsed.baseSha : undefined };
+  }
+  return { envelope: parsed, baseSha: undefined };
+}
+
 async function saveStateAndPush(body: string) {
-  JSON.parse(body);
+  const { envelope, baseSha } = parseSavePayload(body);
   await fs.mkdir(path.dirname(appStatePath), { recursive: true });
-  await fs.writeFile(appStatePath, `${JSON.stringify(JSON.parse(body), null, 2)}\n`, "utf8");
+  try {
+    const current = await fs.readFile(appStatePath, "utf8");
+    const currentSha = stateSha(current);
+    if (!baseSha || baseSha !== currentSha) {
+      throw new StateConflictError("App state changed on the server. Reload the latest state before saving.");
+    }
+  } catch (error) {
+    if (!(typeof error === "object" && error && "code" in error && error.code === "ENOENT")) {
+      throw error;
+    }
+  }
+  await fs.writeFile(appStatePath, `${JSON.stringify(envelope, null, 2)}\n`, "utf8");
   await runGit(["add", "--", appStateRelativePath]);
   const status = await runGit(["status", "--porcelain", "--", appStateRelativePath]);
   if (status.stdout.trim()) {
@@ -80,7 +106,12 @@ function appStateSyncPlugin(): Plugin {
 
           if (request.method === "PUT") {
             const body = await readRequestBody(request);
-            const result = await (writeQueue = writeQueue.then(() => saveStateAndPush(body)));
+            const resultPromise = writeQueue.then(() => saveStateAndPush(body));
+            writeQueue = resultPromise.then(
+              () => undefined,
+              () => undefined,
+            );
+            const result = await resultPromise;
             response.end(JSON.stringify(result));
             return;
           }
@@ -89,6 +120,9 @@ function appStateSyncPlugin(): Plugin {
           response.end(JSON.stringify({ error: "Method not allowed" }));
         } catch (error) {
           response.statusCode = 500;
+          if (error instanceof StateConflictError) {
+            response.statusCode = 409;
+          }
           response.end(
             JSON.stringify({
               error: error instanceof Error ? error.message : "App state sync failed",

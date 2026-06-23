@@ -62,6 +62,18 @@ describe("github sync helpers", () => {
     ).toBe(false);
   });
 
+  it("applies remote state over an idle stale local cache", () => {
+    expect(
+      shouldApplyRemoteState({
+        remoteUpdatedAt: "2026-06-23T10:00:05.000Z",
+        localUpdatedAt: "2026-06-23T10:00:10.000Z",
+        remoteClientId: "pc",
+        clientId: "phone",
+        hasUnsavedLocalChanges: false,
+      }),
+    ).toBe(true);
+  });
+
   it("pushes local state only when this session has unsaved edits", () => {
     expect(
       shouldPushLocalState({

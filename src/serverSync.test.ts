@@ -33,4 +33,27 @@ describe("server sync client", () => {
     ).resolves.toEqual({ sha: "saved-after-retry" });
     expect(globalThis.fetch).toHaveBeenCalledTimes(2);
   });
+
+  it("sends the server state sha that the local save is based on", async () => {
+    globalThis.fetch = vi.fn().mockResolvedValueOnce(new Response(JSON.stringify({ sha: "next-sha" }), { status: 200 }));
+
+    await saveServerState(
+      {
+        version: 1,
+        updatedAt: "2026-06-23T07:00:00.000Z",
+        clientId: "pc",
+        state: { stockDrugs: [] },
+      },
+      { baseSha: "current-sha", retryDelayMs: 0 },
+    );
+
+    const request = vi.mocked(globalThis.fetch).mock.calls[0]?.[1] as RequestInit;
+    expect(JSON.parse(String(request.body))).toMatchObject({
+      baseSha: "current-sha",
+      envelope: {
+        clientId: "pc",
+        state: { stockDrugs: [] },
+      },
+    });
+  });
 });
