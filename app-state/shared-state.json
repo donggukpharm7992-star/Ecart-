@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-23T23:56:07.797Z",
+  "updatedAt": "2026-06-23T23:56:26.565Z",
   "clientId": "0e20e4ad-cc33-493d-83fd-55b68a4dd063",
   "state": {
     "stockDrugs": [
@@ -6064,6 +6064,11 @@
         "roomId": "AER",
         "drugCode": "XACYST6",
         "requiredQty": 4
+      },
+      {
+        "roomId": "영상의학과",
+        "drugCode": "XIDARU5W",
+        "requiredQty": 3
       }
     ],
     "checkedStock": {},
@@ -8244,7 +8249,8 @@
       "closingNote": "간호부의 지속적이고 적극적인 협조 항상 감사드립니다."
     },
     "stockRoomUpdatedAt": {
-      "AER": "26.06.23"
+      "AER": "26.06.23",
+      "영상의학과": "26.06.24"
     },
     "uninspectedRoomIds": []
   }
