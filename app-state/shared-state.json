@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T04:43:38.892Z",
+  "updatedAt": "2026-06-24T04:43:50.472Z",
   "clientId": "27b103e8-74b5-4f17-8ba7-bee6a156a0fa",
   "state": {
     "stockDrugs": [
@@ -6246,7 +6246,8 @@
       "HBEF심혈관조영실::XNORE10": true,
       "HBEF심혈관조영실::XATRO": true,
       "HBEF심혈관조영실::XEPIN": true,
-      "HBEF심혈관조영실::XDOPA4D2": true
+      "HBEF심혈관조영실::XDOPA4D2": true,
+      "HBEF심혈관조영실::ASP1PR": true
     },
     "stockExpiry": {
       "42W::XLABETA20": "2026-09-24"
