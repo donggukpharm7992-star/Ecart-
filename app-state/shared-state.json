@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T06:08:41.199Z",
+  "updatedAt": "2026-06-24T06:09:51.291Z",
   "clientId": "27b103e8-74b5-4f17-8ba7-bee6a156a0fa",
   "state": {
     "stockDrugs": [
@@ -6413,7 +6413,8 @@
       "ADR::XXEPOB75": true,
       "ADR::XXEPOB120": true,
       "ADR::XXEPOB200": true,
-      "ADR::XXEPOB360": true
+      "ADR::XXEPOB360": true,
+      "ADR::XXDABE20": true
     },
     "stockExpiry": {
       "42W::XLABETA20": "2026-09-24",
