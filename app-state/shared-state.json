@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T02:22:41.899Z",
+  "updatedAt": "2026-06-24T02:22:49.887Z",
   "clientId": "27b103e8-74b5-4f17-8ba7-bee6a156a0fa",
   "state": {
     "stockDrugs": [
@@ -9624,7 +9624,7 @@
             "dosage": "6mg/Vial",
             "quantity": 3,
             "checked": true,
-            "expiryDate": ""
+            "expiryDate": "2026-09-17"
           },
           {
             "id": "XNORE10",
