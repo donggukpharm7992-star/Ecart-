@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T04:16:29.181Z",
+  "updatedAt": "2026-06-24T04:21:33.870Z",
   "clientId": "27b103e8-74b5-4f17-8ba7-bee6a156a0fa",
   "state": {
     "stockDrugs": [
@@ -6228,7 +6228,8 @@
       "안과::XXAFLIB2": true,
       "안과::XXRANIBP": true,
       "안과::XXRANIB1": true,
-      "안과::XTAMC40": true
+      "안과::XTAMC40": true,
+      "소화기병검사실::XMEXO": false
     },
     "stockExpiry": {
       "42W::XLABETA20": "2026-09-24"
