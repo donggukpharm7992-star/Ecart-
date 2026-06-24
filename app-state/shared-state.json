@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T05:30:05.558Z",
+  "updatedAt": "2026-06-24T05:30:59.823Z",
   "clientId": "27b103e8-74b5-4f17-8ba7-bee6a156a0fa",
   "state": {
     "stockDrugs": [
@@ -6331,7 +6331,8 @@
     "stockExpiry": {
       "42W::XLABETA20": "2026-09-24",
       "HBEF심혈관조영실::XADENO90": "2026-08-01",
-      "HBEF심혈관조영실::XPHEPH1": "2026-09-30"
+      "HBEF심혈관조영실::XPHEPH1": "2026-09-30",
+      "SICU::XNB84": "2026-09-09"
     },
     "stockChecklistByRoom": {
       "AER": [
