@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T07:22:26.211Z",
+  "updatedAt": "2026-06-24T07:24:15.854Z",
   "clientId": "0e20e4ad-cc33-493d-83fd-55b68a4dd063",
   "state": {
     "stockDrugs": [
@@ -6488,7 +6488,8 @@
       "101W::XHES6MPS5": true,
       "신경과::XBOTOX50X": true,
       "신경과::XBOTOX1W": true,
-      "신경과::XBOTOX15": true
+      "신경과::XBOTOX15": true,
+      "난임클리닉::XFMXEF": true
     },
     "stockExpiry": {
       "42W::XLABETA20": "2026-09-24",
