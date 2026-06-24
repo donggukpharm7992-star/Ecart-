@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T07:30:36.247Z",
+  "updatedAt": "2026-06-24T07:30:43.223Z",
   "clientId": "0e20e4ad-cc33-493d-83fd-55b68a4dd063",
   "state": {
     "stockDrugs": [
@@ -6553,7 +6553,8 @@
       "영상의학과::XPROT": true,
       "영상의학과::XIDARU5W": true,
       "영상의학과::THROM-W": true,
-      "영상의학과::XPGE110": true
+      "영상의학과::XPGE110": true,
+      "비뇨기과::LID11-GL": true
     },
     "stockExpiry": {
       "42W::XLABETA20": "2026-09-24",
