@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T07:16:52.177Z",
+  "updatedAt": "2026-06-24T07:17:08.435Z",
   "clientId": "0e20e4ad-cc33-493d-83fd-55b68a4dd063",
   "state": {
     "stockDrugs": [
@@ -14864,7 +14864,7 @@
           "id": "stock:HBEF심혈관조영실",
           "roomName": "HBEF심혈관조영실",
           "result": "확인 필요",
-          "details": "비품약: 사용후 남은 Heparin syringe 보관 폐기 하도록 안내"
+          "details": "비품약: 사용후 남은 Heparin syringe 보관 중이라 폐기 하도록 안내"
         },
         {
           "id": "stock:ADR",
