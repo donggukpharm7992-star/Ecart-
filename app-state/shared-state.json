@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T06:46:23.958Z",
+  "updatedAt": "2026-06-24T06:46:29.778Z",
   "clientId": "27b103e8-74b5-4f17-8ba7-bee6a156a0fa",
   "state": {
     "stockDrugs": [
@@ -6291,7 +6291,7 @@
       "101W::XMEXO": false,
       "101W::XFURO": false,
       "101W::XKROL": true,
-      "101W::XTRAM50": false,
+      "101W::XTRAM50": true,
       "AER::XAPH1": false,
       "AER::XNICAR5": false,
       "신속대응팀::XROCU50": true,
