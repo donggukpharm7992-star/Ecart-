@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T05:38:29.308Z",
+  "updatedAt": "2026-06-24T05:38:36.432Z",
   "clientId": "27b103e8-74b5-4f17-8ba7-bee6a156a0fa",
   "state": {
     "stockDrugs": [
@@ -6330,7 +6330,11 @@
       "SICU::X20M1X": true,
       "AN::XAPH1": true,
       "AN::XNEFOP20": true,
-      "AN::XADENO6": true
+      "AN::XADENO6": true,
+      "AN::X20AL1S": true,
+      "AN::XPALON75": true,
+      "AN::XATRO": true,
+      "AN::IPRAT-RS": true
     },
     "stockExpiry": {
       "42W::XLABETA20": "2026-09-24",
