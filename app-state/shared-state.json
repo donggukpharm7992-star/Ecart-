@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T05:16:55.762Z",
+  "updatedAt": "2026-06-24T05:16:57.876Z",
   "clientId": "27b103e8-74b5-4f17-8ba7-bee6a156a0fa",
   "state": {
     "stockDrugs": [
@@ -6283,7 +6283,8 @@
       "DSR::XFMXEF": true,
       "DSR::XCZOL1W": true,
       "DSR::XCZEDO": true,
-      "DSR::XCOXIT": true
+      "DSR::XCOXIT": true,
+      "DSR::MISOP2": true
     },
     "stockExpiry": {
       "42W::XLABETA20": "2026-09-24",
