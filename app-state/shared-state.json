@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T07:29:36.830Z",
+  "updatedAt": "2026-06-24T07:29:41.600Z",
   "clientId": "0e20e4ad-cc33-493d-83fd-55b68a4dd063",
   "state": {
     "stockDrugs": [
@@ -6307,7 +6307,7 @@
       "101W::XFURO": true,
       "101W::XKROL": true,
       "101W::XTRAM50": true,
-      "AER::XAPH1": false,
+      "AER::XAPH1": true,
       "AER::XNICAR5": false,
       "신속대응팀::XROCU50": true,
       "영상의학과::XTRAM50": false,
@@ -6523,7 +6523,9 @@
       "PED::SALB-NB": true,
       "AER::XROCU50": true,
       "AER::XXDT5": true,
-      "AER::XADH": true
+      "AER::XADH": true,
+      "AER::XTPA20": true,
+      "AER::XTPA50": true
     },
     "stockExpiry": {
       "42W::XLABETA20": "2026-09-24",
