@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T06:24:58.680Z",
+  "updatedAt": "2026-06-24T06:25:11.907Z",
   "clientId": "27b103e8-74b5-4f17-8ba7-bee6a156a0fa",
   "state": {
     "stockDrugs": [
@@ -6451,7 +6451,8 @@
       "DRL::XICARM": true,
       "DRL::XRITOD": true,
       "DRL::XMGSF10": true,
-      "DRL::XRPCA7": true
+      "DRL::XRPCA7": true,
+      "DRL::XBMETHA4W": true
     },
     "stockExpiry": {
       "42W::XLABETA20": "2026-09-24",
