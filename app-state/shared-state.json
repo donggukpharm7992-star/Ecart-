@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T04:41:58.528Z",
+  "updatedAt": "2026-06-24T04:42:04.384Z",
   "clientId": "27b103e8-74b5-4f17-8ba7-bee6a156a0fa",
   "state": {
     "stockDrugs": [
@@ -6232,7 +6232,11 @@
       "소화기병검사실::XMEXO": true,
       "소화기병검사실::XNALO.4": true,
       "소화기병검사실::XXHYAL20Y": true,
-      "HBEF심혈관조영실::XHEPAR1": true
+      "HBEF심혈관조영실::XHEPAR1": true,
+      "HBEF심혈관조영실::XFURO": false,
+      "HBEF심혈관조영실::XABCIX": true,
+      "HBEF심혈관조영실::XMERGO": true,
+      "HBEF심혈관조영실::XNICORA": true
     },
     "stockExpiry": {
       "42W::XLABETA20": "2026-09-24"
