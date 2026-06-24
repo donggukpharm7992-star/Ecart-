@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T07:32:45.907Z",
+  "updatedAt": "2026-06-24T07:50:46.902Z",
   "clientId": "0e20e4ad-cc33-493d-83fd-55b68a4dd063",
   "state": {
     "stockDrugs": [
@@ -5203,7 +5203,7 @@
       {
         "roomId": "AN",
         "drugCode": "XOXYT",
-        "requiredQty": 5
+        "requiredQty": 12
       },
       {
         "roomId": "DRL",
@@ -6629,7 +6629,9 @@
       "외래주사실::XTRANEX5": true,
       "외래주사실::XCRO2NS": true,
       "외래주사실::XTRAM100": true,
-      "외래주사실::XIRONSU": true
+      "외래주사실::XIRONSU": true,
+      "외래주사실::XD3": true,
+      "외래주사실::XGOSE": true
     },
     "stockExpiry": {
       "42W::XLABETA20": "2026-09-24",
@@ -15167,7 +15169,8 @@
       "ADR": "26.06.24",
       "DSR": "26.06.24",
       "91W": "26.06.24",
-      "HBEF심혈관조영실": "26.06.24"
+      "HBEF심혈관조영실": "26.06.24",
+      "AN": "26.06.24"
     },
     "uninspectedRoomIds": []
   }
