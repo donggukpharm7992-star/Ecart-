@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T05:19:16.711Z",
+  "updatedAt": "2026-06-24T05:19:40.297Z",
   "clientId": "27b103e8-74b5-4f17-8ba7-bee6a156a0fa",
   "state": {
     "stockDrugs": [
@@ -3136,11 +3136,6 @@
         "requiredQty": 2
       },
       {
-        "roomId": "91W",
-        "drugCode": "XAPH1",
-        "requiredQty": 3
-      },
-      {
         "roomId": "92W",
         "drugCode": "XAPH1",
         "requiredQty": 2
@@ -3234,11 +3229,6 @@
         "roomId": "62W",
         "drugCode": "XPALON75",
         "requiredQty": 1
-      },
-      {
-        "roomId": "91W",
-        "drugCode": "XPALON75",
-        "requiredQty": 2
       },
       {
         "roomId": "AN",
@@ -13775,7 +13765,8 @@
       "AER": "26.06.23",
       "영상의학과": "26.06.24",
       "ADR": "26.06.24",
-      "DSR": "26.06.24"
+      "DSR": "26.06.24",
+      "91W": "26.06.24"
     },
     "uninspectedRoomIds": [
       "신경과",
