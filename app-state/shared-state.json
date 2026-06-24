@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T05:40:04.671Z",
+  "updatedAt": "2026-06-24T05:40:07.315Z",
   "clientId": "27b103e8-74b5-4f17-8ba7-bee6a156a0fa",
   "state": {
     "stockDrugs": [
@@ -6357,7 +6357,8 @@
       "AN::XEPIN": true,
       "AN::XMERGO": true,
       "AN::XROCU50": true,
-      "AN::XFLUMA": true
+      "AN::XFLUMA": true,
+      "AN::XDILT": true
     },
     "stockExpiry": {
       "42W::XLABETA20": "2026-09-24",
