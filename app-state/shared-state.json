@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T07:17:56.909Z",
+  "updatedAt": "2026-06-24T07:18:01.026Z",
   "clientId": "0e20e4ad-cc33-493d-83fd-55b68a4dd063",
   "state": {
     "stockDrugs": [
@@ -14857,8 +14857,8 @@
         {
           "id": "stock:신속대응팀",
           "roomName": "",
-          "result": "적합",
-          "details": "적합"
+          "result": "",
+          "details": ""
         },
         {
           "id": "stock:HBEF심혈관조영실",
