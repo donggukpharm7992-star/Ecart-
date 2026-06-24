@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T00:42:24.883Z",
-  "clientId": "0e20e4ad-cc33-493d-83fd-55b68a4dd063",
+  "updatedAt": "2026-06-24T01:10:11.061Z",
+  "clientId": "27b103e8-74b5-4f17-8ba7-bee6a156a0fa",
   "state": {
     "stockDrugs": [
       {
@@ -8253,6 +8253,8 @@
       "영상의학과": "26.06.24",
       "ADR": "26.06.24"
     },
-    "uninspectedRoomIds": []
+    "uninspectedRoomIds": [
+      "정형외과"
+    ]
   }
 }
