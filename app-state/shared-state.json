@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T03:56:42.751Z",
+  "updatedAt": "2026-06-24T03:56:55.372Z",
   "clientId": "0e20e4ad-cc33-493d-83fd-55b68a4dd063",
   "state": {
     "stockDrugs": [
@@ -8569,7 +8569,7 @@
         {
           "section": "비품약",
           "text": "2-1 약제팀 리스트와 불일치 시 불일치 내용 사유를 작성해 주세요.(투약, 망실 등등)",
-          "status": "good",
+          "status": "",
           "id": "stock-42W-5",
           "note": ""
         },
@@ -10017,7 +10017,7 @@
           {
             "section": "E-cart",
             "text": "4. E-cart 약물의 종류와 갯수가 규정과 동일 하다.",
-            "status": "good",
+            "status": "",
             "id": "ecart-general:42-4-drug-count-match",
             "note": ""
           }
