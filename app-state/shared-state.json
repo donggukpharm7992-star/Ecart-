@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T07:19:03.207Z",
+  "updatedAt": "2026-06-24T07:19:19.282Z",
   "clientId": "0e20e4ad-cc33-493d-83fd-55b68a4dd063",
   "state": {
     "stockDrugs": [
@@ -14964,7 +14964,7 @@
         },
         {
           "id": "ecart:AER-2",
-          "roomName": "신속대응팀",
+          "roomName": "영상의학과1",
           "result": "적합",
           "details": "적합"
         },
