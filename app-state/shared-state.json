@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T07:32:10.745Z",
+  "updatedAt": "2026-06-24T07:32:17.727Z",
   "clientId": "0e20e4ad-cc33-493d-83fd-55b68a4dd063",
   "state": {
     "stockDrugs": [
@@ -6604,7 +6604,13 @@
       "외래주사실::XFECMC500": true,
       "외래주사실::X8FRAV2": true,
       "외래주사실::X10FRAV5": true,
-      "외래주사실::XCLM": true
+      "외래주사실::XCLM": true,
+      "외래주사실::XGM80": true,
+      "외래주사실::XHEPATA5": true,
+      "외래주사실::XHYOS2Y": true,
+      "외래주사실::XERTAPEN": true,
+      "외래주사실::XPALP100L": true,
+      "외래주사실::XPALP150L": true
     },
     "stockExpiry": {
       "42W::XLABETA20": "2026-09-24",
