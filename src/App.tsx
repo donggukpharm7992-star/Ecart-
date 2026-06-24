@@ -580,7 +580,9 @@ function normalizeChecklistSection(section: string) {
 }
 
 function normalizeChecklistText(text: string) {
-  return text.replace(/청구약(?!\/\s*수액)/g, CLAIM_FLUID_SECTION);
+  return text
+    .replace(/청구약품 보관 장소에 약품명 라벨링이 되어 있다\./g, `${CLAIM_FLUID_SECTION}의 보관 장소에 약품명 라벨링이 되어 있다.`)
+    .replace(/청구약(?!\/\s*수액|품)/g, CLAIM_FLUID_SECTION);
 }
 
 function makeChecklistSibling<T extends { id?: string; note?: string; section: string; status?: CheckStatus; text: string }>(

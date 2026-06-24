@@ -102,9 +102,11 @@ describe("generated inventory data corrections", () => {
     const sections = checklist.map((item) => item.section);
 
     expect(texts).toContain("5. 비품약 유효기간 1달에 1번 날짜로 관리한다.");
+    expect(texts).toContain("4. 청구약/ 수액의 보관 장소에 약품명 라벨링이 되어 있다.");
     expect(texts).toContain("5. 청구약/ 수액 유효기간을 1달에 1번 관리 한다.");
     expect(sections).toContain("청구약/ 수액");
     expect(sections).not.toContain("청구약");
+    expect(texts.some((text) => text.includes("청구약/ 수액품"))).toBe(false);
     expect(texts.some((text) => /청구약(?!\/\s*수액)/.test(text))).toBe(false);
   });
 
