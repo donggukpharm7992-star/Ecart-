@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T05:40:59.672Z",
+  "updatedAt": "2026-06-24T05:41:03.799Z",
   "clientId": "27b103e8-74b5-4f17-8ba7-bee6a156a0fa",
   "state": {
     "stockDrugs": [
@@ -6342,7 +6342,7 @@
       "AN::XLABETA20": true,
       "AN::XFURO": true,
       "AN::XMEXO": true,
-      "AN::XCPENIR": false,
+      "AN::XCPENIR": true,
       "AN::XSUGAM2W": true,
       "AN::XSUGAM1W": true,
       "AN::XCAGL": true,
@@ -6368,7 +6368,8 @@
       "AN::XRAMOSET": true,
       "AN::XNITR10F": true,
       "AN::XNTPRUS": true,
-      "AN::XNORE10": true
+      "AN::XNORE10": true,
+      "AN::XHPD": true
     },
     "stockExpiry": {
       "42W::XLABETA20": "2026-09-24",
