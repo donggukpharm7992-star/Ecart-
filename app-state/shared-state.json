@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T07:16:02.566Z",
+  "updatedAt": "2026-06-24T07:16:05.161Z",
   "clientId": "0e20e4ad-cc33-493d-83fd-55b68a4dd063",
   "state": {
     "stockDrugs": [
@@ -14773,7 +14773,7 @@
         {
           "id": "stock:91W",
           "roomName": "",
-          "result": "적합",
+          "result": "",
           "details": "적합"
         },
         {
