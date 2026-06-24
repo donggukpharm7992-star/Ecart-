@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T05:28:04.652Z",
+  "updatedAt": "2026-06-24T05:28:12.275Z",
   "clientId": "27b103e8-74b5-4f17-8ba7-bee6a156a0fa",
   "state": {
     "stockDrugs": [
@@ -6280,7 +6280,7 @@
       "SICU::XPCMOL": true,
       "SICU::XDXM": true,
       "SICU::XKROL": true,
-      "SICU::XLABETA20": false,
+      "SICU::XLABETA20": true,
       "SICU::XFURO": true,
       "SICU::XMEXO": true,
       "SICU::XTRAM50": true,
