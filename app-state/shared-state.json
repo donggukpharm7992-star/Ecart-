@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T03:56:55.372Z",
+  "updatedAt": "2026-06-24T03:57:51.774Z",
   "clientId": "0e20e4ad-cc33-493d-83fd-55b68a4dd063",
   "state": {
     "stockDrugs": [
@@ -12015,7 +12015,7 @@
           "id": "stock:62W",
           "roomName": "62W",
           "result": "확인 필요",
-          "details": "비품약: 쥬스 들어 있음"
+          "details": "비품약: 냉장공쥬스 들어 있음"
         },
         {
           "id": "stock:71W",
