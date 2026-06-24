@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T07:15:29.738Z",
+  "updatedAt": "2026-06-24T07:15:33.251Z",
   "clientId": "0e20e4ad-cc33-493d-83fd-55b68a4dd063",
   "state": {
     "stockDrugs": [
@@ -14756,7 +14756,7 @@
           "id": "stock:72W",
           "roomName": "72W",
           "result": "확인 필요",
-          "details": "비품약: 첫 번째 서랍 씰링 재 사용 흔적 있음\nE-cart: 첫 번째 서랍 씰링 재 사용 흔적 있음"
+          "details": "E-cart: 첫 번째 서랍 씰링 재 사용 흔적 있음"
         },
         {
           "id": "stock:81W",
