@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T06:45:58.969Z",
+  "updatedAt": "2026-06-24T06:46:05.653Z",
   "clientId": "27b103e8-74b5-4f17-8ba7-bee6a156a0fa",
   "state": {
     "stockDrugs": [
@@ -6462,7 +6462,8 @@
       "NICU::XCFACT120": true,
       "NICU::TOB-T": true,
       "NICU::XK1": true,
-      "101W::XNORE10": true
+      "101W::XNORE10": true,
+      "101W::XAMIOD": true
     },
     "stockExpiry": {
       "42W::XLABETA20": "2026-09-24",
