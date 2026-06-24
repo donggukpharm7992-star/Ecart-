@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T02:42:46.975Z",
+  "updatedAt": "2026-06-24T02:42:54.230Z",
   "clientId": "27b103e8-74b5-4f17-8ba7-bee6a156a0fa",
   "state": {
     "stockDrugs": [
@@ -6158,7 +6158,8 @@
       "72W::BUD2-RP": true,
       "72W::SALB-NB": true,
       "72W::XHPD": true,
-      "72W::XDXM": true
+      "72W::XDXM": true,
+      "72W::XAPH1": true
     },
     "stockExpiry": {},
     "stockChecklistByRoom": {
