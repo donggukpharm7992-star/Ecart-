@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T05:39:39.173Z",
+  "updatedAt": "2026-06-24T05:39:47.860Z",
   "clientId": "27b103e8-74b5-4f17-8ba7-bee6a156a0fa",
   "state": {
     "stockDrugs": [
@@ -6353,7 +6353,9 @@
       "AN::XDOPA4D2": true,
       "AN::XCTOC100R": true,
       "AN::XEPHE": true,
-      "AN::XLEVET500W": true
+      "AN::XLEVET500W": true,
+      "AN::XEPIN": true,
+      "AN::XMERGO": true
     },
     "stockExpiry": {
       "42W::XLABETA20": "2026-09-24",
