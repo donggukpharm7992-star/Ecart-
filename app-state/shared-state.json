@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T02:53:03.222Z",
+  "updatedAt": "2026-06-24T02:55:42.825Z",
   "clientId": "27b103e8-74b5-4f17-8ba7-bee6a156a0fa",
   "state": {
     "stockDrugs": [
@@ -6174,7 +6174,8 @@
       "71W::XFURO": true,
       "71W::IPRAT-RS": true,
       "71W::BUD2-RP": true,
-      "71W::ACYST-A": true
+      "71W::ACYST-A": true,
+      "62W::XFURO": true
     },
     "stockExpiry": {},
     "stockChecklistByRoom": {
