@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T07:18:13.268Z",
+  "updatedAt": "2026-06-24T07:18:19.252Z",
   "clientId": "0e20e4ad-cc33-493d-83fd-55b68a4dd063",
   "state": {
     "stockDrugs": [
@@ -14965,7 +14965,7 @@
         {
           "id": "ecart:AER-2",
           "roomName": "AER2",
-          "result": "확인 필요",
+          "result": "",
           "details": ""
         },
         {
