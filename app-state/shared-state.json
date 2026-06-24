@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T07:19:34.711Z",
+  "updatedAt": "2026-06-24T07:19:38.246Z",
   "clientId": "0e20e4ad-cc33-493d-83fd-55b68a4dd063",
   "state": {
     "stockDrugs": [
@@ -15012,7 +15012,7 @@
         },
         {
           "id": "ecart:심장혈관검사실",
-          "roomName": "심장혈관검사실",
+          "roomName": "",
           "result": "적합",
           "details": "적합심혈관센터외래"
         }
