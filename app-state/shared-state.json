@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T07:16:11.433Z",
+  "updatedAt": "2026-06-24T07:16:19.394Z",
   "clientId": "0e20e4ad-cc33-493d-83fd-55b68a4dd063",
   "state": {
     "stockDrugs": [
@@ -14772,8 +14772,8 @@
         },
         {
           "id": "stock:91W",
-          "roomName": "91",
-          "result": "",
+          "roomName": "91W",
+          "result": "미운영",
           "details": "적합"
         },
         {
