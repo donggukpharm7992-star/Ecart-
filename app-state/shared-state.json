@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T00:11:47.092Z",
+  "updatedAt": "2026-06-24T00:11:50.565Z",
   "clientId": "0e20e4ad-cc33-493d-83fd-55b68a4dd063",
   "state": {
     "stockDrugs": [
@@ -7572,7 +7572,7 @@
             "dosage": "10mg/10ml",
             "quantity": 5,
             "checked": false,
-            "expiryDate": "2026-08-19"
+            "expiryDate": ""
           },
           {
             "id": "XFURO",
