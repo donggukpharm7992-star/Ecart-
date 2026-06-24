@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T04:23:52.117Z",
+  "updatedAt": "2026-06-24T04:37:35.555Z",
   "clientId": "27b103e8-74b5-4f17-8ba7-bee6a156a0fa",
   "state": {
     "stockDrugs": [
@@ -12306,7 +12306,6 @@
     },
     "uninspectedRoomIds": [
       "신경과",
-      "안과",
       "101W"
     ]
   }
