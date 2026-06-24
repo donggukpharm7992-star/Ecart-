@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T06:47:20.085Z",
+  "updatedAt": "2026-06-24T06:47:23.493Z",
   "clientId": "27b103e8-74b5-4f17-8ba7-bee6a156a0fa",
   "state": {
     "stockDrugs": [
@@ -6469,7 +6469,8 @@
       "101W::APH6ER1Y": true,
       "101W::IPRAT-RS": true,
       "101W::XHPD": true,
-      "101W::CLOPID": true
+      "101W::CLOPID": true,
+      "101W::XHES6MPS5": true
     },
     "stockExpiry": {
       "42W::XLABETA20": "2026-09-24",
