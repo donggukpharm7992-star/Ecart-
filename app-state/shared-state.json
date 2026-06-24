@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T06:54:20.701Z",
+  "updatedAt": "2026-06-24T06:54:25.379Z",
   "clientId": "27b103e8-74b5-4f17-8ba7-bee6a156a0fa",
   "state": {
     "stockDrugs": [
@@ -6472,7 +6472,8 @@
       "101W::CLOPID": true,
       "101W::XHES6MPS5": true,
       "신경과::XBOTOX50X": true,
-      "신경과::XBOTOX1W": true
+      "신경과::XBOTOX1W": true,
+      "신경과::XBOTOX15": true
     },
     "stockExpiry": {
       "42W::XLABETA20": "2026-09-24",
