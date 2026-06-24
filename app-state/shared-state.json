@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T06:54:56.287Z",
-  "clientId": "27b103e8-74b5-4f17-8ba7-bee6a156a0fa",
+  "updatedAt": "2026-06-24T07:04:33.091Z",
+  "clientId": "0e20e4ad-cc33-493d-83fd-55b68a4dd063",
   "state": {
     "stockDrugs": [
       {
@@ -3758,7 +3758,7 @@
       {
         "roomId": "HBEF심혈관조영실",
         "drugCode": "XADENO90",
-        "requiredQty": 4
+        "requiredQty": 6
       },
       {
         "roomId": "42W",
@@ -15010,7 +15010,8 @@
       "영상의학과": "26.06.24",
       "ADR": "26.06.24",
       "DSR": "26.06.24",
-      "91W": "26.06.24"
+      "91W": "26.06.24",
+      "HBEF심혈관조영실": "26.06.24"
     },
     "uninspectedRoomIds": []
   }
