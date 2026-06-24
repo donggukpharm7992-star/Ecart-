@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T07:52:32.748Z",
-  "clientId": "0e20e4ad-cc33-493d-83fd-55b68a4dd063",
+  "updatedAt": "2026-06-24T08:33:35.743Z",
+  "clientId": "27b103e8-74b5-4f17-8ba7-bee6a156a0fa",
   "state": {
     "stockDrugs": [
       {
@@ -6229,7 +6229,7 @@
       "HBEF심혈관조영실::XNICORA": true,
       "HBEF심혈관조영실::XMEXO": true,
       "HBEF심혈관조영실::XLID2W": true,
-      "HBEF심혈관조영실::XVERAW": true,
+      "HBEF심혈관조영실::XVERAW": false,
       "HBEF심혈관조영실::XPHEPH1": true,
       "HBEF심혈관조영실::XAMIOD": true,
       "HBEF심혈관조영실::XFLUMA3": true,
@@ -10027,13 +10027,6 @@
           },
           {
             "section": "E-cart",
-            "text": "이상 시 사유:",
-            "status": "",
-            "id": "ecart-general:AER-1-4",
-            "note": "Triaxon mapset 수량 불일치/ 사용 라벨도 안 보임"
-          },
-          {
-            "section": "E-cart",
             "text": "3. E-cart 약품의 유효기간을 날짜로 월 1회 점검한 점검 기록이 있다,",
             "status": "good",
             "id": "ecart-general:AER-1-5",
@@ -10242,13 +10235,6 @@
             "text": "2-1 E-cart 봉인지 시리얼 넘버가 기재되어 있다.",
             "status": "good",
             "id": "ecart-general:AER-2-3",
-            "note": ""
-          },
-          {
-            "section": "E-cart",
-            "text": "이상 시 사유:",
-            "status": "",
-            "id": "ecart-general:AER-2-4",
             "note": ""
           },
           {
@@ -10465,13 +10451,6 @@
           },
           {
             "section": "E-cart",
-            "text": "이상 시 사유:",
-            "status": "",
-            "id": "ecart-general:CT실-3",
-            "note": ""
-          },
-          {
-            "section": "E-cart",
             "text": "3. E-cart 약품의 유효기간을 날짜로 월 1회 점검한 점검 기록이 있다,",
             "status": "bad",
             "id": "ecart-general:CT실-4",
@@ -10680,13 +10659,6 @@
             "text": "2-1 E-cart 봉인지 시리얼 넘버가 기재되어 있다.",
             "status": "good",
             "id": "ecart-general:영상의학과-2-2",
-            "note": ""
-          },
-          {
-            "section": "E-cart",
-            "text": "이상 시 사유:",
-            "status": "",
-            "id": "ecart-general:영상의학과-2-3",
             "note": ""
           },
           {
@@ -10903,13 +10875,6 @@
           },
           {
             "section": "E-cart",
-            "text": "이상 시 사유:",
-            "status": "",
-            "id": "ecart-general:영상의학과-1-3",
-            "note": ""
-          },
-          {
-            "section": "E-cart",
             "text": "3. E-cart 약품의 유효기간을 날짜로 월 1회 점검한 점검 기록이 있다,",
             "status": "good",
             "id": "ecart-general:영상의학과-1-4",
@@ -11118,13 +11083,6 @@
             "text": "2-1 E-cart 봉인지 시리얼 넘버가 기재되어 있다.",
             "status": "good",
             "id": "ecart-general:42-2",
-            "note": ""
-          },
-          {
-            "section": "E-cart",
-            "text": "이상 시 사유:",
-            "status": "",
-            "id": "ecart-general:42-3",
             "note": ""
           },
           {
@@ -11341,13 +11299,6 @@
           },
           {
             "section": "E-cart",
-            "text": "이상 시 사유:",
-            "status": "",
-            "id": "ecart-general:112-3",
-            "note": ""
-          },
-          {
-            "section": "E-cart",
             "text": "3. E-cart 약품의 유효기간을 날짜로 월 1회 점검한 점검 기록이 있다,",
             "status": "good",
             "id": "ecart-general:112-4",
@@ -11556,13 +11507,6 @@
             "text": "2-1 E-cart 봉인지 시리얼 넘버가 기재되어 있다.",
             "status": "good",
             "id": "ecart-general:102-2",
-            "note": ""
-          },
-          {
-            "section": "E-cart",
-            "text": "이상 시 사유:",
-            "status": "",
-            "id": "ecart-general:102-3",
             "note": ""
           },
           {
@@ -11779,13 +11723,6 @@
           },
           {
             "section": "E-cart",
-            "text": "이상 시 사유:",
-            "status": "",
-            "id": "ecart-general:101-3",
-            "note": ""
-          },
-          {
-            "section": "E-cart",
             "text": "3. E-cart 약품의 유효기간을 날짜로 월 1회 점검한 점검 기록이 있다,",
             "status": "good",
             "id": "ecart-general:101-4",
@@ -11994,13 +11931,6 @@
             "text": "2-1 E-cart 봉인지 시리얼 넘버가 기재되어 있다.",
             "status": "good",
             "id": "ecart-general:92-2",
-            "note": ""
-          },
-          {
-            "section": "E-cart",
-            "text": "이상 시 사유:",
-            "status": "",
-            "id": "ecart-general:92-3",
             "note": ""
           },
           {
@@ -12217,13 +12147,6 @@
           },
           {
             "section": "E-cart",
-            "text": "이상 시 사유:",
-            "status": "",
-            "id": "ecart-general:82-3",
-            "note": ""
-          },
-          {
-            "section": "E-cart",
             "text": "3. E-cart 약품의 유효기간을 날짜로 월 1회 점검한 점검 기록이 있다,",
             "status": "good",
             "id": "ecart-general:82-4",
@@ -12432,13 +12355,6 @@
             "text": "2-1 E-cart 봉인지 시리얼 넘버가 기재되어 있다.",
             "status": "good",
             "id": "ecart-general:81-2",
-            "note": ""
-          },
-          {
-            "section": "E-cart",
-            "text": "이상 시 사유:",
-            "status": "",
-            "id": "ecart-general:81-3",
             "note": ""
           },
           {
@@ -12655,13 +12571,6 @@
           },
           {
             "section": "E-cart",
-            "text": "이상 시 사유:",
-            "status": "",
-            "id": "ecart-general:72-3",
-            "note": ""
-          },
-          {
-            "section": "E-cart",
             "text": "3. E-cart 약품의 유효기간을 날짜로 월 1회 점검한 점검 기록이 있다,",
             "status": "good",
             "id": "ecart-general:72-4",
@@ -12870,13 +12779,6 @@
             "text": "2-1 E-cart 봉인지 시리얼 넘버가 기재되어 있다.",
             "status": "good",
             "id": "ecart-general:71-2",
-            "note": ""
-          },
-          {
-            "section": "E-cart",
-            "text": "이상 시 사유:",
-            "status": "good",
-            "id": "ecart-general:71-3",
             "note": ""
           },
           {
@@ -13093,13 +12995,6 @@
           },
           {
             "section": "E-cart",
-            "text": "이상 시 사유:",
-            "status": "",
-            "id": "ecart-general:61-3",
-            "note": ""
-          },
-          {
-            "section": "E-cart",
             "text": "3. E-cart 약품의 유효기간을 날짜로 월 1회 점검한 점검 기록이 있다,",
             "status": "good",
             "id": "ecart-general:61-4",
@@ -13308,13 +13203,6 @@
             "text": "2-1 E-cart 봉인지 시리얼 넘버가 기재되어 있다.",
             "status": "good",
             "id": "ecart-general:소화기병검사실-2",
-            "note": ""
-          },
-          {
-            "section": "E-cart",
-            "text": "이상 시 사유:",
-            "status": "",
-            "id": "ecart-general:소화기병검사실-3",
             "note": ""
           },
           {
@@ -13531,13 +13419,6 @@
           },
           {
             "section": "E-cart",
-            "text": "이상 시 사유:",
-            "status": "",
-            "id": "ecart-general:심장혈관검사실-3",
-            "note": ""
-          },
-          {
-            "section": "E-cart",
             "text": "3. E-cart 약품의 유효기간을 날짜로 월 1회 점검한 점검 기록이 있다,",
             "status": "good",
             "id": "ecart-general:심장혈관검사실-4",
@@ -13746,13 +13627,6 @@
             "text": "2-1 E-cart 봉인지 시리얼 넘버가 기재되어 있다.",
             "status": "good",
             "id": "ecart-general:운동부하검사실-2",
-            "note": ""
-          },
-          {
-            "section": "E-cart",
-            "text": "이상 시 사유:",
-            "status": "",
-            "id": "ecart-general:운동부하검사실-3",
             "note": ""
           },
           {
@@ -13969,13 +13843,6 @@
           },
           {
             "section": "E-cart",
-            "text": "이상 시 사유:",
-            "status": "",
-            "id": "ecart-general:MICU-3",
-            "note": ""
-          },
-          {
-            "section": "E-cart",
             "text": "3. E-cart 약품의 유효기간을 날짜로 월 1회 점검한 점검 기록이 있다,",
             "status": "good",
             "id": "ecart-general:MICU-4",
@@ -14184,13 +14051,6 @@
             "text": "2-1 E-cart 봉인지 시리얼 넘버가 기재되어 있다.",
             "status": "good",
             "id": "ecart-general:SICU-2",
-            "note": ""
-          },
-          {
-            "section": "E-cart",
-            "text": "이상 시 사유:",
-            "status": "",
-            "id": "ecart-general:SICU-3",
             "note": ""
           },
           {
@@ -14407,13 +14267,6 @@
           },
           {
             "section": "E-cart",
-            "text": "이상 시 사유:",
-            "status": "",
-            "id": "ecart-general:AN-3",
-            "note": ""
-          },
-          {
-            "section": "E-cart",
             "text": "3. E-cart 약품의 유효기간을 날짜로 월 1회 점검한 점검 기록이 있다,",
             "status": "good",
             "id": "ecart-general:AN-4",
@@ -14626,13 +14479,6 @@
           },
           {
             "section": "E-cart",
-            "text": "이상 시 사유:",
-            "status": "",
-            "id": "ecart-general:ADR-3",
-            "note": ""
-          },
-          {
-            "section": "E-cart",
             "text": "3. E-cart 약품의 유효기간을 날짜로 월 1회 점검한 점검 기록이 있다,",
             "status": "good",
             "id": "ecart-general:ADR-4",
@@ -14841,13 +14687,6 @@
             "text": "2-1 E-cart 봉인지 시리얼 넘버가 기재되어 있다.",
             "status": "good",
             "id": "ecart-general:DRL-2",
-            "note": ""
-          },
-          {
-            "section": "E-cart",
-            "text": "이상 시 사유:",
-            "status": "",
-            "id": "ecart-general:DRL-3",
             "note": ""
           },
           {
