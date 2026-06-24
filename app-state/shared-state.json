@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T05:26:45.701Z",
+  "updatedAt": "2026-06-24T05:26:52.112Z",
   "clientId": "27b103e8-74b5-4f17-8ba7-bee6a156a0fa",
   "state": {
     "stockDrugs": [
@@ -6315,7 +6315,8 @@
       "SICU::XDOB250": true,
       "SICU::XNFMOS50": true,
       "SICU::MUPIR1Y-O": true,
-      "SICU::HCORT1-LT": true
+      "SICU::HCORT1-LT": true,
+      "SICU::XCAGL": true
     },
     "stockExpiry": {
       "42W::XLABETA20": "2026-09-24",
