@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T07:28:48.110Z",
+  "updatedAt": "2026-06-24T07:28:54.723Z",
   "clientId": "0e20e4ad-cc33-493d-83fd-55b68a4dd063",
   "state": {
     "stockDrugs": [
@@ -6499,7 +6499,13 @@
       "PED::XHINFB5": true,
       "PED::XEUV-P": true,
       "PED::XXHPV4": true,
-      "PED::XXHEXA6": true
+      "PED::XXHEXA6": true,
+      "PED::XXPOLI5W": true,
+      "PED::XJENCVB2": true,
+      "PED::XJENCVB": true,
+      "PED::XMMR2": true,
+      "PED::XXDTPHBP": true,
+      "PED::XPNEUM20P": true
     },
     "stockExpiry": {
       "42W::XLABETA20": "2026-09-24",
