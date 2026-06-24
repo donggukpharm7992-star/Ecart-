@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T02:48:53.398Z",
+  "updatedAt": "2026-06-24T02:49:08.966Z",
   "clientId": "27b103e8-74b5-4f17-8ba7-bee6a156a0fa",
   "state": {
     "stockDrugs": [
@@ -10812,7 +10812,7 @@
             "name": "Atropine",
             "dosage": "0.5mg/Amp",
             "quantity": 10,
-            "checked": false,
+            "checked": true,
             "expiryDate": ""
           },
           {
