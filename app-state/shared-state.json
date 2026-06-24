@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T03:50:00.650Z",
+  "updatedAt": "2026-06-24T03:54:18.327Z",
   "clientId": "0e20e4ad-cc33-493d-83fd-55b68a4dd063",
   "state": {
     "stockDrugs": [
@@ -8026,7 +8026,7 @@
           "text": "비품약 종류 일치",
           "status": "bad",
           "id": "stock-71W-3",
-          "note": "하단 5%DW 100ml 수량 4개 들어 있음"
+          "note": ""
         },
         {
           "section": "비품약",
@@ -8741,6 +8741,13 @@
             "status": "good",
             "id": "ecart-general:AER-1-5",
             "note": ""
+          },
+          {
+            "section": "E-cart",
+            "text": "4. E-cart 약물의 종류와 갯수가 규정과 동일 하다.",
+            "status": "",
+            "id": "ecart-general:AER-1-5-drug-count-match",
+            "note": ""
           }
         ]
       },
@@ -8952,6 +8959,13 @@
             "text": "3. E-cart 약품의 유효기간을 날짜로 월 1회 점검한 점검 기록이 있다,",
             "status": "good",
             "id": "ecart-general:AER-2-5",
+            "note": ""
+          },
+          {
+            "section": "E-cart",
+            "text": "4. E-cart 약물의 종류와 갯수가 규정과 동일 하다.",
+            "status": "",
+            "id": "ecart-general:AER-2-5-drug-count-match",
             "note": ""
           }
         ]
@@ -9165,6 +9179,13 @@
             "status": "bad",
             "id": "ecart-general:CT실-4",
             "note": "Nitroglycerin 유효기간 당일까지 정리 안 되어 있음"
+          },
+          {
+            "section": "E-cart",
+            "text": "4. E-cart 약물의 종류와 갯수가 규정과 동일 하다.",
+            "status": "",
+            "id": "ecart-general:CT실-4-drug-count-match",
+            "note": ""
           }
         ]
       },
@@ -9376,6 +9397,13 @@
             "text": "3. E-cart 약품의 유효기간을 날짜로 월 1회 점검한 점검 기록이 있다,",
             "status": "good",
             "id": "ecart-general:영상의학과-2-4",
+            "note": ""
+          },
+          {
+            "section": "E-cart",
+            "text": "4. E-cart 약물의 종류와 갯수가 규정과 동일 하다.",
+            "status": "",
+            "id": "ecart-general:영상의학과-2-4-drug-count-match",
             "note": ""
           }
         ]
@@ -9589,6 +9617,13 @@
             "status": "good",
             "id": "ecart-general:영상의학과-1-4",
             "note": ""
+          },
+          {
+            "section": "E-cart",
+            "text": "4. E-cart 약물의 종류와 갯수가 규정과 동일 하다.",
+            "status": "",
+            "id": "ecart-general:영상의학과-1-4-drug-count-match",
+            "note": ""
           }
         ]
       },
@@ -9800,6 +9835,13 @@
             "text": "3. E-cart 약품의 유효기간을 날짜로 월 1회 점검한 점검 기록이 있다,",
             "status": "good",
             "id": "ecart-general:42-4",
+            "note": ""
+          },
+          {
+            "section": "E-cart",
+            "text": "4. E-cart 약물의 종류와 갯수가 규정과 동일 하다.",
+            "status": "",
+            "id": "ecart-general:42-4-drug-count-match",
             "note": ""
           }
         ]
@@ -10013,6 +10055,13 @@
             "status": "good",
             "id": "ecart-general:112-4",
             "note": ""
+          },
+          {
+            "section": "E-cart",
+            "text": "4. E-cart 약물의 종류와 갯수가 규정과 동일 하다.",
+            "status": "",
+            "id": "ecart-general:112-4-drug-count-match",
+            "note": ""
           }
         ]
       },
@@ -10224,6 +10273,13 @@
             "text": "3. E-cart 약품의 유효기간을 날짜로 월 1회 점검한 점검 기록이 있다,",
             "status": "good",
             "id": "ecart-general:102-4",
+            "note": ""
+          },
+          {
+            "section": "E-cart",
+            "text": "4. E-cart 약물의 종류와 갯수가 규정과 동일 하다.",
+            "status": "",
+            "id": "ecart-general:102-4-drug-count-match",
             "note": ""
           }
         ]
@@ -10437,6 +10493,13 @@
             "status": "good",
             "id": "ecart-general:101-4",
             "note": ""
+          },
+          {
+            "section": "E-cart",
+            "text": "4. E-cart 약물의 종류와 갯수가 규정과 동일 하다.",
+            "status": "",
+            "id": "ecart-general:101-4-drug-count-match",
+            "note": ""
           }
         ]
       },
@@ -10648,6 +10711,13 @@
             "text": "3. E-cart 약품의 유효기간을 날짜로 월 1회 점검한 점검 기록이 있다,",
             "status": "good",
             "id": "ecart-general:92-4",
+            "note": ""
+          },
+          {
+            "section": "E-cart",
+            "text": "4. E-cart 약물의 종류와 갯수가 규정과 동일 하다.",
+            "status": "",
+            "id": "ecart-general:92-4-drug-count-match",
             "note": ""
           }
         ]
@@ -10861,6 +10931,13 @@
             "status": "good",
             "id": "ecart-general:82-4",
             "note": ""
+          },
+          {
+            "section": "E-cart",
+            "text": "4. E-cart 약물의 종류와 갯수가 규정과 동일 하다.",
+            "status": "",
+            "id": "ecart-general:82-4-drug-count-match",
+            "note": ""
           }
         ]
       },
@@ -11072,6 +11149,13 @@
             "text": "3. E-cart 약품의 유효기간을 날짜로 월 1회 점검한 점검 기록이 있다,",
             "status": "good",
             "id": "ecart-general:81-4",
+            "note": ""
+          },
+          {
+            "section": "E-cart",
+            "text": "4. E-cart 약물의 종류와 갯수가 규정과 동일 하다.",
+            "status": "",
+            "id": "ecart-general:81-4-drug-count-match",
             "note": ""
           }
         ]
@@ -11285,6 +11369,13 @@
             "status": "good",
             "id": "ecart-general:72-4",
             "note": ""
+          },
+          {
+            "section": "E-cart",
+            "text": "4. E-cart 약물의 종류와 갯수가 규정과 동일 하다.",
+            "status": "",
+            "id": "ecart-general:72-4-drug-count-match",
+            "note": ""
           }
         ]
       },
@@ -11489,13 +11580,20 @@
             "text": "이상 시 사유:",
             "status": "bad",
             "id": "ecart-general:71-3",
-            "note": "하단 5%DW 100ml 수량 4개 들어 있음"
+            "note": ""
           },
           {
             "section": "E-cart",
             "text": "3. E-cart 약품의 유효기간을 날짜로 월 1회 점검한 점검 기록이 있다,",
             "status": "good",
             "id": "ecart-general:71-4",
+            "note": ""
+          },
+          {
+            "section": "E-cart",
+            "text": "4. E-cart 약물의 종류와 갯수가 규정과 동일 하다.",
+            "status": "good",
+            "id": "ecart-general:71-4-drug-count-match",
             "note": ""
           }
         ]
@@ -11709,6 +11807,13 @@
             "status": "good",
             "id": "ecart-general:61-4",
             "note": ""
+          },
+          {
+            "section": "E-cart",
+            "text": "4. E-cart 약물의 종류와 갯수가 규정과 동일 하다.",
+            "status": "",
+            "id": "ecart-general:61-4-drug-count-match",
+            "note": ""
           }
         ]
       }
@@ -11739,7 +11844,7 @@
           "id": "stock:71W",
           "roomName": "71W",
           "result": "확인 필요",
-          "details": "비품약: 하단 5%DW 100ml 수량 4개 들어 있음\n비품약: 보스민 잉여 10개 반납\nE-cart: 하단 5%DW 100ml 수량 4개 들어 있음"
+          "details": "비품약: 비품약 종류 일치 확인 필요\n비품약: 보스민 잉여 10개 반납\nE-cart: 이상 시 사유: 확인 필요"
         },
         {
           "id": "stock:72W",
