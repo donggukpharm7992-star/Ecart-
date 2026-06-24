@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T02:51:29.069Z",
+  "updatedAt": "2026-06-24T02:51:40.666Z",
   "clientId": "27b103e8-74b5-4f17-8ba7-bee6a156a0fa",
   "state": {
     "stockDrugs": [
@@ -6159,7 +6159,8 @@
       "72W::SALB-NB": true,
       "72W::XHPD": true,
       "72W::XDXM": true,
-      "72W::XAPH1": true
+      "72W::XAPH1": true,
+      "71W::XAMIOD": true
     },
     "stockExpiry": {},
     "stockChecklistByRoom": {
@@ -7944,7 +7945,7 @@
         {
           "section": "청구약",
           "text": "3. 적정한 품목과 수량을 청구하고 있다.(재고 과다 보유/ 미사용 수량 계속 보유등 이상 유무)",
-          "status": "good",
+          "status": "bad",
           "id": "stock-71W-21",
           "note": "보스민 잉여 10개 반납"
         },
