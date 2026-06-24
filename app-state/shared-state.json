@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T07:16:39.720Z",
+  "updatedAt": "2026-06-24T07:16:52.177Z",
   "clientId": "0e20e4ad-cc33-493d-83fd-55b68a4dd063",
   "state": {
     "stockDrugs": [
@@ -14816,7 +14816,7 @@
           "id": "stock:SICU",
           "roomName": "SICU",
           "result": "확인 필요",
-          "details": "비품약: 첫번째 서랍 씰링 되어 있지 않음\nE-cart: 첫번째 서랍 씰링 되어 있지 않음"
+          "details": "E-cart: 첫번째 서랍 씰링 되어 있지 않음"
         },
         {
           "id": "stock:MICU",
