@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T05:03:26.243Z",
+  "updatedAt": "2026-06-24T05:03:50.580Z",
   "clientId": "27b103e8-74b5-4f17-8ba7-bee6a156a0fa",
   "state": {
     "stockDrugs": [
@@ -6265,7 +6265,7 @@
       "MICU::XAPH1": false,
       "MICU::XNICAR5": true,
       "MICU::XPCMOL": false,
-      "MICU::XFURO": false,
+      "MICU::XFURO": true,
       "MICU::XMEXO": true,
       "MICU::XCPENIR": true,
       "MICU::XPANTO4": true,
