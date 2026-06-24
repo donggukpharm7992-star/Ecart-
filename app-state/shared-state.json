@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T00:12:01.424Z",
+  "updatedAt": "2026-06-24T00:41:52.523Z",
   "clientId": "0e20e4ad-cc33-493d-83fd-55b68a4dd063",
   "state": {
     "stockDrugs": [
@@ -4028,7 +4028,7 @@
       {
         "roomId": "ADR",
         "drugCode": "XXEPOA2",
-        "requiredQty": 12
+        "requiredQty": 6
       },
       {
         "roomId": "ADR",
@@ -8250,7 +8250,8 @@
     },
     "stockRoomUpdatedAt": {
       "AER": "26.06.23",
-      "영상의학과": "26.06.24"
+      "영상의학과": "26.06.24",
+      "ADR": "26.06.24"
     },
     "uninspectedRoomIds": []
   }
