@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T07:16:23.844Z",
+  "updatedAt": "2026-06-24T07:16:39.720Z",
   "clientId": "0e20e4ad-cc33-493d-83fd-55b68a4dd063",
   "state": {
     "stockDrugs": [
@@ -14780,7 +14780,7 @@
           "id": "stock:92W",
           "roomName": "92W",
           "result": "확인 필요",
-          "details": "비품약: 첫번째 서랍 씰링 안되어 있음\nE-cart: 첫번째 서랍 씰링 안되어 있음"
+          "details": "E-cart: 첫번째 서랍 씰링 안되어 있음"
         },
         {
           "id": "stock:101W",
