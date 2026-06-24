@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T07:30:15.264Z",
+  "updatedAt": "2026-06-24T07:30:20.318Z",
   "clientId": "0e20e4ad-cc33-493d-83fd-55b68a4dd063",
   "state": {
     "stockDrugs": [
@@ -6544,7 +6544,10 @@
       "AER::XACYST6": true,
       "AER::XESOME40": true,
       "AER::XHPD": true,
-      "AER::CLOPID": true
+      "AER::CLOPID": true,
+      "AER::BUD2-RP": true,
+      "AER::XCRO2NS": true,
+      "AER::SALB-NB": true
     },
     "stockExpiry": {
       "42W::XLABETA20": "2026-09-24",
