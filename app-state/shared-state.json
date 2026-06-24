@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T02:38:20.916Z",
+  "updatedAt": "2026-06-24T02:38:24.448Z",
   "clientId": "27b103e8-74b5-4f17-8ba7-bee6a156a0fa",
   "state": {
     "stockDrugs": [
@@ -7626,7 +7626,7 @@
         {
           "section": "비품약",
           "text": "1-1 약품 라벨링이 되어 있는 보관 장소에 분리해서 보관되어 있다..",
-          "status": "good",
+          "status": "bad",
           "id": "stock-72W-1",
           "note": "첫전째 서랍 씰링 재 사용 흔적 있음"
         },
@@ -10509,7 +10509,7 @@
           {
             "section": "E-cart",
             "text": "2. E-cart가 규정에 맞게 잘 봉인되어 있으며 봉인일이 표시 되어 있다.",
-            "status": "good",
+            "status": "bad",
             "id": "ecart-general:72-1",
             "note": "첫전째 서랍 씰링 재 사용 흔적 있음"
           },
