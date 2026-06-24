@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T03:06:41.967Z",
+  "updatedAt": "2026-06-24T03:06:55.920Z",
   "clientId": "27b103e8-74b5-4f17-8ba7-bee6a156a0fa",
   "state": {
     "stockDrugs": [
@@ -6191,7 +6191,8 @@
       "62W::XTRAM50": true,
       "62W::XTAZOC4W": true,
       "62W::XFAMO2W": true,
-      "62W::XCMINX": true
+      "62W::XCMINX": true,
+      "61W::XPCMOL": true
     },
     "stockExpiry": {},
     "stockChecklistByRoom": {
