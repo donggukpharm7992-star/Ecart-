@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import rawInventory from "./data/inventory.generated.json";
 import type { InventoryData } from "./types";
-import { getInitialAppMode, getStockChecklistDefaultState, makeChecklistState } from "./App";
+import { getInitialAppMode, getStockChecklistDefaultState, makeChecklistState, makeInspectionCycleResetState } from "./App";
 
 const inventory = rawInventory as InventoryData;
 
@@ -143,5 +143,15 @@ describe("generated inventory data corrections", () => {
     expect(getInitialAppMode("/Ecart-/", "")).toBe("admin");
     expect(getInitialAppMode("/Ecart-/viewer", "")).toBe("master-viewer");
     expect(getInitialAppMode("/Ecart-/", "?view=master")).toBe("master-viewer");
+  });
+
+  it("clears only inspection-cycle fields when regenerating the round summary", () => {
+    expect(makeInspectionCycleResetState()).toEqual({
+      checkedStock: {},
+      stockExpiry: {},
+      stockChecklistByRoom: {},
+      ecartByTarget: {},
+      roundSummaryDraft: null,
+    });
   });
 });

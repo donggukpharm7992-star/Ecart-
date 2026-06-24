@@ -107,6 +107,11 @@ type PersistedAppState = {
   uninspectedRoomIds: string[];
 };
 
+type InspectionCycleResetState = Pick<
+  PersistedAppState,
+  "checkedStock" | "stockExpiry" | "stockChecklistByRoom" | "ecartByTarget" | "roundSummaryDraft"
+>;
+
 type NewDrugForm = {
   code: string;
   genericName: string;
@@ -697,6 +702,16 @@ function getStockGuideInspectionKey(item: StockGuideEntry) {
   if (item.stockRoomId) return item.stockRoomId;
   if (item.ecartTargetId) return `ecart:${item.ecartTab ?? "general"}:${item.ecartTargetId}`;
   return item.label;
+}
+
+export function makeInspectionCycleResetState(): InspectionCycleResetState {
+  return {
+    checkedStock: {},
+    stockExpiry: {},
+    stockChecklistByRoom: {},
+    ecartByTarget: {},
+    roundSummaryDraft: null,
+  };
 }
 
 export function App() {
@@ -1600,7 +1615,12 @@ export function App() {
   }
 
   function regenerateRoundSummaryDraft() {
-    setRoundSummaryDraft(null);
+    const resetState = makeInspectionCycleResetState();
+    setCheckedStock(resetState.checkedStock);
+    setStockExpiry(resetState.stockExpiry);
+    setStockChecklistByRoom(resetState.stockChecklistByRoom);
+    setEcartByTarget(resetState.ecartByTarget);
+    setRoundSummaryDraft(resetState.roundSummaryDraft);
   }
 
   function openRoundSummaryPrintPreview() {
