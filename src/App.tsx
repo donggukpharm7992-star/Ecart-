@@ -662,6 +662,7 @@ function normalizeChecklistRows<T extends { id?: string; note?: string; section:
 
   ensureChecklistRow(rows, "비품약", "5. 비품약 유효기간 1달에 1번 날짜로 관리한다.", "monthly-stock-expiry");
   ensureChecklistRow(rows, CLAIM_FLUID_SECTION, "5. 청구약/ 수액 유효기간을 1달에 1번 관리 한다.", "monthly-claim-fluid-expiry");
+  ensureChecklistRow(rows, "E-cart", "4. E-cart 약물의 종류와 갯수가 규정과 동일 하다.", "drug-count-match");
 
   return rows;
 }

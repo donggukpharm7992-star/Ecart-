@@ -88,6 +88,12 @@ describe("generated inventory data corrections", () => {
     }
   });
 
+  it("adds the E-cart drug type and count match checklist row", () => {
+    const ecartChecklist = makeChecklistState("ecart-general:42", ["E-cart"]);
+
+    expect(ecartChecklist.map((item) => item.text)).toContain("4. E-cart 약물의 종류와 갯수가 규정과 동일 하다.");
+  });
+
   it("excludes the retired twice-weekly E-cart management log checklist row", () => {
     const generatedTexts = inventory.checklist.filter((item) => item.section === "E-cart").map((item) => item.text);
     const defaultTexts = makeChecklistState("ecart-general:42", ["E-cart"]).map((item) => item.text);
