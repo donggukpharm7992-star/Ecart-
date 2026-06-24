@@ -323,7 +323,7 @@ export function getStockChecklistDefaultState(
   return normalizeChecklistRows(base);
 }
 
-function getEcartDefaultState(
+export function getEcartDefaultState(
   prev: Record<string, EcartInspectionState>,
   tab: EcartTab,
   key: string
@@ -332,28 +332,6 @@ function getEcartDefaultState(
   if (current) return normalizeEcartInspectionState(current);
 
   const base = makeEcartInspectionState(tab, key);
-  const w42 = prev["general:42"];
-  if (key !== "general:42" && w42) {
-    const w42Norm = normalizeEcartInspectionState(w42);
-    const w42ItemMap = new Map(w42Norm.items.map((item) => [item.code, item]));
-    const items = base.items.map((item) => {
-      const w42Item = w42ItemMap.get(item.code);
-      return {
-        ...item,
-        checked: w42Item ? w42Item.checked : item.checked,
-        expiryDate: w42Item ? w42Item.expiryDate : item.expiryDate,
-      };
-    });
-    const checklist = base.checklist.map((item, index) => {
-      const w42Check = w42Norm.checklist[index];
-      return {
-        ...item,
-        status: w42Check ? w42Check.status : item.status,
-        note: w42Check ? w42Check.note : item.note,
-      };
-    });
-    return { items, checklist };
-  }
   return normalizeEcartInspectionState(base);
 }
 
@@ -702,6 +680,10 @@ function getStockGuideInspectionKey(item: StockGuideEntry) {
   if (item.stockRoomId) return item.stockRoomId;
   if (item.ecartTargetId) return `ecart:${item.ecartTab ?? "general"}:${item.ecartTargetId}`;
   return item.label;
+}
+
+export function clearUninspectedRoomId(ids: string[], roomId: string) {
+  return ids.includes(roomId) ? ids.filter((id) => id !== roomId) : ids;
 }
 
 export function makeInspectionCycleResetState(): InspectionCycleResetState {
@@ -1723,13 +1705,14 @@ export function App() {
         <StockReportTable
           refrigerated={refrigerated}
           roomTemperature={roomTemperature}
-          onCheck={(roomId, drugCode) =>
+          onCheck={(roomId, drugCode) => {
+            setUninspectedRoomIds((ids) => clearUninspectedRoomId(ids, roomId));
             setCheckedStock((prev) => {
               const key = stockKey(roomId, drugCode);
               const currentVal = prev[key] !== undefined ? prev[key] : (prev[stockKey("42W", drugCode)] ?? false);
               return { ...prev, [key]: !currentVal };
-            })
-          }
+            });
+          }}
           onExpiry={(roomId, drugCode, value) => setStockExpiry((prev) => ({ ...prev, [stockKey(roomId, drugCode)]: value }))}
           onCount={updateStockCount}
           onDelete={deleteStockItem}

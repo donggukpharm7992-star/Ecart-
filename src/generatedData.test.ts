@@ -1,7 +1,14 @@
 import { describe, expect, it } from "vitest";
 import rawInventory from "./data/inventory.generated.json";
 import type { InventoryData } from "./types";
-import { getInitialAppMode, getStockChecklistDefaultState, makeChecklistState, makeInspectionCycleResetState } from "./App";
+import {
+  clearUninspectedRoomId,
+  getEcartDefaultState,
+  getInitialAppMode,
+  getStockChecklistDefaultState,
+  makeChecklistState,
+  makeInspectionCycleResetState,
+} from "./App";
 
 const inventory = rawInventory as InventoryData;
 
@@ -94,6 +101,74 @@ describe("generated inventory data corrections", () => {
     expect(ecartChecklist.map((item) => item.text)).toContain("4. E-cart 약물의 종류와 갯수가 규정과 동일 하다.");
   });
 
+  it("does not copy 42W E-cart Nitroglycerin inspection values into unsaved rooms", () => {
+    const state = getEcartDefaultState(
+      {
+        "general:42": {
+          items: [
+            {
+              id: "NITR",
+              code: "NITR",
+              name: "Nitroglycerin(SL)",
+              dosage: "0.6mg/Tab",
+              quantity: 3,
+              checked: true,
+              expiryDate: "2026-09-23",
+            },
+          ],
+          checklist: [],
+        },
+      },
+      "general",
+      "general:CT실",
+    );
+    const nitroglycerin = state.items.find((item) => item.code === "NITR");
+
+    expect(nitroglycerin?.checked).toBe(false);
+    expect(nitroglycerin?.expiryDate).toBe("");
+  });
+
+  it("keeps each saved E-cart room's own Nitroglycerin inspection values", () => {
+    const state = getEcartDefaultState(
+      {
+        "general:42": {
+          items: [
+            {
+              id: "NITR",
+              code: "NITR",
+              name: "Nitroglycerin(SL)",
+              dosage: "0.6mg/Tab",
+              quantity: 3,
+              checked: true,
+              expiryDate: "2026-09-23",
+            },
+          ],
+          checklist: [],
+        },
+        "general:CT실": {
+          items: [
+            {
+              id: "NITR",
+              code: "NITR",
+              name: "Nitroglycerin(SL)",
+              dosage: "0.6mg/Tab",
+              quantity: 3,
+              checked: true,
+              expiryDate: "2026-06-24",
+            },
+          ],
+          checklist: [],
+        },
+      },
+      "general",
+      "general:CT실",
+    );
+    const nitroglycerin = state.items.find((item) => item.code === "NITR");
+
+    expect(nitroglycerin?.checked).toBe(true);
+    expect(nitroglycerin?.expiryDate).toBe("2026-06-24");
+  });
+
   it("excludes the retired twice-weekly E-cart management log checklist row", () => {
     const generatedTexts = inventory.checklist.filter((item) => item.section === "E-cart").map((item) => item.text);
     const defaultTexts = makeChecklistState("ecart-general:42", ["E-cart"]).map((item) => item.text);
@@ -153,5 +228,9 @@ describe("generated inventory data corrections", () => {
       ecartByTarget: {},
       roundSummaryDraft: null,
     });
+  });
+
+  it("clears a room's uninspected marker once stock inspection starts", () => {
+    expect(clearUninspectedRoomId(["42W", "61W"], "42W")).toEqual(["61W"]);
   });
 });
