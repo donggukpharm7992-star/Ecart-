@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T07:31:49.770Z",
+  "updatedAt": "2026-06-24T07:31:53.288Z",
   "clientId": "0e20e4ad-cc33-493d-83fd-55b68a4dd063",
   "state": {
     "stockDrugs": [
@@ -6591,7 +6591,9 @@
       "외래주사실::XPALON": true,
       "외래주사실::XC500": true,
       "외래주사실::XBH": true,
-      "외래주사실::XIBAND3W": true
+      "외래주사실::XIBAND3W": true,
+      "외래주사실::XCZEDO": true,
+      "외래주사실::XCZOL1W": true
     },
     "stockExpiry": {
       "42W::XLABETA20": "2026-09-24",
