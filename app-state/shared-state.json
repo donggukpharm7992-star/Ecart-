@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T07:18:45.705Z",
+  "updatedAt": "2026-06-24T07:19:03.207Z",
   "clientId": "0e20e4ad-cc33-493d-83fd-55b68a4dd063",
   "state": {
     "stockDrugs": [
@@ -14892,7 +14892,7 @@
         },
         {
           "id": "stock:영상의학과",
-          "roomName": "영상의학과",
+          "roomName": "신속대응팀",
           "result": "적합",
           "details": "적합"
         },
