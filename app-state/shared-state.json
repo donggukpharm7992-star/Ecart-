@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-24T01:10:11.061Z",
+  "updatedAt": "2026-06-24T01:10:15.247Z",
   "clientId": "27b103e8-74b5-4f17-8ba7-bee6a156a0fa",
   "state": {
     "stockDrugs": [
@@ -8254,7 +8254,7 @@
       "ADR": "26.06.24"
     },
     "uninspectedRoomIds": [
-      "정형외과"
+      "신경과"
     ]
   }
 }
