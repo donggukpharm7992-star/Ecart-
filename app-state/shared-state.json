@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-25T04:37:27.652Z",
-  "clientId": "0c5c5bfd-4585-44fb-b0f6-75cc750a3064",
+  "updatedAt": "2026-06-25T05:22:32.876Z",
+  "clientId": "8b950ea8-2089-4407-af40-becd3102dd03",
   "state": {
     "stockDrugs": [
       {
@@ -4098,7 +4098,7 @@
       {
         "roomId": "안과",
         "drugCode": "XXAFLIB2",
-        "requiredQty": 4
+        "requiredQty": 8
       },
       {
         "roomId": "42W",
@@ -6631,8 +6631,6 @@
       "외래주사실::XD3": true,
       "외래주사실::XGOSE": true,
       "DRL::XEPIN": true,
-      "HBEF심혈관조영실::XABCIX::split-0": true,
-      "HBEF심혈관조영실::XABCIX::split-1": true,
       "HBEF심혈관조영실::XABCIX": true
     },
     "stockExpiry": {
@@ -15011,7 +15009,8 @@
       "DSR": "26.06.24",
       "91W": "26.06.24",
       "HBEF심혈관조영실": "26.06.24",
-      "AN": "26.06.24"
+      "AN": "26.06.24",
+      "안과": "26.06.25"
     },
     "uninspectedRoomIds": []
   }
