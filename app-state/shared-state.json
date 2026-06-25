@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-25T05:22:32.876Z",
+  "updatedAt": "2026-06-25T05:22:45.016Z",
   "clientId": "8b950ea8-2089-4407-af40-becd3102dd03",
   "state": {
     "stockDrugs": [
@@ -4638,7 +4638,7 @@
       {
         "roomId": "안과",
         "drugCode": "XXRANIBP",
-        "requiredQty": 5
+        "requiredQty": 2
       },
       {
         "roomId": "PED",
