@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-26T05:02:33.605Z",
-  "clientId": "8b950ea8-2089-4407-af40-becd3102dd03",
+  "updatedAt": "2026-06-29T02:30:20.175Z",
+  "clientId": "9d1f3ec9-9520-488d-8590-e42c54135d9e",
   "state": {
     "stockDrugs": [
       {
@@ -6061,7 +6061,9 @@
         "requiredQty": 1
       }
     ],
-    "checkedStock": {},
+    "checkedStock": {
+      "42W::XLABETA20": true
+    },
     "stockExpiry": {},
     "stockChecklistByRoom": {},
     "ecartByTarget": {},
