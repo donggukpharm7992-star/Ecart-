@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-29T02:30:24.482Z",
+  "updatedAt": "2026-06-29T06:53:19.588Z",
   "clientId": "9d1f3ec9-9520-488d-8590-e42c54135d9e",
   "state": {
     "stockDrugs": [
@@ -6057,7 +6057,8 @@
       }
     ],
     "checkedStock": {
-      "42W::XLABETA20": true
+      "42W::XLABETA20": true,
+      "OR::XHYALU15W": true
     },
     "stockExpiry": {},
     "stockChecklistByRoom": {},
