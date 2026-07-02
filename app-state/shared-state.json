@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-02T07:51:04.236Z",
-  "clientId": "client-1782969536334-3f4ac1fc728cd",
+  "updatedAt": "2026-07-02T23:02:50.717Z",
+  "clientId": "b4e24877-b1d9-4f63-9c9b-184f5a2e7a46",
   "state": {
     "stockDrugs": [
       {
@@ -6386,6 +6386,8 @@
       "42W": "26.06.29",
       "OR": "26.06.29"
     },
-    "uninspectedRoomIds": []
+    "uninspectedRoomIds": [
+      "피부과"
+    ]
   }
 }
