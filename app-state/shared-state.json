@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-02T23:02:50.717Z",
+  "updatedAt": "2026-07-02T23:02:59.581Z",
   "clientId": "b4e24877-b1d9-4f63-9c9b-184f5a2e7a46",
   "state": {
     "stockDrugs": [
@@ -6073,7 +6073,9 @@
     ],
     "checkedStock": {
       "42W::XLABETA20": true,
-      "OR::XHYALU15W": true
+      "OR::XHYALU15W": true,
+      "피부과::XEPIN": true,
+      "피부과::XCPENIR": true
     },
     "stockExpiry": {},
     "stockChecklistByRoom": {},
@@ -6386,8 +6388,6 @@
       "42W": "26.06.29",
       "OR": "26.06.29"
     },
-    "uninspectedRoomIds": [
-      "피부과"
-    ]
+    "uninspectedRoomIds": []
   }
 }
