@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-02T23:06:33.229Z",
+  "updatedAt": "2026-07-02T23:06:57.747Z",
   "clientId": "b90f8d25-ca80-4ee6-a3f4-c4b2a308e937",
   "state": {
     "stockDrugs": [
@@ -6078,7 +6078,10 @@
       "피부과::XCPENIR": true,
       "HBEF심혈관조영실::ASP1PR::split-0": true,
       "HBEF심혈관조영실::ASP1PR::split-1": true,
-      "HBEF심혈관조영실::ASP1PR": true
+      "HBEF심혈관조영실::ASP1PR": true,
+      "HBEF심혈관조영실::XABCIX::split-0": true,
+      "HBEF심혈관조영실::XABCIX::split-1": true,
+      "HBEF심혈관조영실::XABCIX": true
     },
     "stockExpiry": {},
     "stockChecklistByRoom": {},
