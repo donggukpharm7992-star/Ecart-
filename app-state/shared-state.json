@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-02T23:02:59.581Z",
-  "clientId": "b4e24877-b1d9-4f63-9c9b-184f5a2e7a46",
+  "updatedAt": "2026-07-02T23:06:29.880Z",
+  "clientId": "b90f8d25-ca80-4ee6-a3f4-c4b2a308e937",
   "state": {
     "stockDrugs": [
       {
@@ -6075,7 +6075,8 @@
       "42W::XLABETA20": true,
       "OR::XHYALU15W": true,
       "피부과::XEPIN": true,
-      "피부과::XCPENIR": true
+      "피부과::XCPENIR": true,
+      "HBEF심혈관조영실::ASP1PR::split-0": true
     },
     "stockExpiry": {},
     "stockChecklistByRoom": {},
