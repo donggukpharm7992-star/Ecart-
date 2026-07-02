@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-02T06:32:46.223Z",
+  "updatedAt": "2026-07-02T06:32:57.373Z",
   "clientId": "b90f8d25-ca80-4ee6-a3f4-c4b2a308e937",
   "state": {
     "stockDrugs": [
@@ -6064,6 +6064,11 @@
         "roomId": "OR",
         "drugCode": "XBHYALU",
         "requiredQty": 50
+      },
+      {
+        "roomId": "AER",
+        "drugCode": "XMCARBA5Y",
+        "requiredQty": 2
       }
     ],
     "checkedStock": {
@@ -6370,7 +6375,7 @@
       "closingNote": "간호부의 지속적이고 적극적인 협조 항상 감사드립니다."
     },
     "stockRoomUpdatedAt": {
-      "AER": "26.06.23",
+      "AER": "26.07.02",
       "영상의학과": "26.06.24",
       "ADR": "26.06.24",
       "DSR": "26.06.24",
