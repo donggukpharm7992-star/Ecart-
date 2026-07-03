@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-03T06:57:17.315Z",
+  "updatedAt": "2026-07-03T06:57:21.320Z",
   "clientId": "b90f8d25-ca80-4ee6-a3f4-c4b2a308e937",
   "state": {
     "stockDrugs": [
@@ -6077,7 +6077,8 @@
       "피부과::XEPIN": true,
       "피부과::XCPENIR": true,
       "HBEF심혈관조영실::ASP1PR": true,
-      "HBEF심혈관조영실::XABCIX": true
+      "HBEF심혈관조영실::XABCIX": true,
+      "SICU::XDOB5D2": true
     },
     "stockExpiry": {},
     "stockChecklistByRoom": {},
@@ -6390,8 +6391,6 @@
       "42W": "26.06.29",
       "OR": "26.06.29"
     },
-    "uninspectedRoomIds": [
-      "SICU"
-    ]
+    "uninspectedRoomIds": []
   }
 }
