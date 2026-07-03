@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-03T06:57:46.651Z",
+  "updatedAt": "2026-07-03T06:58:21.695Z",
   "clientId": "b90f8d25-ca80-4ee6-a3f4-c4b2a308e937",
   "state": {
     "stockDrugs": [
@@ -6393,6 +6393,8 @@
       "42W": "26.06.29",
       "OR": "26.06.29"
     },
-    "uninspectedRoomIds": []
+    "uninspectedRoomIds": [
+      "비뇨기과"
+    ]
   }
 }
