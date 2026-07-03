@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-02T23:34:26.245Z",
-  "clientId": "client-1782969536334-3f4ac1fc728cd",
+  "updatedAt": "2026-07-03T06:57:17.315Z",
+  "clientId": "b90f8d25-ca80-4ee6-a3f4-c4b2a308e937",
   "state": {
     "stockDrugs": [
       {
@@ -6390,6 +6390,8 @@
       "42W": "26.06.29",
       "OR": "26.06.29"
     },
-    "uninspectedRoomIds": []
+    "uninspectedRoomIds": [
+      "SICU"
+    ]
   }
 }
