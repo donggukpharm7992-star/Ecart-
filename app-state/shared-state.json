@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-03T06:58:21.695Z",
+  "updatedAt": "2026-07-03T07:26:21.274Z",
   "clientId": "b90f8d25-ca80-4ee6-a3f4-c4b2a308e937",
   "state": {
     "stockDrugs": [
@@ -6071,23 +6071,13 @@
         "requiredQty": 2
       }
     ],
-    "checkedStock": {
-      "42W::XLABETA20": true,
-      "OR::XHYALU15W": true,
-      "피부과::XEPIN": true,
-      "피부과::XCPENIR": true,
-      "HBEF심혈관조영실::ASP1PR": true,
-      "HBEF심혈관조영실::XABCIX": true,
-      "SICU::XDOB5D2": true,
-      "SICU::XROCU50": true,
-      "재활의학과::XXHYAL60": true
-    },
+    "checkedStock": {},
     "stockExpiry": {},
     "stockChecklistByRoom": {},
     "ecartByTarget": {},
     "roundSummaryDraft": {
       "title": "병동 순회 점검표",
-      "inspectionPeriod": "2026년 6월 26일",
+      "inspectionPeriod": "2026년 7월 3일",
       "rows": [
         {
           "id": "stock:42W",
@@ -6393,8 +6383,6 @@
       "42W": "26.06.29",
       "OR": "26.06.29"
     },
-    "uninspectedRoomIds": [
-      "비뇨기과"
-    ]
+    "uninspectedRoomIds": []
   }
 }
