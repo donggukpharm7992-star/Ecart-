@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-04T06:40:19.688Z",
+  "updatedAt": "2026-07-04T06:55:18.444Z",
   "clientId": "b90f8d25-ca80-4ee6-a3f4-c4b2a308e937",
   "state": {
     "stockDrugs": [
@@ -6747,7 +6747,9 @@
     "narcoticCheckedItems": {},
     "narcoticExpiry": {},
     "narcoticChecklistByRoom": {},
-    "uninspectedNarcoticRoomIds": [],
+    "uninspectedNarcoticRoomIds": [
+      "DREMM"
+    ],
     "checkedStock": {},
     "stockExpiry": {},
     "stockChecklistByRoom": {},
