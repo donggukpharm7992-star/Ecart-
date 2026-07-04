@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-04T06:55:18.444Z",
+  "updatedAt": "2026-07-04T06:55:22.869Z",
   "clientId": "b90f8d25-ca80-4ee6-a3f4-c4b2a308e937",
   "state": {
     "stockDrugs": [
@@ -6744,12 +6744,12 @@
       "XPETH50W": "마약",
       "XREMIF1W": "마약"
     },
-    "narcoticCheckedItems": {},
+    "narcoticCheckedItems": {
+      "DREMM::XMIDZ5W": true
+    },
     "narcoticExpiry": {},
     "narcoticChecklistByRoom": {},
-    "uninspectedNarcoticRoomIds": [
-      "DREMM"
-    ],
+    "uninspectedNarcoticRoomIds": [],
     "checkedStock": {},
     "stockExpiry": {},
     "stockChecklistByRoom": {},
