@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-04T05:24:58.760Z",
-  "clientId": "b90f8d25-ca80-4ee6-a3f4-c4b2a308e937",
+  "updatedAt": "2026-07-04T05:31:46.752Z",
+  "clientId": "8661a136-891e-48dd-8980-7d1523f6c473",
   "state": {
     "stockDrugs": [
       {
@@ -6071,6 +6071,683 @@
         "requiredQty": 2
       }
     ],
+    "narcoticDrugs": [
+      {
+        "code": "XALFEN1W",
+        "genericName": "Alfentanil 1mg Inj",
+        "productName": "Alfentanil 1mg Inj",
+        "spec": "1mg",
+        "storage": "실온보관",
+        "note": "",
+        "warning": "",
+        "storageType": "ROOM",
+        "narcoticCategory": "마약"
+      },
+      {
+        "code": "XATIV2W",
+        "genericName": "Ativan 2mg inj",
+        "productName": "Ativan 2mg inj",
+        "spec": "2mg",
+        "storage": "실온보관",
+        "note": "",
+        "warning": "",
+        "storageType": "ROOM",
+        "narcoticCategory": "향정"
+      },
+      {
+        "code": "XATIV4W",
+        "genericName": "Ativan 4mg inj",
+        "productName": "Ativan 4mg inj",
+        "spec": "4mg",
+        "storage": "실온보관",
+        "note": "",
+        "warning": "",
+        "storageType": "ROOM",
+        "narcoticCategory": "향정"
+      },
+      {
+        "code": "XDIAZ10W",
+        "genericName": "Diazepam 10mg/2ml Inj",
+        "productName": "Diazepam 10mg/2ml Inj",
+        "spec": "10mg/2ml",
+        "storage": "실온보관",
+        "note": "",
+        "warning": "",
+        "storageType": "ROOM",
+        "narcoticCategory": "향정"
+      },
+      {
+        "code": "XFENT50W",
+        "genericName": "Fentanyl 50mcg Inj",
+        "productName": "Fentanyl 50mcg Inj",
+        "spec": "50mcg",
+        "storage": "실온보관",
+        "note": "",
+        "warning": "",
+        "storageType": "ROOM",
+        "narcoticCategory": "마약"
+      },
+      {
+        "code": "XFENT100W",
+        "genericName": "Fentanyl 100mcg Inj (Vial)",
+        "productName": "Fentanyl 100mcg/2ml inj(HANA)",
+        "spec": "100mcg/2ml",
+        "storage": "실온보관",
+        "note": "",
+        "warning": "",
+        "storageType": "ROOM",
+        "narcoticCategory": "마약"
+      },
+      {
+        "code": "XFEN500",
+        "genericName": "Fentanyl 500mcg Inj",
+        "productName": "Fentanyl 500mcg Inj",
+        "spec": "500mcg",
+        "storage": "실온보관",
+        "note": "",
+        "warning": "",
+        "storageType": "ROOM",
+        "narcoticCategory": "마약"
+      },
+      {
+        "code": "XFENT15",
+        "genericName": "Fentanyl 1500mcg Inj",
+        "productName": "Fentanyl 1500mcg Inj",
+        "spec": "1500mcg",
+        "storage": "실온보관",
+        "note": "",
+        "warning": "",
+        "storageType": "ROOM",
+        "narcoticCategory": "마약"
+      },
+      {
+        "code": "XPROP1",
+        "genericName": "Fresofol MCT 1% 15ml Inj",
+        "productName": "Fresofol MCT 1% 15ml Inj",
+        "spec": "1% 15ml",
+        "storage": "실온보관",
+        "note": "",
+        "warning": "",
+        "storageType": "ROOM",
+        "narcoticCategory": "향정"
+      },
+      {
+        "code": "XPROP1T",
+        "genericName": "Fresofol MCT 1% 20ml Inj",
+        "productName": "Fresofol MCT 1% 20ml Inj",
+        "spec": "1% 20ml",
+        "storage": "실온보관",
+        "note": "",
+        "warning": "",
+        "storageType": "ROOM",
+        "narcoticCategory": "향정"
+      },
+      {
+        "code": "XPROP2T",
+        "genericName": "Fresofol MCT 2% 50ml Inj",
+        "productName": "Fresofol MCT 2% 50ml Inj",
+        "spec": "2% 50ml",
+        "storage": "실온보관",
+        "note": "",
+        "warning": "",
+        "storageType": "ROOM",
+        "narcoticCategory": "향정"
+      },
+      {
+        "code": "XKETA5W",
+        "genericName": "Ketamine 500mg Inj",
+        "productName": "Ketamine 500mg Inj",
+        "spec": "500mg",
+        "storage": "실온보관",
+        "note": "",
+        "warning": "",
+        "storageType": "ROOM",
+        "narcoticCategory": "향정"
+      },
+      {
+        "code": "XMIDZ5W",
+        "genericName": "Midazolam 5mg/5ml Inj",
+        "productName": "Midazolam 5mg/5ml Inj",
+        "spec": "5mg/5ml",
+        "storage": "실온보관",
+        "note": "",
+        "warning": "",
+        "storageType": "ROOM",
+        "narcoticCategory": "향정"
+      },
+      {
+        "code": "XMIDZ15W",
+        "genericName": "Midazolam 15mg/3ml Inj",
+        "productName": "Midazolam 15mg/3ml Inj",
+        "spec": "15mg/3ml",
+        "storage": "실온보관",
+        "note": "",
+        "warning": "",
+        "storageType": "ROOM",
+        "narcoticCategory": "향정"
+      },
+      {
+        "code": "XMORPS5W",
+        "genericName": "Morphine sulfate 5mg Inj",
+        "productName": "Morphine sulfate 5mg/5ml inj",
+        "spec": "5mg/5ml",
+        "storage": "실온보관",
+        "note": "",
+        "warning": "",
+        "storageType": "ROOM",
+        "narcoticCategory": "마약"
+      },
+      {
+        "code": "XNALB10",
+        "genericName": "Nalbupine 10mg",
+        "productName": "Nalbupine 10mg",
+        "spec": "10mg",
+        "storage": "실온보관",
+        "note": "",
+        "warning": "",
+        "storageType": "ROOM",
+        "narcoticCategory": "향정"
+      },
+      {
+        "code": "XOXCON1W",
+        "genericName": "Oxynorm 10mg inj",
+        "productName": "Oxycodone 10mg inj",
+        "spec": "10mg",
+        "storage": "실온보관",
+        "note": "",
+        "warning": "",
+        "storageType": "ROOM",
+        "narcoticCategory": "마약"
+      },
+      {
+        "code": "XPENT5",
+        "genericName": "Pentothal-sodium 0.5g Inj",
+        "productName": "Pentothal-sodium 0.5g Inj",
+        "spec": "0.5g",
+        "storage": "실온보관",
+        "note": "",
+        "warning": "",
+        "storageType": "ROOM",
+        "narcoticCategory": "향정"
+      },
+      {
+        "code": "XPETH50W",
+        "genericName": "Pethidine 50mg Inj",
+        "productName": "Pethidine 50mg Inj(HANA)",
+        "spec": "50mg",
+        "storage": "실온보관",
+        "note": "",
+        "warning": "",
+        "storageType": "ROOM",
+        "narcoticCategory": "마약"
+      },
+      {
+        "code": "XPOCR5S",
+        "genericName": "Pocral syr(5ml)",
+        "productName": "Pocral syr(5ml)",
+        "spec": "5ml",
+        "storage": "실온보관",
+        "note": "",
+        "warning": "",
+        "storageType": "ROOM",
+        "narcoticCategory": "향정"
+      },
+      {
+        "code": "XREMIF1W",
+        "genericName": "Ultian 1mg Inj",
+        "productName": "Ultian 1mg Inj",
+        "spec": "1mg",
+        "storage": "실온보관",
+        "note": "",
+        "warning": "",
+        "storageType": "ROOM",
+        "narcoticCategory": "마약"
+      }
+    ],
+    "narcoticAllocations": [
+      {
+        "roomId": "DREMM",
+        "drugCode": "XPOCR5S",
+        "requiredQty": 10
+      },
+      {
+        "roomId": "AN",
+        "drugCode": "XATIV4W",
+        "requiredQty": 2
+      },
+      {
+        "roomId": "121",
+        "drugCode": "XATIV4W",
+        "requiredQty": 2
+      },
+      {
+        "roomId": "ER",
+        "drugCode": "XATIV2W",
+        "requiredQty": 5
+      },
+      {
+        "roomId": "GICLA",
+        "drugCode": "XATIV2W",
+        "requiredQty": 2
+      },
+      {
+        "roomId": "MICU",
+        "drugCode": "XATIV2W",
+        "requiredQty": 3
+      },
+      {
+        "roomId": "SICU",
+        "drugCode": "XATIV2W",
+        "requiredQty": 5
+      },
+      {
+        "roomId": "ADR",
+        "drugCode": "XATIV2W",
+        "requiredQty": 2
+      },
+      {
+        "roomId": "NICU",
+        "drugCode": "XATIV2W",
+        "requiredQty": 2
+      },
+      {
+        "roomId": "42",
+        "drugCode": "XATIV2W",
+        "requiredQty": 1
+      },
+      {
+        "roomId": "71",
+        "drugCode": "XATIV2W",
+        "requiredQty": 1
+      },
+      {
+        "roomId": "72",
+        "drugCode": "XATIV2W",
+        "requiredQty": 2
+      },
+      {
+        "roomId": "81",
+        "drugCode": "XATIV2W",
+        "requiredQty": 2
+      },
+      {
+        "roomId": "82",
+        "drugCode": "XATIV2W",
+        "requiredQty": 2
+      },
+      {
+        "roomId": "91",
+        "drugCode": "XATIV2W",
+        "requiredQty": 2
+      },
+      {
+        "roomId": "92",
+        "drugCode": "XATIV2W",
+        "requiredQty": 2
+      },
+      {
+        "roomId": "101",
+        "drugCode": "XATIV2W",
+        "requiredQty": 5
+      },
+      {
+        "roomId": "102",
+        "drugCode": "XATIV2W",
+        "requiredQty": 1
+      },
+      {
+        "roomId": "111",
+        "drugCode": "XATIV2W",
+        "requiredQty": 2
+      },
+      {
+        "roomId": "112",
+        "drugCode": "XATIV2W",
+        "requiredQty": 3
+      },
+      {
+        "roomId": "121",
+        "drugCode": "XATIV2W",
+        "requiredQty": 5
+      },
+      {
+        "roomId": "ER",
+        "drugCode": "XKETA5W",
+        "requiredQty": 2
+      },
+      {
+        "roomId": "GICLA",
+        "drugCode": "XKETA5W",
+        "requiredQty": 5
+      },
+      {
+        "roomId": "MICU",
+        "drugCode": "XKETA5W",
+        "requiredQty": 1
+      },
+      {
+        "roomId": "AN",
+        "drugCode": "XKETA5W",
+        "requiredQty": 2
+      },
+      {
+        "roomId": "72",
+        "drugCode": "XKETA5W",
+        "requiredQty": 1
+      },
+      {
+        "roomId": "DRL",
+        "drugCode": "XDIAZ10W",
+        "requiredQty": 3
+      },
+      {
+        "roomId": "91",
+        "drugCode": "XDIAZ10W",
+        "requiredQty": 1
+      },
+      {
+        "roomId": "101",
+        "drugCode": "XDIAZ10W",
+        "requiredQty": 1
+      },
+      {
+        "roomId": "121",
+        "drugCode": "XDIAZ10W",
+        "requiredQty": 2
+      },
+      {
+        "roomId": "HBEF",
+        "drugCode": "XMIDZ15W",
+        "requiredQty": 3
+      },
+      {
+        "roomId": "MICU",
+        "drugCode": "XMIDZ15W",
+        "requiredQty": 3
+      },
+      {
+        "roomId": "AN",
+        "drugCode": "XMIDZ15W",
+        "requiredQty": 3
+      },
+      {
+        "roomId": "SICU",
+        "drugCode": "XMIDZ15W",
+        "requiredQty": 5
+      },
+      {
+        "roomId": "DREMM",
+        "drugCode": "XMIDZ5W",
+        "requiredQty": 10
+      },
+      {
+        "roomId": "ER",
+        "drugCode": "XMIDZ5W",
+        "requiredQty": 4
+      },
+      {
+        "roomId": "GICLA",
+        "drugCode": "XMIDZ5W",
+        "requiredQty": 80
+      },
+      {
+        "roomId": "HBEF",
+        "drugCode": "XMIDZ5W",
+        "requiredQty": 4
+      },
+      {
+        "roomId": "MICU",
+        "drugCode": "XMIDZ5W",
+        "requiredQty": 3
+      },
+      {
+        "roomId": "AN",
+        "drugCode": "XMIDZ5W",
+        "requiredQty": 20
+      },
+      {
+        "roomId": "OR",
+        "drugCode": "XMIDZ5W",
+        "requiredQty": 1
+      },
+      {
+        "roomId": "SICU",
+        "drugCode": "XMIDZ5W",
+        "requiredQty": 5
+      },
+      {
+        "roomId": "HPC",
+        "drugCode": "XMIDZ5W",
+        "requiredQty": 70
+      },
+      {
+        "roomId": "DRL",
+        "drugCode": "XMIDZ5W",
+        "requiredQty": 3
+      },
+      {
+        "roomId": "NICU",
+        "drugCode": "XMIDZ5W",
+        "requiredQty": 3
+      },
+      {
+        "roomId": "61",
+        "drugCode": "XMIDZ5W",
+        "requiredQty": 1
+      },
+      {
+        "roomId": "62",
+        "drugCode": "XMIDZ5W",
+        "requiredQty": 1
+      },
+      {
+        "roomId": "71",
+        "drugCode": "XMIDZ5W",
+        "requiredQty": 1
+      },
+      {
+        "roomId": "72",
+        "drugCode": "XMIDZ5W",
+        "requiredQty": 1
+      },
+      {
+        "roomId": "81",
+        "drugCode": "XMIDZ5W",
+        "requiredQty": 1
+      },
+      {
+        "roomId": "82",
+        "drugCode": "XMIDZ5W",
+        "requiredQty": 2
+      },
+      {
+        "roomId": "91",
+        "drugCode": "XMIDZ5W",
+        "requiredQty": 3
+      },
+      {
+        "roomId": "92",
+        "drugCode": "XMIDZ5W",
+        "requiredQty": 1
+      },
+      {
+        "roomId": "101",
+        "drugCode": "XMIDZ5W",
+        "requiredQty": 2
+      },
+      {
+        "roomId": "102",
+        "drugCode": "XMIDZ5W",
+        "requiredQty": 1
+      },
+      {
+        "roomId": "111",
+        "drugCode": "XMIDZ5W",
+        "requiredQty": 2
+      },
+      {
+        "roomId": "112",
+        "drugCode": "XMIDZ5W",
+        "requiredQty": 3
+      },
+      {
+        "roomId": "DRL",
+        "drugCode": "XNALB10",
+        "requiredQty": 3
+      },
+      {
+        "roomId": "GICLA",
+        "drugCode": "XPROP1",
+        "requiredQty": 5
+      },
+      {
+        "roomId": "HBEF",
+        "drugCode": "XPROP1",
+        "requiredQty": 2
+      },
+      {
+        "roomId": "AN",
+        "drugCode": "XPROP1",
+        "requiredQty": 30
+      },
+      {
+        "roomId": "AN",
+        "drugCode": "XPROP1T",
+        "requiredQty": 20
+      },
+      {
+        "roomId": "HBEF",
+        "drugCode": "XPROP2T",
+        "requiredQty": 1
+      },
+      {
+        "roomId": "AN",
+        "drugCode": "XPROP2T",
+        "requiredQty": 20
+      },
+      {
+        "roomId": "AN",
+        "drugCode": "XPENT5",
+        "requiredQty": 40
+      },
+      {
+        "roomId": "AN",
+        "drugCode": "XALFEN1W",
+        "requiredQty": 10
+      },
+      {
+        "roomId": "DREMM",
+        "drugCode": "XFENT50W",
+        "requiredQty": 15
+      },
+      {
+        "roomId": "GICLA",
+        "drugCode": "XFENT50W",
+        "requiredQty": 10
+      },
+      {
+        "roomId": "HBEF",
+        "drugCode": "XFENT50W",
+        "requiredQty": 4
+      },
+      {
+        "roomId": "AN",
+        "drugCode": "XFENT50W",
+        "requiredQty": 20
+      },
+      {
+        "roomId": "AN",
+        "drugCode": "XFEN500",
+        "requiredQty": 20
+      },
+      {
+        "roomId": "AN",
+        "drugCode": "XFENT100W",
+        "requiredQty": 30
+      },
+      {
+        "roomId": "AN",
+        "drugCode": "XFENT15",
+        "requiredQty": 10
+      },
+      {
+        "roomId": "HBEF",
+        "drugCode": "XMORPS5W",
+        "requiredQty": 4
+      },
+      {
+        "roomId": "112",
+        "drugCode": "XMORPS5W",
+        "requiredQty": 6
+      },
+      {
+        "roomId": "112",
+        "drugCode": "XOXCON1W",
+        "requiredQty": 3
+      },
+      {
+        "roomId": "DREMM",
+        "drugCode": "XPETH50W",
+        "requiredQty": 10
+      },
+      {
+        "roomId": "GICLA",
+        "drugCode": "XPETH50W",
+        "requiredQty": 40
+      },
+      {
+        "roomId": "HBEF",
+        "drugCode": "XPETH50W",
+        "requiredQty": 2
+      },
+      {
+        "roomId": "AN",
+        "drugCode": "XPETH50W",
+        "requiredQty": 5
+      },
+      {
+        "roomId": "HPC",
+        "drugCode": "XPETH50W",
+        "requiredQty": 25
+      },
+      {
+        "roomId": "HBEF",
+        "drugCode": "XREMIF1W",
+        "requiredQty": 3
+      },
+      {
+        "roomId": "AN",
+        "drugCode": "XREMIF1W",
+        "requiredQty": 39
+      }
+    ],
+    "narcoticDrugCategories": {
+      "XPOCR5S": "향정",
+      "XATIV4W": "향정",
+      "XATIV2W": "향정",
+      "XKETA5W": "향정",
+      "XDIAZ10W": "향정",
+      "XMIDZ15W": "향정",
+      "XMIDZ5W": "향정",
+      "XNALB10": "향정",
+      "XPROP1": "향정",
+      "XPROP1T": "향정",
+      "XPROP2T": "향정",
+      "XPENT5": "향정",
+      "XALFEN1W": "마약",
+      "XFENT50W": "마약",
+      "XFEN500": "마약",
+      "XFENT100W": "마약",
+      "XFENT15": "마약",
+      "XMORPS5W": "마약",
+      "XOXCON1W": "마약",
+      "XPETH50W": "마약",
+      "XREMIF1W": "마약"
+    },
+    "narcoticCheckedItems": {},
+    "narcoticExpiry": {},
+    "narcoticChecklistByRoom": {},
+    "uninspectedNarcoticRoomIds": [],
     "checkedStock": {},
     "stockExpiry": {},
     "stockChecklistByRoom": {},
