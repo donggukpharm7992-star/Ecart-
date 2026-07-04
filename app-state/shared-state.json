@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-04T07:54:29.396Z",
-  "clientId": "b90f8d25-ca80-4ee6-a3f4-c4b2a308e937",
+  "updatedAt": "2026-07-04T10:35:51.452Z",
+  "clientId": "b4e24877-b1d9-4f63-9c9b-184f5a2e7a46",
   "state": {
     "stockDrugs": [
       {
@@ -6750,7 +6750,9 @@
     "narcoticExpiry": {},
     "narcoticChecklistByRoom": {},
     "narcoticRoundSummaryDraft": null,
-    "uninspectedNarcoticRoomIds": [],
+    "uninspectedNarcoticRoomIds": [
+      "GICLA"
+    ],
     "checkedStock": {},
     "stockExpiry": {},
     "stockChecklistByRoom": {},
