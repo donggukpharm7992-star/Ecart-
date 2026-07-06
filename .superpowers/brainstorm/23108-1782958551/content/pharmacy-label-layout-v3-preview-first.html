@@ -1,0 +1,340 @@
+<style>
+  .preview-first {
+    --brand-orange: #f68d45;
+    --brand-orange-deep: #e2631a;
+    --brand-header: #7f665a;
+    --brand-brown: #96796a;
+    --brand-bluegray: #a8b6c3;
+    --brand-orange-soft: #fff3ea;
+    --brand-brown-soft: #f3eeea;
+    --brand-bluegray-soft: #edf3f7;
+    --line: #d8d1cc;
+    --line-soft: #eee8e3;
+    --muted: #667085;
+    --ink: #17202a;
+  }
+  .preview-first .shell {
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+  }
+  .preview-first .topbar {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 14px;
+    color: #fff;
+    background: var(--brand-header);
+  }
+  .preview-first .topbar h3,
+  .preview-first .topbar p {
+    margin: 0;
+  }
+  .preview-first .topbar p {
+    color: #f3ece7;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .preview-first .btn {
+    min-height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--brand-header);
+    background: #fff;
+    font-size: 12px;
+    font-weight: 900;
+  }
+  .preview-first .btn.primary {
+    border-color: var(--brand-orange-deep);
+    color: #fff;
+    background: var(--brand-orange);
+  }
+  .preview-first .btn.active {
+    border-color: #6f5a50;
+    color: #fff;
+    background: var(--brand-header);
+  }
+  .preview-first .btn.soft {
+    border-color: #d7c7bc;
+    color: var(--brand-header);
+    background: var(--brand-brown-soft);
+  }
+  .preview-first .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line-soft);
+    background: #fff;
+  }
+  .preview-first .preview-stage {
+    display: grid;
+    gap: 10px;
+    padding: 14px;
+    background: #f2f1ef;
+  }
+  .preview-first .stage-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: end;
+  }
+  .preview-first .stage-head h3,
+  .preview-first .stage-head p {
+    margin: 0;
+  }
+  .preview-first .stage-head p {
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .preview-first .canvas {
+    min-height: 238px;
+    padding: 18px;
+    border: 1px solid #d7c7bc;
+    border-radius: 8px;
+    background:
+      linear-gradient(90deg, rgba(216, 209, 204, 0.38) 1px, transparent 1px) 0 0 / 24px 24px,
+      linear-gradient(rgba(216, 209, 204, 0.38) 1px, transparent 1px) 0 0 / 24px 24px,
+      #fff;
+    overflow: auto;
+  }
+  .preview-first .label-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    align-items: flex-start;
+  }
+  .preview-first .label-card {
+    box-sizing: border-box;
+    background: #fff;
+    box-shadow: 0 6px 16px rgba(23, 32, 42, 0.08);
+  }
+  .preview-first .label-large {
+    width: 390px;
+    height: 138px;
+    display: grid;
+    grid-template-columns: 72px 1fr 58px;
+    overflow: hidden;
+    border: 2px solid #111;
+  }
+  .preview-first .label-warning {
+    display: grid;
+    place-items: center;
+    color: #fff;
+    background: #b42318;
+    font-size: 16px;
+    font-weight: 1000;
+    line-height: 1.1;
+    text-align: center;
+  }
+  .preview-first .label-name {
+    display: grid;
+    place-items: center;
+    padding: 8px;
+    color: #111827;
+    font-size: 38px;
+    font-weight: 1000;
+    line-height: 0.98;
+    text-align: center;
+  }
+  .preview-first .label-code {
+    display: grid;
+    place-items: center;
+    padding: 4px;
+    color: #e5e7eb;
+    background: #111;
+    font-size: 12px;
+    font-weight: 900;
+    line-height: 1.05;
+    text-align: center;
+    word-break: break-all;
+  }
+  .preview-first .label-small {
+    width: 278px;
+    height: 40px;
+    display: grid;
+    grid-template-columns: 58px 1fr 48px;
+    overflow: hidden;
+    border: 1px solid #111;
+  }
+  .preview-first .label-small .label-warning {
+    background: var(--brand-header);
+    font-size: 10px;
+  }
+  .preview-first .label-small .label-name {
+    font-size: 16px;
+    line-height: 1.05;
+  }
+  .preview-first .label-small .label-code {
+    font-size: 7px;
+  }
+  .preview-first .bottom-tools {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    padding: 12px 14px 14px;
+    background: #fff;
+  }
+  .preview-first .tool {
+    display: grid;
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    background: #fff;
+  }
+  .preview-first .tool strong {
+    color: var(--ink);
+  }
+  .preview-first .tool-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .preview-first .chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 900;
+  }
+  .preview-first .chip.cold {
+    color: #546878;
+    background: var(--brand-bluegray-soft);
+  }
+  .preview-first .chip.light {
+    color: #7a5200;
+    background: #fff7d7;
+  }
+  .preview-first .chip.expensive {
+    color: #9a3412;
+    background: var(--brand-orange-soft);
+  }
+  @media (max-width: 900px) {
+    .preview-first .bottom-tools {
+      grid-template-columns: 1fr;
+    }
+    .preview-first .label-large {
+      width: 100%;
+      max-width: 390px;
+    }
+  }
+</style>
+
+<h2>라벨 출력란 중심 배치</h2>
+<p class="subtitle">라벨을 가장 먼저 확인할 수 있도록 출력란을 넓은 상단 캔버스로 올리고, 조건/업로드/편집 도구는 아래 보조 영역으로 내린 배치입니다.</p>
+
+<div class="mockup preview-first">
+  <div class="mockup-header">Preview: 출력 미리보기 우선 배치</div>
+  <div class="mockup-body">
+    <div class="shell">
+      <div class="topbar">
+        <div>
+          <p>별도 화면</p>
+          <h3>약제팀 라벨 작업실</h3>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+          <button class="btn soft">비품관리로 돌아가기</button>
+          <button class="btn primary">라벨 출력 미리보기</button>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <button class="btn active">약품명 라벨</button>
+        <button class="btn">약품리스트</button>
+        <button class="btn">약품장 라벨</button>
+        <button class="btn">3단 약병장</button>
+        <button class="btn">외용장 라벨</button>
+      </div>
+
+      <section class="preview-stage">
+        <div class="stage-head">
+          <div>
+            <h3>라벨 출력란</h3>
+            <p>선택한 약품의 마지막 저장 라벨 또는 매칭된 기본 디자인을 크게 보여줍니다.</p>
+          </div>
+          <div class="tool-row">
+            <button class="btn active">100%</button>
+            <button class="btn">맞춤</button>
+            <button class="btn">인쇄용 보기</button>
+          </div>
+        </div>
+        <div class="canvas">
+          <div class="label-row">
+            <div>
+              <div class="label-card label-large">
+                <div class="label-warning">용량<br>주의</div>
+                <div class="label-name">Abilify<br>asimtufii</div>
+                <div class="label-code">XXARPIP72<br>차광</div>
+              </div>
+              <p style="margin:8px 0 0;color:#667085;font-size:12px;font-weight:800">35x100mm 샘플: 잘림 없이 전체 확인</p>
+            </div>
+            <div>
+              <div class="label-card label-small">
+                <div class="label-warning">차광</div>
+                <div class="label-name">Albumin(SK) 20%</div>
+                <div class="label-code">X20AL1S</div>
+              </div>
+              <p style="margin:8px 0 0;color:#667085;font-size:12px;font-weight:800">10x70mm 샘플: 작은 라벨도 함께 확인</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="bottom-tools">
+        <section class="tool">
+          <strong>라벨 생성 조건</strong>
+          <input class="mock-input" placeholder="분류 검색: 앰플, 바이알, 경구, 외용..." style="width:100%;border-color:#d8d1cc">
+          <div class="tool-row">
+            <span class="chip cold">냉장</span>
+            <span class="chip light">차광</span>
+            <span class="chip expensive">고가</span>
+          </div>
+        </section>
+
+        <section class="tool">
+          <strong>약품 검색 / 리스트 업로드</strong>
+          <input class="mock-input" placeholder="약품명, 코드 검색" style="width:100%;border-color:#d8d1cc">
+          <div style="border:1px dashed #a8b6c3;border-radius:6px;padding:10px;text-align:center;color:#667085;font-size:12px;background:#edf3f7">엑셀 파일 업로드</div>
+        </section>
+
+        <section class="tool">
+          <strong>크기 / 테두리 / 글자 편집</strong>
+          <div class="tool-row">
+            <button class="btn active">35x100</button>
+            <button class="btn">10x70</button>
+            <button class="btn soft">사용자 지정 mm</button>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;color:#475467;font-size:12px;font-weight:800">
+            <span>테두리 2mm</span>
+            <span>색상 #111111</span>
+            <span>약품명 38px</span>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="preview-first-ok" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>이 배치가 더 좋다</h3>
+      <p>라벨 출력란을 상단 넓은 캔버스로 두고 구현 설계에 반영합니다.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="preview-side-panel" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>출력란은 좋고, 도구는 옆으로</h3>
+      <p>출력란을 크게 유지하되 조건/편집 도구를 오른쪽 사이드 패널로 붙여봅니다.</p>
+    </div>
+  </div>
+</div>

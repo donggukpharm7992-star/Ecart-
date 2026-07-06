@@ -1,0 +1,227 @@
+<style>
+  .hospital-label-preview {
+    --brand-orange: #f68d45;
+    --brand-orange-deep: #e2631a;
+    --brand-header: #7f665a;
+    --brand-brown: #96796a;
+    --brand-bluegray: #a8b6c3;
+    --brand-orange-soft: #fff3ea;
+    --brand-brown-soft: #f3eeea;
+    --brand-bluegray-soft: #edf3f7;
+    --line: #d8d1cc;
+    --muted: #667085;
+    --ink: #17202a;
+  }
+  .hospital-label-preview .hospital-btn {
+    min-height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--brand-header);
+    background: #fff;
+    font-size: 12px;
+    font-weight: 900;
+  }
+  .hospital-label-preview .hospital-btn.primary {
+    border-color: var(--brand-orange-deep);
+    color: #fff;
+    background: var(--brand-orange);
+  }
+  .hospital-label-preview .hospital-btn.active {
+    border-color: #6f5a50;
+    color: #fff;
+    background: var(--brand-header);
+  }
+  .hospital-label-preview .hospital-btn.soft {
+    border-color: #d7c7bc;
+    color: var(--brand-header);
+    background: var(--brand-brown-soft);
+  }
+  .hospital-label-preview .mock-panel {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+  }
+  .hospital-label-preview .mock-titlebar {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 14px;
+    border-bottom: 1px solid #eee8e3;
+    color: #fff;
+    background: var(--brand-header);
+  }
+  .hospital-label-preview .mock-titlebar h3,
+  .hospital-label-preview .mock-titlebar p {
+    margin: 0;
+  }
+  .hospital-label-preview .mock-titlebar p {
+    color: #f3ece7;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .hospital-label-preview .tab-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px 12px;
+    border-bottom: 1px solid #eee8e3;
+    background: #fff;
+  }
+  .hospital-label-preview .workspace {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr) 240px;
+    gap: 12px;
+    padding: 12px;
+    background: #f2f1ef;
+  }
+  .hospital-label-preview .tool-box {
+    display: grid;
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    background: #fff;
+  }
+  .hospital-label-preview .tool-box strong {
+    color: var(--ink);
+  }
+  .hospital-label-preview .chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 900;
+  }
+  .hospital-label-preview .chip.cold {
+    color: #546878;
+    background: var(--brand-bluegray-soft);
+  }
+  .hospital-label-preview .chip.light {
+    color: #7a5200;
+    background: #fff7d7;
+  }
+  .hospital-label-preview .chip.expensive {
+    color: #9a3412;
+    background: var(--brand-orange-soft);
+  }
+</style>
+
+<h2>약제팀 라벨 버튼 색상 조정</h2>
+<p class="subtitle">기존 앱의 병원 UI 팔레트에 맞춰 주요 버튼은 오렌지, 활성 탭은 헤더 브라운, 보조 버튼은 소프트 브라운으로 정리했습니다.</p>
+
+<div class="mockup hospital-label-preview">
+  <div class="mockup-header">Preview: 병원 UI 팔레트 적용 버전</div>
+  <div class="mockup-body">
+    <div style="display:grid;grid-template-columns:0.8fr auto 1.4fr;gap:18px;align-items:stretch">
+      <div class="mock-panel" style="padding:14px">
+        <div style="font-size:12px;font-weight:800;color:var(--muted)">기존 비품관리 화면</div>
+        <div style="margin-top:10px;padding:10px;border:1px solid #eee8e3;border-radius:7px;background:#f8f7f5">
+          <strong>약품 라벨 출력</strong>
+          <p style="margin:6px 0 10px;color:var(--muted);font-size:12px">일반 약품 / E-cart / 수액 / 약제팀</p>
+          <button class="hospital-btn primary">약제팀 라벨</button>
+        </div>
+        <div style="margin-top:12px;height:120px;border:1px dashed #cbd5e1;border-radius:7px;color:#94a3b8;display:grid;place-items:center;font-size:12px">
+          전체 비품약 마스터 현황
+        </div>
+      </div>
+
+      <div style="display:grid;place-items:center;color:var(--muted);font-weight:900">→</div>
+
+      <div class="mock-panel" style="overflow:hidden">
+        <div class="mock-titlebar">
+          <div>
+            <p>별도 화면</p>
+            <h3>약제팀 라벨 작업실</h3>
+          </div>
+          <button class="hospital-btn soft">비품관리로 돌아가기</button>
+        </div>
+
+        <div class="tab-row">
+          <button class="hospital-btn active">약품명 라벨</button>
+          <button class="hospital-btn">약품리스트</button>
+          <button class="hospital-btn">약품장 라벨</button>
+          <button class="hospital-btn">3단 약병장</button>
+          <button class="hospital-btn">외용장 라벨</button>
+        </div>
+
+        <div class="workspace">
+          <div style="display:grid;gap:10px">
+            <div class="tool-box">
+              <strong>라벨 생성 조건</strong>
+              <div style="border:1px solid #d8d1cc;border-radius:6px;padding:7px;color:#475467;font-size:12px">분류: 앰플, 바이알, 경구, 외용...</div>
+              <div style="display:flex;gap:5px;flex-wrap:wrap">
+                <span class="chip cold">냉장</span>
+                <span class="chip light">차광</span>
+                <span class="chip expensive">고가</span>
+              </div>
+            </div>
+            <div class="tool-box">
+              <strong>약품 검색 / 신규 등록</strong>
+              <input class="mock-input" placeholder="약품명, 코드 검색" style="width:100%;border-color:#d8d1cc">
+              <button class="hospital-btn primary" style="width:max-content">신규 등록</button>
+            </div>
+          </div>
+
+          <div class="tool-box" style="min-height:250px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <strong>라벨 출력란</strong>
+              <span style="font-size:12px;color:var(--muted);font-weight:800">마지막 저장 라벨을 기본 표시</span>
+            </div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start">
+              <div style="width:265px;height:95px;border:2px solid #111;background:white;display:grid;grid-template-columns:54px 1fr 44px;overflow:hidden">
+                <div style="background:#b42318;color:white;display:grid;place-items:center;font-weight:900;font-size:12px;text-align:center">용량<br>주의</div>
+                <div style="display:grid;place-items:center;font-weight:1000;font-size:26px;text-align:center">Abilify<br>asimtufii</div>
+                <div style="background:#111;color:white;display:grid;place-items:center;font-size:10px;font-weight:900">XXARPIP72</div>
+              </div>
+              <div style="width:196px;height:28px;border:1px solid #111;background:white;display:grid;grid-template-columns:42px 1fr 34px;overflow:hidden">
+                <div style="background:#7f665a;color:white;display:grid;place-items:center;font-weight:900;font-size:8px">차광</div>
+                <div style="display:grid;place-items:center;font-weight:1000;font-size:12px">Albumin 20%</div>
+                <div style="background:#111;color:white;display:grid;place-items:center;font-size:6px">X20AL1S</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:grid;gap:10px">
+            <div class="tool-box">
+              <strong>크기 / 테두리 / 글자</strong>
+              <div style="display:grid;gap:7px;font-size:12px;color:#475467">
+                <button class="hospital-btn soft" style="width:max-content">사용자 지정 mm</button>
+                <div>테두리 굵기 / 색상</div>
+                <div>약품명 글자 크기 / 색상</div>
+              </div>
+            </div>
+            <div class="tool-box">
+              <strong>약품 리스트 업데이트</strong>
+              <div style="border:1px dashed #a8b6c3;border-radius:6px;padding:12px;text-align:center;color:#667085;font-size:12px;background:#edf3f7">엑셀 업로드</div>
+            </div>
+            <div class="tool-box">
+              <strong>마약 / 향정 / 고위험</strong>
+              <div style="height:52px;overflow:hidden;color:#667085;font-size:12px">스크롤 선택 + 추가/삭제</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="colors-ok" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>색상 방향 좋다</h3>
+      <p>이 병원 UI 팔레트를 기준으로 다음 세부 화면 설계를 진행합니다.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="colors-more-muted" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>조금 더 차분하게</h3>
+      <p>오렌지 버튼을 줄이고 브라운/블루그레이 중심으로 더 낮은 채도로 조정합니다.</p>
+    </div>
+  </div>
+</div>

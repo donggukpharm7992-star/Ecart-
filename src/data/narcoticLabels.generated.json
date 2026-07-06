@@ -1,0 +1,462 @@
+[
+  {
+    "code": "CODE20",
+    "labelText": "Decoin\n20mg tab\n(Codein phosphate 20mg)",
+    "category": "마약",
+    "categoryText": "마 약",
+    "cautionText": "고위험의약품 / 용량주의",
+    "sourceFile": "마약경구라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "B2"
+  },
+  {
+    "code": "FENT100-H",
+    "labelText": "Fentadur\n100mcg/hr\n(Fentanyl 100mcg/patch)",
+    "category": "마약",
+    "categoryText": "마 약",
+    "cautionText": "고위험의약품 / 용량주의",
+    "sourceFile": "마약경구라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "D11"
+  },
+  {
+    "code": "FENT1-H",
+    "labelText": "Fentadur\n12mcg/hr\n(Fentanyl 12mcg/patch)",
+    "category": "마약",
+    "categoryText": "마 약",
+    "cautionText": "고위험의약품 / 용량주의",
+    "sourceFile": "마약경구라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "B8"
+  },
+  {
+    "code": "FENT2-H",
+    "labelText": "Fentadur\n25mcg/hr\n(Fentanyl 25mcg/patch)",
+    "category": "마약",
+    "categoryText": "마 약",
+    "cautionText": "고위험의약품 / 용량주의",
+    "sourceFile": "마약경구라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "D8"
+  },
+  {
+    "code": "FENT5-H",
+    "labelText": "Fentadur\n50mcg/hr\n(Fentanyl 50mcg/patch)",
+    "category": "마약",
+    "categoryText": "마 약",
+    "cautionText": "고위험의약품 / 용량주의",
+    "sourceFile": "마약경구라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "B11"
+  },
+  {
+    "code": "FENT1SL",
+    "labelText": "Fentakhan SL\n133mcg/tab\n(Fentanyl citrate 133mcg)",
+    "category": "마약",
+    "categoryText": "마 약",
+    "cautionText": "고위험의약품 / 용량주의",
+    "sourceFile": "마약경구라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "B20"
+  },
+  {
+    "code": "FENT2SL",
+    "labelText": "Fentakhan SL\n267mcg/tab\n(Fentanyl citrate 267mcg)",
+    "category": "마약",
+    "categoryText": "마 약",
+    "cautionText": "고위험의약품",
+    "sourceFile": "마약경구라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "D20"
+  },
+  {
+    "code": "FENT4SL",
+    "labelText": "Fentakhan SL\n400mcg/tab\n(Fentanyl citrate 400mcg)",
+    "category": "마약",
+    "categoryText": "마 약",
+    "cautionText": "",
+    "sourceFile": "마약경구라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "B23"
+  },
+  {
+    "code": "XFENT100W",
+    "labelText": "Fentanlyl\n100mcg/2ml\n(Fentanyl citrate 100mcg)",
+    "category": "마약",
+    "categoryText": "마 약",
+    "cautionText": "고위험의약품 / 용량주의",
+    "sourceFile": "마약주사라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "D2"
+  },
+  {
+    "code": "XFENT15",
+    "labelText": "Fentanlyl\n1500mcg/30ml\n(Fentanyl citrate 1500mcg)",
+    "category": "마약",
+    "categoryText": "마 약",
+    "cautionText": "고위험의약품 / 용량주의",
+    "sourceFile": "마약주사라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "D5"
+  },
+  {
+    "code": "XFEN500",
+    "labelText": "Fentanlyl\n500mcg/10ml\n(Fentanyl citrate 500mcg)",
+    "category": "마약",
+    "categoryText": "마 약",
+    "cautionText": "고위험의약품 / 용량주의",
+    "sourceFile": "마약주사라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "B5"
+  },
+  {
+    "code": "XFEN50",
+    "labelText": "Fentanlyl\n50mcg/1ml\n(Fentanyl citrate 50mcg)",
+    "category": "마약",
+    "categoryText": "마 약",
+    "cautionText": "고위험의약품 / 용량주의",
+    "sourceFile": "마약주사라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "B2"
+  },
+  {
+    "code": "XMORP30",
+    "labelText": "Morphine sulfate\n30mg/2ml\n(Morphine sulfate 30mg)",
+    "category": "마약",
+    "categoryText": "마 약",
+    "cautionText": "고위험의약품",
+    "sourceFile": "마약주사라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "D14"
+  },
+  {
+    "code": "XMORPS5W",
+    "labelText": "Morphine sulfate\n5mg/5ml\n(Morphine sulfate 5mg)",
+    "category": "마약",
+    "categoryText": "마 약",
+    "cautionText": "고위험의약품",
+    "sourceFile": "마약주사라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "B14"
+  },
+  {
+    "code": "COIBAPH",
+    "labelText": "Mypol\n(Codein phosphate 10mg/ Ibuprofen 200mg/Acetaminophen 250mg/cap)",
+    "category": "마약",
+    "categoryText": "마 약",
+    "cautionText": "고위험의약품 / 용량주의",
+    "sourceFile": "마약경구라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "D2"
+  },
+  {
+    "code": "TAPENTA5W",
+    "labelText": "Nucynta ER\n50mg tab\n(Tapentadol 50mg)",
+    "category": "마약",
+    "categoryText": "마 약",
+    "cautionText": "",
+    "sourceFile": "마약경구라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "D23"
+  },
+  {
+    "code": "XOXCON1W",
+    "labelText": "Ocodone\n10mg/ml\n(Oxycodone HCl 10mg)",
+    "category": "마약",
+    "categoryText": "마 약",
+    "cautionText": "고위험의약품",
+    "sourceFile": "마약주사라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "B8"
+  },
+  {
+    "code": "OXCOD10",
+    "labelText": "Ocodone\n10mg/tab\n(Oxycodone HCl 10mg)",
+    "category": "마약",
+    "categoryText": "마 약",
+    "cautionText": "고위험의약품 / 용량주의",
+    "sourceFile": "마약경구라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "D5"
+  },
+  {
+    "code": "XOXCON2W",
+    "labelText": "Ocodone\n20mg/2ml\n(Oxycodone HCl 20mg)",
+    "category": "마약",
+    "categoryText": "마 약",
+    "cautionText": "고위험의약품",
+    "sourceFile": "마약주사라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "D8"
+  },
+  {
+    "code": "OXCOD5",
+    "labelText": "Ocodone\n5mg/tab\n(Oxycodone HCl 5mg)",
+    "category": "마약",
+    "categoryText": "마 약",
+    "cautionText": "고위험의약품 / 용량주의",
+    "sourceFile": "마약경구라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "B5"
+  },
+  {
+    "code": "XPETH50W",
+    "labelText": "Pethidine\n50mg/ml\n(Pethidine 50mg)",
+    "category": "마약",
+    "categoryText": "마 약",
+    "cautionText": "고위험의약품 / 용량주의",
+    "sourceFile": "마약주사라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "B11"
+  },
+  {
+    "code": "XREMIF5W",
+    "labelText": "Remiva\n5mg\n(Remifentanil 5mg)",
+    "category": "마약",
+    "categoryText": "마 약",
+    "cautionText": "",
+    "sourceFile": "마약주사라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "B17"
+  },
+  {
+    "code": "XSUFEN50",
+    "labelText": "Sufental\n50mcg/ml\n(Sufentanil 50mcg)",
+    "category": "마약",
+    "categoryText": "마 약",
+    "cautionText": "고위험의약품 / 용량주의",
+    "sourceFile": "마약주사라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "D11"
+  },
+  {
+    "code": "OXYC10N5",
+    "labelText": "Targin PR\n10/5mg/tab\n(Oxycodone 10mg/Naloxone 5mg)",
+    "category": "마약",
+    "categoryText": "마 약",
+    "cautionText": "고위험의약품 / 용량주의",
+    "sourceFile": "마약경구라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "D14"
+  },
+  {
+    "code": "OXYC20N10",
+    "labelText": "Targin PR\n20/10mg/tab\n(Oxycodone 20mg/Naloxone 10mg)",
+    "category": "마약",
+    "categoryText": "마 약",
+    "cautionText": "고위험의약품 / 용량주의",
+    "sourceFile": "마약경구라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "B17"
+  },
+  {
+    "code": "OXYC40N20",
+    "labelText": "Targin PR\n40/20mg/tab\n(Oxycodone 40mg/Naloxone 20mg)",
+    "category": "마약",
+    "categoryText": "마 약",
+    "cautionText": "고위험의약품 / 용량주의",
+    "sourceFile": "마약경구라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "D17"
+  },
+  {
+    "code": "OXYC5N2",
+    "labelText": "Targin PR\n5/2.5mg/tab\n(Oxycodone 5mg/Naloxone 2.5mg)",
+    "category": "마약",
+    "categoryText": "마 약",
+    "cautionText": "고위험의약품 / 용량주의",
+    "sourceFile": "마약경구라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "B14"
+  },
+  {
+    "code": "XREMIF1W",
+    "labelText": "Ultian\n1mg\n(Remifentanil 1mg)",
+    "category": "마약",
+    "categoryText": "마 약",
+    "cautionText": "",
+    "sourceFile": "마약주사라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "D17"
+  },
+  {
+    "code": "XPTS500W",
+    "labelText": "Advanz thiopental\n500mg\n(Thiopental 500mg)",
+    "category": "향정",
+    "categoryText": "향정신성의약품",
+    "cautionText": "고위험의약품",
+    "sourceFile": "향정라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "B14"
+  },
+  {
+    "code": "XLZPAM2",
+    "labelText": "Ativan\n2mg/0.5ml\n(Lorazepam 2mg)",
+    "category": "향정",
+    "categoryText": "향정신성의약품/ 냉장보관",
+    "cautionText": "고위험의약품 / 용량주의",
+    "sourceFile": "향정라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "B20"
+  },
+  {
+    "code": "XLZPAM4",
+    "labelText": "Ativan\n4mg/1ml\n(Lorazepam 4mg)",
+    "category": "향정",
+    "categoryText": "향정신성의약품/ 냉장보관",
+    "cautionText": "고위험의약품 / 용량주의",
+    "sourceFile": "향정라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "D20"
+  },
+  {
+    "code": "XREMIMA2",
+    "labelText": "Byfavo\n20mg/4.05ml\n(Remimazolam 20mg)",
+    "category": "향정",
+    "categoryText": "향정신성의약품",
+    "cautionText": "고위험의약품",
+    "sourceFile": "향정라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "B23"
+  },
+  {
+    "code": "XREMIMA",
+    "labelText": "Byfavo\n50mg/10ml\n(Remimazolam 50mg)",
+    "category": "향정",
+    "categoryText": "향정신성의약품",
+    "cautionText": "고위험의약품",
+    "sourceFile": "향정라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "D23"
+  },
+  {
+    "code": "XDDP",
+    "labelText": "Diazepam\n10mg/2ml\n(Oxycodone 10mg/Naloxone 5mg)",
+    "category": "향정",
+    "categoryText": "향정신성의약품",
+    "cautionText": "고위험의약품",
+    "sourceFile": "향정라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "D14"
+  },
+  {
+    "code": "XETOM",
+    "labelText": "Etomidate lipuro\n20mg/10ml\n(Etomidate 20mgl)",
+    "category": "향정",
+    "categoryText": "향정신성의약품",
+    "cautionText": "",
+    "sourceFile": "향정라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "D26"
+  },
+  {
+    "code": "XPROPO115W",
+    "labelText": "Fresofol MCT 1%\n150mg/15ml\n(Propofol 150mg)",
+    "category": "향정",
+    "categoryText": "향정신성의약품",
+    "cautionText": "고위험의약품 / 용량주의",
+    "sourceFile": "향정라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "B8"
+  },
+  {
+    "code": "XPROPO120",
+    "labelText": "Fresofol MCT 1%\n200mg/20ml\n(Propofol 200mg)",
+    "category": "향정",
+    "categoryText": "향정신성의약품",
+    "cautionText": "고위험의약품",
+    "sourceFile": "향정라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "D8"
+  },
+  {
+    "code": "XPROPO250",
+    "labelText": "Fresofol MCT 2%\n1000mg/50ml\n(Propofol 1000mg)",
+    "category": "향정",
+    "categoryText": "향정신성의약품",
+    "cautionText": "고위험의약품",
+    "sourceFile": "향정라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "B11"
+  },
+  {
+    "code": "XKETA5",
+    "labelText": "Ketamin HCl\n500mg/10ml\n(Ketamin HCl 500mg)",
+    "category": "향정",
+    "categoryText": "향정신성의약품/ 냉장보관",
+    "cautionText": "",
+    "sourceFile": "향정라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "B26"
+  },
+  {
+    "code": "XMIDA15",
+    "labelText": "Midazoalm\n15mg/3ml\n(Midazolam 15mg)",
+    "category": "향정",
+    "categoryText": "향정신성의약품",
+    "cautionText": "고위험의약품 / 용량주의",
+    "sourceFile": "향정라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "D2"
+  },
+  {
+    "code": "XMIDA5",
+    "labelText": "Midazoalm\n5mg/5ml\n(Midazolam 5mg)",
+    "category": "향정",
+    "categoryText": "향정신성의약품",
+    "cautionText": "고위험의약품 / 용량주의",
+    "sourceFile": "향정라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "B2"
+  },
+  {
+    "code": "XNALBUP10W",
+    "labelText": "Nalbuphine\n10mg/ml\n(Nalbuphine HCl 10mg)",
+    "category": "향정",
+    "categoryText": "향정신성의약품",
+    "cautionText": "고위험의약품 / 용량주의",
+    "sourceFile": "향정라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "B17"
+  },
+  {
+    "code": "BUPRE10-H",
+    "labelText": "Norspan\n10mcg/hr\n(Buprenorphine 10mcg)",
+    "category": "향정",
+    "categoryText": "향정신성의약품",
+    "cautionText": "고위험의약품 / 용량주의",
+    "sourceFile": "향정라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "D5"
+  },
+  {
+    "code": "BUPRE5-H",
+    "labelText": "Norspan\n5mcg/hr\n(Buprenorphine 5mcg)",
+    "category": "향정",
+    "categoryText": "향정신성의약품",
+    "cautionText": "고위험의약품 / 용량주의",
+    "sourceFile": "향정라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "B5"
+  },
+  {
+    "code": "XPHB",
+    "labelText": "Phenobarbital\n100mg/ml\n(Phenobarbital 100mg)",
+    "category": "향정",
+    "categoryText": "향정신성의약품",
+    "cautionText": "고위험의약품",
+    "sourceFile": "향정라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "D11"
+  },
+  {
+    "code": "CHR5-S",
+    "labelText": "Pocral Syr\n5ml/btl\n(Chloral hydrate 500mg)",
+    "category": "향정",
+    "categoryText": "향정신성의약품",
+    "cautionText": "고위험의약품 / 용량주의",
+    "sourceFile": "향정라벨.xlsx",
+    "sourceSheet": "Sheet1",
+    "sourceCell": "D17"
+  }
+]

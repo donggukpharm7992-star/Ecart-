@@ -1,0 +1,396 @@
+<style>
+  .header-search-layout {
+    --brand-orange: #f68d45;
+    --brand-orange-deep: #e2631a;
+    --brand-header: #7f665a;
+    --brand-brown: #96796a;
+    --brand-bluegray: #a8b6c3;
+    --brand-orange-soft: #fff3ea;
+    --brand-brown-soft: #f3eeea;
+    --brand-bluegray-soft: #edf3f7;
+    --line: #d8d1cc;
+    --line-soft: #eee8e3;
+    --muted: #667085;
+    --ink: #17202a;
+  }
+  .header-search-layout .shell {
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+  }
+  .header-search-layout .topbar {
+    display: grid;
+    grid-template-columns: minmax(180px, 0.7fr) minmax(320px, 1.25fr) auto;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 14px;
+    color: #fff;
+    background: var(--brand-header);
+  }
+  .header-search-layout .topbar h3,
+  .header-search-layout .topbar p {
+    margin: 0;
+  }
+  .header-search-layout .topbar p {
+    color: #f3ece7;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .header-search-layout .header-search {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+    gap: 8px;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 8px 0 12px;
+    border: 1px solid #d7c7bc;
+    border-radius: 7px;
+    background: #fff;
+  }
+  .header-search-layout .header-search span {
+    color: #96796a;
+    font-weight: 1000;
+  }
+  .header-search-layout .header-search input {
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    color: var(--ink);
+    font-size: 14px;
+    font-weight: 800;
+  }
+  .header-search-layout .btn {
+    min-height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--brand-header);
+    background: #fff;
+    font-size: 12px;
+    font-weight: 900;
+  }
+  .header-search-layout .btn.primary {
+    border-color: var(--brand-orange-deep);
+    color: #fff;
+    background: var(--brand-orange);
+  }
+  .header-search-layout .btn.active {
+    border-color: #6f5a50;
+    color: #fff;
+    background: var(--brand-header);
+  }
+  .header-search-layout .btn.soft {
+    border-color: #d7c7bc;
+    color: var(--brand-header);
+    background: var(--brand-brown-soft);
+  }
+  .header-search-layout .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line-soft);
+    background: #fff;
+  }
+  .header-search-layout .preview-stage {
+    display: grid;
+    gap: 10px;
+    padding: 14px;
+    background: #f2f1ef;
+  }
+  .header-search-layout .stage-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: end;
+  }
+  .header-search-layout .stage-head h3,
+  .header-search-layout .stage-head p {
+    margin: 0;
+  }
+  .header-search-layout .stage-head p {
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .header-search-layout .canvas {
+    min-height: 238px;
+    padding: 18px;
+    border: 1px solid #d7c7bc;
+    border-radius: 8px;
+    background:
+      linear-gradient(90deg, rgba(216, 209, 204, 0.38) 1px, transparent 1px) 0 0 / 24px 24px,
+      linear-gradient(rgba(216, 209, 204, 0.38) 1px, transparent 1px) 0 0 / 24px 24px,
+      #fff;
+    overflow: auto;
+  }
+  .header-search-layout .label-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    align-items: flex-start;
+  }
+  .header-search-layout .label-card {
+    box-sizing: border-box;
+    background: #fff;
+    box-shadow: 0 6px 16px rgba(23, 32, 42, 0.08);
+  }
+  .header-search-layout .label-large {
+    width: 390px;
+    height: 138px;
+    display: grid;
+    grid-template-columns: 72px 1fr 58px;
+    overflow: hidden;
+    border: 2px solid #111;
+  }
+  .header-search-layout .label-warning {
+    display: grid;
+    place-items: center;
+    color: #fff;
+    background: #b42318;
+    font-size: 16px;
+    font-weight: 1000;
+    line-height: 1.1;
+    text-align: center;
+  }
+  .header-search-layout .label-name {
+    display: grid;
+    place-items: center;
+    padding: 8px;
+    color: #111827;
+    font-size: 38px;
+    font-weight: 1000;
+    line-height: 0.98;
+    text-align: center;
+  }
+  .header-search-layout .label-code {
+    display: grid;
+    place-items: center;
+    padding: 4px;
+    color: #e5e7eb;
+    background: #111;
+    font-size: 12px;
+    font-weight: 900;
+    line-height: 1.05;
+    text-align: center;
+    word-break: break-all;
+  }
+  .header-search-layout .label-small {
+    width: 278px;
+    height: 40px;
+    display: grid;
+    grid-template-columns: 58px 1fr 48px;
+    overflow: hidden;
+    border: 1px solid #111;
+  }
+  .header-search-layout .label-small .label-warning {
+    background: var(--brand-header);
+    font-size: 10px;
+  }
+  .header-search-layout .label-small .label-name {
+    font-size: 16px;
+    line-height: 1.05;
+  }
+  .header-search-layout .label-small .label-code {
+    font-size: 7px;
+  }
+  .header-search-layout .bottom-tools {
+    display: grid;
+    grid-template-columns: minmax(220px, 0.95fr) minmax(260px, 1.1fr) minmax(220px, 0.95fr);
+    gap: 12px;
+    padding: 12px 14px 14px;
+    background: #fff;
+  }
+  .header-search-layout .tool {
+    display: grid;
+    align-content: start;
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    background: #fff;
+  }
+  .header-search-layout .tool strong {
+    color: var(--ink);
+  }
+  .header-search-layout .tool-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+  .header-search-layout .mini-upload {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 34px;
+    width: max-content;
+    padding: 0 12px;
+    border: 1px dashed #a8b6c3;
+    border-radius: 6px;
+    color: #546878;
+    background: var(--brand-bluegray-soft);
+    font-size: 12px;
+    font-weight: 900;
+  }
+  .header-search-layout .chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 900;
+  }
+  .header-search-layout .chip.cold {
+    color: #546878;
+    background: var(--brand-bluegray-soft);
+  }
+  .header-search-layout .chip.light {
+    color: #7a5200;
+    background: #fff7d7;
+  }
+  .header-search-layout .chip.expensive {
+    color: #9a3412;
+    background: var(--brand-orange-soft);
+  }
+  .header-search-layout .chip.control {
+    color: #7f1d1d;
+    background: #fff1f3;
+  }
+  @media (max-width: 980px) {
+    .header-search-layout .topbar {
+      grid-template-columns: 1fr;
+    }
+    .header-search-layout .bottom-tools {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<h2>검색은 헤더, 업로드는 작게</h2>
+<p class="subtitle">약품 검색을 작업실 헤더에 고정하고, 아래 도구 영역은 조건 / 편집 / 업로드·분류관리 순서로 재배치했습니다.</p>
+
+<div class="mockup header-search-layout">
+  <div class="mockup-header">Preview: 헤더 검색 + 컴팩트 업로드</div>
+  <div class="mockup-body">
+    <div class="shell">
+      <div class="topbar">
+        <div>
+          <p>별도 화면</p>
+          <h3>약제팀 라벨 작업실</h3>
+        </div>
+        <label class="header-search">
+          <span>⌕</span>
+          <input placeholder="약품명, 코드, 성분명 검색 후 바로 라벨 생성">
+          <button class="btn primary">검색</button>
+        </label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+          <button class="btn soft">비품관리로 돌아가기</button>
+          <button class="btn primary">라벨 출력 미리보기</button>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <button class="btn active">약품명 라벨</button>
+        <button class="btn">약품리스트</button>
+        <button class="btn">약품장 라벨</button>
+        <button class="btn">3단 약병장</button>
+        <button class="btn">외용장 라벨</button>
+      </div>
+
+      <section class="preview-stage">
+        <div class="stage-head">
+          <div>
+            <h3>라벨 출력란</h3>
+            <p>검색 또는 조건 매칭 결과의 마지막 저장 라벨을 크게 보여줍니다.</p>
+          </div>
+          <div class="tool-row">
+            <button class="btn active">100%</button>
+            <button class="btn">맞춤</button>
+            <button class="btn">인쇄용 보기</button>
+          </div>
+        </div>
+        <div class="canvas">
+          <div class="label-row">
+            <div>
+              <div class="label-card label-large">
+                <div class="label-warning">용량<br>주의</div>
+                <div class="label-name">Abilify<br>asimtufii</div>
+                <div class="label-code">XXARPIP72<br>차광</div>
+              </div>
+              <p style="margin:8px 0 0;color:#667085;font-size:12px;font-weight:800">35x100mm 샘플</p>
+            </div>
+            <div>
+              <div class="label-card label-small">
+                <div class="label-warning">차광</div>
+                <div class="label-name">Albumin(SK) 20%</div>
+                <div class="label-code">X20AL1S</div>
+              </div>
+              <p style="margin:8px 0 0;color:#667085;font-size:12px;font-weight:800">10x70mm 샘플</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="bottom-tools">
+        <section class="tool">
+          <strong>라벨 생성 조건</strong>
+          <input class="mock-input" placeholder="분류: 앰플, 바이알, 경구, 외용..." style="width:100%;border-color:#d8d1cc">
+          <div class="tool-row">
+            <span class="chip cold">냉장</span>
+            <span class="chip light">차광</span>
+            <span class="chip expensive">고가</span>
+          </div>
+        </section>
+
+        <section class="tool">
+          <strong>크기 / 테두리 / 글자 편집</strong>
+          <div class="tool-row">
+            <button class="btn active">35x100</button>
+            <button class="btn">10x70</button>
+            <button class="btn soft">사용자 지정 mm</button>
+          </div>
+          <div class="tool-row" style="font-size:12px;color:#475467;font-weight:800">
+            <span>테두리 2mm</span>
+            <span>색상 #111111</span>
+            <span>약품명 38px</span>
+            <span>글자색 #111827</span>
+          </div>
+        </section>
+
+        <section class="tool">
+          <strong>리스트 업로드 / 분류 관리</strong>
+          <div class="tool-row">
+            <button class="mini-upload">↑ 엑셀 업로드</button>
+            <button class="btn soft">변경 반영</button>
+          </div>
+          <div class="tool-row">
+            <span class="chip control">마약</span>
+            <span class="chip control">향정</span>
+            <span class="chip control">고위험</span>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="header-search-ok" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>이 배치가 맞다</h3>
+      <p>검색은 헤더 고정, 편집 도구는 가운데, 업로드는 작은 보조 버튼으로 설계에 반영합니다.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="header-search-more-compact" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>아래 도구를 더 줄이자</h3>
+      <p>조건과 편집을 접이식 또는 한 줄 도구막대로 더 압축합니다.</p>
+    </div>
+  </div>
+</div>

@@ -1,6 +1,15 @@
 import { describe, expect, it } from "vitest";
 import type { StockAllocation, StockDrug } from "./types";
-import { buildMasterRows, deleteAllocation, sortStockDrugsByName, updateAllocationQuantity } from "./inventoryState";
+import {
+  buildMasterRows,
+  deleteAllocation,
+  deleteMasterDrug,
+  filterMasterRowsByKind,
+  filterMasterRowsWithStock,
+  type MasterRow,
+  sortStockDrugsByName,
+  updateAllocationQuantity,
+} from "./inventoryState";
 
 const drugs: StockDrug[] = [
   {
@@ -68,6 +77,26 @@ describe("inventory allocation state", () => {
     ]);
   });
 
+  it("can hide master rows whose total quantity is zero without removing the drug from master data", () => {
+    const rows = buildMasterRows([...drugs, { ...drugs[0], code: "XZERO", productName: "Zero stock inj" }], allocations);
+
+    expect(rows.some((row) => row.code === "XZERO")).toBe(true);
+    expect(filterMasterRowsWithStock(rows).map((row) => row.code)).not.toContain("XZERO");
+  });
+
+  it("filters master rows by selected stock, psychotropic, and narcotic categories", () => {
+    const rows: MasterRow[] = [
+      { ...drugs[0], masterKind: "stock", totalQuantity: 1, roomDetails: [] },
+      { ...drugs[0], code: "XPSY", masterKind: "psychotropic", totalQuantity: 1, roomDetails: [] },
+      { ...drugs[0], code: "XNAR", masterKind: "narcotic", totalQuantity: 1, roomDetails: [] },
+    ];
+
+    expect(filterMasterRowsByKind(rows, { stock: true, psychotropic: false, narcotic: true }).map((row) => row.code)).toEqual([
+      "XAAA",
+      "XNAR",
+    ]);
+  });
+
   it("updates a room quantity and immediately changes the master summary", () => {
     const next = updateAllocationQuantity(allocations, "42W", "XAAA", 7);
     const rows = buildMasterRows(drugs, next);
@@ -84,5 +113,12 @@ describe("inventory allocation state", () => {
 
     expect(alpha?.totalQuantity).toBe(2);
     expect(alpha?.roomDetails).toEqual([{ roomId: "42W", requiredQty: 2 }]);
+  });
+
+  it("deletes one master drug and only its allocations", () => {
+    const next = deleteMasterDrug(drugs, allocations, "XAAA");
+
+    expect(next.drugs.map((drug) => drug.code)).toEqual(["XBBB"]);
+    expect(next.allocations).toEqual([{ roomId: "42W", drugCode: "XBBB", requiredQty: 1 }]);
   });
 });

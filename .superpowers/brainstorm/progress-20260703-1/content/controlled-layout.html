@@ -1,0 +1,107 @@
+<h2>비치마약류 관리 화면 배치안</h2>
+<p class="subtitle">비품약 화면과 같은 구조를 유지하되, 순회 점검표와 LOT 업로드는 비치마약류 화면 안에만 둡니다.</p>
+
+<div class="mockup">
+  <div class="mockup-header">Preview: 비치마약류 관리 탭</div>
+  <div class="mockup-body">
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <button class="mock-button" style="background:#f8fafc;color:#334155;border:1px solid #cbd5e1">비품약 관리</button>
+      <button class="mock-button" style="background:#f8fafc;color:#334155;border:1px solid #cbd5e1">응급카트 관리</button>
+      <button class="mock-button" style="background:#b4232f;color:white;border:1px solid #8f1d28">비치마약류 관리</button>
+    </div>
+
+    <div style="border:1px solid #f0c7cc;background:#fff7f8;border-radius:12px;padding:14px;margin-bottom:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+        <div>
+          <h3 style="margin:0;color:#8f1d28">비치마약류 보유 현황</h3>
+          <p style="margin:6px 0 0;color:#475569">비치향정,마약현황.xlsx 기준 · 월별 재고 상세 파일 LOT 자동 연동</p>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="mock-button" style="background:#b4232f;color:white;border:1px solid #8f1d28">비치마약류 순회 점검표</button>
+          <button class="mock-button" style="background:white;color:#8f1d28;border:1px solid #d8707a">엑셀 업로드</button>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:220px 1fr;gap:14px">
+      <aside style="border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc">
+        <strong>층별 보유 현황 안내</strong>
+        <div style="display:grid;gap:8px;margin-top:10px">
+          <span style="padding:8px;border-radius:8px;background:white;border:1px solid #e2e8f0">2층: HBEF · GICLA · MICU</span>
+          <span style="padding:8px;border-radius:8px;background:#fff1f2;border:1px solid #f0c7cc">3층: AN · OR · SICU</span>
+          <span style="padding:8px;border-radius:8px;background:white;border:1px solid #e2e8f0">4층: DRL · NICU · 42</span>
+          <span style="padding:8px;border-radius:8px;background:white;border:1px solid #e2e8f0">5층 이상: 61 · 62 · 71...</span>
+        </div>
+      </aside>
+
+      <main style="display:grid;gap:14px">
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="mock-button" style="background:#b4232f;color:white;border:1px solid #8f1d28">HBEF (7)</button>
+          <button class="mock-button" style="background:#f8fafc;color:#334155;border:1px solid #cbd5e1">DREMM (4)</button>
+          <button class="mock-button" style="background:#f8fafc;color:#334155;border:1px solid #cbd5e1">MICU (8)</button>
+          <button class="mock-button" style="background:#f8fafc;color:#334155;border:1px solid #cbd5e1">AN (12)</button>
+          <button class="mock-button" style="background:#f8fafc;color:#334155;border:1px solid #cbd5e1">기타 병동</button>
+        </div>
+
+        <div style="border:1px solid #e5e7eb;border-radius:10px;overflow:hidden">
+          <table style="width:100%;border-collapse:collapse;font-size:13px;background:white">
+            <thead style="background:#fff1f2;color:#7f1d1d">
+              <tr>
+                <th style="padding:8px;text-align:left">구분</th>
+                <th style="padding:8px;text-align:left">약품코드</th>
+                <th style="padding:8px;text-align:left">약품명</th>
+                <th style="padding:8px;text-align:right">수량</th>
+                <th style="padding:8px;text-align:left">실별 LOT번호</th>
+                <th style="padding:8px;text-align:left">조제실 LOT번호</th>
+                <th style="padding:8px;text-align:center">확인</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="padding:8px;border-top:1px solid #f1f5f9"><span style="background:#7f1d1d;color:white;border-radius:999px;padding:2px 8px">향정</span></td>
+                <td style="padding:8px;border-top:1px solid #f1f5f9">XMIDA5</td>
+                <td style="padding:8px;border-top:1px solid #f1f5f9">Midazolam 5mg/5ml inj</td>
+                <td style="padding:8px;border-top:1px solid #f1f5f9;text-align:right">4</td>
+                <td style="padding:8px;border-top:1px solid #f1f5f9">25075</td>
+                <td style="padding:8px;border-top:1px solid #f1f5f9">25080</td>
+                <td style="padding:8px;border-top:1px solid #f1f5f9;text-align:center">□</td>
+              </tr>
+              <tr>
+                <td style="padding:8px;border-top:1px solid #f1f5f9"><span style="background:#991b1b;color:white;border-radius:999px;padding:2px 8px">마약</span></td>
+                <td style="padding:8px;border-top:1px solid #f1f5f9">XFEN50</td>
+                <td style="padding:8px;border-top:1px solid #f1f5f9">Fentanyl 50mcg inj</td>
+                <td style="padding:8px;border-top:1px solid #f1f5f9;text-align:right">4</td>
+                <td style="padding:8px;border-top:1px solid #f1f5f9">BQY801</td>
+                <td style="padding:8px;border-top:1px solid #f1f5f9">BQZ104</td>
+                <td style="padding:8px;border-top:1px solid #f1f5f9;text-align:center">□</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <section style="border:1px solid #e5e7eb;border-radius:10px;padding:12px;background:white">
+            <strong>비치마약류 체크리스트</strong>
+            <p style="color:#64748b;margin:6px 0 10px">9개 기본 문항 · 양호/개선 필요/메모</p>
+            <div style="display:grid;gap:7px">
+              <span>☑ 저장 시설에 적절하게 보관</span>
+              <span>☑ 계폐와 시건 장치 이상 없음</span>
+              <span>☐ 종류와 수량 이상 없음</span>
+              <span>☑ 유효기간 월 1회 날짜 관리</span>
+            </div>
+          </section>
+          <section style="border:1px solid #e5e7eb;border-radius:10px;padding:12px;background:white">
+            <strong>점검 사항</strong>
+            <p style="color:#64748b;margin:6px 0 10px">개선 필요와 메모가 순회 점검표로 자동 반영</p>
+            <textarea class="mock-input" style="width:100%;min-height:90px" placeholder="예: XFEN50 수량 재확인 필요"></textarea>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>확인할 부분</h3>
+  <p>버튼 위치, LOT 업로드 위치, 붉은 계열 강조, 현황판의 LOT 열 구성이 의도와 맞는지 확인해 주세요.</p>
+</div>

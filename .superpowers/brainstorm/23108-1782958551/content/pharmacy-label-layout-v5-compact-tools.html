@@ -1,0 +1,349 @@
+<style>
+  .compact-tools-layout {
+    --brand-orange: #f68d45;
+    --brand-orange-deep: #e2631a;
+    --brand-header: #7f665a;
+    --brand-brown: #96796a;
+    --brand-bluegray: #a8b6c3;
+    --brand-orange-soft: #fff3ea;
+    --brand-brown-soft: #f3eeea;
+    --brand-bluegray-soft: #edf3f7;
+    --line: #d8d1cc;
+    --line-soft: #eee8e3;
+    --muted: #667085;
+    --ink: #17202a;
+  }
+  .compact-tools-layout .shell {
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+  }
+  .compact-tools-layout .topbar {
+    display: grid;
+    grid-template-columns: minmax(170px, 0.6fr) minmax(340px, 1.5fr) auto;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 14px;
+    color: #fff;
+    background: var(--brand-header);
+  }
+  .compact-tools-layout .topbar h3,
+  .compact-tools-layout .topbar p {
+    margin: 0;
+  }
+  .compact-tools-layout .topbar p {
+    color: #f3ece7;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .compact-tools-layout .header-search {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+    gap: 8px;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 8px 0 12px;
+    border: 1px solid #d7c7bc;
+    border-radius: 7px;
+    background: #fff;
+  }
+  .compact-tools-layout .header-search span {
+    color: #96796a;
+    font-weight: 1000;
+  }
+  .compact-tools-layout .header-search input {
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    color: var(--ink);
+    font-size: 14px;
+    font-weight: 800;
+  }
+  .compact-tools-layout .btn {
+    min-height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--brand-header);
+    background: #fff;
+    font-size: 12px;
+    font-weight: 900;
+  }
+  .compact-tools-layout .btn.primary {
+    border-color: var(--brand-orange-deep);
+    color: #fff;
+    background: var(--brand-orange);
+  }
+  .compact-tools-layout .btn.active {
+    border-color: #6f5a50;
+    color: #fff;
+    background: var(--brand-header);
+  }
+  .compact-tools-layout .btn.soft {
+    border-color: #d7c7bc;
+    color: var(--brand-header);
+    background: var(--brand-brown-soft);
+  }
+  .compact-tools-layout .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line-soft);
+    background: #fff;
+  }
+  .compact-tools-layout .utility-strip {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: center;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--line-soft);
+    background: #f8f7f5;
+  }
+  .compact-tools-layout .tool-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+  .compact-tools-layout .tool-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    min-height: 30px;
+    padding: 0 10px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: #475467;
+    background: #fff;
+    font-size: 12px;
+    font-weight: 900;
+  }
+  .compact-tools-layout .tool-chip.emphasis {
+    color: var(--brand-header);
+    background: var(--brand-brown-soft);
+    border-color: #d7c7bc;
+  }
+  .compact-tools-layout .tool-chip.upload {
+    color: #546878;
+    background: var(--brand-bluegray-soft);
+    border-style: dashed;
+    border-color: var(--brand-bluegray);
+  }
+  .compact-tools-layout .preview-stage {
+    display: grid;
+    gap: 10px;
+    padding: 14px;
+    background: #f2f1ef;
+  }
+  .compact-tools-layout .stage-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: end;
+  }
+  .compact-tools-layout .stage-head h3,
+  .compact-tools-layout .stage-head p {
+    margin: 0;
+  }
+  .compact-tools-layout .stage-head p {
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .compact-tools-layout .canvas {
+    min-height: 315px;
+    padding: 22px;
+    border: 1px solid #d7c7bc;
+    border-radius: 8px;
+    background:
+      linear-gradient(90deg, rgba(216, 209, 204, 0.38) 1px, transparent 1px) 0 0 / 24px 24px,
+      linear-gradient(rgba(216, 209, 204, 0.38) 1px, transparent 1px) 0 0 / 24px 24px,
+      #fff;
+    overflow: auto;
+  }
+  .compact-tools-layout .label-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 22px;
+    align-items: flex-start;
+  }
+  .compact-tools-layout .label-card {
+    box-sizing: border-box;
+    background: #fff;
+    box-shadow: 0 6px 16px rgba(23, 32, 42, 0.08);
+  }
+  .compact-tools-layout .label-large {
+    width: 430px;
+    height: 152px;
+    display: grid;
+    grid-template-columns: 78px 1fr 64px;
+    overflow: hidden;
+    border: 2px solid #111;
+  }
+  .compact-tools-layout .label-warning {
+    display: grid;
+    place-items: center;
+    color: #fff;
+    background: #b42318;
+    font-size: 17px;
+    font-weight: 1000;
+    line-height: 1.1;
+    text-align: center;
+  }
+  .compact-tools-layout .label-name {
+    display: grid;
+    place-items: center;
+    padding: 8px;
+    color: #111827;
+    font-size: 41px;
+    font-weight: 1000;
+    line-height: 0.98;
+    text-align: center;
+  }
+  .compact-tools-layout .label-code {
+    display: grid;
+    place-items: center;
+    padding: 4px;
+    color: #e5e7eb;
+    background: #111;
+    font-size: 12px;
+    font-weight: 900;
+    line-height: 1.05;
+    text-align: center;
+    word-break: break-all;
+  }
+  .compact-tools-layout .label-small {
+    width: 310px;
+    height: 45px;
+    display: grid;
+    grid-template-columns: 62px 1fr 50px;
+    overflow: hidden;
+    border: 1px solid #111;
+  }
+  .compact-tools-layout .label-small .label-warning {
+    background: var(--brand-header);
+    font-size: 10px;
+  }
+  .compact-tools-layout .label-small .label-name {
+    font-size: 17px;
+    line-height: 1.05;
+  }
+  .compact-tools-layout .label-small .label-code {
+    font-size: 7px;
+  }
+  .compact-tools-layout .selected-drug-line {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    color: #475467;
+    font-size: 12px;
+    font-weight: 900;
+  }
+  @media (max-width: 980px) {
+    .compact-tools-layout .topbar,
+    .compact-tools-layout .utility-strip {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<h2>압축 도구막대 틀</h2>
+<p class="subtitle">B 방향으로 진행한 버전입니다. 아래 패널을 크게 펼치지 않고, 조건/편집/업로드를 한 줄 도구막대로 압축해 출력 캔버스를 더 크게 확보했습니다.</p>
+
+<div class="mockup compact-tools-layout">
+  <div class="mockup-header">Preview: 헤더 검색 + 압축 도구막대</div>
+  <div class="mockup-body">
+    <div class="shell">
+      <div class="topbar">
+        <div>
+          <p>별도 화면</p>
+          <h3>약제팀 라벨 작업실</h3>
+        </div>
+        <label class="header-search">
+          <span>⌕</span>
+          <input placeholder="약품명, 코드, 성분명 검색 후 바로 라벨 생성">
+          <button class="btn primary">검색</button>
+        </label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+          <button class="btn soft">비품관리로 돌아가기</button>
+          <button class="btn primary">라벨 출력 미리보기</button>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <button class="btn active">약품명 라벨</button>
+        <button class="btn">약품리스트</button>
+        <button class="btn">약품장 라벨</button>
+        <button class="btn">3단 약병장</button>
+        <button class="btn">외용장 라벨</button>
+      </div>
+
+      <div class="utility-strip">
+        <div class="tool-chips">
+          <button class="tool-chip emphasis">분류: 앰플 · 바이알 · 경구 · 외용</button>
+          <button class="tool-chip">보관: 냉장 · 차광 · 고가</button>
+          <button class="tool-chip emphasis">크기: 35x100mm</button>
+          <button class="tool-chip">테두리 2mm #111</button>
+          <button class="tool-chip">약품명 41px #111827</button>
+          <button class="tool-chip upload">엑셀 업로드</button>
+          <button class="tool-chip">마약 · 향정 · 고위험 관리</button>
+        </div>
+        <button class="btn soft">도구 펼치기</button>
+      </div>
+
+      <section class="preview-stage">
+        <div class="stage-head">
+          <div>
+            <h3>라벨 출력란</h3>
+            <p>외부에서 만든 라벨 파일을 공유받기 전까지는 선택 약품과 마지막 저장 라벨의 틀을 보여줍니다.</p>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="btn active">100%</button>
+            <button class="btn">맞춤</button>
+            <button class="btn">인쇄용 보기</button>
+          </div>
+        </div>
+        <div class="canvas">
+          <div class="selected-drug-line">
+            <span>선택 약품</span>
+            <span style="color:#7f665a">XXARPIP72</span>
+            <span>Abilify asimtufii 720mg inj</span>
+            <span style="color:#b42318">용량주의 · 차광</span>
+          </div>
+          <div class="label-row" style="margin-top:14px">
+            <div>
+              <div class="label-card label-large">
+                <div class="label-warning">용량<br>주의</div>
+                <div class="label-name">Abilify<br>asimtufii</div>
+                <div class="label-code">XXARPIP72<br>차광</div>
+              </div>
+              <p style="margin:8px 0 0;color:#667085;font-size:12px;font-weight:800">35x100mm 기본 틀</p>
+            </div>
+            <div>
+              <div class="label-card label-small">
+                <div class="label-warning">차광</div>
+                <div class="label-name">Albumin(SK) 20%</div>
+                <div class="label-code">X20AL1S</div>
+              </div>
+              <p style="margin:8px 0 0;color:#667085;font-size:12px;font-weight:800">10x70mm 보조 틀</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="compact-frame-ok" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>이 틀로 대기</h3>
+      <p>압축 도구막대와 큰 출력 캔버스 구조만 유지하고, 라벨 구현 파일 공유 전까지 여기서 멈춥니다.</p>
+    </div>
+  </div>
+</div>

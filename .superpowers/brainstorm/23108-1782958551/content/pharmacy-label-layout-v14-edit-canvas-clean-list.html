@@ -1,0 +1,687 @@
+<style>
+  .label-studio-clean {
+    --brand-orange: #f68d45;
+    --brand-orange-deep: #e2631a;
+    --brand-header: #7f665a;
+    --brand-brown: #96796a;
+    --brand-brown-soft: #f3eeea;
+    --brand-bluegray-soft: #edf3f7;
+    --line: #d8d1cc;
+    --line-soft: #eee8e3;
+    --muted: #667085;
+    --ink: #17202a;
+    --ok: #12805c;
+    --warn: #a15c00;
+    --danger: #b42318;
+  }
+  .label-studio-clean * {
+    box-sizing: border-box;
+  }
+  .label-studio-clean .shell {
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+  }
+  .label-studio-clean .topbar {
+    display: grid;
+    grid-template-columns: minmax(220px, 0.65fr) minmax(320px, 1.1fr) auto;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 14px;
+    color: #fff;
+    background: var(--brand-header);
+  }
+  .label-studio-clean .topbar h3,
+  .label-studio-clean .topbar p {
+    margin: 0;
+  }
+  .label-studio-clean .topbar p {
+    color: #f3ece7;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .label-studio-clean .header-search {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+    gap: 8px;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 8px 0 12px;
+    border: 1px solid #d7c7bc;
+    border-radius: 7px;
+    background: #fff;
+  }
+  .label-studio-clean .header-search span {
+    color: #96796a;
+    font-weight: 1000;
+  }
+  .label-studio-clean .header-search input {
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    color: var(--ink);
+    font-size: 14px;
+    font-weight: 800;
+  }
+  .label-studio-clean .btn {
+    min-height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--brand-header);
+    background: #fff;
+    font-size: 12px;
+    font-weight: 900;
+  }
+  .label-studio-clean .btn.primary {
+    border-color: var(--brand-orange-deep);
+    color: #fff;
+    background: var(--brand-orange);
+  }
+  .label-studio-clean .btn.active {
+    border-color: #6f5a50;
+    color: #fff;
+    background: var(--brand-header);
+  }
+  .label-studio-clean .btn.soft {
+    border-color: #ead9cd;
+    color: #6f5a50;
+    background: #fff8f4;
+  }
+  .label-studio-clean .label-tabs {
+    display: flex;
+    gap: 8px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line-soft);
+    background: #fbfaf9;
+  }
+  .label-studio-clean .source-strip {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line-soft);
+    background: #fff;
+  }
+  .label-studio-clean .source-strip strong {
+    display: block;
+    color: var(--ink);
+    font-size: 13px;
+  }
+  .label-studio-clean .source-strip span {
+    display: block;
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .label-studio-clean .stats {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .label-studio-clean .workspace {
+    display: grid;
+    grid-template-columns: minmax(230px, 0.78fr) minmax(420px, 1.45fr) minmax(260px, 0.9fr);
+    gap: 12px;
+    padding: 14px;
+    background: #f7f8fa;
+  }
+  .label-studio-clean .panel {
+    min-width: 0;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+  }
+  .label-studio-clean .panel-head {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 12px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .label-studio-clean .panel-head h3,
+  .label-studio-clean .panel-head p {
+    margin: 0;
+  }
+  .label-studio-clean .panel-head h3 {
+    color: var(--ink);
+    font-size: 16px;
+  }
+  .label-studio-clean .panel-head p {
+    margin-top: 3px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .label-studio-clean .chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 24px;
+    padding: 0 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 1000;
+    white-space: nowrap;
+  }
+  .label-studio-clean .chip.ok {
+    color: var(--ok);
+    background: #e9f8f1;
+  }
+  .label-studio-clean .chip.warn {
+    color: var(--warn);
+    background: #fff4df;
+  }
+  .label-studio-clean .chip.red {
+    color: var(--danger);
+    background: #fff0ed;
+  }
+  .label-studio-clean .chip.gray {
+    color: #475467;
+    background: #f2f4f7;
+  }
+  .label-studio-clean .filter-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .label-studio-clean .drug-list {
+    display: grid;
+    gap: 7px;
+    max-height: 405px;
+    overflow: auto;
+    padding: 10px 12px;
+  }
+  .label-studio-clean .drug-row {
+    display: grid;
+    grid-template-columns: 18px minmax(0, 1fr) auto;
+    gap: 8px;
+    align-items: center;
+    width: 100%;
+    padding: 9px 9px;
+    border: 1px solid var(--line-soft);
+    border-radius: 7px;
+    color: var(--ink);
+    background: #fff;
+    text-align: left;
+  }
+  .label-studio-clean .drug-row.selected {
+    border-color: var(--brand-orange);
+    background: #fff8f3;
+    box-shadow: inset 4px 0 0 var(--brand-orange);
+  }
+  .label-studio-clean .drug-row strong {
+    display: block;
+    overflow: hidden;
+    color: var(--ink);
+    font-size: 13px;
+    line-height: 1.25;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .label-studio-clean .drug-row small {
+    display: block;
+    margin-top: 2px;
+    overflow: hidden;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 800;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .label-studio-clean .list-note {
+    margin: 0 12px 12px;
+    padding: 9px 10px;
+    border-radius: 7px;
+    color: #667085;
+    background: #f8fafc;
+    font-size: 11px;
+    font-weight: 800;
+  }
+  .label-studio-clean .canvas-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .label-studio-clean .canvas-head h3,
+  .label-studio-clean .canvas-head p {
+    margin: 0;
+  }
+  .label-studio-clean .canvas-head h3 {
+    color: var(--ink);
+    font-size: 17px;
+  }
+  .label-studio-clean .canvas-head p {
+    margin-top: 3px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .label-studio-clean .mode-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line-soft);
+    background: #fbfaf9;
+  }
+  .label-studio-clean .edit-stage {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 116px;
+    gap: 12px;
+    align-items: stretch;
+    padding: 14px;
+  }
+  .label-studio-clean .canvas {
+    display: flex;
+    min-height: 300px;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed #c7d7e5;
+    border-radius: 8px;
+    background:
+      linear-gradient(90deg, rgba(148, 163, 184, 0.10) 1px, transparent 1px),
+      linear-gradient(0deg, rgba(148, 163, 184, 0.10) 1px, transparent 1px),
+      #f8fbfd;
+    background-size: 22px 22px;
+  }
+  .label-studio-clean .label-card {
+    position: relative;
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr);
+    width: 350px;
+    min-height: 126px;
+    overflow: hidden;
+    border: 3px solid #111827;
+    border-radius: 4px;
+    background: #fff;
+    box-shadow: 0 12px 24px rgba(16, 24, 40, 0.12);
+  }
+  .label-studio-clean .label-card:after {
+    content: "";
+    position: absolute;
+    inset: 8px;
+    border: 2px dashed var(--brand-orange);
+    border-radius: 3px;
+    pointer-events: none;
+  }
+  .label-studio-clean .label-warning {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: 2px solid #111827;
+    color: #d92d20;
+    font-size: 20px;
+    font-weight: 1000;
+    line-height: 1.12;
+    text-align: center;
+  }
+  .label-studio-clean .label-main {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    min-width: 0;
+  }
+  .label-studio-clean .label-name {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 14px;
+    color: #111827;
+    font-size: 25px;
+    font-weight: 1000;
+    line-height: 1.07;
+    text-align: center;
+    text-shadow:
+      -1px -1px 0 #ffffff,
+      1px -1px 0 #ffffff,
+      -1px 1px 0 #ffffff,
+      1px 1px 0 #ffffff;
+  }
+  .label-studio-clean .label-code {
+    padding: 6px 10px;
+    border-top: 2px solid #111827;
+    color: #475467;
+    font-size: 12px;
+    font-weight: 900;
+    text-align: center;
+  }
+  .label-studio-clean .mini-tools {
+    display: grid;
+    gap: 8px;
+    align-content: start;
+  }
+  .label-studio-clean .tool-tile {
+    display: grid;
+    gap: 5px;
+    justify-items: center;
+    padding: 10px 6px;
+    border: 1px solid var(--line-soft);
+    border-radius: 7px;
+    color: #475467;
+    background: #fff;
+    font-size: 11px;
+    font-weight: 900;
+  }
+  .label-studio-clean .tool-tile.active {
+    border-color: var(--brand-orange);
+    color: var(--brand-orange-deep);
+    background: #fff8f3;
+  }
+  .label-studio-clean .save-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    padding: 11px 12px;
+    border-top: 1px solid var(--line-soft);
+  }
+  .label-studio-clean .save-row span {
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 800;
+  }
+  .label-studio-clean details {
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .label-studio-clean details:last-child {
+    border-bottom: 0;
+  }
+  .label-studio-clean summary {
+    cursor: pointer;
+    padding: 12px;
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 1000;
+    list-style: none;
+  }
+  .label-studio-clean summary::-webkit-details-marker {
+    display: none;
+  }
+  .label-studio-clean summary:after {
+    content: "펼치기";
+    float: right;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 900;
+  }
+  .label-studio-clean details[open] summary:after {
+    content: "접기";
+  }
+  .label-studio-clean .detail-body {
+    display: grid;
+    gap: 8px;
+    padding: 0 12px 12px;
+  }
+  .label-studio-clean .field-row {
+    display: grid;
+    grid-template-columns: 78px minmax(0, 1fr);
+    gap: 8px;
+    align-items: center;
+    color: #475467;
+    font-size: 12px;
+    font-weight: 900;
+  }
+  .label-studio-clean .fake-input {
+    min-height: 30px;
+    padding: 7px 8px;
+    border: 1px solid var(--line-soft);
+    border-radius: 6px;
+    color: var(--ink);
+    background: #fff;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .label-studio-clean .candidate {
+    display: grid;
+    grid-template-columns: 18px minmax(0, 1fr);
+    gap: 7px;
+    align-items: flex-start;
+    padding: 8px;
+    border: 1px solid var(--line-soft);
+    border-radius: 7px;
+    color: #344054;
+    background: #fff;
+    font-size: 12px;
+    font-weight: 900;
+  }
+  .label-studio-clean .candidate small {
+    display: block;
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 800;
+  }
+  .label-studio-clean .rule-box {
+    padding: 10px;
+    border: 1px solid #d6e6f2;
+    border-radius: 7px;
+    color: #31546c;
+    background: #f4f9fc;
+    font-size: 12px;
+    font-weight: 850;
+    line-height: 1.45;
+  }
+  @media (max-width: 980px) {
+    .label-studio-clean .topbar,
+    .label-studio-clean .source-strip,
+    .label-studio-clean .workspace,
+    .label-studio-clean .edit-stage {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<h2>수정 캔버스와 간소화된 약품 리스트</h2>
+<p class="subtitle">약품 리스트는 선택에만 집중하고, 새로 수정하거나 직접 그리는 화면은 중앙의 라벨 편집 캔버스에서 바로 보이도록 정리한 미리보기입니다.</p>
+
+<div class="mockup label-studio-clean">
+  <div class="mockup-header">Preview: 엑셀 매칭 라벨 작업실</div>
+  <div class="mockup-body">
+    <div class="shell">
+      <div class="topbar">
+        <div>
+          <p>별도 화면</p>
+          <h3>약제팀 라벨 작업실</h3>
+        </div>
+        <label class="header-search">
+          <span>⌕</span>
+          <input placeholder="약품코드, 약품명, 매칭 라벨 검색">
+          <button class="btn primary">검색</button>
+        </label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+          <button class="btn primary">약품리스트 관리</button>
+          <button class="btn soft">비품관리로 돌아가기</button>
+        </div>
+      </div>
+
+      <div class="label-tabs">
+        <button class="btn active">약품명 라벨</button>
+        <button class="btn">약품장 라벨</button>
+        <button class="btn">3단 약병장</button>
+        <button class="btn">외용장 라벨</button>
+      </div>
+
+      <div class="source-strip">
+        <div>
+          <strong>연결 파일: 원내보유의약품_라벨매칭_20260702.xlsx</strong>
+          <span>약품코드 기준으로 연결합니다. 점수와 원본 위치는 기본 리스트에서 숨기고, 필요할 때 오른쪽 매칭 상세에서 확인합니다.</span>
+        </div>
+        <div class="stats">
+          <span class="chip ok">확정 582</span>
+          <span class="chip warn">검토필요 169</span>
+          <span class="chip red">미매칭 911</span>
+        </div>
+      </div>
+
+      <div class="workspace">
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h3>약품 리스트</h3>
+              <p>복수 선택 후 일괄 출력 가능</p>
+            </div>
+            <span class="chip gray">선택 3</span>
+          </div>
+          <div class="filter-row">
+            <span class="chip ok">확정</span>
+            <span class="chip warn">검토필요</span>
+            <span class="chip red">미매칭</span>
+            <span class="chip gray">마약</span>
+            <span class="chip gray">항암제</span>
+          </div>
+          <div class="drug-list">
+            <button class="drug-row selected">
+              <input type="checkbox" checked>
+              <span>
+                <strong>Atropine oph 0.01% 5mL</strong>
+                <small>A.01W-T · 외용 · 차광</small>
+              </span>
+              <span class="chip ok">확정</span>
+            </button>
+            <button class="drug-row">
+              <input type="checkbox" checked>
+              <span>
+                <strong>Heuk powder 50g</strong>
+                <small>ACHAR5-W · 산제</small>
+              </span>
+              <span class="chip ok">확정</span>
+            </button>
+            <button class="drug-row">
+              <input type="checkbox">
+              <span>
+                <strong>Zoylex 200mg tab</strong>
+                <small>ACYC2W · 경구</small>
+              </span>
+              <span class="chip warn">검토</span>
+            </button>
+            <button class="drug-row">
+              <input type="checkbox" checked>
+              <span>
+                <strong>Verzenio 100mg tab</strong>
+                <small>ABEMA1 · 항암제</small>
+              </span>
+              <span class="chip red">미매칭</span>
+            </button>
+            <button class="drug-row">
+              <input type="checkbox">
+              <span>
+                <strong>Verzenio 150mg tab</strong>
+                <small>ABEMA15 · 항암제</small>
+              </span>
+              <span class="chip red">미매칭</span>
+            </button>
+          </div>
+          <p class="list-note">점수, 원본 파일, 셀 위치는 이 목록에 표시하지 않습니다. 선택 약품의 검토 정보는 오른쪽 매칭 상세에서만 확인합니다.</p>
+        </section>
+
+        <section class="panel">
+          <div class="canvas-head">
+            <div>
+              <h3>라벨 편집 캔버스</h3>
+              <p>새로 만들기, 수기 수정, 직접 그리기가 모두 이 영역에 표시됩니다.</p>
+            </div>
+            <span class="chip ok">기본: 엑셀 매칭 라벨</span>
+          </div>
+          <div class="mode-row">
+            <button class="btn active">선택 라벨 수정</button>
+            <button class="btn">새 라벨 만들기</button>
+            <button class="btn">직접 그리기</button>
+            <button class="btn">텍스트 편집</button>
+          </div>
+          <div class="edit-stage">
+            <div class="canvas">
+              <div class="label-card">
+                <div class="label-warning">차광<br>필요</div>
+                <div class="label-main">
+                  <div class="label-name">Atropine oph<br>0.01% 5ml<br>아트로핀</div>
+                  <div class="label-code">A.01W-T · 외용 · 기본 라벨</div>
+                </div>
+              </div>
+            </div>
+            <div class="mini-tools">
+              <div class="tool-tile active">↔<span>이동</span></div>
+              <div class="tool-tile">T<span>글자</span></div>
+              <div class="tool-tile">□<span>테두리</span></div>
+              <div class="tool-tile">✎<span>그리기</span></div>
+              <div class="tool-tile">↺<span>되돌림</span></div>
+            </div>
+          </div>
+          <div class="save-row">
+            <span>저장하면 이 약품의 최신 라벨로 보관되고, 다음 검색/출력 시 기본값으로 다시 표시됩니다.</span>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button class="btn">A4 출력</button>
+              <button class="btn">A3 출력</button>
+              <button class="btn primary">수정 라벨 저장</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h3>도구와 상세</h3>
+              <p>필요한 정보만 펼쳐 확인</p>
+            </div>
+          </div>
+          <details open>
+            <summary>크기와 테두리</summary>
+            <div class="detail-body">
+              <div class="field-row"><span>크기</span><div class="fake-input">35 x 100 mm</div></div>
+              <div class="field-row"><span>외곽선</span><div class="fake-input">3 px · 검정</div></div>
+              <div class="field-row"><span>글자 테두리</span><div class="fake-input">1 px · 흰색</div></div>
+            </div>
+          </details>
+          <details>
+            <summary>글씨 설정</summary>
+            <div class="detail-body">
+              <div class="field-row"><span>폰트</span><div class="fake-input">기본 고딕</div></div>
+              <div class="field-row"><span>크기</span><div class="fake-input">25 pt</div></div>
+              <div class="field-row"><span>색상</span><div class="fake-input">검정 / 경고 빨강</div></div>
+            </div>
+          </details>
+          <details>
+            <summary>매칭 상세</summary>
+            <div class="detail-body">
+              <div class="rule-box">선택 약품: A.01W-T<br>매칭상태: 확정 · 매칭점수: 103<br>원본 위치: 외용바구니!A14 / 외용바구니_old!A14 / 앰플!B2</div>
+              <label class="candidate">
+                <input type="radio" checked>
+                <span>Atropine oph 0.01% 5ml 아트로핀 0.01% 점안액<small>약품개별 라벨모음 · 외용바구니!A14</small></span>
+              </label>
+              <label class="candidate">
+                <input type="radio">
+                <span>Atropine 아트로핀<small>바이알, 앰플, 수액라벨.xlsx · 앰플!B2</small></span>
+              </label>
+            </div>
+          </details>
+          <details open>
+            <summary>저장 우선순위</summary>
+            <div class="detail-body">
+              <div class="rule-box">1. 약품별로 저장된 수기 라벨이 있으면 먼저 표시<br>2. 없으면 엑셀 `해당라벨` 매칭값 표시<br>3. 미매칭이면 현재 크기/모양으로 새 라벨 생성</div>
+            </div>
+          </details>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="edit-canvas-clean-list-ok" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>이 배치가 맞다</h3>
+      <p>왼쪽은 선택 목록, 가운데는 실제 수정/그리기 캔버스, 오른쪽은 접이식 도구와 매칭 상세로 나눕니다.</p>
+    </div>
+  </div>
+</div>

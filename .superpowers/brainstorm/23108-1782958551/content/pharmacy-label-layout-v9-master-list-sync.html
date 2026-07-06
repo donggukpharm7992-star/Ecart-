@@ -1,0 +1,411 @@
+<style>
+  .master-sync-layout {
+    --brand-orange: #f68d45;
+    --brand-orange-deep: #e2631a;
+    --brand-header: #7f665a;
+    --brand-brown: #96796a;
+    --brand-bluegray: #a8b6c3;
+    --brand-orange-soft: #fff3ea;
+    --brand-brown-soft: #f3eeea;
+    --brand-bluegray-soft: #edf3f7;
+    --line: #d8d1cc;
+    --line-soft: #eee8e3;
+    --muted: #667085;
+    --ink: #17202a;
+  }
+  .master-sync-layout .shell {
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+  }
+  .master-sync-layout .topbar {
+    display: grid;
+    grid-template-columns: minmax(170px, 0.6fr) minmax(340px, 1.5fr) auto;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 14px;
+    color: #fff;
+    background: var(--brand-header);
+  }
+  .master-sync-layout .topbar h3,
+  .master-sync-layout .topbar p {
+    margin: 0;
+  }
+  .master-sync-layout .topbar p {
+    color: #f3ece7;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .master-sync-layout .header-search {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+    gap: 8px;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 8px 0 12px;
+    border: 1px solid #d7c7bc;
+    border-radius: 7px;
+    background: #fff;
+  }
+  .master-sync-layout .header-search span {
+    color: #96796a;
+    font-weight: 1000;
+  }
+  .master-sync-layout .header-search input {
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    color: var(--ink);
+    font-size: 14px;
+    font-weight: 800;
+  }
+  .master-sync-layout .btn {
+    min-height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--brand-header);
+    background: #fff;
+    font-size: 12px;
+    font-weight: 900;
+  }
+  .master-sync-layout .btn.primary {
+    border-color: var(--brand-orange-deep);
+    color: #fff;
+    background: var(--brand-orange);
+  }
+  .master-sync-layout .btn.active {
+    border-color: #6f5a50;
+    color: #fff;
+    background: var(--brand-header);
+  }
+  .master-sync-layout .btn.soft {
+    border-color: #d7c7bc;
+    color: var(--brand-header);
+    background: var(--brand-brown-soft);
+  }
+  .master-sync-layout .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line-soft);
+    background: #fff;
+  }
+  .master-sync-layout .content {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 270px;
+    gap: 12px;
+    padding: 14px;
+    background: #f2f1ef;
+  }
+  .master-sync-layout .panel,
+  .master-sync-layout .side-panel {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+  }
+  .master-sync-layout .section-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: end;
+  }
+  .master-sync-layout h3,
+  .master-sync-layout p {
+    margin: 0;
+  }
+  .master-sync-layout .section-head p,
+  .master-sync-layout .side-panel p {
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .master-sync-layout .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+  .master-sync-layout .chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 27px;
+    padding: 0 9px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: #475467;
+    background: #fff;
+    font-size: 12px;
+    font-weight: 900;
+  }
+  .master-sync-layout .chip.active {
+    color: var(--brand-header);
+    background: var(--brand-brown-soft);
+    border-color: #d7c7bc;
+  }
+  .master-sync-layout .chip.red {
+    color: #7f1d1d;
+    background: #fff1f3;
+    border-color: #fecdd3;
+  }
+  .master-sync-layout .table-wrap {
+    max-height: 310px;
+    overflow: auto;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+  }
+  .master-sync-layout table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 780px;
+    background: #fff;
+  }
+  .master-sync-layout th,
+  .master-sync-layout td {
+    padding: 8px 9px;
+    border-bottom: 1px solid var(--line-soft);
+    color: #344054;
+    font-size: 12px;
+    text-align: left;
+    vertical-align: middle;
+  }
+  .master-sync-layout th {
+    position: sticky;
+    top: 0;
+    background: #f8f7f5;
+    color: var(--brand-header);
+    font-weight: 1000;
+    z-index: 2;
+  }
+  .master-sync-layout td strong {
+    display: block;
+    color: var(--brand-header);
+    font-size: 12px;
+  }
+  .master-sync-layout td small {
+    display: block;
+    color: var(--muted);
+    font-size: 11px;
+  }
+  .master-sync-layout .toggle-cell {
+    text-align: center;
+  }
+  .master-sync-layout .toggle-cell input {
+    width: 16px;
+    height: 16px;
+  }
+  .master-sync-layout .changed {
+    background: #fffaf6;
+  }
+  .master-sync-layout .mini-select,
+  .master-sync-layout .mini-input {
+    min-height: 30px;
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 4px 7px;
+    color: var(--ink);
+    background: #fff;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .master-sync-layout .impact-list {
+    display: grid;
+    gap: 8px;
+  }
+  .master-sync-layout .impact-card {
+    padding: 9px;
+    border: 1px solid var(--line-soft);
+    border-radius: 7px;
+    background: #f8f7f5;
+  }
+  .master-sync-layout .impact-card strong {
+    display: block;
+    color: var(--brand-header);
+    font-size: 13px;
+  }
+  .master-sync-layout .impact-card span {
+    display: block;
+    margin-top: 3px;
+    color: #475467;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .master-sync-layout .rule-box {
+    padding: 10px;
+    border: 1px solid #d7c7bc;
+    border-radius: 8px;
+    color: var(--brand-header);
+    background: var(--brand-brown-soft);
+    font-size: 12px;
+    font-weight: 900;
+    line-height: 1.45;
+  }
+  @media (max-width: 980px) {
+    .master-sync-layout .topbar,
+    .master-sync-layout .content {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<h2>전체 리스트 관리와 연동</h2>
+<p class="subtitle">약제팀 라벨 작업실 안에서 마약/향정/고위험 같은 약품 속성을 직접 수정하고, 저장 시 라벨과 비품약 리스트에 함께 반영되는 흐름입니다.</p>
+
+<div class="mockup master-sync-layout">
+  <div class="mockup-header">Preview: 약제팀 약품 전체 리스트 관리</div>
+  <div class="mockup-body">
+    <div class="shell">
+      <div class="topbar">
+        <div>
+          <p>별도 화면</p>
+          <h3>약제팀 라벨 작업실</h3>
+        </div>
+        <label class="header-search">
+          <span>⌕</span>
+          <input placeholder="약품코드, 약품명, 성분명 검색">
+          <button class="btn primary">검색</button>
+        </label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+          <button class="btn soft">비품관리로 돌아가기</button>
+          <button class="btn primary">변경 저장 및 연동</button>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <button class="btn">약품명 라벨</button>
+        <button class="btn active">약품리스트 / 전체 관리</button>
+        <button class="btn">약품장 라벨</button>
+        <button class="btn">3단 약병장</button>
+        <button class="btn">외용장 라벨</button>
+      </div>
+
+      <div class="content">
+        <section class="panel">
+          <div class="section-head">
+            <div>
+              <h3>약제팀 약품 전체 리스트</h3>
+              <p>약품코드 기준으로 수정하고, 라벨 저장본과 비품약 리스트에 연결합니다.</p>
+            </div>
+            <div class="filter-bar">
+              <span class="chip active">전체</span>
+              <span class="chip red">마약</span>
+              <span class="chip red">향정</span>
+              <span class="chip red">고위험</span>
+              <span class="chip">수정됨 3건</span>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>약품</th>
+                  <th>마약</th>
+                  <th>향정</th>
+                  <th>고위험</th>
+                  <th>항암</th>
+                  <th>보관</th>
+                  <th>주의문구</th>
+                  <th>연동상태</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="changed">
+                  <td><strong>XMO15</strong><small>Morphine 15mg inj</small></td>
+                  <td class="toggle-cell"><input type="checkbox" checked></td>
+                  <td class="toggle-cell"><input type="checkbox"></td>
+                  <td class="toggle-cell"><input type="checkbox" checked></td>
+                  <td class="toggle-cell"><input type="checkbox"></td>
+                  <td><select class="mini-select"><option>실온</option><option>냉장</option><option>차광</option></select></td>
+                  <td><input class="mini-input" value="마약 / 고위험"></td>
+                  <td><span class="chip red">라벨 2건 갱신</span></td>
+                </tr>
+                <tr class="changed">
+                  <td><strong>XMIDA</strong><small>Midazolam 5mg/5ml inj</small></td>
+                  <td class="toggle-cell"><input type="checkbox"></td>
+                  <td class="toggle-cell"><input type="checkbox" checked></td>
+                  <td class="toggle-cell"><input type="checkbox"></td>
+                  <td class="toggle-cell"><input type="checkbox"></td>
+                  <td><select class="mini-select"><option>실온</option><option>냉장</option><option>차광</option></select></td>
+                  <td><input class="mini-input" value="향정"></td>
+                  <td><span class="chip active">비품약 1건 갱신</span></td>
+                </tr>
+                <tr>
+                  <td><strong>X20AL1S</strong><small>Albumin(SK) 20% 100ml inj</small></td>
+                  <td class="toggle-cell"><input type="checkbox"></td>
+                  <td class="toggle-cell"><input type="checkbox"></td>
+                  <td class="toggle-cell"><input type="checkbox"></td>
+                  <td class="toggle-cell"><input type="checkbox"></td>
+                  <td><select class="mini-select"><option>냉장</option><option>실온</option><option>차광</option></select></td>
+                  <td><input class="mini-input" value="냉장"></td>
+                  <td><span class="chip">동기화됨</span></td>
+                </tr>
+                <tr class="changed">
+                  <td><strong>XCHEMO1</strong><small>Cyclophosphamide inj</small></td>
+                  <td class="toggle-cell"><input type="checkbox"></td>
+                  <td class="toggle-cell"><input type="checkbox"></td>
+                  <td class="toggle-cell"><input type="checkbox" checked></td>
+                  <td class="toggle-cell"><input type="checkbox" checked></td>
+                  <td><select class="mini-select"><option>차광</option><option>실온</option><option>냉장</option></select></td>
+                  <td><input class="mini-input" value="항암제 / 고위험"></td>
+                  <td><span class="chip red">새 태그 추가</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="filter-bar">
+            <button class="btn soft">업로드 변경분 비교</button>
+            <button class="btn">선택 행 일괄 수정</button>
+            <button class="btn primary">변경 저장 및 연동</button>
+          </div>
+        </section>
+
+        <aside class="side-panel">
+          <div>
+            <h3>저장 시 영향 범위</h3>
+            <p>수정 내용이 어디에 반영되는지 저장 전에 확인합니다.</p>
+          </div>
+          <div class="impact-list">
+            <div class="impact-card">
+              <strong>라벨 저장소</strong>
+              <span>저장된 약품 라벨 4건의 태그/주의문구 갱신</span>
+            </div>
+            <div class="impact-card">
+              <strong>출력 기본값</strong>
+              <span>약품 클릭 시 마지막 저장 라벨 + 새 속성으로 미리보기</span>
+            </div>
+            <div class="impact-card">
+              <strong>비품약 관리 화면</strong>
+              <span>같은 약품코드가 있으면 주의문구/보관 배지 갱신</span>
+            </div>
+            <div class="impact-card">
+              <strong>필터 조건</strong>
+              <span>마약/향정/고위험 필터 결과가 즉시 변경</span>
+            </div>
+          </div>
+          <div class="rule-box">
+            약품코드가 기준입니다. 수기로 편집한 라벨의 디자인은 유지하고, 마약/향정/고위험 같은 안전 태그와 주의문구만 최신 값으로 다시 연결합니다.
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="master-sync-ok" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>이 전체 리스트 관리 방식이 맞다</h3>
+      <p>약제팀 라벨 작업실에서 수정하고 라벨/비품약 리스트에 함께 연동하는 구조로 설계에 반영합니다.</p>
+    </div>
+  </div>
+</div>

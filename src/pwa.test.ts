@@ -1,0 +1,262 @@
+import { existsSync, readFileSync } from "node:fs";
+import { inflateSync } from "node:zlib";
+import { describe, expect, it } from "vitest";
+import { buildPwaAssetUrl, getPwaMetadata } from "./pwa";
+
+const iconVersion = "20260701a";
+
+function readPngSize(path: string) {
+  const bytes = readFileSync(path);
+  return {
+    width: bytes.readUInt32BE(16),
+    height: bytes.readUInt32BE(20),
+  };
+}
+
+function readPngAlphaBounds(path: string) {
+  const bytes = readFileSync(path);
+  const width = bytes.readUInt32BE(16);
+  const height = bytes.readUInt32BE(20);
+  const bitDepth = bytes[24];
+  const colorType = bytes[25];
+  const interlace = bytes[28];
+  if (bitDepth !== 8 || colorType !== 6 || interlace !== 0) {
+    throw new Error(`Unsupported PNG format for alpha bounds: ${path}`);
+  }
+
+  const idatChunks: Buffer[] = [];
+  let offset = 8;
+  while (offset < bytes.length) {
+    const length = bytes.readUInt32BE(offset);
+    const type = bytes.toString("ascii", offset + 4, offset + 8);
+    const dataStart = offset + 8;
+    const dataEnd = dataStart + length;
+    if (type === "IDAT") idatChunks.push(bytes.subarray(dataStart, dataEnd));
+    if (type === "IEND") break;
+    offset = dataEnd + 4;
+  }
+
+  const inflated = inflateSync(Buffer.concat(idatChunks));
+  const bytesPerPixel = 4;
+  const stride = width * bytesPerPixel;
+  const rows: Uint8Array[] = [];
+  let sourceOffset = 0;
+  for (let y = 0; y < height; y += 1) {
+    const filterType = inflated[sourceOffset];
+    sourceOffset += 1;
+    const current = Uint8Array.from(inflated.subarray(sourceOffset, sourceOffset + stride));
+    sourceOffset += stride;
+    const previous = rows[y - 1];
+    for (let x = 0; x < stride; x += 1) {
+      const left = x >= bytesPerPixel ? current[x - bytesPerPixel] : 0;
+      const up = previous?.[x] ?? 0;
+      const upLeft = x >= bytesPerPixel ? (previous?.[x - bytesPerPixel] ?? 0) : 0;
+      current[x] =
+        (current[x] +
+          (filterType === 1
+            ? left
+            : filterType === 2
+              ? up
+              : filterType === 3
+                ? Math.floor((left + up) / 2)
+                : filterType === 4
+                  ? paeth(left, up, upLeft)
+                  : 0)) &
+        0xff;
+    }
+    rows.push(current);
+  }
+
+  let minX = width;
+  let minY = height;
+  let maxX = -1;
+  let maxY = -1;
+  rows.forEach((row, y) => {
+    for (let x = 0; x < width; x += 1) {
+      if (row[x * bytesPerPixel + 3] <= 8) continue;
+      minX = Math.min(minX, x);
+      minY = Math.min(minY, y);
+      maxX = Math.max(maxX, x);
+      maxY = Math.max(maxY, y);
+    }
+  });
+
+  return {
+    left: minX,
+    top: minY,
+    right: width - 1 - maxX,
+    bottom: height - 1 - maxY,
+  };
+}
+
+function paeth(left: number, up: number, upLeft: number) {
+  const estimate = left + up - upLeft;
+  const leftDistance = Math.abs(estimate - left);
+  const upDistance = Math.abs(estimate - up);
+  const upLeftDistance = Math.abs(estimate - upLeft);
+  if (leftDistance <= upDistance && leftDistance <= upLeftDistance) return left;
+  if (upDistance <= upLeftDistance) return up;
+  return upLeft;
+}
+
+describe("PWA install metadata", () => {
+  it("uses the Vite base path for install assets", () => {
+    expect(buildPwaAssetUrl("/Ecart-/", "sw.js")).toBe("/Ecart-/sw.js");
+    expect(buildPwaAssetUrl("/Ecart-/", "manifest.webmanifest")).toBe("/Ecart-/manifest.webmanifest");
+  });
+
+  it("selects separate install metadata for the master viewer route", () => {
+    expect(getPwaMetadata("/Ecart-/").manifestPath).toBe("manifest.webmanifest");
+    expect(getPwaMetadata("/Ecart-/viewer")).toEqual({
+      manifestPath: "viewer.webmanifest",
+      iconPath: "icons/app-icon-192.png",
+      appleTitle: "비품약 마스터 관리",
+      themeColor: "#f97316",
+    });
+    expect(getPwaMetadata("/Ecart-/pharmacy-viewer")).toEqual({
+      manifestPath: "pharmacy-viewer.webmanifest",
+      iconPath: "icons/app-icon-192.png",
+      appleTitle: "약제팀 라벨",
+      themeColor: "#f97316",
+    });
+    expect(getPwaMetadata("/Ecart-/narcotic-viewer")).toEqual({
+      manifestPath: "narcotic-viewer.webmanifest",
+      iconPath: "icons/narcotic-icon-192.png",
+      appleTitle: "비치마약류관리",
+      themeColor: "#b91c1c",
+    });
+  });
+
+  it("defines an installable standalone app manifest", () => {
+    const manifest = JSON.parse(readFileSync("public/manifest.webmanifest", "utf8"));
+
+    expect(manifest.name).toBe("비품점검");
+    expect(manifest.short_name).toBe("비품점검");
+    expect(manifest.display).toBe("standalone");
+    expect(manifest.id).toBe("/Ecart-/");
+    expect(manifest.start_url).toBe("/Ecart-/");
+    expect(manifest.scope).toBe("/Ecart-/");
+    expect(manifest.background_color).toBe("#f97316");
+    expect(manifest.theme_color).toBe("#f97316");
+    expect(manifest.icons).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ src: `/Ecart-/icons/app-icon-192.png?v=${iconVersion}`, sizes: "192x192", type: "image/png", purpose: "any" }),
+        expect.objectContaining({
+          src: `/Ecart-/icons/app-icon-desktop-512.png?v=${iconVersion}`,
+          sizes: "512x512",
+          type: "image/png",
+          purpose: "any",
+        }),
+      ]),
+    );
+    expect(manifest.icons).not.toEqual(expect.arrayContaining([expect.objectContaining({ purpose: expect.stringContaining("maskable") })]));
+    expect(manifest.icons).not.toEqual(expect.arrayContaining([expect.objectContaining({ src: expect.stringContaining("app-icon.svg") })]));
+    expect(existsSync("public/icons/app-icon-192.png")).toBe(true);
+    expect(existsSync("public/icons/app-icon-512.png")).toBe(true);
+    expect(existsSync("public/icons/app-icon-desktop-512.png")).toBe(true);
+    expect(readPngSize("public/icons/app-icon-192.png")).toEqual({ width: 192, height: 192 });
+    expect(readPngSize("public/icons/app-icon-512.png")).toEqual({ width: 512, height: 512 });
+    expect(readPngSize("public/icons/app-icon-desktop-512.png")).toEqual({ width: 512, height: 512 });
+    expect(readPngAlphaBounds("public/icons/app-icon-desktop-512.png")).toEqual({
+      left: expect.any(Number),
+      top: expect.any(Number),
+      right: expect.any(Number),
+      bottom: expect.any(Number),
+    });
+    expect(Object.values(readPngAlphaBounds("public/icons/app-icon-512.png")).every((inset) => inset >= 100)).toBe(true);
+    expect(Object.values(readPngAlphaBounds("public/icons/app-icon-desktop-512.png")).every((inset) => inset >= 30)).toBe(true);
+    expect(Object.values(readPngAlphaBounds("public/icons/app-icon-desktop-512.png")).every((inset) => inset < 80)).toBe(true);
+  });
+
+  it("defines a separate installable manifest for the master viewer", () => {
+    const manifest = JSON.parse(readFileSync("public/viewer.webmanifest", "utf8"));
+
+    expect(manifest.name).toBe("비품약 마스터 관리");
+    expect(manifest.short_name).toBe("마스터 관리");
+    expect(manifest.display).toBe("standalone");
+    expect(manifest.id).toBe("/Ecart-/viewer");
+    expect(manifest.start_url).toBe("/Ecart-/viewer");
+    expect(manifest.scope).toBe("/Ecart-/");
+    expect(manifest.background_color).toBe("#f97316");
+    expect(manifest.theme_color).toBe("#f97316");
+    expect(manifest.icons).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ src: `/Ecart-/icons/app-icon-192.png?v=${iconVersion}`, sizes: "192x192", type: "image/png", purpose: "any" }),
+        expect.objectContaining({
+          src: `/Ecart-/icons/app-icon-desktop-512.png?v=${iconVersion}`,
+          sizes: "512x512",
+          type: "image/png",
+          purpose: "any",
+        }),
+      ]),
+    );
+    expect(manifest.icons).not.toEqual(expect.arrayContaining([expect.objectContaining({ src: expect.stringContaining("master-icon") })]));
+  });
+
+  it("defines a separate installable manifest for the pharmacy label viewer", () => {
+    const manifest = JSON.parse(readFileSync("public/pharmacy-viewer.webmanifest", "utf8"));
+
+    expect(manifest.name).toBe("약제팀 라벨");
+    expect(manifest.short_name).toBe("약제팀 라벨");
+    expect(manifest.display).toBe("standalone");
+    expect(manifest.id).toBe("/Ecart-/pharmacy-viewer");
+    expect(manifest.start_url).toBe("/Ecart-/pharmacy-viewer");
+    expect(manifest.scope).toBe("/Ecart-/");
+    expect(manifest.background_color).toBe("#f97316");
+    expect(manifest.theme_color).toBe("#f97316");
+    expect(manifest.icons).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ src: `/Ecart-/icons/app-icon-192.png?v=${iconVersion}`, sizes: "192x192", type: "image/png", purpose: "any" }),
+        expect.objectContaining({
+          src: `/Ecart-/icons/app-icon-desktop-512.png?v=${iconVersion}`,
+          sizes: "512x512",
+          type: "image/png",
+          purpose: "any",
+        }),
+      ]),
+    );
+  });
+
+  it("defines a separate installable manifest and icon set for the narcotic viewer", () => {
+    const manifest = JSON.parse(readFileSync("public/narcotic-viewer.webmanifest", "utf8"));
+
+    expect(manifest.name).toBe("비치마약류관리");
+    expect(manifest.short_name).toBe("비치마약류관리");
+    expect(manifest.display).toBe("standalone");
+    expect(manifest.id).toBe("/Ecart-/narcotic-viewer");
+    expect(manifest.start_url).toBe("/Ecart-/narcotic-viewer");
+    expect(manifest.scope).toBe("/Ecart-/");
+    expect(manifest.background_color).toBe("#b91c1c");
+    expect(manifest.theme_color).toBe("#b91c1c");
+    expect(manifest.icons).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ src: `/Ecart-/icons/narcotic-icon-192.png?v=${iconVersion}`, sizes: "192x192", type: "image/png", purpose: "any" }),
+        expect.objectContaining({
+          src: `/Ecart-/icons/narcotic-icon-desktop-512.png?v=${iconVersion}`,
+          sizes: "512x512",
+          type: "image/png",
+          purpose: "any",
+        }),
+      ]),
+    );
+    expect(existsSync("public/icons/narcotic-icon-192.png")).toBe(true);
+    expect(existsSync("public/icons/narcotic-icon-desktop-512.png")).toBe(true);
+    expect(readPngSize("public/icons/narcotic-icon-192.png")).toEqual({ width: 192, height: 192 });
+    expect(readPngSize("public/icons/narcotic-icon-desktop-512.png")).toEqual({ width: 512, height: 512 });
+    expect(Object.values(readPngAlphaBounds("public/icons/narcotic-icon-192.png")).every((inset) => inset > 0)).toBe(true);
+    expect(Object.values(readPngAlphaBounds("public/icons/narcotic-icon-desktop-512.png")).every((inset) => inset > 0)).toBe(true);
+  });
+
+  it("uses relative desktop favicon and manifest links so Vite does not double-prefix the base path", () => {
+    const html = readFileSync("index.html", "utf8");
+
+    expect(html).toContain(`viewer.webmanifest`);
+    expect(html).toContain(`narcotic-viewer.webmanifest`);
+    expect(html).toContain(`icons/narcotic-icon-192.png`);
+    expect(html).toContain(`icons/app-icon-192.png`);
+    expect(html).toContain(`manifest.webmanifest`);
+    expect(html).toContain(`icons/app-icon-192.png`);
+    expect(html).not.toContain(`%BASE_URL%`);
+    expect(html).not.toContain(`/Ecart-/Ecart-/`);
+  });
+});

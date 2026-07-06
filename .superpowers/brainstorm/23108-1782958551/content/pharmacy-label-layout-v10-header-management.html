@@ -1,0 +1,441 @@
+<style>
+  .header-management-layout {
+    --brand-orange: #f68d45;
+    --brand-orange-deep: #e2631a;
+    --brand-header: #7f665a;
+    --brand-brown: #96796a;
+    --brand-bluegray: #a8b6c3;
+    --brand-orange-soft: #fff3ea;
+    --brand-brown-soft: #f3eeea;
+    --brand-bluegray-soft: #edf3f7;
+    --line: #d8d1cc;
+    --line-soft: #eee8e3;
+    --muted: #667085;
+    --ink: #17202a;
+  }
+  .header-management-layout .shell {
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+  }
+  .header-management-layout .topbar {
+    display: grid;
+    grid-template-columns: minmax(280px, 0.85fr) minmax(320px, 1.15fr) auto;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 14px;
+    color: #fff;
+    background: var(--brand-header);
+  }
+  .header-management-layout .title-block {
+    display: grid;
+    gap: 8px;
+  }
+  .header-management-layout .topbar h3,
+  .header-management-layout .topbar p {
+    margin: 0;
+  }
+  .header-management-layout .topbar p {
+    color: #f3ece7;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .header-management-layout .header-mode-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .header-management-layout .header-search {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+    gap: 8px;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 8px 0 12px;
+    border: 1px solid #d7c7bc;
+    border-radius: 7px;
+    background: #fff;
+  }
+  .header-management-layout .header-search span {
+    color: #96796a;
+    font-weight: 1000;
+  }
+  .header-management-layout .header-search input {
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    color: var(--ink);
+    font-size: 14px;
+    font-weight: 800;
+  }
+  .header-management-layout .btn {
+    min-height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--brand-header);
+    background: #fff;
+    font-size: 12px;
+    font-weight: 900;
+  }
+  .header-management-layout .btn.primary {
+    border-color: var(--brand-orange-deep);
+    color: #fff;
+    background: var(--brand-orange);
+  }
+  .header-management-layout .btn.active {
+    border-color: #6f5a50;
+    color: #fff;
+    background: var(--brand-header);
+  }
+  .header-management-layout .btn.soft {
+    border-color: #d7c7bc;
+    color: var(--brand-header);
+    background: var(--brand-brown-soft);
+  }
+  .header-management-layout .btn.header-ghost {
+    border-color: rgba(255,255,255,0.35);
+    color: #fff;
+    background: rgba(255,255,255,0.12);
+  }
+  .header-management-layout .btn.header-active {
+    border-color: #fff;
+    color: var(--brand-header);
+    background: #fff;
+  }
+  .header-management-layout .label-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line-soft);
+    background: #fff;
+  }
+  .header-management-layout .label-tabs::before {
+    content: "라벨 작업";
+    display: inline-flex;
+    align-items: center;
+    min-height: 34px;
+    margin-right: 4px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 1000;
+  }
+  .header-management-layout .content {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 270px;
+    gap: 12px;
+    padding: 14px;
+    background: #f2f1ef;
+  }
+  .header-management-layout .panel,
+  .header-management-layout .side-panel {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+  }
+  .header-management-layout .section-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: end;
+  }
+  .header-management-layout h3,
+  .header-management-layout p {
+    margin: 0;
+  }
+  .header-management-layout .section-head p,
+  .header-management-layout .side-panel p {
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .header-management-layout .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+  .header-management-layout .chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 27px;
+    padding: 0 9px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: #475467;
+    background: #fff;
+    font-size: 12px;
+    font-weight: 900;
+  }
+  .header-management-layout .chip.active {
+    color: var(--brand-header);
+    background: var(--brand-brown-soft);
+    border-color: #d7c7bc;
+  }
+  .header-management-layout .chip.red {
+    color: #7f1d1d;
+    background: #fff1f3;
+    border-color: #fecdd3;
+  }
+  .header-management-layout .table-wrap {
+    max-height: 310px;
+    overflow: auto;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+  }
+  .header-management-layout table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 780px;
+    background: #fff;
+  }
+  .header-management-layout th,
+  .header-management-layout td {
+    padding: 8px 9px;
+    border-bottom: 1px solid var(--line-soft);
+    color: #344054;
+    font-size: 12px;
+    text-align: left;
+    vertical-align: middle;
+  }
+  .header-management-layout th {
+    position: sticky;
+    top: 0;
+    background: #f8f7f5;
+    color: var(--brand-header);
+    font-weight: 1000;
+    z-index: 2;
+  }
+  .header-management-layout td strong {
+    display: block;
+    color: var(--brand-header);
+    font-size: 12px;
+  }
+  .header-management-layout td small {
+    display: block;
+    color: var(--muted);
+    font-size: 11px;
+  }
+  .header-management-layout .toggle-cell {
+    text-align: center;
+  }
+  .header-management-layout .toggle-cell input {
+    width: 16px;
+    height: 16px;
+  }
+  .header-management-layout .changed {
+    background: #fffaf6;
+  }
+  .header-management-layout .mini-select,
+  .header-management-layout .mini-input {
+    min-height: 30px;
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 4px 7px;
+    color: var(--ink);
+    background: #fff;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .header-management-layout .impact-list {
+    display: grid;
+    gap: 8px;
+  }
+  .header-management-layout .impact-card {
+    padding: 9px;
+    border: 1px solid var(--line-soft);
+    border-radius: 7px;
+    background: #f8f7f5;
+  }
+  .header-management-layout .impact-card strong {
+    display: block;
+    color: var(--brand-header);
+    font-size: 13px;
+  }
+  .header-management-layout .impact-card span {
+    display: block;
+    margin-top: 3px;
+    color: #475467;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .header-management-layout .rule-box {
+    padding: 10px;
+    border: 1px solid #d7c7bc;
+    border-radius: 8px;
+    color: var(--brand-header);
+    background: var(--brand-brown-soft);
+    font-size: 12px;
+    font-weight: 900;
+    line-height: 1.45;
+  }
+  @media (max-width: 980px) {
+    .header-management-layout .topbar,
+    .header-management-layout .content {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<h2>관리 버튼은 헤더, 라벨 버튼은 한 묶음</h2>
+<p class="subtitle">약품리스트 / 전체 관리는 헤더의 전환 버튼으로 올리고, 아래에는 라벨 작업 버튼만 모아둔 배치입니다.</p>
+
+<div class="mockup header-management-layout">
+  <div class="mockup-header">Preview: 헤더 관리 전환 + 라벨 전용 탭</div>
+  <div class="mockup-body">
+    <div class="shell">
+      <div class="topbar">
+        <div class="title-block">
+          <div>
+            <p>별도 화면</p>
+            <h3>약제팀 라벨 작업실</h3>
+          </div>
+          <div class="header-mode-buttons">
+            <button class="btn header-ghost">약품명 라벨</button>
+            <button class="btn header-active">약품리스트 / 전체 관리</button>
+          </div>
+        </div>
+        <label class="header-search">
+          <span>⌕</span>
+          <input placeholder="약품코드, 약품명, 성분명 검색">
+          <button class="btn primary">검색</button>
+        </label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+          <button class="btn soft">비품관리로 돌아가기</button>
+          <button class="btn primary">변경 저장 및 연동</button>
+        </div>
+      </div>
+
+      <div class="label-tabs">
+        <button class="btn active">약품명 라벨</button>
+        <button class="btn">약품장 라벨</button>
+        <button class="btn">3단 약병장</button>
+        <button class="btn">외용장 라벨</button>
+      </div>
+
+      <div class="content">
+        <section class="panel">
+          <div class="section-head">
+            <div>
+              <h3>약제팀 약품 전체 리스트</h3>
+              <p>헤더의 전체 관리에서 수정하고, 라벨 버튼 묶음은 라벨 출력 작업 전용으로 둡니다.</p>
+            </div>
+            <div class="filter-bar">
+              <span class="chip active">전체</span>
+              <span class="chip red">마약</span>
+              <span class="chip red">향정</span>
+              <span class="chip red">고위험</span>
+              <span class="chip">수정됨 3건</span>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>약품</th>
+                  <th>마약</th>
+                  <th>향정</th>
+                  <th>고위험</th>
+                  <th>항암</th>
+                  <th>보관</th>
+                  <th>주의문구</th>
+                  <th>연동상태</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="changed">
+                  <td><strong>XMO15</strong><small>Morphine 15mg inj</small></td>
+                  <td class="toggle-cell"><input type="checkbox" checked></td>
+                  <td class="toggle-cell"><input type="checkbox"></td>
+                  <td class="toggle-cell"><input type="checkbox" checked></td>
+                  <td class="toggle-cell"><input type="checkbox"></td>
+                  <td><select class="mini-select"><option>실온</option><option>냉장</option><option>차광</option></select></td>
+                  <td><input class="mini-input" value="마약 / 고위험"></td>
+                  <td><span class="chip red">라벨 2건 갱신</span></td>
+                </tr>
+                <tr class="changed">
+                  <td><strong>XMIDA</strong><small>Midazolam 5mg/5ml inj</small></td>
+                  <td class="toggle-cell"><input type="checkbox"></td>
+                  <td class="toggle-cell"><input type="checkbox" checked></td>
+                  <td class="toggle-cell"><input type="checkbox"></td>
+                  <td class="toggle-cell"><input type="checkbox"></td>
+                  <td><select class="mini-select"><option>실온</option><option>냉장</option><option>차광</option></select></td>
+                  <td><input class="mini-input" value="향정"></td>
+                  <td><span class="chip active">비품약 1건 갱신</span></td>
+                </tr>
+                <tr>
+                  <td><strong>X20AL1S</strong><small>Albumin(SK) 20% 100ml inj</small></td>
+                  <td class="toggle-cell"><input type="checkbox"></td>
+                  <td class="toggle-cell"><input type="checkbox"></td>
+                  <td class="toggle-cell"><input type="checkbox"></td>
+                  <td class="toggle-cell"><input type="checkbox"></td>
+                  <td><select class="mini-select"><option>냉장</option><option>실온</option><option>차광</option></select></td>
+                  <td><input class="mini-input" value="냉장"></td>
+                  <td><span class="chip">동기화됨</span></td>
+                </tr>
+                <tr class="changed">
+                  <td><strong>XCHEMO1</strong><small>Cyclophosphamide inj</small></td>
+                  <td class="toggle-cell"><input type="checkbox"></td>
+                  <td class="toggle-cell"><input type="checkbox"></td>
+                  <td class="toggle-cell"><input type="checkbox" checked></td>
+                  <td class="toggle-cell"><input type="checkbox" checked></td>
+                  <td><select class="mini-select"><option>차광</option><option>실온</option><option>냉장</option></select></td>
+                  <td><input class="mini-input" value="항암제 / 고위험"></td>
+                  <td><span class="chip red">새 태그 추가</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="filter-bar">
+            <button class="btn soft">업로드 변경분 비교</button>
+            <button class="btn">선택 행 일괄 수정</button>
+            <button class="btn primary">변경 저장 및 연동</button>
+          </div>
+        </section>
+
+        <aside class="side-panel">
+          <div>
+            <h3>저장 시 영향 범위</h3>
+            <p>수정 내용이 어디에 반영되는지 저장 전에 확인합니다.</p>
+          </div>
+          <div class="impact-list">
+            <div class="impact-card">
+              <strong>라벨 저장소</strong>
+              <span>저장된 약품 라벨 4건의 태그/주의문구 갱신</span>
+            </div>
+            <div class="impact-card">
+              <strong>출력 기본값</strong>
+              <span>약품명 라벨 버튼으로 돌아가면 최신 속성으로 미리보기</span>
+            </div>
+            <div class="impact-card">
+              <strong>비품약 관리 화면</strong>
+              <span>같은 약품코드의 주의문구/보관 배지 갱신</span>
+            </div>
+          </div>
+          <div class="rule-box">
+            전체 관리는 헤더에서 진입하고, 아래 버튼 묶음은 라벨 출력 종류만 담당합니다. 역할이 분리되어 화면 전환이 더 명확합니다.
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="header-management-ok" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>이 버튼 위치가 맞다</h3>
+      <p>약품리스트 / 전체 관리는 헤더에 붙이고, 라벨 버튼만 별도 묶음으로 유지합니다.</p>
+    </div>
+  </div>
+</div>

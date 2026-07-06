@@ -1,0 +1,373 @@
+<style>
+  .no-prefix-layout {
+    --brand-orange: #f68d45;
+    --brand-orange-deep: #e2631a;
+    --brand-header: #7f665a;
+    --brand-brown: #96796a;
+    --brand-brown-soft: #f3eeea;
+    --line: #d8d1cc;
+    --line-soft: #eee8e3;
+    --muted: #667085;
+    --ink: #17202a;
+  }
+  .no-prefix-layout .shell {
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+  }
+  .no-prefix-layout .topbar {
+    display: grid;
+    grid-template-columns: minmax(220px, 0.7fr) minmax(320px, 1.2fr) auto;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 14px;
+    color: #fff;
+    background: var(--brand-header);
+  }
+  .no-prefix-layout .topbar h3,
+  .no-prefix-layout .topbar p {
+    margin: 0;
+  }
+  .no-prefix-layout .topbar p {
+    color: #f3ece7;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .no-prefix-layout .header-search {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+    gap: 8px;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 8px 0 12px;
+    border: 1px solid #d7c7bc;
+    border-radius: 7px;
+    background: #fff;
+  }
+  .no-prefix-layout .header-search span {
+    color: #96796a;
+    font-weight: 1000;
+  }
+  .no-prefix-layout .header-search input {
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    color: var(--ink);
+    font-size: 14px;
+    font-weight: 800;
+  }
+  .no-prefix-layout .btn {
+    min-height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--brand-header);
+    background: #fff;
+    font-size: 12px;
+    font-weight: 900;
+  }
+  .no-prefix-layout .btn.primary {
+    border-color: var(--brand-orange-deep);
+    color: #fff;
+    background: var(--brand-orange);
+  }
+  .no-prefix-layout .btn.active {
+    border-color: #6f5a50;
+    color: #fff;
+    background: var(--brand-header);
+  }
+  .no-prefix-layout .btn.soft {
+    border-color: #d7c7bc;
+    color: var(--brand-header);
+    background: var(--brand-brown-soft);
+  }
+  .no-prefix-layout .label-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line-soft);
+    background: #fff;
+  }
+  .no-prefix-layout .content {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 270px;
+    gap: 12px;
+    padding: 14px;
+    background: #f2f1ef;
+  }
+  .no-prefix-layout .panel,
+  .no-prefix-layout .side-panel {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+  }
+  .no-prefix-layout .section-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: end;
+  }
+  .no-prefix-layout h3,
+  .no-prefix-layout p {
+    margin: 0;
+  }
+  .no-prefix-layout .section-head p,
+  .no-prefix-layout .side-panel p {
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .no-prefix-layout .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+  .no-prefix-layout .chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 27px;
+    padding: 0 9px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: #475467;
+    background: #fff;
+    font-size: 12px;
+    font-weight: 900;
+  }
+  .no-prefix-layout .chip.active {
+    color: var(--brand-header);
+    background: var(--brand-brown-soft);
+    border-color: #d7c7bc;
+  }
+  .no-prefix-layout .chip.red {
+    color: #7f1d1d;
+    background: #fff1f3;
+    border-color: #fecdd3;
+  }
+  .no-prefix-layout .table-wrap {
+    max-height: 310px;
+    overflow: auto;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+  }
+  .no-prefix-layout table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 780px;
+    background: #fff;
+  }
+  .no-prefix-layout th,
+  .no-prefix-layout td {
+    padding: 8px 9px;
+    border-bottom: 1px solid var(--line-soft);
+    color: #344054;
+    font-size: 12px;
+    text-align: left;
+    vertical-align: middle;
+  }
+  .no-prefix-layout th {
+    position: sticky;
+    top: 0;
+    background: #f8f7f5;
+    color: var(--brand-header);
+    font-weight: 1000;
+    z-index: 2;
+  }
+  .no-prefix-layout td strong {
+    display: block;
+    color: var(--brand-header);
+    font-size: 12px;
+  }
+  .no-prefix-layout td small {
+    display: block;
+    color: var(--muted);
+    font-size: 11px;
+  }
+  .no-prefix-layout .toggle-cell {
+    text-align: center;
+  }
+  .no-prefix-layout .toggle-cell input {
+    width: 16px;
+    height: 16px;
+  }
+  .no-prefix-layout .changed {
+    background: #fffaf6;
+  }
+  .no-prefix-layout .mini-select,
+  .no-prefix-layout .mini-input {
+    min-height: 30px;
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 4px 7px;
+    color: var(--ink);
+    background: #fff;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .no-prefix-layout .impact-list {
+    display: grid;
+    gap: 8px;
+  }
+  .no-prefix-layout .impact-card {
+    padding: 9px;
+    border: 1px solid var(--line-soft);
+    border-radius: 7px;
+    background: #f8f7f5;
+  }
+  .no-prefix-layout .impact-card strong {
+    display: block;
+    color: var(--brand-header);
+    font-size: 13px;
+  }
+  .no-prefix-layout .impact-card span {
+    display: block;
+    margin-top: 3px;
+    color: #475467;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .no-prefix-layout .rule-box {
+    padding: 10px;
+    border: 1px solid #d7c7bc;
+    border-radius: 8px;
+    color: var(--brand-header);
+    background: var(--brand-brown-soft);
+    font-size: 12px;
+    font-weight: 900;
+    line-height: 1.45;
+  }
+</style>
+
+<h2>라벨 작업 문구 제거</h2>
+<p class="subtitle">아래 버튼 묶음 앞의 불필요한 설명 문구를 삭제하고, 바로 라벨 버튼만 보이게 정리했습니다.</p>
+
+<div class="mockup no-prefix-layout">
+  <div class="mockup-header">Preview: 라벨 버튼 묶음 정리</div>
+  <div class="mockup-body">
+    <div class="shell">
+      <div class="topbar">
+        <div>
+          <p>별도 화면</p>
+          <h3>약제팀 라벨 작업실</h3>
+        </div>
+        <label class="header-search">
+          <span>⌕</span>
+          <input placeholder="약품코드, 약품명, 성분명 검색">
+          <button class="btn primary">검색</button>
+        </label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+          <button class="btn primary">약품리스트 관리</button>
+          <button class="btn soft">비품관리로 돌아가기</button>
+        </div>
+      </div>
+
+      <div class="label-tabs">
+        <button class="btn active">약품명 라벨</button>
+        <button class="btn">약품장 라벨</button>
+        <button class="btn">3단 약병장</button>
+        <button class="btn">외용장 라벨</button>
+      </div>
+
+      <div class="content">
+        <section class="panel">
+          <div class="section-head">
+            <div>
+              <h3>약제팀 약품 전체 리스트</h3>
+              <p>수정한 내용은 이 영역 하단에서 저장해야 라벨과 비품약 리스트에 연동됩니다.</p>
+            </div>
+            <div class="filter-bar">
+              <span class="chip active">전체</span>
+              <span class="chip red">마약</span>
+              <span class="chip red">향정</span>
+              <span class="chip red">고위험</span>
+              <span class="chip">수정됨 3건</span>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>약품</th>
+                  <th>마약</th>
+                  <th>향정</th>
+                  <th>고위험</th>
+                  <th>항암</th>
+                  <th>보관</th>
+                  <th>주의문구</th>
+                  <th>연동상태</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="changed">
+                  <td><strong>XMO15</strong><small>Morphine 15mg inj</small></td>
+                  <td class="toggle-cell"><input type="checkbox" checked></td>
+                  <td class="toggle-cell"><input type="checkbox"></td>
+                  <td class="toggle-cell"><input type="checkbox" checked></td>
+                  <td class="toggle-cell"><input type="checkbox"></td>
+                  <td><select class="mini-select"><option>실온</option><option>냉장</option><option>차광</option></select></td>
+                  <td><input class="mini-input" value="마약 / 고위험"></td>
+                  <td><span class="chip red">라벨 2건 갱신</span></td>
+                </tr>
+                <tr>
+                  <td><strong>X20AL1S</strong><small>Albumin(SK) 20% 100ml inj</small></td>
+                  <td class="toggle-cell"><input type="checkbox"></td>
+                  <td class="toggle-cell"><input type="checkbox"></td>
+                  <td class="toggle-cell"><input type="checkbox"></td>
+                  <td class="toggle-cell"><input type="checkbox"></td>
+                  <td><select class="mini-select"><option>냉장</option><option>실온</option><option>차광</option></select></td>
+                  <td><input class="mini-input" value="냉장"></td>
+                  <td><span class="chip">동기화됨</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="filter-bar">
+            <button class="btn soft">업로드 변경분 비교</button>
+            <button class="btn">선택 행 일괄 수정</button>
+            <button class="btn primary">변경 저장 및 연동</button>
+          </div>
+        </section>
+
+        <aside class="side-panel">
+          <div>
+            <h3>저장 시 영향 범위</h3>
+            <p>헤더가 아니라 이 관리 화면에서 저장합니다.</p>
+          </div>
+          <div class="impact-list">
+            <div class="impact-card">
+              <strong>라벨 저장소</strong>
+              <span>저장된 약품 라벨의 태그/주의문구 갱신</span>
+            </div>
+            <div class="impact-card">
+              <strong>비품약 관리 화면</strong>
+              <span>같은 약품코드의 주의문구/보관 배지 갱신</span>
+            </div>
+          </div>
+          <div class="rule-box">
+            아래 버튼 묶음에는 라벨 종류만 남깁니다.
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="no-label-prefix-ok" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>이 정리가 맞다</h3>
+      <p>라벨 버튼 앞 설명 문구 없이 버튼만 표시합니다.</p>
+    </div>
+  </div>
+</div>

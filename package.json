@@ -5,11 +5,16 @@
   "type": "module",
   "scripts": {
     "generate:data": "py scripts/extract_inventory.py",
+    "generate:labels": "py scripts/extract_hospital_labels.py",
+    "generate:label-matches": "py scripts/extract_pharmacy_label_matches.py",
+    "generate:narcotic-labels": "py scripts/extract_narcotic_labels.py",
     "validate:data": "py scripts/validate_inventory.py",
     "test": "vitest run --no-watch --reporter=basic --testTimeout=10000 --config vitest.config.ts",
     "dev": "vite --host 0.0.0.0",
     "dev:public": "node scripts/dev_public.mjs",
-    "build": "tsc --noEmit && vite build",
+    "build": "tsc --noEmit && vite build && node scripts/create_pwa_routes.mjs",
+    "publish": "node scripts/publish_gh_pages.mjs",
+    "publish:login": "node scripts/publish_gh_pages.mjs --login",
     "preview": "vite preview --host 127.0.0.1"
   },
   "dependencies": {

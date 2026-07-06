@@ -1,0 +1,302 @@
+[
+    {
+        "drugName":  "Advanz thiopental 500mg inj",
+        "drugCode":  "XPTS500W"
+    },
+    {
+        "drugName":  "Alfentanil 1mg/2ml inj",
+        "drugCode":  "XAFEN1"
+    },
+    {
+        "drugName":  "Alpram 0.25mg tab",
+        "drugCode":  "ALPRA2"
+    },
+    {
+        "drugName":  "Alpram 0.5mg tab",
+        "drugCode":  "ALPRA5"
+    },
+    {
+        "drugName":  "Ativan 0.5mg tab",
+        "drugCode":  "LZPAM"
+    },
+    {
+        "drugName":  "Ativan 1mg tab",
+        "drugCode":  "LZPAM1"
+    },
+    {
+        "drugName":  "Ativan 2mg inj",
+        "drugCode":  "XLZPAM2"
+    },
+    {
+        "drugName":  "Ativan 4mg/1ml inj",
+        "drugCode":  "XLZPAM4"
+    },
+    {
+        "drugName":  "Byfavo 20mg inj",
+        "drugCode":  "XREMIMA2"
+    },
+    {
+        "drugName":  "Byfavo 50mg inj",
+        "drugCode":  "XREMIMA"
+    },
+    {
+        "drugName":  "Concerta OROS 18mg Tab",
+        "drugCode":  "MPHE18SR"
+    },
+    {
+        "drugName":  "Concerta OROS 27mg tab",
+        "drugCode":  "MPHE27SR"
+    },
+    {
+        "drugName":  "Decoin 20mg tab",
+        "drugCode":  "CODE20"
+    },
+    {
+        "drugName":  "Depas 0.5mg tab",
+        "drugCode":  "ETIZOL.5"
+    },
+    {
+        "drugName":  "Diazepam 10mg/2ml inj",
+        "drugCode":  "XDDP"
+    },
+    {
+        "drugName":  "Diazepam 2mg tab",
+        "drugCode":  "DDP2W"
+    },
+    {
+        "drugName":  "Diazepam 5mg tab",
+        "drugCode":  "DDP5Y"
+    },
+    {
+        "drugName":  "Etomidate lipuro 20mg/10ml inj",
+        "drugCode":  "XETOM"
+    },
+    {
+        "drugName":  "Fentadur 100mcg/hr patch",
+        "drugCode":  "FENT100-H"
+    },
+    {
+        "drugName":  "Fentadur 12mcg/hr patch",
+        "drugCode":  "FENT1-H"
+    },
+    {
+        "drugName":  "Fentadur 25mcg/hr patch",
+        "drugCode":  "FENT2-H"
+    },
+    {
+        "drugName":  "Fentadur 50mcg/hr patch",
+        "drugCode":  "FENT5-H"
+    },
+    {
+        "drugName":  "Fentakhan SL 133mcg tab",
+        "drugCode":  "FENT1SL"
+    },
+    {
+        "drugName":  "Fentakhan SL 267mcg tab",
+        "drugCode":  "FENT2SL"
+    },
+    {
+        "drugName":  "Fentakhan SL 400mcg tab",
+        "drugCode":  "FENT4SL"
+    },
+    {
+        "drugName":  "Fentanyl 100mcg/2ml inj(HANA)",
+        "drugCode":  "XFENT100W"
+    },
+    {
+        "drugName":  "FENTANYL 1500mcg/30ml inj",
+        "drugCode":  "XFENT15"
+    },
+    {
+        "drugName":  "FENTANYL 500mcg/10ml inj",
+        "drugCode":  "XFEN500"
+    },
+    {
+        "drugName":  "Fentanyl 50mcg/ml inj",
+        "drugCode":  "XFEN50"
+    },
+    {
+        "drugName":  "Fresofol MCT 1% 20ml inj",
+        "drugCode":  "XPROPO120"
+    },
+    {
+        "drugName":  "FRESOFOL MCT 1% Inj 150mg/15ml",
+        "drugCode":  "XPROPO115W"
+    },
+    {
+        "drugName":  "Fresofol MCT 2% 50ml inj",
+        "drugCode":  "XPROPO250"
+    },
+    {
+        "drugName":  "Ketamine HCl 500mg/10ml Inj",
+        "drugCode":  "XKETA5"
+    },
+    {
+        "drugName":  "Liberty 10mg tab",
+        "drugCode":  "CDP10"
+    },
+    {
+        "drugName":  "Medikinet 10mg retard cap",
+        "drugCode":  "MPHERC1"
+    },
+    {
+        "drugName":  "Medikinet 30mg retard cap",
+        "drugCode":  "MPHERC3"
+    },
+    {
+        "drugName":  "Midazolam 15mg/3ml",
+        "drugCode":  "XMIDA15"
+    },
+    {
+        "drugName":  "Midazolam 5mg/5ml inj",
+        "drugCode":  "XMIDA5"
+    },
+    {
+        "drugName":  "Morphine sulfate 30mg/2ml Inj",
+        "drugCode":  "XMORP30"
+    },
+    {
+        "drugName":  "Morphine sulfate 5mg/5ml inj",
+        "drugCode":  "XMORPS5W"
+    },
+    {
+        "drugName":  "Mypol cap",
+        "drugCode":  "COIBAPH"
+    },
+    {
+        "drugName":  "Nalbuphine 10㎎/㎖  inj",
+        "drugCode":  "XNALBUP10W"
+    },
+    {
+        "drugName":  "Norspan 10mcg/h Patch",
+        "drugCode":  "BUPRE10-H"
+    },
+    {
+        "drugName":  "Norspan 5mcg/h Patch",
+        "drugCode":  "BUPRE5-H"
+    },
+    {
+        "drugName":  "Nucynta ER 50mg tab",
+        "drugCode":  "TAPENTA5W"
+    },
+    {
+        "drugName":  "Ocodone 10mg tab",
+        "drugCode":  "OXCOD10"
+    },
+    {
+        "drugName":  "Ocodone 10mg/1ml inj",
+        "drugCode":  "XOXCON1W"
+    },
+    {
+        "drugName":  "OCODONE 20mg/2ml inj",
+        "drugCode":  "XOXCON2W"
+    },
+    {
+        "drugName":  "Ocodone 5mg tab",
+        "drugCode":  "OXCOD5"
+    },
+    {
+        "drugName":  "Penid 10mg tab",
+        "drugCode":  "MPHEN10"
+    },
+    {
+        "drugName":  "Pethidine 50mg/1ml inj (HANA)",
+        "drugCode":  "XPETH50W"
+    },
+    {
+        "drugName":  "Phenobarbital 100mg/ml inj",
+        "drugCode":  "XPHB"
+    },
+    {
+        "drugName":  "Phenobarbital 30mg tab",
+        "drugCode":  "PHB"
+    },
+    {
+        "drugName":  "Pocral syr 5ml/btl",
+        "drugCode":  "CHR5-S"
+    },
+    {
+        "drugName":  "Remiva 5mg inj",
+        "drugCode":  "XREMIF5W"
+    },
+    {
+        "drugName":  "Rivotril 0.5mg tab",
+        "drugCode":  "CNZEP5"
+    },
+    {
+        "drugName":  "Sentil 5mg tab",
+        "drugCode":  "CLOBAZ5"
+    },
+    {
+        "drugName":  "Stilnox 10mg tab",
+        "drugCode":  "ZOLPID"
+    },
+    {
+        "drugName":  "Stilnox 12.5mg CR tab(14정)",
+        "drugCode":  "ZOLP12CR"
+    },
+    {
+        "drugName":  "Stilnox 6.25mg CR tab(14정)",
+        "drugCode":  "ZOLP6CR"
+    },
+    {
+        "drugName":  "Sufental 50mcg/ml inj",
+        "drugCode":  "XSUFEN50"
+    },
+    {
+        "drugName":  "Targin PR 10/5mg tab",
+        "drugCode":  "OXYC10N5"
+    },
+    {
+        "drugName":  "Targin PR 20/10mg tab",
+        "drugCode":  "OXYC20N10"
+    },
+    {
+        "drugName":  "Targin PR 40/20mg tab",
+        "drugCode":  "OXYC40N20"
+    },
+    {
+        "drugName":  "Targin PR 5/2.5mg tab",
+        "drugCode":  "OXYC5N2"
+    },
+    {
+        "drugName":  "Ultian 1mg inj",
+        "drugCode":  "XREMIF1W"
+    },
+    {
+        "drugName":  "Valium 5mg tab",
+        "drugCode":  "DDP5X"
+    },
+    {
+        "drugName":  "Zaledeep 10mg cap",
+        "drugCode":  "ZALEP1"
+    },
+    {
+        "drugName":  "ZALEDEEP 5mg cap",
+        "drugCode":  "ZALEP5"
+    },
+    {
+        "drugName":  "Zanapam 0.125mg tab",
+        "drugCode":  "ALPRA1"
+    },
+    {
+        "drugName":  "Zolmin 0.25mg tab",
+        "drugCode":  "TRIA2W"
+    },
+    {
+        "drugName":  "Zolpid 5mg tab",
+        "drugCode":  "ZOLPID5"
+    },
+    {
+        "drugName":  "Zoss 1mg tab",
+        "drugCode":  "ESZOPIC1W"
+    },
+    {
+        "drugName":  "Zoss 2mg tab",
+        "drugCode":  "ESZOPIC2W"
+    },
+    {
+        "drugName":  "Zoss 3mg tab",
+        "drugCode":  "ESZOPIC3W"
+    }
+]

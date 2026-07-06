@@ -50,8 +50,29 @@ function parseSavePayload(body: string) {
   return { envelope: parsed, baseSha: undefined, force: false };
 }
 
+function countFilledNarcoticLots(envelope: unknown) {
+  if (!envelope || typeof envelope !== "object" || !("state" in envelope)) return 0;
+  const state = (envelope as { state?: { narcoticLotAssignments?: Record<string, { roomLot?: string; pharmacyLot?: string }> } }).state;
+  return Object.values(state?.narcoticLotAssignments ?? {}).filter((value) => value?.roomLot || value?.pharmacyLot).length;
+}
+
+export function protectNarcoticLotAssignments<T extends { state?: Record<string, unknown> }>(incoming: T, current?: T): T {
+  if (!current?.state || !incoming?.state) return incoming;
+  if (current.state.narcoticLotFileName !== incoming.state.narcoticLotFileName) return incoming;
+  if (countFilledNarcoticLots(current) <= countFilledNarcoticLots(incoming)) return incoming;
+  return {
+    ...incoming,
+    state: {
+      ...incoming.state,
+      narcoticLotAssignments: current.state.narcoticLotAssignments,
+      narcoticLotFileName: current.state.narcoticLotFileName,
+    },
+  };
+}
+
 async function saveStateAndPush(body: string) {
   const { envelope, baseSha, force } = parseSavePayload(body);
+  let envelopeToSave = envelope;
   await fs.mkdir(path.dirname(appStatePath), { recursive: true });
   try {
     const current = await fs.readFile(appStatePath, "utf8");
@@ -59,12 +80,13 @@ async function saveStateAndPush(body: string) {
     if (!force && (!baseSha || baseSha !== currentSha)) {
       throw new StateConflictError("App state changed on the server. Reload the latest state before saving.");
     }
+    envelopeToSave = protectNarcoticLotAssignments(envelope, JSON.parse(current));
   } catch (error) {
     if (!(typeof error === "object" && error && "code" in error && error.code === "ENOENT")) {
       throw error;
     }
   }
-  await fs.writeFile(appStatePath, `${JSON.stringify(envelope, null, 2)}\n`, "utf8");
+  await fs.writeFile(appStatePath, `${JSON.stringify(envelopeToSave, null, 2)}\n`, "utf8");
   await runGit(["add", "--", appStateRelativePath]);
   const status = await runGit(["status", "--porcelain", "--", appStateRelativePath]);
   if (status.stdout.trim()) {
@@ -91,8 +113,18 @@ function appStateSyncPlugin(): Plugin {
 
         response.setHeader("Content-Type", "application/json; charset=utf-8");
         response.setHeader("Cache-Control", "no-store");
+        response.setHeader("Access-Control-Allow-Origin", request.headers.origin ?? "*");
+        response.setHeader("Access-Control-Allow-Methods", "GET, PUT, OPTIONS");
+        response.setHeader("Access-Control-Allow-Headers", "Accept, Content-Type");
+        response.setHeader("Vary", "Origin");
 
         try {
+          if (request.method === "OPTIONS") {
+            response.statusCode = 204;
+            response.end();
+            return;
+          }
+
           if (request.method === "GET") {
             try {
               const content = await fs.readFile(appStatePath, "utf8");

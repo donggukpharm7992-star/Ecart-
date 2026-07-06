@@ -13,26 +13,138 @@ import {
   Siren,
   Smartphone,
   Trash2,
+  Upload,
   X,
 } from "lucide-react";
-import { Fragment, type ChangeEvent, type FormEvent, type ReactNode, type RefObject, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Fragment,
+  type CSSProperties,
+  type ChangeEvent,
+  type FormEvent,
+  type ReactNode,
+  type RefObject,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import rawInventory from "./data/inventory.generated.json";
-import { isForcedRefrigeratedDrug, isHighRiskDrug, normalizeDrugWarning } from "./drugRules";
+import { getPolicyCautionLabels, isHighRiskDrug, normalizeDrugWarning, type DrugRuleFields } from "./drugRules";
 import { shouldApplyRemoteState, shouldMarkLocalChange, shouldPushLocalState, type RemoteStateEnvelope } from "./githubSync";
+import {
+  DRUG_LABEL_SIZE_GROUPS,
+  GENERAL_FLUID_LABELS,
+  ROUND_SUMMARY_COMMON_GUIDANCE,
+  buildNarcoticFileLabelData,
+  buildNarcoticMasterLabelData,
+  buildReportFileName,
+  buildStockLabelData,
+  cleanDrugLabelName,
+  clearUninspectedRoomId,
+  displayRoomName,
+  ecartTargets,
+  firstEcartTargetId,
+  fluidLabelTone,
+  formatFluidLabelName,
+  formatStockLabelSpec,
+  getAllEcartPrintTargets,
+  getDrugLabelNameClass,
+  getDrugLabelSize,
+  getDrugLabelFlagLabels,
+  getEcartDefaultState,
+  getInitialAppMode,
+  getInitialMasterKindFilter,
+  getLabelModeOptions,
+  getStockChecklistDefaultState,
+  getStockGuideClassName,
+  getStockGuideInspectionKey,
+  getStockRoomEcartLink,
+  labelStorageTone,
+  makeChecklistState,
+  makeEcartKey,
+  makeInspectionCycleResetState,
+  makeLabelPrintSelectionKey,
+  matchesDrug,
+  matchesMaster,
+  matchesMasterRoom,
+  nicuTarget,
+  normalizeChecklistRows,
+  normalizeEcartInspectionState,
+  normalizeEcartItem,
+  normalizeLabelCautionLabels,
+  removeStockDrugRecords,
+  resolveDrugLabelPrintRow,
+  resolveMasterLabelRoomId,
+  stockGuideSections,
+  stockRoomEcartLinks,
+  stockKey,
+  stockSplitKey,
+  toggleStockSplitPart,
+  getStockSplitParts,
+} from "./appLogic";
+import {
+  getHospitalDrugLabelWarnings,
+  getHospitalDrugStorageLabel,
+  loadHospitalDrugLabelRows,
+  makeHospitalDrugLabelId,
+  matchesHospitalDrugLabel,
+  type HospitalDrugLabelRow,
+} from "./hospitalDrugLabels";
+import { PharmacyLabelWorkspace } from "./PharmacyLabelWorkspace";
+import { NARCOTIC_LABEL_ROWS, matchesNarcoticLabel } from "./narcoticLabels";
+import { loadPharmacyLabelMatchRows, type PharmacyLabelMatchRow } from "./pharmacyLabelMatches";
+import {
+  loadSavedPharmacyLabelsFromStorage,
+  savePharmacyLabelToStorage,
+  type PharmacyLabelDraft,
+  type PharmacySavedLabel,
+} from "./pharmacyLabelStudio";
 import {
   buildMasterRows,
   compareStockDrugsByName,
   deleteAllocation,
+  deleteMasterDrug,
   drugDisplayName,
+  filterMasterRowsByKind,
+  filterMasterRowsWithStock,
   type MasterRow,
+  type MasterRowKind,
   sortStockDrugsByName,
   updateAllocationQuantity,
 } from "./inventoryState";
+import { MASTER_EXPORT_MIME, buildMasterExportFileName, createMasterWorkbookXlsx } from "./masterExport";
 import { downloadElementAsPdf, type PdfDownloadResult } from "./reportPdf";
 import { effectiveRoomUpdatedAt, formatRoomUpdatedAt, markRoomsUpdated } from "./roomUpdateDate";
-import { buildRoundSummaryDraft, type RoundSummaryDraft, type RoundSummaryRow } from "./roundSummary";
-import { loadServerState, saveServerState } from "./serverSync";
+import {
+  buildInspectionCycleResetRoundSummaryDraft,
+  buildNarcoticRoundSummaryDraft,
+  buildRoundSummaryDraft,
+  type RoundSummaryDraft,
+  type RoundSummaryRow,
+} from "./roundSummary";
+import { loadRuntimeSyncConfig } from "./runtimeSyncConfig";
+import { configureServerSyncBaseUrl, loadServerState, saveServerState } from "./serverSync";
+import { inferStorageType, isRefrigeratedDrug, storageDisplayLabel } from "./storageDisplay";
 import type { ChecklistItem, EcartItem, InventoryData, StockAllocation, StockDrug, StockRoom } from "./types";
+import {
+  FIRST_NARCOTIC_ROOM,
+  NARCOTIC_ALLOCATIONS,
+  NARCOTIC_CHECKLIST,
+  NARCOTIC_DRUGS,
+  NARCOTIC_DRUG_CATEGORY_BY_CODE,
+  NARCOTIC_FLOORS,
+  NARCOTIC_ROUND_SUMMARY_COMMON_GUIDANCE,
+  NARCOTIC_ROOMS,
+  type NarcoticCategory,
+  narcoticCategoryOf,
+} from "./narcoticData";
+import {
+  buildNarcoticLotAssignments,
+  isNarcoticLotWorkbookFileName,
+  narcoticLotKey,
+  readNarcoticLotWorkbook,
+  type NarcoticLotValue,
+} from "./narcoticLot";
 
 const inventory = rawInventory as InventoryData;
 const STORAGE_KEY = "hospital-inventory-app-state-v2";
@@ -41,31 +153,81 @@ const SYNC_CLIENT_KEY = "hospital-inventory-sync-client-v1";
 const STOCK_CODE_REPLACEMENTS = new Map([["0.9% NaKCl 20mEq/100ml btl", "XNAK20"]]);
 const STOCK_FIELD_CORRECTIONS = new Map<
   string,
-  Partial<Pick<StockDrug, "storageType" | "warning">>
+  Partial<Pick<StockDrug, "storage" | "storageType" | "warning">>
 >([
+  ["XATIV2W", { storage: "냉장보관(2-8℃)", storageType: "REFRIGERATED" }],
+  ["XATIV4W", { storage: "냉장보관(2-8℃)", storageType: "REFRIGERATED" }],
   ["XBPCA5W", { warning: "" }],
   ["XEPIN", { storageType: "ROOM" }],
+  ["XKETA5W", { storage: "냉장보관(2-8℃)", storageType: "REFRIGERATED" }],
   ["XMEXO", { warning: "유사모양" }],
   ["XMVH", { storageType: "REFRIGERATED" }],
 ]);
-const FORCE_ROOM_STORAGE_CODES = new Set(["XEPIN"]);
-const ECART_GENERAL_CORRECTIONS = new Map(
-  [
-    ["XNS20", { name: "N/S 20cc", dosage: "20mL/Amp", quantity: 3 }],
-    ["NITR", { name: "Nitroglycerin(SL)", dosage: "0.6mg/Tab", quantity: 3 }],
-    ["XCPENIR", { name: "Peniramin", dosage: "4mg/2ml/Amp", quantity: 3 }],
-    ["XNITR10F", { name: "Nitrolingual 0.1%", dosage: "10mg/10ml", quantity: 5 }],
-    ["XADENO6", { name: "Adenocor( Adenosin )", dosage: "6mg/Vial", quantity: 3 }],
-    ["XNB84", { name: "Sodium Bicabonate", dosage: "20mEq/20mL/Amp", quantity: 10 }],
-    ["XLID2W", { name: "2% Lidocaine 400mg", dosage: "2% 20mL/Vial", quantity: 2 }],
-  ] satisfies Array<[string, Partial<EcartItem>]>,
-);
 
-type MainCategory = "stock" | "ecart";
+type MainCategory = "stock" | "ecart" | "narcotic";
 type EcartTab = "general" | "nicu";
 type CheckStatus = "" | "good" | "bad";
-type PrintPreviewMode = "single" | "all-stock" | "round-summary";
-type AppMode = "admin" | "master-viewer";
+type PrintPreviewMode = "single" | "all-stock" | "all-ecart" | "round-summary" | "drug-labels";
+type RoundSummaryMode = "ward" | "narcotic";
+type AppMode = "admin" | "master-viewer" | "pharmacy-viewer" | "narcotic-viewer";
+type DrugLabelMode = "stock" | "ecart" | "fluid" | "narcotic" | "pharmacy";
+type DrugLabelSizeKey = "10x70" | "15x95" | "40x70" | "55x95" | "35x100";
+
+const MASTER_KIND_FILTER_OPTIONS: { kind: MasterRowKind; label: string }[] = [
+  { kind: "stock", label: "비품" },
+  { kind: "psychotropic", label: "향정" },
+  { kind: "narcotic", label: "마약" },
+];
+
+type DrugLabelData = {
+  id: string;
+  kind: DrugLabelMode;
+  code: string;
+  name: string;
+  spec: string;
+  storageLabel: string;
+  storageTone: "room" | "cold" | "light" | "ecart";
+  storage: string;
+  roomId?: string;
+  totalQuantity?: number;
+  quantityLabel?: string;
+  cautionLabels: string[];
+  categoryLabel?: string;
+  highRisk: boolean;
+  fluidTone?: string;
+};
+
+type LabelModeOption = {
+  mode: DrugLabelMode;
+  label: string;
+};
+
+type LabelPrintSelection = {
+  id: string;
+  mode: DrugLabelMode;
+  sizeKey: DrugLabelSizeKey;
+  roomId?: string;
+  quantityOverride?: number;
+  labelRow?: DrugLabelData;
+};
+
+type PrintableDrugLabel = LabelPrintSelection & {
+  row: DrugLabelData;
+  copyIndex: number;
+};
+
+type FluidLabelSource = {
+  code: string;
+  name: string;
+};
+
+function labelSizeCssVars(sizeKey: DrugLabelSizeKey) {
+  const size = getDrugLabelSize(sizeKey);
+  return {
+    "--label-width-mm": size.widthMm,
+    "--label-height-mm": size.heightMm,
+  } as CSSProperties;
+}
 
 type EditableStockItem = StockAllocation & {
   drug: StockDrug;
@@ -98,6 +260,15 @@ type PersistedAppState = {
   stockDrugs: StockDrug[];
   stockRooms: StockRoom[];
   stockAllocations: StockAllocation[];
+  narcoticRooms: StockRoom[];
+  narcoticDrugs: StockDrug[];
+  narcoticAllocations: StockAllocation[];
+  narcoticDrugCategories: Record<string, NarcoticCategory>;
+  narcoticCheckedItems: Record<string, boolean>;
+  narcoticExpiry: Record<string, string>;
+  narcoticChecklistByRoom: Record<string, ChecklistState[]>;
+  narcoticRoundSummaryDraft: RoundSummaryDraft | null;
+  uninspectedNarcoticRoomIds: string[];
   checkedStock: Record<string, boolean>;
   stockExpiry: Record<string, string>;
   stockChecklistByRoom: Record<string, ChecklistState[]>;
@@ -105,11 +276,13 @@ type PersistedAppState = {
   roundSummaryDraft: RoundSummaryDraft | null;
   stockRoomUpdatedAt: Record<string, string>;
   uninspectedRoomIds: string[];
+  narcoticLotAssignments: Record<string, NarcoticLotValue>;
+  narcoticLotFileName: string;
 };
 
 type InspectionCycleResetState = Pick<
   PersistedAppState,
-  "checkedStock" | "stockExpiry" | "stockChecklistByRoom" | "ecartByTarget" | "roundSummaryDraft"
+  "checkedStock" | "stockExpiry" | "stockChecklistByRoom" | "ecartByTarget" | "roundSummaryDraft" | "uninspectedRoomIds"
 >;
 
 type NewDrugForm = {
@@ -119,6 +292,7 @@ type NewDrugForm = {
   spec: string;
   storage: string;
   warning: string;
+  category: "stock" | NarcoticCategory;
 };
 
 type PdfStatus = "idle" | "generating" | "ready" | "error";
@@ -151,220 +325,32 @@ const hiddenStockRooms = new Set(["체외순환실"]);
 const initialStockRooms = inventory.stock.rooms.filter((room) => !hiddenStockRooms.has(room.id));
 const initialStockAllocations = inventory.stock.allocations.filter((allocation) => !hiddenStockRooms.has(allocation.roomId));
 const firstStockRoom = initialStockRooms[0]?.id ?? "";
-const CLAIM_FLUID_SECTION = "청구약/ 수액";
-const stockChecklistSections = ["비품약", "냉장약", CLAIM_FLUID_SECTION];
-const ecartChecklistSections = ["E-cart"];
-const ecartTargets = buildEcartTargets(inventory.ecart.departments);
-const firstEcartTargetId = ecartTargets[0]?.id ?? "ecart-general";
-const nicuTarget: EcartTarget = { id: "nicu", label: "NICU 신생아중환자실" };
-const stockGuideSections: StockGuideSection[] = [
-  {
-    floor: "지하 1층",
-    rows: [[{ label: "재활의학과", stockRoomId: "재활의학과", ecartTargetId: "재활의학과" }, { label: "핵의학과", ecartTargetId: "핵의학과", ecartOnly: true }]],
-  },
-  {
-    floor: "1층",
-    rows: [
-      [
-        { label: "피부과", stockRoomId: "피부과" },
-        { label: "정형외과", stockRoomId: "정형외과" },
-        { label: "비뇨기과", stockRoomId: "비뇨기과" },
-        { label: "외래주사실", stockRoomId: "외래주사실", ecartTargetId: "외래주사실" },
-      ],
-      [
-        { label: "AER1", stockRoomId: "AER", ecartTargetId: "AER-1" },
-        { label: "AER2", ecartTargetId: "AER-2", ecartOnly: true },
-        { label: "영상의학과1", stockRoomId: "영상의학과", ecartTargetId: "영상의학과-1" },
-        { label: "영상의학과2", ecartTargetId: "영상의학과-2", ecartOnly: true },
-        { label: "CT실", ecartTargetId: "CT실", ecartOnly: true },
-      ],
-    ],
-  },
-  {
-    floor: "2층",
-    rows: [
-      [
-        { label: "이비인후과", stockRoomId: "이비인후과" },
-        { label: "신경과", stockRoomId: "신경과" },
-        { label: "안과", stockRoomId: "안과" },
-        { label: "산부인과", stockRoomId: "산부인과" },
-        { label: "심혈관센터외래", ecartTargetId: "심혈관센터외래", ecartOnly: true },
-        { label: "PED", stockRoomId: "PED" },
-      ],
-      [
-        { label: "HBEF심혈관조영실", stockRoomId: "HBEF심혈관조영실" },
-        { label: "운동부하검사실", ecartTargetId: "운동부하검사실", ecartOnly: true },
-        { label: "소화기병검사실", stockRoomId: "소화기병검사실", ecartTargetId: "소화기병검사실" },
-      ],
-      [
-        { label: "MICU", stockRoomId: "MICU", ecartTargetId: "MICU" },
-        { label: "DSR", stockRoomId: "DSR" },
-      ],
-    ],
-  },
-  {
-    floor: "3층",
-    rows: [[{ label: "SICU", stockRoomId: "SICU", ecartTargetId: "SICU" }, { label: "AN", stockRoomId: "AN", ecartTargetId: "AN" }, { label: "OR", stockRoomId: "OR" }]],
-  },
-  {
-    floor: "4층",
-    rows: [
-      [
-        { label: "건강증진센터", ecartTargetId: "건강증진센터", ecartOnly: true },
-        { label: "ADR", stockRoomId: "ADR", ecartTargetId: "ADR" },
-      ],
-      [
-        { label: "난임클리닉", stockRoomId: "난임클리닉" },
-        { label: "분만장", stockRoomId: "DRL", ecartTargetId: "DRL" },
-        { label: "NICU", stockRoomId: "NICU", ecartTargetId: "nicu", ecartTab: "nicu" },
-        { label: "42병동", stockRoomId: "42W", ecartTargetId: "42" },
-      ],
-    ],
-  },
-  {
-    floor: "5층 ~ 12층",
-    rows: [
-      [
-        { label: "51W", ecartTargetId: "51", ecartOnly: true },
-        { label: "52W", ecartTargetId: "52", ecartOnly: true },
-        { label: "61W", stockRoomId: "61W", ecartTargetId: "61" },
-        { label: "62W", stockRoomId: "62W", ecartTargetId: "62" },
-        { label: "71W", stockRoomId: "71W", ecartTargetId: "71" },
-        { label: "72W", stockRoomId: "72W", ecartTargetId: "72" },
-      ],
-      [
-        { label: "81W", stockRoomId: "81W", ecartTargetId: "81" },
-        { label: "82W", stockRoomId: "82W", ecartTargetId: "82" },
-        { label: "91W", stockRoomId: "91W", ecartTargetId: "91" },
-        { label: "92W", stockRoomId: "92W", ecartTargetId: "92" },
-      ],
-      [
-        { label: "101W", stockRoomId: "101W", ecartTargetId: "101" },
-        { label: "102W", stockRoomId: "102W", ecartTargetId: "102" },
-        { label: "RRT", stockRoomId: "신속대응팀" },
-        { label: "111W", stockRoomId: "111W", ecartTargetId: "111" },
-        { label: "112W", stockRoomId: "112W", ecartTargetId: "112" },
-        { label: "121W", stockRoomId: "121W", ecartTargetId: "121" },
-      ],
-    ],
-  },
+const NARCOTIC_WARD_ROW_IDS = [
+  ["51", "52", "61", "62", "71", "72"],
+  ["81", "82", "91", "92"],
+  ["101", "102", "111", "112", "121"],
 ];
-const stockRoomEcartLinks = new Map(
-  stockGuideSections.flatMap((section) =>
-    section.rows.flatMap((row) =>
-      row.flatMap((item) =>
-        item.stockRoomId && item.ecartTargetId
-          ? [[item.stockRoomId, { targetId: item.ecartTargetId, tab: item.ecartTab ?? "general", label: item.label }] as const]
-          : [],
-      ),
-    ),
-  ),
-);
-const ROUND_SUMMARY_COMMON_GUIDANCE = [
-  "1. 비품약과 E-cart 유효기간 관리를 월 1회 날짜로 관리해 주시고, 유효기간 1달 미만인 경우 약제팀에 문의하여 교환 기간 안내를 받으시기 바랍니다.",
-  "   - E-cart은 연 1회, NTG는 연 2회 일괄교환이며 주기 내 임박 약품은 약제팀 문의 후 개별 교환해 주십시오.",
-  "2. 비품약 관리대장 수량과 실제 보유/카운트 수량이 일치하도록 관리해 주십시오. 잉여 발생 시 약제팀으로 바로 내려 주십시오.",
-  "3. 처치 청구약은 사용량 변화에 따라 청구량을 조절하고 유효기간 경과 폐기가 없도록 관리 부탁드립니다.",
-  "4. 병동 비품 점검표는 분기별 의약품 보관 상태 점검 증빙 서류로 보관해 주시기 바랍니다.",
-  "5. 24시간 근무하지 않는 부서에서 냉장약이 있는 경우 주말이나 휴일도 냉장고 MIN/MAX를 확인하여 2-8도를 유지해 주십시오.",
-].join("\n");
-
-export function makeChecklistState(prefix: string, sections: string[]) {
-  return normalizeChecklistRows(inventory.checklist)
-    .filter((item) => sections.includes(item.section))
-    .map((item, index) => {
-      const isNoteOrReason = item.text.startsWith("*") || item.text.includes("사유") || item.text.startsWith("이상 시");
-      const shouldDefaultGood = !isNoteOrReason;
-      return {
-        ...item,
-        id: `${prefix}-${index}`,
-        status: (shouldDefaultGood ? "good" : "") as CheckStatus,
-        note: "",
-      };
-    });
+function getNarcoticChecklistDefaultState(checklistByRoom: Record<string, ChecklistState[]>, roomId: string) {
+  const existing = checklistByRoom[roomId];
+  if (existing) return normalizeChecklistRows(existing);
+  return NARCOTIC_CHECKLIST.map((item, index) => ({
+    ...item,
+    id: `narcotic-${roomId}-${index}`,
+    status: "good" as CheckStatus,
+    note: "",
+  }));
 }
 
-function makeStockChecklist(roomId: string) {
-  return makeChecklistState(`stock-${roomId}`, stockChecklistSections);
+function getNarcoticFloorRows(floor: string, rooms: readonly StockRoom[]) {
+  if (floor !== "5층 ~ 12층") return [rooms];
+  const roomById = new Map(rooms.map((room) => [room.id, room]));
+  return NARCOTIC_WARD_ROW_IDS.map((row) => row.flatMap((id) => roomById.get(id) ?? [])).filter((row) => row.length > 0);
 }
 
-function makeEcartKey(tab: EcartTab, targetId: string) {
-  return `${tab}:${targetId}`;
-}
-
-function makeEcartInspectionState(tab: EcartTab, key: string): EcartInspectionState {
-  const baseItems = tab === "general" ? inventory.ecart.generalItems : inventory.ecart.nicuItems;
-  return {
-    items: baseItems.map((item) => ({ ...normalizeEcartItem(item), checked: false, expiryDate: "" })),
-    checklist: makeChecklistState(`ecart-${key}`, ecartChecklistSections),
-  };
-}
-
-export function getStockChecklistDefaultState(
-  prev: Record<string, ChecklistState[]>,
-  roomId: string
-): ChecklistState[] {
-  const current = prev[roomId];
-  if (current) return normalizeChecklistRows(current);
-
-  const base = makeStockChecklist(roomId);
-  const w42 = prev["42W"];
-  if (roomId !== "42W" && w42) {
-    const w42Norm = normalizeChecklistRows(w42);
-    return normalizeChecklistRows(base).map((item, index) => {
-      const w42Item = w42Norm[index];
-      return {
-        ...item,
-        status: w42Item ? w42Item.status : item.status,
-        note: w42Item ? w42Item.note : item.note,
-      };
-    });
-  }
-  return normalizeChecklistRows(base);
-}
-
-export function getEcartDefaultState(
-  prev: Record<string, EcartInspectionState>,
-  tab: EcartTab,
-  key: string
-): EcartInspectionState {
-  const current = prev[key];
-  if (current) return normalizeEcartInspectionState(current);
-
-  const base = makeEcartInspectionState(tab, key);
-  return normalizeEcartInspectionState(base);
-}
-
-function buildEcartTargets(departments: string[]): EcartTarget[] {
-  const targets: EcartTarget[] = [];
-  const seen = new Set<string>();
-
-  function add(label: string, id = label.replace(/\s+/g, "-")) {
-    const normalizedLabel = label.trim();
-    const normalizedId = id.trim();
-    if (!normalizedLabel || seen.has(normalizedId)) return;
-    seen.add(normalizedId);
-    targets.push({ id: normalizedId, label: normalizedLabel });
-  }
-
-  for (const department of departments) {
-    const value = department.trim();
-    if (!value) continue;
-    if (/^AER/i.test(value)) {
-      add("AER 1", "AER-1");
-      add("AER 2", "AER-2");
-      continue;
-    }
-    if (value.includes("영상의학과")) {
-      add("영상의학과 1", "영상의학과-1");
-      add("영상의학과 2", "영상의학과-2");
-      continue;
-    }
-    add(value.replace(/\s*\d+\s*개\s*$/, ""));
-  }
-
-  add("CT실", "CT실");
-  return targets;
+function narcoticGuideLabel(room: StockRoom) {
+  if (/^\d+$/.test(room.id) && room.id !== "42") return `${room.id}W`;
+  if (room.id === "42") return room.label;
+  return room.id;
 }
 
 function loadPersistedState(): Partial<PersistedAppState> {
@@ -436,20 +422,8 @@ function normalizeStockAllocations(allocations: StockAllocation[]) {
   return [...byKey.values()];
 }
 
-function normalizeEcartItem(item: EcartItem): EcartItem {
-  return { ...item, ...ECART_GENERAL_CORRECTIONS.get(item.code) };
-}
-
-function normalizeEcartInspectionState(state: EcartInspectionState): EcartInspectionState {
-  return {
-    ...state,
-    items: state.items.map((item) => ({ ...item, ...normalizeEcartItem(item) })),
-    checklist: normalizeChecklistRows(state.checklist),
-  };
-}
-
-function normalizeStockRooms(rooms: StockRoom[]) {
-  const generatedById = new Map(initialStockRooms.map((room) => [room.id, room]));
+function normalizeRooms(rooms: StockRoom[], generatedRooms: readonly StockRoom[]) {
+  const generatedById = new Map(generatedRooms.map((room) => [room.id, room]));
   return rooms.map((room) => {
     const generated = generatedById.get(room.id);
     return {
@@ -460,14 +434,43 @@ function normalizeStockRooms(rooms: StockRoom[]) {
   });
 }
 
+function normalizeStockRooms(rooms: StockRoom[]) {
+  return normalizeRooms(rooms, initialStockRooms);
+}
+
+function normalizeNarcoticRooms(rooms: StockRoom[]) {
+  return normalizeRooms(rooms, NARCOTIC_ROOMS);
+}
+
 function remapStockKeyRecord<T>(record?: Record<string, T>) {
   if (!record) return undefined;
   const next: Record<string, T> = {};
   for (const [key, value] of Object.entries(record)) {
-    const [roomId, drugCode] = key.split("::");
-    next[roomId && drugCode ? stockKey(roomId, normalizeStockCode(drugCode)) : key] = value;
+    const [roomId, drugCode, ...suffix] = key.split("::");
+    next[roomId && drugCode ? [roomId, normalizeStockCode(drugCode), ...suffix].join("::") : key] = value;
   }
   return next;
+}
+
+function renameStockKeyRecord<T>(record: Record<string, T>, oldCode: string, newCode: string) {
+  const next = { ...record };
+  for (const [key, value] of Object.entries(record)) {
+    const [roomId, drugCode, ...suffix] = key.split("::");
+    if (roomId && drugCode === oldCode) {
+      next[[roomId, newCode, ...suffix].join("::")] = value;
+      delete next[key];
+    }
+  }
+  return next;
+}
+
+function normalizeNarcoticCategories(record?: Record<string, NarcoticCategory>) {
+  return {
+    ...NARCOTIC_DRUG_CATEGORY_BY_CODE,
+    ...(record
+      ? Object.fromEntries(Object.entries(record).map(([code, category]) => [normalizeStockCode(code), category]))
+      : {}),
+  };
 }
 
 function normalizePersistedState(state: Partial<PersistedAppState>): Partial<PersistedAppState> {
@@ -479,6 +482,16 @@ function normalizePersistedState(state: Partial<PersistedAppState>): Partial<Per
     stockDrugs: state.stockDrugs ? dedupeStockDrugs(state.stockDrugs) : undefined,
     stockRooms: state.stockRooms ? normalizeStockRooms(state.stockRooms) : undefined,
     stockAllocations: state.stockAllocations ? normalizeStockAllocations(state.stockAllocations) : undefined,
+    narcoticRooms: state.narcoticRooms ? normalizeNarcoticRooms(state.narcoticRooms) : undefined,
+    narcoticDrugs: state.narcoticDrugs ? dedupeStockDrugs(state.narcoticDrugs) : undefined,
+    narcoticAllocations: state.narcoticAllocations ? normalizeStockAllocations(state.narcoticAllocations) : undefined,
+    narcoticDrugCategories: normalizeNarcoticCategories(state.narcoticDrugCategories),
+    narcoticCheckedItems: remapStockKeyRecord(state.narcoticCheckedItems),
+    narcoticExpiry: remapStockKeyRecord(state.narcoticExpiry),
+    narcoticChecklistByRoom: state.narcoticChecklistByRoom
+      ? Object.fromEntries(Object.entries(state.narcoticChecklistByRoom).map(([roomId, rows]) => [roomId, normalizeChecklistRows(rows)]))
+      : undefined,
+    narcoticRoundSummaryDraft: "narcoticRoundSummaryDraft" in state ? (state.narcoticRoundSummaryDraft ?? null) : undefined,
     checkedStock: remapStockKeyRecord(state.checkedStock),
     stockExpiry: remapStockKeyRecord(state.stockExpiry),
     stockChecklistByRoom: state.stockChecklistByRoom
@@ -486,6 +499,7 @@ function normalizePersistedState(state: Partial<PersistedAppState>): Partial<Per
       : undefined,
     ecartByTarget,
     uninspectedRoomIds: Array.isArray(state.uninspectedRoomIds) ? state.uninspectedRoomIds : undefined,
+    uninspectedNarcoticRoomIds: Array.isArray(state.uninspectedNarcoticRoomIds) ? state.uninspectedNarcoticRoomIds : undefined,
   };
 }
 
@@ -493,37 +507,17 @@ function drugTitle(drug: StockDrug) {
   return drugDisplayName(drug);
 }
 
-function isRefrigeratedStorage(storage: string) {
-  const value = storage.replace(/\s+/g, "");
-  const normalized = value.replace(/[∼～−–—]/g, "-").replace(/℃|°C/gi, "");
-  if (normalized.includes("냉장보관하지")) return false;
-  return normalized.includes("냉장") || /2(?:-|~)8/.test(normalized);
-}
-
-function isRefrigerated(drug: StockDrug) {
-  if (FORCE_ROOM_STORAGE_CODES.has(drug.code)) return false;
-  if (isForcedRefrigeratedDrug(drug)) return true;
-  return isRefrigeratedStorage(drug.storage);
-}
-
 function splitStockItems(items: EditableStockItem[]) {
   return {
-    refrigerated: items.filter((item) => isRefrigerated(item.drug)),
-    roomTemperature: items.filter((item) => !isRefrigerated(item.drug)),
+    refrigerated: items.filter((item) => isRefrigeratedDrug(item.drug)),
+    roomTemperature: items.filter((item) => !isRefrigeratedDrug(item.drug)),
   };
 }
 
-function inferStorageType(storage: string): StockDrug["storageType"] {
-  if (isRefrigeratedStorage(storage)) return "REFRIGERATED";
-  const value = storage.replace(/\s+/g, "");
-  if (value.includes("차광")) return "LIGHT_PROTECTED";
-  return "ROOM";
-}
-
 function storageBadge(drug: StockDrug) {
-  if (isRefrigerated(drug)) return <span className="badge blue">냉장</span>;
-  if (drug.storageType === "LIGHT_PROTECTED") return <span className="badge amber">차광</span>;
-  return <span className="badge gray">실온</span>;
+  const label = storageDisplayLabel(drug);
+  const tone = label === "냉장" ? "blue" : label === "차광" ? "amber" : "gray";
+  return <span className={`badge ${tone}`}>{label}</span>;
 }
 
 function warningBadge(text: string) {
@@ -532,135 +526,152 @@ function warningBadge(text: string) {
   return <span className={`badge ${tone}`}>{text}</span>;
 }
 
-function matchesDrug(drug: StockDrug, query: string) {
-  const value = query.trim().toLowerCase();
-  if (!value) return true;
-  return [drug.code, drug.genericName, drug.productName, drug.spec, drug.storage, drug.warning]
-    .join(" ")
-    .toLowerCase()
-    .includes(value);
+function drugRuleFieldsFromEcartItem(item: EcartItem): DrugRuleFields {
+  return {
+    code: item.code,
+    genericName: item.name,
+    productName: item.name,
+    spec: item.dosage,
+    warning: "",
+  };
 }
 
-function matchesMaster(row: MasterRow, query: string) {
-  return matchesDrug(row, query) || row.roomDetails.some((detail) => detail.roomId.toLowerCase().includes(query));
+function renderLabelName(row: DrugLabelData) {
+  const parenthetical = row.name.match(/^(.+?)(\([^()]+\))$/);
+  if (!parenthetical) return row.name;
+  return (
+    <>
+      {parenthetical[1]}
+      <span className="drug-name-parenthetical">{parenthetical[2]}</span>
+    </>
+  );
+}
+
+function hospitalDrugRuleFields(row: HospitalDrugLabelRow): DrugRuleFields {
+  return {
+    code: row.code,
+    genericName: row.koreanName,
+    productName: row.name,
+    spec: [row.strength, row.spec, row.package].filter(Boolean).join(" "),
+    warning: getHospitalDrugLabelWarnings(row).join(", "),
+  };
+}
+
+function buildHospitalDrugLabelData(row: HospitalDrugLabelRow): DrugLabelData {
+  const fields = hospitalDrugRuleFields(row);
+  const storageLabel = getHospitalDrugStorageLabel(row);
+  const highRisk = isHighRiskDrug(fields);
+  return {
+    id: makeHospitalDrugLabelId(row),
+    kind: "pharmacy",
+    code: row.code,
+    name: cleanDrugLabelName(row.name, highRisk),
+    spec: formatStockLabelSpec([row.strength, row.spec, row.package].filter(Boolean).join(" ")),
+    storageLabel,
+    storageTone: labelStorageTone(storageLabel),
+    storage: row.storage,
+    cautionLabels: getHospitalDrugLabelWarnings(row),
+    highRisk,
+  };
+}
+
+function buildEcartLabelData(
+  item: EcartItem,
+  totalQuantity: number,
+  suffix: string,
+): DrugLabelData {
+  const fields = drugRuleFieldsFromEcartItem(item);
+  return {
+    id: `ecart-${suffix}-${item.code}-${item.name}`,
+    kind: "ecart",
+    code: item.code,
+    name: item.name,
+    spec: item.dosage,
+    storageLabel: "E-cart",
+    storageTone: "ecart",
+    storage: "E-cart",
+    totalQuantity,
+    quantityLabel: "수량",
+    cautionLabels: getPolicyCautionLabels(fields),
+    highRisk: isHighRiskDrug(fields),
+  };
+}
+
+function buildFluidLabelData(item: FluidLabelSource): DrugLabelData {
+  const fields: DrugRuleFields = {
+    code: item.code,
+    genericName: item.name,
+    productName: item.name,
+    spec: "",
+    warning: "",
+  };
+  return {
+    id: `fluid-${item.code}`,
+    kind: "fluid",
+    code: item.code,
+    name: formatFluidLabelName(item.name),
+    spec: "",
+    storageLabel: "실온",
+    storageTone: "room",
+    storage: "실온보관",
+    cautionLabels: getPolicyCautionLabels(fields),
+    highRisk: isHighRiskDrug(fields),
+    fluidTone: fluidLabelTone({ code: item.code, genericName: "", productName: item.name, spec: "" }),
+  };
+}
+
+function getEcartLabelQuantity(state: EcartInspectionState, item: EcartItem) {
+  const current = state.items.find((row) => row.code === item.code || row.name === item.name);
+  return current?.quantity ?? item.quantity;
+}
+
+function drugCautionLabels(drug: DrugRuleFields) {
+  return [...getPolicyCautionLabels(drug), isHighRiskDrug(drug) ? "고위험" : ""].filter(Boolean);
+}
+
+function labelCautionLabels(row: DrugLabelData) {
+  return normalizeLabelCautionLabels(row.cautionLabels, row.highRisk);
+}
+
+function labelFlagLabels(row: DrugLabelData) {
+  return getDrugLabelFlagLabels(row);
+}
+
+function labelCautionBadgeClass(label: string) {
+  if (label === "마약") return "narcotic-group";
+  if (label === "향정") return "psychotropic";
+  if (label.includes("고위험")) return "red";
+  return "amber";
+}
+
+function renderLabelTopline(row: DrugLabelData) {
+  const cautionText = labelFlagLabels(row).join(" / ");
+  const showCodeStorageLabel = row.kind !== "ecart" && row.kind !== "fluid" && row.storageTone !== "room";
+  return (
+    <div className="drug-label-topline">
+      {cautionText ? <span className="drug-label-warning-flag">{cautionText}</span> : <span className="drug-label-warning-spacer" />}
+      <div className="drug-label-code-stack">
+        <strong>{row.code}</strong>
+        {showCodeStorageLabel ? <small className={`label-code-storage ${row.storageTone}`}>{row.storageLabel}</small> : null}
+        {row.kind === "ecart" ? <span className="label-storage-badge ecart">E-cart</span> : null}
+        {row.totalQuantity !== undefined ? <small className="label-quantity-circle">{row.totalQuantity}</small> : null}
+      </div>
+    </div>
+  );
+}
+
+function renderLabelSpec(row: DrugLabelData) {
+  if (row.kind !== "ecart" || !row.spec) return null;
+  return <p>{row.spec}</p>;
+}
+
+function renderLabelBottomCaution(row: DrugLabelData) {
+  const cautionText = labelFlagLabels(row).join(" / ");
+  return cautionText ? <em className="drug-label-caution-bottom">{cautionText}</em> : null;
 }
 
 function updateChecklistRows(items: ChecklistState[], id: string, patch: Partial<ChecklistState>) {
   return items.map((item) => (item.id === id ? { ...item, ...patch } : item));
-}
-
-function isChecklistLabelOnly(text: string) {
-  const compact = text.replace(/\s+/g, "");
-  return compact === "양호불량";
-}
-
-function isRetiredChecklistRow(text: string) {
-  return text.includes("E-cart") && text.includes("주 2회") && text.includes("관리대장");
-}
-
-function normalizeChecklistSection(section: string) {
-  return section === "청구약" ? CLAIM_FLUID_SECTION : section;
-}
-
-function normalizeChecklistText(text: string) {
-  return text
-    .replace(/청구약품 보관 장소에 약품명 라벨링이 되어 있다\./g, `${CLAIM_FLUID_SECTION}의 보관 장소에 약품명 라벨링이 되어 있다.`)
-    .replace(/청구약(?!\/\s*수액|품)/g, CLAIM_FLUID_SECTION);
-}
-
-function makeChecklistSibling<T extends { id?: string; note?: string; section: string; status?: CheckStatus; text: string }>(
-  item: T,
-  suffix: string,
-  text: string,
-) {
-  return {
-    ...item,
-    id: item.id ? `${item.id}-${suffix}` : undefined,
-    note: "",
-    status: "" as CheckStatus,
-    text,
-  } as T;
-}
-
-function ensureChecklistRow<T extends { id?: string; note?: string; section: string; status?: CheckStatus; text: string }>(
-  rows: T[],
-  section: string,
-  text: string,
-  suffix: string,
-) {
-  const compactText = text.replace(/\s+/g, "");
-  if (rows.some((item) => item.section === section && item.text.replace(/\s+/g, "") === compactText)) return;
-
-  for (let index = rows.length - 1; index >= 0; index -= 1) {
-    if (rows[index].section === section) {
-      rows.splice(index + 1, 0, makeChecklistSibling(rows[index], suffix, text));
-      return;
-    }
-  }
-}
-
-function normalizeChecklistRows<T extends { id?: string; note?: string; section: string; status?: CheckStatus; text: string }>(items: T[]) {
-  const rows: T[] = [];
-  for (const item of items) {
-    if (isChecklistLabelOnly(item.text)) continue;
-    if (isRetiredChecklistRow(item.text)) continue;
-    const section = normalizeChecklistSection(item.section);
-    let text = normalizeChecklistText(item.text);
-    if (text.includes("비품이외의 잉여약을 보관하고 있다.")) {
-      text = text.replace("비품이외의 잉여약을 보관하고 있다.", "비품이외의 잉여약을 보관하고 있지 않다.");
-    }
-    let status = item.status;
-    const isNoteOrReason = text.startsWith("*") || text.includes("사유") || text.startsWith("이상 시");
-    const shouldDefaultGood = !isNoteOrReason;
-    if (shouldDefaultGood && (status === undefined || status === "")) {
-      status = "good" as CheckStatus;
-    }
-    const normalizedItem = { ...item, section, text, status };
-    if (text.startsWith("2-1 ") && text.includes(" 2-2 ")) {
-      const [first, second] = text.split(" 2-2 ", 2);
-      rows.push(makeChecklistSibling(normalizedItem, "2-1", first));
-      rows.push(makeChecklistSibling(normalizedItem, "2-2", `2-2 ${second}`));
-      continue;
-    }
-    rows.push(normalizedItem);
-  }
-
-  const stockKindIndex = rows.findIndex((item) => item.section === "비품약" && item.text.replace(/\s+/g, "") === "비품약종류일치");
-  const hasQuantityMatch = rows.some((item) => item.section === "비품약" && item.text.replace(/\s+/g, "") === "수량일치");
-  if (stockKindIndex >= 0 && !hasQuantityMatch) {
-    rows.splice(stockKindIndex + 1, 0, makeChecklistSibling(rows[stockKindIndex], "quantity-match", "수량 일치"));
-  }
-
-  let lastColdIndex = -1;
-  for (let index = rows.length - 1; index >= 0; index -= 1) {
-    if (rows[index].section === "냉장약") {
-      lastColdIndex = index;
-      break;
-    }
-  }
-  const hasThermometerCheck = rows.some((item) => item.section === "냉장약" && item.text.includes("냉장고 온도계 검증"));
-  if (lastColdIndex >= 0 && !hasThermometerCheck) {
-    rows.splice(lastColdIndex + 1, 0, makeChecklistSibling(rows[lastColdIndex], "thermometer", "6. 연 1회 냉장고 온도계 검증 여부"));
-  }
-
-  ensureChecklistRow(rows, "비품약", "5. 비품약 유효기간 1달에 1번 날짜로 관리한다.", "monthly-stock-expiry");
-  ensureChecklistRow(rows, CLAIM_FLUID_SECTION, "5. 청구약/ 수액 유효기간을 1달에 1번 관리 한다.", "monthly-claim-fluid-expiry");
-  ensureChecklistRow(rows, "E-cart", "4. E-cart 약물의 종류와 갯수가 규정과 동일 하다.", "drug-count-match");
-
-  return rows;
-}
-
-function stockKey(roomId: string, drugCode: string) {
-  return `${roomId}::${drugCode}`;
-}
-
-function sanitizeFileName(value: string) {
-  return value.replace(/[\\/:*?"<>|]/g, "_").replace(/\s+/g, " ").trim();
-}
-
-function todayStamp() {
-  const now = new Date();
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 }
 
 function defaultRoundInspectionPeriod() {
@@ -668,41 +679,19 @@ function defaultRoundInspectionPeriod() {
   return `${now.getFullYear()}년 ${now.getMonth() + 1}월 ${now.getDate()}일`;
 }
 
-export function getInitialAppMode(pathname = window.location.pathname, search = window.location.search): AppMode {
-  const params = new URLSearchParams(search);
-  if (params.get("view") === "master" || pathname.replace(/\/+$/, "").endsWith("/viewer")) {
-    return "master-viewer";
-  }
-  return "admin";
-}
-
-function getStockGuideInspectionKey(item: StockGuideEntry) {
-  if (item.stockRoomId) return item.stockRoomId;
-  if (item.ecartTargetId) return `ecart:${item.ecartTab ?? "general"}:${item.ecartTargetId}`;
-  return item.label;
-}
-
-export function clearUninspectedRoomId(ids: string[], roomId: string) {
-  return ids.includes(roomId) ? ids.filter((id) => id !== roomId) : ids;
-}
-
-export function makeInspectionCycleResetState(): InspectionCycleResetState {
-  return {
-    checkedStock: {},
-    stockExpiry: {},
-    stockChecklistByRoom: {},
-    ecartByTarget: {},
-    roundSummaryDraft: null,
-  };
-}
-
 export function App() {
   const appMode = useMemo(() => getInitialAppMode(), []);
-  const isMasterViewer = appMode === "master-viewer";
+  const isViewerMode = appMode !== "admin";
+  const isReadOnlyViewer = appMode === "master-viewer" || appMode === "pharmacy-viewer";
+  const isPharmacyViewer = appMode === "pharmacy-viewer";
+  const isNarcoticViewer = appMode === "narcotic-viewer";
+  const canEditMaster = appMode === "admin" || isNarcoticViewer;
+  const defaultNewDrugCategory: NewDrugForm["category"] = isNarcoticViewer ? "향정" : "stock";
   const persistedState = useMemo(loadPersistedState, []);
-  const [mainCategory, setMainCategory] = useState<MainCategory>("stock");
-  const [showMaster, setShowMaster] = useState(isMasterViewer);
+  const [mainCategory, setMainCategory] = useState<MainCategory>(isNarcoticViewer ? "narcotic" : "stock");
+  const [showMaster, setShowMaster] = useState(isReadOnlyViewer);
   const [showRoundSummary, setShowRoundSummary] = useState(false);
+  const [roundSummaryMode, setRoundSummaryMode] = useState<RoundSummaryMode>("ward");
   const [activeRoom, setActiveRoom] = useState(firstStockRoom);
   const [activeEcartTab, setActiveEcartTab] = useState<EcartTab>("general");
   const [activeEcartTargetId, setActiveEcartTargetId] = useState(firstEcartTargetId);
@@ -712,6 +701,18 @@ export function App() {
   );
   const [stockAllocations, setStockAllocations] = useState<StockAllocation[]>(
     (persistedState.stockAllocations ?? initialStockAllocations).filter((allocation) => !hiddenStockRooms.has(allocation.roomId)),
+  );
+  const [narcoticDrugs, setNarcoticDrugs] = useState<StockDrug[]>(() =>
+    dedupeStockDrugs(persistedState.narcoticDrugs ?? [...NARCOTIC_DRUGS]),
+  );
+  const [narcoticAllocations, setNarcoticAllocations] = useState<StockAllocation[]>(() =>
+    normalizeStockAllocations(persistedState.narcoticAllocations ?? [...NARCOTIC_ALLOCATIONS]),
+  );
+  const [narcoticRooms, setNarcoticRooms] = useState<StockRoom[]>(() =>
+    normalizeNarcoticRooms(persistedState.narcoticRooms ?? [...NARCOTIC_ROOMS]),
+  );
+  const [narcoticDrugCategories, setNarcoticDrugCategories] = useState<Record<string, NarcoticCategory>>(
+    persistedState.narcoticDrugCategories ?? normalizeNarcoticCategories(),
   );
   const [checkedStock, setCheckedStock] = useState<Record<string, boolean>>(persistedState.checkedStock ?? {});
   const [stockExpiry, setStockExpiry] = useState<Record<string, string>>(persistedState.stockExpiry ?? {});
@@ -724,12 +725,33 @@ export function App() {
   const [roundSummaryDraft, setRoundSummaryDraft] = useState<RoundSummaryDraft | null>(
     persistedState.roundSummaryDraft ?? null,
   );
+  const [narcoticRoundSummaryDraft, setNarcoticRoundSummaryDraft] = useState<RoundSummaryDraft | null>(
+    persistedState.narcoticRoundSummaryDraft ?? null,
+  );
   const [stockRoomUpdatedAt, setStockRoomUpdatedAt] = useState<Record<string, string>>(
     persistedState.stockRoomUpdatedAt ?? {},
   );
   const [uninspectedRoomIds, setUninspectedRoomIds] = useState<string[]>(persistedState.uninspectedRoomIds ?? []);
   const [query, setQuery] = useState("");
   const [masterQuery, setMasterQuery] = useState("");
+  const [masterKindFilter, setMasterKindFilter] = useState<Record<MasterRowKind, boolean>>(() => getInitialMasterKindFilter(appMode));
+  const [masterQuickPlacement, setMasterQuickPlacement] = useState<"side" | "bottom">("side");
+  const [labelQuery, setLabelQuery] = useState("");
+  const [labelSelectedCodes, setLabelSelectedCodes] = useState<string[]>([]);
+  const [labelPrintSelections, setLabelPrintSelections] = useState<LabelPrintSelection[]>([]);
+  const [labelCopies, setLabelCopies] = useState(1);
+  const [labelMode, setLabelMode] = useState<DrugLabelMode>("stock");
+  const [labelSize, setLabelSize] = useState<DrugLabelSizeKey>("35x100");
+  const [isDrugLabelPanelOpen, setIsDrugLabelPanelOpen] = useState(false);
+  const [isPharmacyLabelWorkspaceOpen, setIsPharmacyLabelWorkspaceOpen] = useState(appMode === "pharmacy-viewer");
+  const [hospitalDrugLabelRows, setHospitalDrugLabelRows] = useState<HospitalDrugLabelRow[]>([]);
+  const [isHospitalDrugLabelsLoading, setIsHospitalDrugLabelsLoading] = useState(false);
+  const [pharmacyLabelMatchRows, setPharmacyLabelMatchRows] = useState<PharmacyLabelMatchRow[]>([]);
+  const [isPharmacyLabelMatchesLoading, setIsPharmacyLabelMatchesLoading] = useState(false);
+  const [savedPharmacyLabels, setSavedPharmacyLabels] = useState<PharmacySavedLabel[]>(() =>
+    typeof window === "undefined" ? [] : loadSavedPharmacyLabelsFromStorage(window.localStorage),
+  );
+  const [pharmacyPrintDrafts, setPharmacyPrintDrafts] = useState<PharmacyLabelDraft[]>([]);
   const [targetRooms, setTargetRooms] = useState<string[]>([]);
   const [newAssignment, setNewAssignment] = useState({ drugCode: "", count: 1 });
   const [assignmentDrugQuery, setAssignmentDrugQuery] = useState("");
@@ -740,18 +762,34 @@ export function App() {
     spec: "",
     storage: "실온보관",
     warning: "",
+    category: defaultNewDrugCategory,
   });
   const [newRoomName, setNewRoomName] = useState("");
   const [renameDrugForm, setRenameDrugForm] = useState({ oldCode: "", newCode: "" });
   const [isMobileMode, setIsMobileMode] = useState(false);
+  const [narcoticActiveRoom, setNarcoticActiveRoom] = useState(FIRST_NARCOTIC_ROOM);
+  const [narcoticCheckedItems, setNarcoticCheckedItems] = useState<Record<string, boolean>>(persistedState.narcoticCheckedItems ?? {});
+  const [narcoticExpiry, setNarcoticExpiry] = useState<Record<string, string>>(persistedState.narcoticExpiry ?? {});
+  const [narcoticChecklistByRoom, setNarcoticChecklistByRoom] = useState<Record<string, ChecklistState[]>>(
+    persistedState.narcoticChecklistByRoom ?? {},
+  );
+  const [uninspectedNarcoticRoomIds, setUninspectedNarcoticRoomIds] = useState<string[]>(
+    persistedState.uninspectedNarcoticRoomIds ?? [],
+  );
+  const [narcoticLotAssignments, setNarcoticLotAssignments] = useState<Record<string, NarcoticLotValue>>(
+    persistedState.narcoticLotAssignments ?? {},
+  );
+  const [narcoticExcelFileName, setNarcoticExcelFileName] = useState(persistedState.narcoticLotFileName ?? "");
   const [showSyncSettings, setShowSyncSettings] = useState(false);
   const [syncStatus, setSyncStatus] = useState<SyncStatus>({ mode: "syncing", message: "자동 저장 서버 연결 중..." });
+  const [isSyncConfigReady, setIsSyncConfigReady] = useState(false);
   const [pdfStatus, setPdfStatus] = useState<PdfStatus>("idle");
   const [pdfDownload, setPdfDownload] = useState<PdfDownloadResult | null>(null);
   const [showPrintPreview, setShowPrintPreview] = useState(false);
   const [printPreviewMode, setPrintPreviewMode] = useState<PrintPreviewMode>("single");
   const reportRef = useRef<HTMLDivElement>(null);
   const printPreviewRef = useRef<HTMLDivElement>(null);
+  const narcoticExcelInputRef = useRef<HTMLInputElement>(null);
   const syncClientId = useMemo(getSyncClientId, []);
   const remoteShaRef = useRef<string | undefined>(undefined);
   const syncInitializedRef = useRef(false);
@@ -769,6 +807,15 @@ export function App() {
       stockDrugs,
       stockRooms,
       stockAllocations,
+      narcoticRooms,
+      narcoticDrugs,
+      narcoticAllocations,
+      narcoticDrugCategories,
+      narcoticCheckedItems,
+      narcoticExpiry,
+      narcoticChecklistByRoom,
+      narcoticRoundSummaryDraft,
+      uninspectedNarcoticRoomIds,
       checkedStock,
       stockExpiry,
       stockChecklistByRoom,
@@ -776,17 +823,30 @@ export function App() {
       roundSummaryDraft,
       stockRoomUpdatedAt,
       uninspectedRoomIds,
+      narcoticLotAssignments,
+      narcoticLotFileName: narcoticExcelFileName,
     }),
     [
       checkedStock,
       ecartByTarget,
+      narcoticAllocations,
+      narcoticCheckedItems,
+      narcoticChecklistByRoom,
+      narcoticDrugCategories,
+      narcoticDrugs,
+      narcoticRooms,
+      narcoticRoundSummaryDraft,
       roundSummaryDraft,
+      narcoticExcelFileName,
+      narcoticExpiry,
+      narcoticLotAssignments,
       stockAllocations,
       stockChecklistByRoom,
       stockDrugs,
       stockExpiry,
       stockRoomUpdatedAt,
       stockRooms,
+      uninspectedNarcoticRoomIds,
       uninspectedRoomIds,
     ],
   );
@@ -799,6 +859,15 @@ export function App() {
     if (normalized.stockAllocations) {
       setStockAllocations(normalizeStockAllocations(normalized.stockAllocations).filter((allocation) => !hiddenStockRooms.has(allocation.roomId)));
     }
+    if (normalized.narcoticRooms) setNarcoticRooms(normalizeNarcoticRooms(normalized.narcoticRooms));
+    if (normalized.narcoticDrugs) setNarcoticDrugs(dedupeStockDrugs(normalized.narcoticDrugs));
+    if (normalized.narcoticAllocations) setNarcoticAllocations(normalizeStockAllocations(normalized.narcoticAllocations));
+    if (normalized.narcoticDrugCategories) setNarcoticDrugCategories(normalized.narcoticDrugCategories);
+    if (normalized.narcoticCheckedItems) setNarcoticCheckedItems(normalized.narcoticCheckedItems);
+    if (normalized.narcoticExpiry) setNarcoticExpiry(normalized.narcoticExpiry);
+    if (normalized.narcoticChecklistByRoom) setNarcoticChecklistByRoom(normalized.narcoticChecklistByRoom);
+    if (normalized.narcoticRoundSummaryDraft !== undefined) setNarcoticRoundSummaryDraft(normalized.narcoticRoundSummaryDraft);
+    if (normalized.uninspectedNarcoticRoomIds) setUninspectedNarcoticRoomIds(normalized.uninspectedNarcoticRoomIds);
     if (normalized.checkedStock) setCheckedStock(normalized.checkedStock);
     if (normalized.stockExpiry) setStockExpiry(normalized.stockExpiry);
     if (normalized.stockChecklistByRoom) setStockChecklistByRoom(normalized.stockChecklistByRoom);
@@ -806,6 +875,8 @@ export function App() {
     if ("roundSummaryDraft" in normalized) setRoundSummaryDraft(normalized.roundSummaryDraft ?? null);
     if (normalized.stockRoomUpdatedAt) setStockRoomUpdatedAt(normalized.stockRoomUpdatedAt);
     if (normalized.uninspectedRoomIds) setUninspectedRoomIds(normalized.uninspectedRoomIds);
+    if (normalized.narcoticLotAssignments) setNarcoticLotAssignments(normalized.narcoticLotAssignments);
+    if (typeof normalized.narcoticLotFileName === "string") setNarcoticExcelFileName(normalized.narcoticLotFileName);
   }
 
   async function pullRemoteState(forceApply = false, options: PullRemoteOptions = {}) {
@@ -920,6 +991,79 @@ export function App() {
     }
   }
 
+  function mergeNarcoticInspectionFields(base: PersistedAppState, source: Partial<PersistedAppState>): PersistedAppState {
+    return {
+      ...base,
+      narcoticRooms: source.narcoticRooms ?? base.narcoticRooms,
+      narcoticDrugs: source.narcoticDrugs ?? base.narcoticDrugs,
+      narcoticAllocations: source.narcoticAllocations ?? base.narcoticAllocations,
+      narcoticDrugCategories: source.narcoticDrugCategories ?? base.narcoticDrugCategories,
+      narcoticCheckedItems: source.narcoticCheckedItems ?? base.narcoticCheckedItems,
+      narcoticExpiry: source.narcoticExpiry ?? base.narcoticExpiry,
+      narcoticChecklistByRoom: source.narcoticChecklistByRoom ?? base.narcoticChecklistByRoom,
+      narcoticRoundSummaryDraft:
+        source.narcoticRoundSummaryDraft !== undefined ? source.narcoticRoundSummaryDraft : base.narcoticRoundSummaryDraft,
+      uninspectedNarcoticRoomIds: source.uninspectedNarcoticRoomIds ?? base.uninspectedNarcoticRoomIds,
+      narcoticLotAssignments: source.narcoticLotAssignments ?? base.narcoticLotAssignments,
+      narcoticLotFileName: source.narcoticLotFileName ?? base.narcoticLotFileName,
+    };
+  }
+
+  async function pullNarcoticInspectionStateFromServer() {
+    const localState = latestStateRef.current ?? persistedAppState;
+    setSyncStatus({ mode: "syncing", message: "비치마약류 점검 내용 불러오는 중..." });
+    try {
+      const remote = await loadServerState<PersistedAppState>();
+      if (!remote) {
+        setSyncStatus({ mode: "idle", message: "불러올 비치마약류 점검 내용이 없습니다." });
+        return;
+      }
+      remoteShaRef.current = remote.sha;
+      const normalizedRemote = normalizePersistedState(remote.envelope.state);
+      const mergedState = mergeNarcoticInspectionFields(localState, normalizedRemote);
+      localUpdatedAtRef.current = remote.envelope.updatedAt;
+      hasUnsavedLocalChangesRef.current = false;
+      pendingPushRef.current = false;
+      window.localStorage.setItem(LOCAL_UPDATED_AT_KEY, remote.envelope.updatedAt);
+      applyPersistedAppState(mergedState);
+      setSyncStatus({ mode: "synced", message: "비치마약류 점검 내용 불러오기 완료", lastSyncedAt: new Date().toISOString() });
+    } catch (error) {
+      setSyncStatus({ mode: "error", message: error instanceof Error ? error.message : "비치마약류 점검 내용 불러오기 실패" });
+    }
+  }
+
+  async function saveNarcoticInspectionStateToServer() {
+    const localState = latestStateRef.current ?? persistedAppState;
+    const confirmed = window.confirm(
+      "현재 기기의 비치마약류 체크, 3개월 미만 날짜, 체크리스트 메모, LOT, 순회점검표 내용을 PC/모바일 공유 상태로 저장합니다.",
+    );
+    if (!confirmed) return;
+
+    setSyncStatus({ mode: "syncing", message: "비치마약류 점검 내용 저장 중..." });
+    try {
+      const remote = await loadServerState<PersistedAppState>();
+      const baseState = remote ? ({ ...localState, ...remote.envelope.state } as PersistedAppState) : localState;
+      const mergedState = mergeNarcoticInspectionFields(baseState, localState);
+      const updatedAt = new Date().toISOString();
+      const envelope: RemoteStateEnvelope<PersistedAppState> = {
+        version: 1,
+        updatedAt,
+        clientId: syncClientId,
+        state: mergedState,
+      };
+      const result = await saveServerState(envelope, remote?.sha ? { baseSha: remote.sha } : { force: true });
+      remoteShaRef.current = result.sha;
+      localUpdatedAtRef.current = updatedAt;
+      hasUnsavedLocalChangesRef.current = false;
+      pendingPushRef.current = false;
+      window.localStorage.setItem(LOCAL_UPDATED_AT_KEY, updatedAt);
+      applyPersistedAppState(mergedState);
+      setSyncStatus({ mode: "synced", message: "비치마약류 점검 내용 저장 완료", lastSyncedAt: new Date().toISOString() });
+    } catch (error) {
+      setSyncStatus({ mode: "error", message: error instanceof Error ? error.message : "비치마약류 점검 내용 저장 실패" });
+    }
+  }
+
   function scheduleRemotePush() {
     if (!syncInitializedRef.current) {
       pendingPushRef.current = true;
@@ -932,6 +1076,13 @@ export function App() {
       pushTimerRef.current = undefined;
       void pushRemoteState().catch(() => undefined);
     }, 800);
+  }
+
+  function markImmediateLocalChange() {
+    const updatedAt = new Date().toISOString();
+    localUpdatedAtRef.current = updatedAt;
+    hasUnsavedLocalChangesRef.current = true;
+    window.localStorage.setItem(LOCAL_UPDATED_AT_KEY, updatedAt);
   }
 
   useEffect(() => {
@@ -954,6 +1105,28 @@ export function App() {
 
   useEffect(() => {
     let cancelled = false;
+
+    void loadRuntimeSyncConfig()
+      .then((config) => {
+        if (cancelled) return;
+        configureServerSyncBaseUrl(config?.apiBaseUrl);
+      })
+      .catch((error) => {
+        console.warn("Runtime sync config load failed", error);
+        configureServerSyncBaseUrl();
+      })
+      .finally(() => {
+        if (!cancelled) setIsSyncConfigReady(true);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isSyncConfigReady) return;
+    let cancelled = false;
     syncInitializedRef.current = false;
     setSyncStatus({ mode: "syncing", message: "자동 저장 서버 연결 중..." });
     void pullRemoteState().catch((error) => {
@@ -970,13 +1143,43 @@ export function App() {
       cancelled = true;
       window.clearInterval(poller);
     };
-  }, [syncClientId]);
+  }, [isSyncConfigReady, syncClientId]);
 
   useEffect(() => {
     return () => {
       if (pushTimerRef.current) window.clearTimeout(pushTimerRef.current);
     };
   }, []);
+
+  useEffect(() => {
+    if (appMode === "master-viewer" || !isDrugLabelPanelOpen || labelMode !== "pharmacy" || hospitalDrugLabelRows.length > 0) return;
+    setIsHospitalDrugLabelsLoading(true);
+    void loadHospitalDrugLabelRows()
+      .then((rows) => {
+        setHospitalDrugLabelRows(rows);
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => {
+        setIsHospitalDrugLabelsLoading(false);
+      });
+  }, [appMode, hospitalDrugLabelRows.length, isDrugLabelPanelOpen, labelMode]);
+
+  useEffect(() => {
+    if (!isPharmacyLabelWorkspaceOpen || pharmacyLabelMatchRows.length > 0 || isPharmacyLabelMatchesLoading) return;
+    setIsPharmacyLabelMatchesLoading(true);
+    void loadPharmacyLabelMatchRows()
+      .then((rows) => {
+        setPharmacyLabelMatchRows(rows);
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => {
+        setIsPharmacyLabelMatchesLoading(false);
+      });
+  }, [isPharmacyLabelMatchesLoading, isPharmacyLabelWorkspaceOpen, pharmacyLabelMatchRows.length]);
 
   const syncStatusText = useMemo(() => {
     if (syncStatus.lastSyncedAt) {
@@ -1020,8 +1223,65 @@ export function App() {
     return stockRooms.map((room) => ({ ...room, ...(stats.get(room.id) ?? { allocationCount: 0, totalQuantity: 0 }) }));
   }, [stockAllocations, stockRooms]);
 
+  const currentNarcoticRooms = useMemo(() => {
+    const stats = new Map<string, { allocationCount: number; totalQuantity: number }>();
+    for (const room of narcoticRooms) {
+      stats.set(room.id, { allocationCount: 0, totalQuantity: 0 });
+    }
+    for (const allocation of narcoticAllocations) {
+      const roomStats = stats.get(allocation.roomId);
+      if (!roomStats) continue;
+      roomStats.allocationCount += 1;
+      roomStats.totalQuantity += allocation.requiredQty;
+    }
+    return narcoticRooms.map((room) => ({ ...room, ...(stats.get(room.id) ?? { allocationCount: 0, totalQuantity: 0 }) }));
+  }, [narcoticAllocations, narcoticRooms]);
+
+  const currentNarcoticFloors = useMemo(() => {
+    const roomById = new Map(currentNarcoticRooms.map((room) => [room.id, room]));
+    const groupedRoomIds = new Set(NARCOTIC_FLOORS.flatMap((floorGroup) => floorGroup.rooms.map((room) => room.id)));
+    const floors = NARCOTIC_FLOORS.map((floorGroup) => ({
+      ...floorGroup,
+      rooms: floorGroup.rooms.flatMap((room) => roomById.get(room.id) ?? []),
+    }));
+    const extraRooms = currentNarcoticRooms.filter((room) => !groupedRoomIds.has(room.id));
+    return extraRooms.length > 0 ? [...floors, { floor: "추가 보유실", rooms: extraRooms }] : floors;
+  }, [currentNarcoticRooms]);
+
+  const inspectedStockRoomIds = useMemo(() => {
+    const ids = new Set<string>();
+    for (const [key, checked] of Object.entries(checkedStock)) {
+      if (!checked) continue;
+      const [roomId] = key.split("::");
+      if (roomId) ids.add(roomId);
+    }
+    return [...ids];
+  }, [checkedStock]);
+
+  const inspectedNarcoticRoomIds = useMemo(() => {
+    const ids = new Set<string>();
+    for (const [key, checked] of Object.entries(narcoticCheckedItems)) {
+      if (!checked) continue;
+      const [roomId] = key.split("::");
+      if (roomId) ids.add(roomId);
+    }
+    return [...ids];
+  }, [narcoticCheckedItems]);
+
   const drugByCode = useMemo(() => new Map(stockDrugs.map((drug) => [drug.code, drug])), [stockDrugs]);
+  const narcoticDrugByCode = useMemo(() => new Map(narcoticDrugs.map((drug) => [drug.code, drug])), [narcoticDrugs]);
+  const narcoticMasterKindByCode = useMemo(
+    () =>
+      new Map(
+        narcoticDrugs.map((drug) => [
+          drug.code,
+          (narcoticDrugCategories[drug.code] ?? narcoticCategoryOf(drug.code)) === "마약" ? "narcotic" : "psychotropic",
+        ] as const),
+      ),
+    [narcoticDrugCategories, narcoticDrugs],
+  );
   const roomById = useMemo(() => new Map(currentStockRooms.map((room) => [room.id, room])), [currentStockRooms]);
+  const narcoticRoomById = useMemo(() => new Map(currentNarcoticRooms.map((room) => [room.id, room])), [currentNarcoticRooms]);
   const activeRoomInfo = roomById.get(activeRoom) ?? currentStockRooms[0];
   const activeEcartTarget =
     activeEcartTab === "general"
@@ -1032,20 +1292,51 @@ export function App() {
     return getEcartDefaultState(ecartByTarget, activeEcartTab, activeEcartKey);
   }, [activeEcartKey, activeEcartTab, ecartByTarget]);
 
-  const masterRows = useMemo(() => buildMasterRows(stockDrugs, stockAllocations), [stockAllocations, stockDrugs]);
+  const masterRows = useMemo(
+    () => {
+      const kindOrder: Record<MasterRowKind, number> = { stock: 0, psychotropic: 1, narcotic: 2 };
+      const rows = [
+        ...buildMasterRows(stockDrugs, stockAllocations, () => "stock"),
+        ...buildMasterRows(narcoticDrugs, narcoticAllocations, (drug) => narcoticMasterKindByCode.get(drug.code) ?? "psychotropic"),
+      ];
+      return rows.sort((a, b) => kindOrder[a.masterKind] - kindOrder[b.masterKind] || compareStockDrugsByName(a, b));
+    },
+    [narcoticAllocations, narcoticDrugs, narcoticMasterKindByCode, stockAllocations, stockDrugs],
+  );
+  const stockedMasterRows = useMemo(() => filterMasterRowsWithStock(masterRows), [masterRows]);
+  const visibleMasterRows = useMemo(
+    () => filterMasterRowsByKind(stockedMasterRows, masterKindFilter),
+    [masterKindFilter, stockedMasterRows],
+  );
+  const activeMasterLabelRoomId = useMemo(
+    () => resolveMasterLabelRoomId(masterQuery, [...stockRooms, ...currentNarcoticRooms]),
+    [currentNarcoticRooms, masterQuery, stockRooms],
+  );
   const filteredMasterRows = useMemo(
-    () => masterRows.filter((row) => matchesMaster(row, masterQuery.trim().toLowerCase())),
-    [masterRows, masterQuery],
+    () =>
+      activeMasterLabelRoomId
+        ? visibleMasterRows.filter((row) => matchesMasterRoom(row, activeMasterLabelRoomId))
+        : visibleMasterRows.filter((row) => matchesMaster(row, masterQuery.trim().toLowerCase())),
+    [activeMasterLabelRoomId, visibleMasterRows, masterQuery],
+  );
+  const assignmentDrugs = useMemo(
+    () => sortStockDrugsByName(isNarcoticViewer ? narcoticDrugs : [...stockDrugs, ...narcoticDrugs]),
+    [isNarcoticViewer, narcoticDrugs, stockDrugs],
   );
   const selectedAssignmentDrug = useMemo(
-    () => stockDrugs.find((drug) => drug.code === newAssignment.drugCode),
-    [newAssignment.drugCode, stockDrugs],
+    () => assignmentDrugs.find((drug) => drug.code === newAssignment.drugCode),
+    [assignmentDrugs, newAssignment.drugCode],
   );
+  const selectedAssignmentKind: MasterRowKind =
+    selectedAssignmentDrug && narcoticMasterKindByCode.has(selectedAssignmentDrug.code)
+      ? (narcoticMasterKindByCode.get(selectedAssignmentDrug.code) ?? "psychotropic")
+      : "stock";
+  const assignmentRoomOptions = selectedAssignmentKind === "stock" ? currentStockRooms : currentNarcoticRooms;
   const assignmentDrugMatches = useMemo(() => {
     const value = assignmentDrugQuery.trim();
     if (!value) return [];
-    return stockDrugs.filter((drug) => matchesDrug(drug, value)).slice(0, 18);
-  }, [assignmentDrugQuery, stockDrugs]);
+    return assignmentDrugs.filter((drug) => matchesDrug(drug, value)).slice(0, 18);
+  }, [assignmentDrugQuery, assignmentDrugs]);
 
   const stockItemsByRoom = useMemo(() => {
     const itemsByRoom = new Map<string, EditableStockItem[]>();
@@ -1081,10 +1372,178 @@ export function App() {
   const currentStockChecklist = useMemo(() => {
     return getStockChecklistDefaultState(stockChecklistByRoom, activeRoom);
   }, [activeRoom, stockChecklistByRoom]);
-  const currentChecklist = mainCategory === "stock" ? currentStockChecklist : activeEcartState.checklist;
+
+  // ── Narcotic derived data ──
+  const narcoticRoomInfo = useMemo(
+    () => narcoticRoomById.get(narcoticActiveRoom) ?? currentNarcoticRooms[0],
+    [currentNarcoticRooms, narcoticActiveRoom, narcoticRoomById],
+  );
+  const narcoticItemsByRoom = useMemo(() => {
+    const itemsByRoom = new Map<string, EditableStockItem[]>();
+    for (const allocation of narcoticAllocations) {
+      const drug = narcoticDrugByCode.get(allocation.drugCode);
+      if (!drug) continue;
+      const key = stockKey(allocation.roomId, allocation.drugCode);
+      const item: EditableStockItem = {
+        ...allocation,
+        drug,
+        checked: narcoticCheckedItems[key] ?? false,
+        expiryDate: narcoticExpiry[key] ?? "",
+      };
+      const roomItems = itemsByRoom.get(allocation.roomId) ?? [];
+      roomItems.push(item);
+      itemsByRoom.set(allocation.roomId, roomItems);
+    }
+    for (const roomItems of itemsByRoom.values()) {
+      roomItems.sort((a, b) => compareStockDrugsByName(a.drug, b.drug));
+    }
+    return itemsByRoom;
+  }, [narcoticAllocations, narcoticCheckedItems, narcoticDrugByCode, narcoticExpiry]);
+  const currentNarcoticItems = useMemo<EditableStockItem[]>(
+    () => (narcoticItemsByRoom.get(narcoticActiveRoom) ?? []).filter((item) => matchesDrug(item.drug, query)),
+    [narcoticActiveRoom, narcoticItemsByRoom, query],
+  );
+  const currentNarcoticChecklist = useMemo<ChecklistState[]>(() => {
+    return getNarcoticChecklistDefaultState(narcoticChecklistByRoom, narcoticActiveRoom);
+  }, [narcoticActiveRoom, narcoticChecklistByRoom]);
+
+  const currentChecklist = mainCategory === "stock" ? currentStockChecklist
+    : mainCategory === "narcotic" ? currentNarcoticChecklist
+    : activeEcartState.checklist;
 
   const selectedMasterRow = filteredMasterRows[0];
   const showMasterQuickView = masterQuery.trim().length > 0;
+  const labelModeOptions = useMemo(() => getLabelModeOptions(appMode), [appMode]);
+  const labelSearchRows = useMemo(() => {
+    const trimmed = labelQuery.trim().toLowerCase();
+    const rows = trimmed ? visibleMasterRows.filter((row) => matchesMaster(row, trimmed)) : filteredMasterRows;
+    return rows.slice(0, 24);
+  }, [filteredMasterRows, labelQuery, visibleMasterRows]);
+  const selectedLabelRows = useMemo(
+    () => filteredMasterRows.filter((row) => labelSelectedCodes.includes(row.code)),
+    [filteredMasterRows, labelSelectedCodes],
+  );
+  const narcoticMasterRowsForLabels = useMemo(() => {
+    const rows = stockedMasterRows.filter((row) => row.masterKind === "psychotropic" || row.masterKind === "narcotic");
+    const trimmed = labelQuery.trim().toLowerCase();
+    if (!trimmed) return rows.slice(0, 80);
+    return rows.filter((row) => matchesMaster(row, trimmed)).slice(0, 80);
+  }, [labelQuery, stockedMasterRows]);
+  const allNarcoticMasterLabelRows = useMemo(
+    () =>
+      stockedMasterRows
+        .filter((row) => row.masterKind === "psychotropic" || row.masterKind === "narcotic")
+        .map((row) => buildNarcoticMasterLabelData(row, row.masterKind === "narcotic" ? "마약" : "향정")),
+    [stockedMasterRows],
+  );
+  const narcoticMasterLabelRows = useMemo(
+    () =>
+      narcoticMasterRowsForLabels.map((row) =>
+        buildNarcoticMasterLabelData(row, row.masterKind === "narcotic" ? "마약" : "향정", activeMasterLabelRoomId),
+      ),
+    [activeMasterLabelRoomId, narcoticMasterRowsForLabels],
+  );
+  const allNarcoticFileLabelRows = useMemo(() => NARCOTIC_LABEL_ROWS.map(buildNarcoticFileLabelData), []);
+  const filteredNarcoticFileLabelRows = useMemo(() => {
+    const trimmed = labelQuery.trim().toLowerCase();
+    const rows = trimmed ? NARCOTIC_LABEL_ROWS.filter((row) => matchesNarcoticLabel(row, trimmed)) : NARCOTIC_LABEL_ROWS;
+    return rows.slice(0, 80).map(buildNarcoticFileLabelData);
+  }, [labelQuery]);
+  const stockLabelBaseRows = useMemo(
+    () => labelSearchRows.map((row) => buildStockLabelData(row, "stock", activeMasterLabelRoomId)),
+    [activeMasterLabelRoomId, labelSearchRows],
+  );
+  const allStockLabelRows = useMemo(() => visibleMasterRows.map((row) => buildStockLabelData(row, "stock")), [visibleMasterRows]);
+  const hospitalDrugRowsByLabelId = useMemo(
+    () => new Map(hospitalDrugLabelRows.map((row) => [makeHospitalDrugLabelId(row), row])),
+    [hospitalDrugLabelRows],
+  );
+  const pharmacyLabelBaseRows = useMemo(() => {
+    if (hospitalDrugLabelRows.length === 0) return [];
+    const trimmed = labelQuery.trim().toLowerCase();
+    const rows = trimmed ? hospitalDrugLabelRows.filter((row) => matchesHospitalDrugLabel(row, trimmed)) : hospitalDrugLabelRows;
+    return rows.slice(0, 80).map(buildHospitalDrugLabelData);
+  }, [hospitalDrugLabelRows, labelQuery]);
+  const ecartLabelBaseRows = useMemo(() => {
+    const allTargets = getAllEcartPrintTargets(ecartTargets);
+    const generalTargets = allTargets.filter((entry) => entry.tab === "general");
+    const nicuTargets = allTargets.filter((entry) => entry.tab === "nicu");
+    const generalRows = inventory.ecart.generalItems.map((item, index) => {
+      const setQuantity =
+        generalTargets
+          .map(({ tab, key }) => {
+            const state = getEcartDefaultState(ecartByTarget, tab, key);
+            return getEcartLabelQuantity(state, item);
+          })
+          .find((quantity) => quantity > 0) ?? normalizeEcartItem(item).quantity;
+      return buildEcartLabelData(item, setQuantity, `general-${index}`);
+    });
+    const nicuRows = inventory.ecart.nicuItems.map((item, index) => {
+      const setQuantity =
+        nicuTargets
+          .map(({ tab, key }) => {
+            const state = getEcartDefaultState(ecartByTarget, tab, key);
+            return getEcartLabelQuantity(state, item);
+          })
+          .find((quantity) => quantity > 0) ?? normalizeEcartItem(item).quantity;
+      return buildEcartLabelData(item, setQuantity, `nicu-${index}`);
+    });
+    return [...generalRows, ...nicuRows];
+  }, [ecartByTarget]);
+  const fluidLabelBaseRows = useMemo(() => {
+    const trimmed = labelQuery.trim().toLowerCase();
+    const rows = GENERAL_FLUID_LABELS.map(buildFluidLabelData);
+    if (!trimmed) return rows;
+    return rows.filter((row) => [row.code, row.name].join(" ").toLowerCase().includes(trimmed));
+  }, [labelQuery]);
+  const filteredEcartLabelRows = useMemo(() => {
+    const trimmed = labelQuery.trim().toLowerCase();
+    if (!trimmed) return ecartLabelBaseRows;
+    return ecartLabelBaseRows.filter((row) => [row.code, row.name, row.spec].join(" ").toLowerCase().includes(trimmed));
+  }, [ecartLabelBaseRows, labelQuery]);
+  const currentLabelSourceRows = useMemo<DrugLabelData[]>(() => {
+    if (labelMode === "ecart") return filteredEcartLabelRows;
+    if (labelMode === "fluid") return fluidLabelBaseRows;
+    if (labelMode === "narcotic") return labelSize === "40x70" ? filteredNarcoticFileLabelRows : narcoticMasterLabelRows;
+    if (labelMode === "pharmacy") return pharmacyLabelBaseRows;
+    return stockLabelBaseRows;
+  }, [
+    filteredEcartLabelRows,
+    filteredNarcoticFileLabelRows,
+    fluidLabelBaseRows,
+    labelMode,
+    labelSize,
+    narcoticMasterLabelRows,
+    pharmacyLabelBaseRows,
+    stockLabelBaseRows,
+  ]);
+  const labelRowsById = useMemo(() => {
+    const rows = [...allStockLabelRows, ...ecartLabelBaseRows, ...fluidLabelBaseRows, ...allNarcoticMasterLabelRows, ...allNarcoticFileLabelRows];
+    return new Map(rows.map((row) => [row.id, row]));
+  }, [allNarcoticFileLabelRows, allNarcoticMasterLabelRows, allStockLabelRows, ecartLabelBaseRows, fluidLabelBaseRows]);
+  const labelPrintRows = useMemo<PrintableDrugLabel[]>(
+    () =>
+      labelPrintSelections.flatMap((selection) => {
+        const fallbackRow =
+          labelRowsById.get(selection.id) ??
+          (selection.mode === "pharmacy"
+            ? (() => {
+                const hospitalRow = hospitalDrugRowsByLabelId.get(selection.id);
+                return hospitalRow ? buildHospitalDrugLabelData(hospitalRow) : undefined;
+              })()
+            : undefined);
+        const printableRow = resolveDrugLabelPrintRow(selection, fallbackRow);
+        if (!printableRow) return [];
+        return Array.from({ length: labelCopies }, (_, copyIndex) => ({ ...selection, row: printableRow, copyIndex }));
+      }),
+    [hospitalDrugRowsByLabelId, labelCopies, labelPrintSelections, labelRowsById],
+  );
+  const currentModeLabelPrintRows = useMemo(
+    () => labelPrintRows.filter((entry) => entry.mode === labelMode),
+    [labelMode, labelPrintRows],
+  );
+  const selectedLabelSize = getDrugLabelSize(labelSize);
+  const currentModeSelectionCount = labelPrintSelections.filter((selection) => selection.mode === labelMode).length;
   const stockTotalQuantity = useMemo(
     () => stockAllocations.reduce((sum, allocation) => sum + allocation.requiredQty, 0),
     [stockAllocations],
@@ -1092,15 +1551,20 @@ export function App() {
   const currentCheckedCount =
     mainCategory === "stock"
       ? currentStockItems.filter((item) => item.checked).length
-      : currentEcartItems.filter((item) => item.checked).length;
-  const currentItemCount = mainCategory === "stock" ? currentStockItems.length : currentEcartItems.length;
+      : mainCategory === "narcotic"
+        ? currentNarcoticItems.filter((item) => item.checked).length
+        : currentEcartItems.filter((item) => item.checked).length;
+  const currentItemCount =
+    mainCategory === "stock" ? currentStockItems.length : mainCategory === "narcotic" ? currentNarcoticItems.length : currentEcartItems.length;
   const checklistDoneCount = currentChecklist.filter((item) => item.status !== "").length;
   const currentAlertCount =
     mainCategory === "stock"
       ? currentStockItems.filter((item) => item.drug.warning || item.drug.storageType !== "ROOM").length
-      : activeEcartTab === "general"
-        ? ecartTargets.length
-        : 1;
+      : mainCategory === "narcotic"
+        ? currentNarcoticRooms.length
+        : activeEcartTab === "general"
+          ? ecartTargets.length
+          : 1;
   const activeRoomEcartLink = activeRoom ? stockRoomEcartLinks.get(activeRoom) : undefined;
   const generatedRoundSummaryDraft = useMemo(() => {
     const linkedEcartKeys = new Set<string>();
@@ -1116,7 +1580,7 @@ export function App() {
 
       return {
         id: room.id,
-        label: room.label,
+        label: displayRoomName(room.label),
         stockChecklist: getStockChecklistDefaultState(stockChecklistByRoom, room.id),
         ecartChecklist,
       };
@@ -1162,11 +1626,52 @@ export function App() {
       commonGuidance: ROUND_SUMMARY_COMMON_GUIDANCE,
     });
   }, [currentStockRooms, ecartByTarget, stockChecklistByRoom]);
-  const activeRoundSummaryDraft = roundSummaryDraft ?? generatedRoundSummaryDraft;
+  const generatedNarcoticRoundSummaryDraft = useMemo(() => {
+    return buildNarcoticRoundSummaryDraft({
+      inspectionPeriod: defaultRoundInspectionPeriod(),
+      rooms: currentNarcoticRooms.map((room) => ({
+        id: room.id,
+        label: displayRoomName(room.label),
+        inventoryItems: (narcoticItemsByRoom.get(room.id) ?? []).map((item) => ({
+          code: item.drugCode,
+          name: drugTitle(item.drug),
+          quantity: item.requiredQty,
+          checked: item.checked,
+          expiryDate: item.expiryDate,
+        })),
+        checklist: getNarcoticChecklistDefaultState(narcoticChecklistByRoom, room.id),
+      })),
+      commonGuidance: NARCOTIC_ROUND_SUMMARY_COMMON_GUIDANCE,
+    });
+  }, [currentNarcoticRooms, narcoticChecklistByRoom, narcoticItemsByRoom]);
+  const activeRoundSummaryDraft =
+    roundSummaryMode === "narcotic" ? (narcoticRoundSummaryDraft ?? generatedNarcoticRoundSummaryDraft) : (roundSummaryDraft ?? generatedRoundSummaryDraft);
+  const activeRoundSummaryIsNarcotic = activeRoundSummaryDraft.title === "비치마약류 순회점검표";
+  const activeRoundSummaryHeaders = activeRoundSummaryIsNarcotic
+    ? {
+        room: "비치마약류 보유 실",
+        detail: "비치마약류 보유 현황 및 점검 사항",
+        description:
+          "비치마약류 보유 현황 체크, 점검사항 개선필요, 입력된 사유를 중심으로 비치마약류 순회점검표 양식에 맞춰 자동 작성합니다.",
+      }
+    : {
+        room: "병동명",
+        detail: "비품 및 E-cart 약품",
+        description: "개선 필요 체크와 비고/사유 입력 내용을 중심으로 병동 순회 점검표 양식에 맞춰 자동 작성합니다.",
+      };
 
   const lastGeneratedDraftRef = useRef<RoundSummaryDraft | null>(null);
+  const lastGeneratedNarcoticDraftRef = useRef<RoundSummaryDraft | null>(null);
+  const pendingRoundSummaryResetRef = useRef<RoundSummaryDraft | null>(null);
 
   useEffect(() => {
+    const pendingResetDraft = pendingRoundSummaryResetRef.current;
+    if (pendingResetDraft) {
+      pendingRoundSummaryResetRef.current = null;
+      lastGeneratedDraftRef.current = generatedRoundSummaryDraft;
+      setRoundSummaryDraft(buildInspectionCycleResetRoundSummaryDraft(pendingResetDraft, generatedRoundSummaryDraft));
+      return;
+    }
     if (!roundSummaryDraft) {
       lastGeneratedDraftRef.current = generatedRoundSummaryDraft;
       return;
@@ -1200,6 +1705,38 @@ export function App() {
     }
     lastGeneratedDraftRef.current = generatedRoundSummaryDraft;
   }, [generatedRoundSummaryDraft, roundSummaryDraft]);
+  useEffect(() => {
+    if (!narcoticRoundSummaryDraft) {
+      lastGeneratedNarcoticDraftRef.current = generatedNarcoticRoundSummaryDraft;
+      return;
+    }
+    const lastGen = lastGeneratedNarcoticDraftRef.current;
+    if (lastGen) {
+      const updatedRows = narcoticRoundSummaryDraft.rows.map((row) => {
+        const genRow = generatedNarcoticRoundSummaryDraft.rows.find((r) => r.id === row.id);
+        const lastGenRow = lastGen.rows.find((r) => r.id === row.id);
+        if (genRow && lastGenRow && (genRow.result !== lastGenRow.result || genRow.details !== lastGenRow.details)) {
+          return {
+            ...row,
+            result: genRow.result,
+            details: genRow.details,
+          };
+        }
+        return row;
+      });
+      const hasChange = updatedRows.some((row, i) => {
+        const prevRow = narcoticRoundSummaryDraft.rows[i];
+        return row.result !== prevRow.result || row.details !== prevRow.details;
+      });
+      if (hasChange) {
+        setNarcoticRoundSummaryDraft({
+          ...narcoticRoundSummaryDraft,
+          rows: updatedRows,
+        });
+      }
+    }
+    lastGeneratedNarcoticDraftRef.current = generatedNarcoticRoundSummaryDraft;
+  }, [generatedNarcoticRoundSummaryDraft, narcoticRoundSummaryDraft]);
   const summaryGrid = (
     <section className="summary-grid" aria-label="전체 요약">
       <MetricCard
@@ -1232,9 +1769,15 @@ export function App() {
       />
       <MetricCard
         icon={<Siren size={20} />}
-        label={mainCategory === "stock" ? "주의/특수보관" : "대상 부서"}
+        label={mainCategory === "stock" ? "주의/특수보관" : mainCategory === "narcotic" ? "비치마약류 보유실" : "대상 부서"}
         value={currentAlertCount.toLocaleString("ko-KR")}
-        detail={mainCategory === "stock" ? `냉장 ${refrigeratedStock.length}개 포함` : activeEcartTarget.label}
+        detail={
+          mainCategory === "stock"
+            ? `냉장 ${refrigeratedStock.length}개 포함`
+            : mainCategory === "narcotic"
+              ? displayRoomName(narcoticRoomInfo?.label ?? narcoticActiveRoom)
+              : displayRoomName(activeEcartTarget.label)
+        }
         tone="amber"
       />
     </section>
@@ -1245,6 +1788,13 @@ export function App() {
     setShowRoundSummary(false);
     setMainCategory("stock");
     setActiveRoom(roomId);
+  }
+
+  function goToNarcoticRoom(roomId: string) {
+    setShowMaster(false);
+    setShowRoundSummary(false);
+    setMainCategory("narcotic");
+    setNarcoticActiveRoom(roomId);
   }
 
   function goToEcartTarget(targetId: string, tab: EcartTab = "general") {
@@ -1258,7 +1808,7 @@ export function App() {
   }
 
   function toggleMasterView() {
-    if (isMasterViewer) return;
+    if (isReadOnlyViewer) return;
     setShowMaster((prev) => {
       const next = !prev;
       if (next) setShowRoundSummary(false);
@@ -1267,12 +1817,51 @@ export function App() {
   }
 
   function toggleRoundSummaryView() {
-    if (isMasterViewer) return;
+    if (isViewerMode) return;
     setShowRoundSummary((prev) => {
       const next = !prev;
-      if (next) setShowMaster(false);
+      if (next) {
+        setRoundSummaryMode("ward");
+        setShowMaster(false);
+      }
       return next;
     });
+  }
+
+  function openNarcoticRoundSummary() {
+    setRoundSummaryMode("narcotic");
+    setShowMaster(false);
+    setShowRoundSummary(true);
+  }
+
+  async function handleNarcoticExcelUpload(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (!isNarcoticLotWorkbookFileName(file.name)) {
+      window.alert("파일명이 '의약품_재고_상세_20260704' 형식인 재고 상세 Excel 파일을 업로드해 주세요.");
+      event.target.value = "";
+      return;
+    }
+    try {
+      const rows = await readNarcoticLotWorkbook(file);
+      const assignments = buildNarcoticLotAssignments({
+        rows,
+        roomIds: currentNarcoticRooms.map((room) => room.id),
+        drugCodes: narcoticDrugs.map((drug) => drug.code),
+        drugs: narcoticDrugs,
+      });
+      markImmediateLocalChange();
+      setNarcoticLotAssignments(assignments);
+      setNarcoticExcelFileName(file.name);
+      if (rows.length === 0) {
+        window.alert("업로드한 Excel 파일에서 보관소와 LOT번호 헤더를 찾지 못했습니다.");
+      }
+    } catch (error) {
+      console.error(error);
+      window.alert("Excel 파일을 읽지 못했습니다. 의약품 재고 상세 파일인지 확인해 주세요.");
+    } finally {
+      event.target.value = "";
+    }
   }
 
   function openGuideEntry(item: StockGuideEntry) {
@@ -1304,17 +1893,60 @@ export function App() {
     markStockRoomsEdited([roomId]);
   }
 
+  function deleteMasterRow(row: MasterRow) {
+    const confirmed = window.confirm(
+      `[${row.code}] ${drugTitle(row)} 약품을 전체 비품약 마스터와 모든 보유실 배정에서 삭제할까요?`,
+    );
+    if (!confirmed) return;
+
+    if (row.masterKind === "stock") {
+      setStockDrugs((prev) => deleteMasterDrug(prev, [], row.code).drugs);
+      setStockAllocations((prev) => deleteMasterDrug([], prev, row.code).allocations);
+      setCheckedStock((prev) => removeStockDrugRecords(prev, row.code));
+      setStockExpiry((prev) => removeStockDrugRecords(prev, row.code));
+      markStockRoomsEdited(row.roomDetails.map((detail) => detail.roomId));
+    } else {
+      setNarcoticDrugs((prev) => deleteMasterDrug(prev, [], row.code).drugs);
+      setNarcoticAllocations((prev) => deleteMasterDrug([], prev, row.code).allocations);
+      setNarcoticCheckedItems((prev) => removeStockDrugRecords(prev, row.code));
+      setNarcoticExpiry((prev) => removeStockDrugRecords(prev, row.code));
+      setNarcoticLotAssignments((prev) => removeStockDrugRecords(prev, row.code));
+      setNarcoticDrugCategories((prev) => {
+        const next = { ...prev };
+        delete next[row.code];
+        return next;
+      });
+    }
+    setNewAssignment((prev) => (prev.drugCode === row.code ? { ...prev, drugCode: "" } : prev));
+    setAssignmentDrugQuery((prev) => (prev.includes(row.code) ? "" : prev));
+    setRenameDrugForm((prev) => (prev.oldCode === row.code ? { oldCode: "", newCode: "" } : prev));
+  }
+
   function addAssignment(event: FormEvent) {
     event.preventDefault();
     if (!newAssignment.drugCode || targetRooms.length === 0) return;
-    setStockAllocations((prev) => {
-      let next = prev;
-      for (const roomId of targetRooms) {
-        next = updateAllocationQuantity(next, roomId, newAssignment.drugCode, newAssignment.count);
-      }
-      return next;
-    });
-    markStockRoomsEdited(targetRooms);
+    const validRoomIds = new Set(assignmentRoomOptions.map((room) => room.id));
+    const roomIds = targetRooms.filter((roomId) => validRoomIds.has(roomId));
+    if (roomIds.length === 0) return;
+
+    if (selectedAssignmentKind === "stock") {
+      setStockAllocations((prev) => {
+        let next = prev;
+        for (const roomId of roomIds) {
+          next = updateAllocationQuantity(next, roomId, newAssignment.drugCode, newAssignment.count);
+        }
+        return next;
+      });
+      markStockRoomsEdited(roomIds);
+    } else {
+      setNarcoticAllocations((prev) => {
+        let next = prev;
+        for (const roomId of roomIds) {
+          next = updateAllocationQuantity(next, roomId, newAssignment.drugCode, newAssignment.count);
+        }
+        return next;
+      });
+    }
     setNewAssignment({ drugCode: "", count: 1 });
     setAssignmentDrugQuery("");
     setTargetRooms([]);
@@ -1335,11 +1967,18 @@ export function App() {
       warning: newDrug.warning.trim(),
       storageType: inferStorageType(newDrug.storage),
     };
-    setStockDrugs((prev) =>
-      sortStockDrugsByName(prev.some((item) => item.code === code) ? prev.map((item) => (item.code === code ? drug : item)) : [...prev, drug]),
-    );
+    if (newDrug.category === "stock") {
+      setStockDrugs((prev) =>
+        sortStockDrugsByName(prev.some((item) => item.code === code) ? prev.map((item) => (item.code === code ? drug : item)) : [...prev, drug]),
+      );
+    } else {
+      setNarcoticDrugs((prev) =>
+        sortStockDrugsByName(prev.some((item) => item.code === code) ? prev.map((item) => (item.code === code ? drug : item)) : [...prev, drug]),
+      );
+      setNarcoticDrugCategories((prev) => ({ ...prev, [code]: newDrug.category as NarcoticCategory }));
+    }
     setNewAssignment((prev) => ({ ...prev, drugCode: code }));
-    setNewDrug({ code: "", genericName: "", productName: "", spec: "", storage: "실온보관", warning: "" });
+    setNewDrug({ code: "", genericName: "", productName: "", spec: "", storage: "실온보관", warning: "", category: defaultNewDrugCategory });
   }
 
   function changeDrugCode(event: FormEvent) {
@@ -1354,67 +1993,35 @@ export function App() {
       alert("기존 코드와 신규 코드가 동일합니다.");
       return;
     }
-    const drugExists = stockDrugs.some((item) => item.code === oldCode);
+    const isNarcoticDrug = narcoticMasterKindByCode.has(oldCode);
+    const drugExists = assignmentDrugs.some((item) => item.code === oldCode);
     if (!drugExists) {
       alert("존재하지 않는 기존 약품 코드입니다.");
       return;
     }
-    const newDrugExists = stockDrugs.some((item) => item.code === newCode);
+    const newDrugExists = assignmentDrugs.some((item) => item.code === newCode);
     if (newDrugExists) {
       alert("이미 존재하는 신규 약품 코드입니다.");
       return;
     }
 
-    // 1. Update stockDrugs
-    setStockDrugs((prev) => {
-      const updated = prev.map((item) => {
-        if (item.code === oldCode) {
-          return { ...item, code: newCode };
-        }
-        return item;
+    if (isNarcoticDrug) {
+      setNarcoticDrugs((prev) => sortStockDrugsByName(prev.map((item) => (item.code === oldCode ? { ...item, code: newCode } : item))));
+      setNarcoticAllocations((prev) => prev.map((allocation) => (allocation.drugCode === oldCode ? { ...allocation, drugCode: newCode } : allocation)));
+      setNarcoticCheckedItems((prev) => renameStockKeyRecord(prev, oldCode, newCode));
+      setNarcoticExpiry((prev) => renameStockKeyRecord(prev, oldCode, newCode));
+      setNarcoticLotAssignments((prev) => renameStockKeyRecord(prev, oldCode, newCode));
+      setNarcoticDrugCategories((prev) => {
+        const next = { ...prev, [newCode]: prev[oldCode] ?? narcoticCategoryOf(oldCode) };
+        delete next[oldCode];
+        return next;
       });
-      return sortStockDrugsByName(updated);
-    });
-
-    // 2. Update stockAllocations
-    setStockAllocations((prev) => {
-      return prev.map((allocation) => {
-        if (allocation.drugCode === oldCode) {
-          return { ...allocation, drugCode: newCode };
-        }
-        return allocation;
-      });
-    });
-
-    // 3. Update checkedStock keys
-    setCheckedStock((prev) => {
-      const next = { ...prev };
-      for (const key of Object.keys(prev)) {
-        const parts = key.split("::");
-        if (parts.length === 2 && parts[1] === oldCode) {
-          const roomId = parts[0];
-          const newKey = stockKey(roomId, newCode);
-          next[newKey] = prev[key];
-          delete next[key];
-        }
-      }
-      return next;
-    });
-
-    // 4. Update stockExpiry keys
-    setStockExpiry((prev) => {
-      const next = { ...prev };
-      for (const key of Object.keys(prev)) {
-        const parts = key.split("::");
-        if (parts.length === 2 && parts[1] === oldCode) {
-          const roomId = parts[0];
-          const newKey = stockKey(roomId, newCode);
-          next[newKey] = prev[key];
-          delete next[key];
-        }
-      }
-      return next;
-    });
+    } else {
+      setStockDrugs((prev) => sortStockDrugsByName(prev.map((item) => (item.code === oldCode ? { ...item, code: newCode } : item))));
+      setStockAllocations((prev) => prev.map((allocation) => (allocation.drugCode === oldCode ? { ...allocation, drugCode: newCode } : allocation)));
+      setCheckedStock((prev) => renameStockKeyRecord(prev, oldCode, newCode));
+      setStockExpiry((prev) => renameStockKeyRecord(prev, oldCode, newCode));
+    }
 
     // Reset new assignment choice if it was selecting the old code
     setNewAssignment((prev) => {
@@ -1432,6 +2039,17 @@ export function App() {
     event.preventDefault();
     const id = newRoomName.trim();
     if (!id) return;
+    if (isNarcoticViewer) {
+      setNarcoticRooms((prev) =>
+        prev.some((room) => room.id === id)
+          ? prev
+          : [...prev, { id, label: id, sourceColumn: id, sourceSheet: id, sourceUpdatedAt: formatRoomUpdatedAt(), allocationCount: 0, totalQuantity: 0 }],
+      );
+      setTargetRooms((prev) => (prev.includes(id) ? prev : [...prev, id]));
+      setNarcoticActiveRoom(id);
+      setNewRoomName("");
+      return;
+    }
     setStockRooms((prev) =>
       prev.some((room) => room.id === id)
         ? prev
@@ -1517,6 +2135,47 @@ export function App() {
     }
   }
 
+  // ── Narcotic checklist/state helpers ──
+  function updateNarcoticChecklistNote(roomId: string, id: string, note: string) {
+    setNarcoticChecklistByRoom((prev) => {
+      const current = getNarcoticChecklistDefaultState(prev, roomId);
+      return { ...prev, [roomId]: updateChecklistRows(current, id, { note }) };
+    });
+  }
+  function updateNarcoticChecklistStatus(roomId: string, id: string, status: CheckStatus) {
+    setNarcoticChecklistByRoom((prev) => {
+      const current = getNarcoticChecklistDefaultState(prev, roomId);
+      return { ...prev, [roomId]: updateChecklistRows(current, id, { status }) };
+    });
+  }
+  function toggleUninspectedNarcoticRoom(roomId: string) {
+    setUninspectedNarcoticRoomIds((prev) => (prev.includes(roomId) ? prev.filter((id) => id !== roomId) : [...prev, roomId]));
+  }
+  function toggleNarcoticItemCheck(roomId: string, drugCode: string) {
+    setUninspectedNarcoticRoomIds((ids) => clearUninspectedRoomId(ids, roomId));
+    setNarcoticCheckedItems((prev) => {
+      const key = stockKey(roomId, drugCode);
+      return { ...prev, [key]: !prev[key] };
+    });
+  }
+  function updateNarcoticCount(roomId: string, drugCode: string, value: string) {
+    const count = Number.parseInt(value, 10);
+    setNarcoticAllocations((prev) => updateAllocationQuantity(prev, roomId, drugCode, Number.isNaN(count) ? 0 : count));
+  }
+  function deleteNarcoticItem(roomId: string, drugCode: string) {
+    setNarcoticAllocations((prev) => deleteAllocation(prev, roomId, drugCode));
+    setNarcoticCheckedItems((prev) => {
+      const next = { ...prev };
+      delete next[stockKey(roomId, drugCode)];
+      return next;
+    });
+    setNarcoticExpiry((prev) => {
+      const next = { ...prev };
+      delete next[stockKey(roomId, drugCode)];
+      return next;
+    });
+  }
+
   function updateEcartChecklistNote(id: string, note: string) {
     const currentEcart = getEcartDefaultState(ecartByTarget, activeEcartTab, activeEcartKey);
     const index = currentEcart.checklist.findIndex((item) => item.id === id);
@@ -1580,15 +2239,19 @@ export function App() {
   }
 
   function updateRoundSummaryDraft(patch: Partial<Omit<RoundSummaryDraft, "rows">>) {
-    setRoundSummaryDraft((prev) => ({
-      ...(prev ?? (JSON.parse(JSON.stringify(generatedRoundSummaryDraft)) as RoundSummaryDraft)),
+    const generatedDraft = roundSummaryMode === "narcotic" ? generatedNarcoticRoundSummaryDraft : generatedRoundSummaryDraft;
+    const setDraft = roundSummaryMode === "narcotic" ? setNarcoticRoundSummaryDraft : setRoundSummaryDraft;
+    setDraft((prev) => ({
+      ...(prev ?? (JSON.parse(JSON.stringify(generatedDraft)) as RoundSummaryDraft)),
       ...patch,
     }));
   }
 
   function updateRoundSummaryRow(rowId: string, patch: Partial<RoundSummaryRow>) {
-    setRoundSummaryDraft((prev) => {
-      const draft = prev ?? (JSON.parse(JSON.stringify(generatedRoundSummaryDraft)) as RoundSummaryDraft);
+    const generatedDraft = roundSummaryMode === "narcotic" ? generatedNarcoticRoundSummaryDraft : generatedRoundSummaryDraft;
+    const setDraft = roundSummaryMode === "narcotic" ? setNarcoticRoundSummaryDraft : setRoundSummaryDraft;
+    setDraft((prev) => {
+      const draft = prev ?? (JSON.parse(JSON.stringify(generatedDraft)) as RoundSummaryDraft);
       return {
         ...draft,
         rows: draft.rows.map((row) => (row.id === rowId ? { ...row, ...patch } : row)),
@@ -1597,12 +2260,19 @@ export function App() {
   }
 
   function regenerateRoundSummaryDraft() {
+    if (roundSummaryMode === "narcotic") {
+      setNarcoticChecklistByRoom({});
+      setNarcoticRoundSummaryDraft(null);
+      return;
+    }
     const resetState = makeInspectionCycleResetState();
+    pendingRoundSummaryResetRef.current = activeRoundSummaryDraft;
     setCheckedStock(resetState.checkedStock);
     setStockExpiry(resetState.stockExpiry);
     setStockChecklistByRoom(resetState.stockChecklistByRoom);
     setEcartByTarget(resetState.ecartByTarget);
     setRoundSummaryDraft(resetState.roundSummaryDraft);
+    setUninspectedRoomIds(resetState.uninspectedRoomIds);
   }
 
   function openRoundSummaryPrintPreview() {
@@ -1615,23 +2285,18 @@ export function App() {
   async function downloadReport() {
     const reportElement = printPreviewRef.current ?? reportRef.current;
     if (!reportElement) return;
-    const isBulkStock = showPrintPreview && printPreviewMode === "all-stock";
-    const isRoundSummary = showPrintPreview && printPreviewMode === "round-summary";
-    const targetName = isRoundSummary
-      ? "병동순회점검표"
-      : isBulkStock
-        ? "전체보유실"
-        : mainCategory === "stock"
-          ? activeRoomInfo?.label ?? activeRoom
-          : activeEcartTarget.label;
-    const reportName = isRoundSummary
-      ? "전체점검내용"
-      : isBulkStock
-        ? "비품약-일괄점검보고서"
-        : mainCategory === "stock"
-          ? "비품약-점검보고서"
-          : "E-cart-점검보고서";
-    const fileName = `${sanitizeFileName(`${targetName}-${reportName}-${todayStamp()}`)}.pdf`;
+    const reportCategory = mainCategory === "ecart" ? "ecart" : "stock";
+    const reportTargetName =
+      mainCategory === "stock"
+        ? displayRoomName(activeRoomInfo?.label ?? activeRoom)
+        : mainCategory === "narcotic"
+          ? displayRoomName(narcoticRoomInfo?.label ?? narcoticActiveRoom)
+          : displayRoomName(activeEcartTarget.label);
+    const fileName = buildReportFileName({
+      category: reportCategory,
+      mode: showPrintPreview ? printPreviewMode : "single",
+      targetName: reportTargetName,
+    });
     setPdfStatus("generating");
     setPdfDownload(null);
     try {
@@ -1642,6 +2307,111 @@ export function App() {
       console.error(error);
       setPdfStatus("error");
     }
+  }
+
+  function downloadMasterWorkbook() {
+    const workbook = createMasterWorkbookXlsx(visibleMasterRows);
+    const blob = new Blob([workbook], { type: MASTER_EXPORT_MIME });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = buildMasterExportFileName();
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  function toggleLabelDrug(code: string) {
+    setLabelSelectedCodes((prev) => (prev.includes(code) ? prev.filter((item) => item !== code) : [...prev, code]));
+  }
+
+  function isLabelPrintSelected(row: DrugLabelData, sizeKey = labelSize) {
+    const key = makeLabelPrintSelectionKey(row.id, row.kind, sizeKey, row.roomId);
+    return labelPrintSelections.some(
+      (selection) => makeLabelPrintSelectionKey(selection.id, selection.mode, selection.sizeKey, selection.roomId) === key,
+    );
+  }
+
+  function toggleLabelPrintSelection(row: DrugLabelData) {
+    const key = makeLabelPrintSelectionKey(row.id, row.kind, labelSize, row.roomId);
+    setLabelPrintSelections((prev) => {
+      const exists = prev.some((selection) => makeLabelPrintSelectionKey(selection.id, selection.mode, selection.sizeKey, selection.roomId) === key);
+      if (exists) {
+        return prev.filter((selection) => makeLabelPrintSelectionKey(selection.id, selection.mode, selection.sizeKey, selection.roomId) !== key);
+      }
+      return [
+        ...prev,
+        {
+          id: row.id,
+          mode: row.kind,
+          sizeKey: labelSize,
+          roomId: row.roomId,
+          quantityOverride: row.totalQuantity,
+          labelRow: row,
+        },
+      ];
+    });
+  }
+
+  function clearLabelSelection() {
+    setLabelPrintSelections([]);
+  }
+
+  function toggleFilteredMasterLabels(checked: boolean) {
+    const codes = filteredMasterRows.map((row) => row.code);
+    setLabelSelectedCodes((prev) => {
+      if (!checked) return prev.filter((code) => !codes.includes(code));
+      return [...new Set([...prev, ...codes])];
+    });
+  }
+
+  function openDrugLabelPrintPreview() {
+    if (labelPrintRows.length === 0) return;
+    setPharmacyPrintDrafts([]);
+    setPrintPreviewMode("drug-labels");
+    setPdfStatus("idle");
+    setPdfDownload(null);
+    setShowPrintPreview(true);
+  }
+
+  function openSelectedMasterLabelPreview(mode: DrugLabelMode = "stock") {
+    if (selectedLabelRows.length === 0) return;
+    setPharmacyPrintDrafts([]);
+    setLabelMode(mode);
+    setLabelPrintSelections(
+      selectedLabelRows.map((row) => {
+        const labelRow = buildStockLabelData(row, mode, activeMasterLabelRoomId);
+        return {
+          id: labelRow.id,
+          mode: labelRow.kind,
+          sizeKey: labelSize,
+          roomId: labelRow.roomId,
+          quantityOverride: labelRow.totalQuantity,
+          labelRow,
+        };
+      }),
+    );
+    setIsDrugLabelPanelOpen(true);
+    setPrintPreviewMode("drug-labels");
+    setPdfStatus("idle");
+    setPdfDownload(null);
+    setShowPrintPreview(true);
+  }
+
+  function savePharmacyStudioLabel(draft: PharmacyLabelDraft) {
+    if (typeof window === "undefined") return;
+    const saved = savePharmacyLabelToStorage(window.localStorage, draft);
+    setSavedPharmacyLabels((previous) => [...previous.filter((label) => label.id !== saved.id), saved]);
+  }
+
+  function printPharmacyStudioLabels(labels: PharmacyLabelDraft[]) {
+    if (labels.length === 0) return;
+    setPharmacyPrintDrafts(labels);
+    setPrintPreviewMode("drug-labels");
+    setPdfStatus("idle");
+    setPdfDownload(null);
+    setShowPrintPreview(true);
   }
 
   function openPrintPreview(mode: PrintPreviewMode = "single") {
@@ -1685,7 +2455,7 @@ export function App() {
       <section ref={targetRef} className={className}>
         <div className="report-title">
           <div className="report-title-row">
-            <h2>{`( ${room.label} ) 병동 비품약 점검 체크리스트`}</h2>
+            <h2>{`( ${displayRoomName(room.label)} ) 병동 비품약 점검 체크리스트`}</h2>
             {showEcartLink && ecartLink && (
               <button className="header-link-button" onClick={() => goToEcartTarget(ecartLink.targetId, ecartLink.tab)}>
                 E_Cart
@@ -1705,6 +2475,7 @@ export function App() {
         <StockReportTable
           refrigerated={refrigerated}
           roomTemperature={roomTemperature}
+          checkedStock={checkedStock}
           onCheck={(roomId, drugCode) => {
             setUninspectedRoomIds((ids) => clearUninspectedRoomId(ids, roomId));
             setCheckedStock((prev) => {
@@ -1712,6 +2483,10 @@ export function App() {
               const currentVal = prev[key] !== undefined ? prev[key] : (prev[stockKey("42W", drugCode)] ?? false);
               return { ...prev, [key]: !currentVal };
             });
+          }}
+          onSplitCheck={(roomId, drugCode, partIndex, partCount) => {
+            setUninspectedRoomIds((ids) => clearUninspectedRoomId(ids, roomId));
+            setCheckedStock((prev) => toggleStockSplitPart(prev, roomId, drugCode, partIndex, partCount));
           }}
           onExpiry={(roomId, drugCode, value) => setStockExpiry((prev) => ({ ...prev, [stockKey(roomId, drugCode)]: value }))}
           onCount={updateStockCount}
@@ -1727,12 +2502,28 @@ export function App() {
     );
   }
 
-  function renderEcartReportCard(targetRef: RefObject<HTMLDivElement | null>, className = "report-card") {
+  function renderEcartReportCard({
+    targetRef,
+    className = "report-card",
+    target = activeEcartTarget,
+    items = currentEcartItems,
+    checklist = activeEcartState.checklist,
+    editable = true,
+  }: {
+    targetRef?: RefObject<HTMLDivElement | null>;
+    className?: string;
+    target?: EcartTarget;
+    items?: EditableEcartItem[];
+    checklist?: ChecklistState[];
+    editable?: boolean;
+  }) {
+    const noop = () => undefined;
+
     return (
       <section ref={targetRef} className={className}>
         <div className="report-title">
           <div className="report-title-row">
-            <h2>{`( ${activeEcartTarget.label} ) 응급카트 점검 체크리스트`}</h2>
+            <h2>{`( ${displayRoomName(target.label)} ) 응급카트 점검 체크리스트`}</h2>
           </div>
           <span>점검 일자: {new Date().toLocaleDateString("ko-KR")}</span>
         </div>
@@ -1742,16 +2533,130 @@ export function App() {
           약품 보유 현황
         </div>
         <EcartReportTable
-          items={currentEcartItems}
-          onCheck={(id) => updateActiveEcartItems((items) => items.map((item) => (item.id === id ? { ...item, checked: !item.checked } : item)))}
-          onExpiry={(id, expiryDate) =>
-            updateActiveEcartItems((items) => items.map((item) => (item.id === id ? { ...item, expiryDate } : item)))
+          items={items}
+          onCheck={
+            editable
+              ? (id) => updateActiveEcartItems((rows) => rows.map((item) => (item.id === id ? { ...item, checked: !item.checked } : item)))
+              : noop
           }
-          onCount={updateEcartCount}
-          onDelete={deleteEcartItem}
+          onExpiry={(id, expiryDate) =>
+            editable
+              ? updateActiveEcartItems((rows) => rows.map((item) => (item.id === id ? { ...item, expiryDate } : item)))
+              : undefined
+          }
+          onCount={editable ? updateEcartCount : noop}
+          onDelete={editable ? deleteEcartItem : noop}
         />
 
-        <ChecklistTable items={activeEcartState.checklist} onNote={updateEcartChecklistNote} onStatus={updateEcartChecklistStatus} />
+        <ChecklistTable
+          items={checklist}
+          onNote={editable ? updateEcartChecklistNote : noop}
+          onStatus={editable ? updateEcartChecklistStatus : noop}
+        />
+      </section>
+    );
+  }
+
+  function renderNarcoticLotCells(item: EditableStockItem) {
+    const lot = narcoticLotAssignments[narcoticLotKey(item.roomId, item.drugCode)];
+    return (
+      <>
+        <td className="lot-cell">{lot?.roomLot || "-"}</td>
+        <td className="lot-cell">{lot?.pharmacyLot || "-"}</td>
+      </>
+    );
+  }
+
+  function renderNarcoticReportCard({
+    targetRef,
+    className = "report-card",
+    room = narcoticRoomInfo,
+    items = currentNarcoticItems,
+    checklist = currentNarcoticChecklist,
+  }: {
+    targetRef?: RefObject<HTMLDivElement | null>;
+    className?: string;
+    room?: StockRoom;
+    items?: EditableStockItem[];
+    checklist?: ChecklistState[];
+  }) {
+    const psychotropicItems = items.filter((item) => (narcoticDrugCategories[item.drugCode] ?? narcoticCategoryOf(item.drugCode)) === "향정");
+    const narcoticItems = items.filter((item) => (narcoticDrugCategories[item.drugCode] ?? narcoticCategoryOf(item.drugCode)) === "마약");
+
+    return (
+      <section ref={targetRef} className={className}>
+        <div className="report-title">
+          <div className="report-title-row">
+            <h2>{`( ${displayRoomName(room.label)} ) 비치 마약류 점검 체크리스트`}</h2>
+          </div>
+          <span>점검 일자: {new Date().toLocaleDateString("ko-KR")}</span>
+        </div>
+
+        <div className="report-section-title with-meta stock-inventory-title">
+          <span>
+            <Database size={18} />
+            비치 마약류 보유 현황
+          </span>
+        </div>
+        <div className="table-wrap bordered inspection-table-wrap stock-inventory-wrap">
+          <table className="data-table inspection-table narcotic-inventory-table">
+            <thead>
+              <tr>
+                <th>점검</th>
+                <th>코드</th>
+                <th>약품명</th>
+                <th>수량</th>
+                <th>실별 LOT</th>
+                <th>조제실 LOT</th>
+                <th>3개월 미만</th>
+                <th>삭제</th>
+              </tr>
+            </thead>
+            <tbody>
+              {psychotropicItems.length > 0 && (
+                <GroupRows
+                  label="향정신성의약품"
+                  tone="psychotropic"
+                  items={psychotropicItems}
+                  checkedStock={narcoticCheckedItems}
+                  onCheck={toggleNarcoticItemCheck}
+                  onSplitCheck={() => {}}
+                  onExpiry={(roomId, drugCode, value) => setNarcoticExpiry((prev) => ({ ...prev, [stockKey(roomId, drugCode)]: value }))}
+                  onCount={updateNarcoticCount}
+                  onDelete={deleteNarcoticItem}
+                  renderExtraCells={renderNarcoticLotCells}
+                />
+              )}
+              {narcoticItems.length > 0 && (
+                <GroupRows
+                  label="마약류"
+                  tone="narcotic-group"
+                  items={narcoticItems}
+                  checkedStock={narcoticCheckedItems}
+                  onCheck={toggleNarcoticItemCheck}
+                  onSplitCheck={() => {}}
+                  onExpiry={(roomId, drugCode, value) => setNarcoticExpiry((prev) => ({ ...prev, [stockKey(roomId, drugCode)]: value }))}
+                  onCount={updateNarcoticCount}
+                  onDelete={deleteNarcoticItem}
+                  renderExtraCells={renderNarcoticLotCells}
+                />
+              )}
+              {psychotropicItems.length === 0 && narcoticItems.length === 0 && (
+                <tr>
+                  <td colSpan={8} className="empty-row">
+                    이 실에 배정된 마약류가 없습니다.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        <ChecklistTable
+          items={checklist}
+          onNote={(id, note) => updateNarcoticChecklistNote(room.id, id, note)}
+          onStatus={(id, status) => updateNarcoticChecklistStatus(room.id, id, status)}
+        />
       </section>
     );
   }
@@ -1766,7 +2671,10 @@ export function App() {
         checklist: currentStockChecklist,
       });
     }
-    return renderEcartReportCard(targetRef, className);
+    if (mainCategory === "narcotic") {
+      return renderNarcoticReportCard({ targetRef, className });
+    }
+    return renderEcartReportCard({ targetRef, className });
   }
 
   function renderBulkStockReports() {
@@ -1787,6 +2695,95 @@ export function App() {
     );
   }
 
+  function renderBulkEcartReports() {
+    return (
+      <div ref={printPreviewRef} className="bulk-report-stack">
+        {getAllEcartPrintTargets(ecartTargets).map(({ tab, target, key }) => {
+          const state = getEcartDefaultState(ecartByTarget, tab, key);
+          return (
+            <div key={key} className="bulk-report-page">
+              {renderEcartReportCard({
+                className: "report-card print-preview-report",
+                target,
+                items: state.items,
+                checklist: state.checklist,
+                editable: false,
+              })}
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+
+  function renderDrugLabelArticle(entry: PrintableDrugLabel, key: string) {
+    const { row, sizeKey } = entry;
+    const flagLabels = labelFlagLabels(row);
+    const nameClass = getDrugLabelNameClass(row.name, row.kind, sizeKey);
+    const className = [
+      "drug-label-item",
+      "print-label",
+      `label-size-${sizeKey}`,
+      `label-kind-${row.kind}`,
+      nameClass,
+      row.fluidTone ? "fluid-label" : "",
+      row.fluidTone ? `fluid-tone-${row.fluidTone}` : "",
+      row.highRisk ? "high-risk-label" : "",
+      flagLabels.length > 0 ? "has-caution-label" : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
+
+    return (
+      <article className={className} style={labelSizeCssVars(sizeKey)} key={key}>
+        {renderLabelTopline(row)}
+        <h3 className={row.fluidTone ? `fluid-name ${row.fluidTone}` : undefined}>{renderLabelName(row)}</h3>
+        {renderLabelSpec(row)}
+      </article>
+    );
+  }
+
+  function renderPharmacyPrintDraftArticle(draft: PharmacyLabelDraft, key: string) {
+    const style = {
+      "--pharmacy-label-width-mm": draft.size.widthMm,
+      "--pharmacy-label-height-mm": draft.size.heightMm,
+      "--pharmacy-label-border": `${draft.style.outerBorderPx}px solid ${draft.style.outerBorderColor}`,
+      "--pharmacy-label-font-size": `${draft.style.fontSizePt}pt`,
+      "--pharmacy-label-color": draft.style.fontColor,
+      "--pharmacy-label-warning": draft.style.warningColor,
+      "--pharmacy-label-font-family": draft.style.fontFamily,
+      "--pharmacy-label-outline-color": draft.style.textOutlineColor,
+      "--pharmacy-label-outline-px": `${draft.style.textOutlinePx}px`,
+    } as CSSProperties;
+
+    return (
+      <article className="pharmacy-print-label print-label" style={style} key={key}>
+        {draft.printable.warning ? <div className="pharmacy-label-warning">{draft.printable.warning}</div> : null}
+        <div className="pharmacy-label-main">{draft.printable.title}</div>
+        {draft.printable.footer.enabled ? <footer>{draft.printable.footer.text}</footer> : null}
+      </article>
+    );
+  }
+
+  function renderDrugLabelSheet(targetRef?: RefObject<HTMLDivElement | null>, className = "drug-label-sheet") {
+    return (
+      <section ref={targetRef} className={`${className} mixed-label-sheet`}>
+        <div className="drug-label-sheet-head">
+          <div>
+            <h2>약품 라벨 출력</h2>
+            <p>선택한 라벨 크기별로 자동 배치된 출력 목록입니다.</p>
+          </div>
+          <span>출력 일자: {new Date().toLocaleDateString("ko-KR")}</span>
+        </div>
+        <div className="drug-label-print-grid mixed-label-grid">
+          {pharmacyPrintDrafts.length > 0
+            ? pharmacyPrintDrafts.map((draft, index) => renderPharmacyPrintDraftArticle(draft, `${draft.id}-${draft.savedAt ?? "draft"}-${index}`))
+            : labelPrintRows.map((entry, index) => renderDrugLabelArticle(entry, `${entry.id}-${entry.sizeKey}-${entry.copyIndex}-${index}`))}
+        </div>
+      </section>
+    );
+  }
+
   function renderRoundSummaryReport(targetRef?: RefObject<HTMLDivElement | null>, className = "round-summary-report") {
     const draft = activeRoundSummaryDraft;
 
@@ -1800,9 +2797,9 @@ export function App() {
           <table className="data-table round-summary-table">
             <thead>
               <tr>
-                <th>병동명</th>
+                <th>{activeRoundSummaryHeaders.room}</th>
                 <th>점검결과</th>
-                <th>비품 및 E-cart 약품</th>
+                <th>{activeRoundSummaryHeaders.detail}</th>
               </tr>
             </thead>
             <tbody>
@@ -1830,8 +2827,8 @@ export function App() {
         <section className="card round-summary-editor">
           <div className="card-head">
             <div>
-              <h2>병동 순회 점검표</h2>
-              <p>불량 체크와 비고/사유 입력 내용을 중심으로 병동 순회 점검표 양식에 맞춰 자동 작성합니다.</p>
+              <h2>{draft.title}</h2>
+              <p>{activeRoundSummaryHeaders.description}</p>
             </div>
             <div className="toolbar-actions">
               <button className="secondary-button" onClick={regenerateRoundSummaryDraft}>
@@ -1858,9 +2855,9 @@ export function App() {
               <table className="data-table round-summary-table editable">
                 <thead>
                   <tr>
-                    <th>병동명</th>
+                    <th>{activeRoundSummaryHeaders.room}</th>
                     <th>점검결과</th>
-                    <th>비품 및 E-cart 약품</th>
+                    <th>{activeRoundSummaryHeaders.detail}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1886,7 +2883,7 @@ export function App() {
             </div>
 
             <label className="round-summary-guidance-editor">
-              공통 안내
+              {activeRoundSummaryIsNarcotic ? "안내 문구" : "공통 안내"}
               <textarea
                 value={draft.commonGuidance}
                 onChange={(event) => updateRoundSummaryDraft({ commonGuidance: event.target.value })}
@@ -1903,36 +2900,70 @@ export function App() {
     );
   }
 
+  if (isPharmacyLabelWorkspaceOpen) {
+    return (
+      <PharmacyLabelWorkspace
+        rows={pharmacyLabelMatchRows}
+        savedLabels={savedPharmacyLabels}
+        isLoading={isPharmacyLabelMatchesLoading}
+        onBack={() => setIsPharmacyLabelWorkspaceOpen(false)}
+        onSaveLabel={savePharmacyStudioLabel}
+        onPrint={printPharmacyStudioLabels}
+      />
+    );
+  }
+
+  const headerEyebrow = isPharmacyViewer
+    ? "약제팀 뷰어"
+    : isNarcoticViewer
+      ? "마약 담당자 뷰어"
+      : isViewerMode
+        ? "뷰어 전용"
+        : "병동 비품약 & E-cart 점검";
+  const headerTitle = isPharmacyViewer
+    ? "약제팀 라벨 뷰어"
+    : isNarcoticViewer
+      ? showMaster
+        ? "전체 약품 마스터"
+        : "비치마약류 관리"
+      : isViewerMode
+        ? "전체 약품 마스터"
+        : "비품관리 현황판";
+
   return (
-    <div className={`app-page ${isMobileMode ? "mobile-mode" : ""} ${isMasterViewer ? "viewer-mode" : ""}`}>
+    <div className={`app-page ${isMobileMode ? "mobile-mode" : ""} ${isViewerMode ? "viewer-mode" : ""}`}>
       <header className="app-header">
         <div>
-          <p>{isMasterViewer ? "뷰어 전용" : "병동 비품약 & E-cart 점검"}</p>
-          <h1>{isMasterViewer ? "전체 약품 마스터" : "비품관리 현황판"}</h1>
+          <p>{headerEyebrow}</p>
+          <h1>{headerTitle}</h1>
         </div>
-        {!isMasterViewer && (
+        {!isReadOnlyViewer && (
           <div className="header-actions">
-            <button className={`admin-toggle ${showRoundSummary ? "danger" : ""}`} onClick={toggleRoundSummaryView}>
-              <FileText size={18} />
-              {showRoundSummary ? "점검 현황판으로 돌아가기" : "병동 순회 점검표"}
-            </button>
-            <button className={`admin-toggle ${isMobileMode ? "active" : ""}`} onClick={() => setIsMobileMode(!isMobileMode)}>
-              {isMobileMode ? <Monitor size={18} /> : <Smartphone size={18} />}
-              {isMobileMode ? "PC 화면 보기" : "모바일 화면 보기"}
-            </button>
-            <button className={`admin-toggle sync ${syncStatus.mode}`} onClick={() => setShowSyncSettings((prev) => !prev)}>
-              <RefreshCw size={18} />
-              자동 저장 상태
-            </button>
+            {!isViewerMode && (
+              <>
+                <button className={`admin-toggle ${showRoundSummary ? "danger" : ""}`} onClick={toggleRoundSummaryView}>
+                  <FileText size={18} />
+                  {showRoundSummary ? "점검 현황판으로 돌아가기" : "병동 순회 점검표"}
+                </button>
+                <button className={`admin-toggle ${isMobileMode ? "active" : ""}`} onClick={() => setIsMobileMode(!isMobileMode)}>
+                  {isMobileMode ? <Monitor size={18} /> : <Smartphone size={18} />}
+                  {isMobileMode ? "PC 화면 보기" : "모바일 화면 보기"}
+                </button>
+                <button className={`admin-toggle sync ${syncStatus.mode}`} onClick={() => setShowSyncSettings((prev) => !prev)}>
+                  <RefreshCw size={18} />
+                  자동 저장 상태
+                </button>
+              </>
+            )}
             <button className={`admin-toggle ${showMaster ? "danger" : ""}`} onClick={toggleMasterView}>
               <Database size={18} />
-              {showMaster ? "점검 현황판으로 돌아가기" : "전체 약품 마스터 관리"}
+              {showMaster ? (isNarcoticViewer ? "비치마약류 관리로 돌아가기" : "점검 현황판으로 돌아가기") : "전체 약품 마스터 관리"}
             </button>
           </div>
         )}
       </header>
 
-      {!isMasterViewer && showSyncSettings && (
+      {!isViewerMode && showSyncSettings && (
         <section className="sync-panel">
           <div className="sync-panel-content">
             <div>
@@ -1955,14 +2986,21 @@ export function App() {
         </section>
       )}
 
-      {!isMasterViewer && !showMaster && !showRoundSummary && (
+      {!isReadOnlyViewer && !showMaster && !showRoundSummary && (
         <div className="primary-tabs">
-          <button className={mainCategory === "stock" ? "active stock" : ""} onClick={() => setMainCategory("stock")}>
-            비품약 관리
+          <button className={`narcotic-order ${mainCategory === "narcotic" ? "active narcotic" : ""}`} onClick={() => setMainCategory("narcotic")}>
+            비치마약류 관리
           </button>
-          <button className={mainCategory === "ecart" ? "active ecart" : ""} onClick={() => setMainCategory("ecart")}>
-            응급카트 E-cart 관리
-          </button>
+          {!isNarcoticViewer && (
+            <>
+              <button className={mainCategory === "stock" ? "active stock" : ""} onClick={() => setMainCategory("stock")}>
+                비품약 관리
+              </button>
+              <button className={mainCategory === "ecart" ? "active ecart" : ""} onClick={() => setMainCategory("ecart")}>
+                응급카트 E-cart 관리
+              </button>
+            </>
+          )}
         </div>
       )}
 
@@ -1971,7 +3009,7 @@ export function App() {
           renderRoundSummaryEditor()
         ) : showMaster ? (
           <section className="master-stack">
-            {!isMasterViewer && (
+            {canEditMaster && (
             <section className="card">
               <div className="card-head">
                 <div>
@@ -1993,6 +3031,8 @@ export function App() {
                   {selectedAssignmentDrug && (
                     <div className="selected-drug-pill">
                       선택됨: <strong>{selectedAssignmentDrug.code}</strong> · {drugTitle(selectedAssignmentDrug)}
+                      {selectedAssignmentKind === "psychotropic" && <span className="badge psychotropic">향정</span>}
+                      {selectedAssignmentKind === "narcotic" && <span className="badge narcotic-group">마약</span>}
                     </div>
                   )}
                   {assignmentDrugQuery.trim() && (
@@ -2032,12 +3072,12 @@ export function App() {
                 <div className="room-picker">
                   <div>
                     <strong>반영할 보유실</strong>
-                    <button type="button" onClick={() => setTargetRooms(currentStockRooms.map((room) => room.id))}>
+                    <button type="button" onClick={() => setTargetRooms(assignmentRoomOptions.map((room) => room.id))}>
                       전체 선택
                     </button>
                   </div>
                   <div className="room-chip-grid">
-                    {currentStockRooms.map((room) => (
+                    {assignmentRoomOptions.map((room) => (
                       <label key={room.id} className={targetRooms.includes(room.id) ? "selected" : ""}>
                         <input
                           type="checkbox"
@@ -2048,7 +3088,7 @@ export function App() {
                             )
                           }
                         />
-                        {room.label}
+                        {displayRoomName(room.label)}
                       </label>
                     ))}
                   </div>
@@ -2096,6 +3136,17 @@ export function App() {
                         />
                       </label>
                       <label>
+                        관리구분
+                        <select
+                          value={newDrug.category}
+                          onChange={(event) => setNewDrug((prev) => ({ ...prev, category: event.target.value as NewDrugForm["category"] }))}
+                        >
+                          {!isNarcoticViewer && <option value="stock">일반 의약품</option>}
+                          <option value="향정">향정신성의약품</option>
+                          <option value="마약">마약류</option>
+                        </select>
+                      </label>
+                      <label>
                         주의사항
                         <input
                           value={newDrug.warning}
@@ -2122,7 +3173,7 @@ export function App() {
                           onChange={(event) => setRenameDrugForm((prev) => ({ ...prev, oldCode: event.target.value }))}
                         >
                           <option value="">-- 약품 선택 --</option>
-                          {stockDrugs.map((drug) => (
+                          {assignmentDrugs.map((drug) => (
                             <option key={drug.code} value={drug.code}>
                               [{drug.code}] {drug.productName} {drug.spec ? `(${drug.spec})` : ""}
                             </option>
@@ -2138,7 +3189,11 @@ export function App() {
                         />
                       </label>
                     </div>
-                    <button className="secondary-button" type="submit" style={{ backgroundColor: "#0284c7", borderColor: "#0284c7" }}>
+                    <button
+                      className="secondary-button"
+                      type="submit"
+                      style={{ backgroundColor: "var(--brand-brown)", borderColor: "var(--brand-brown)" }}
+                    >
                       <RefreshCw size={16} />
                       코드 변경 실행
                     </button>
@@ -2148,7 +3203,7 @@ export function App() {
                 <form className="add-panel compact" onSubmit={addNewRoom}>
                   <div>
                     <h3>신규 보유실 추가</h3>
-                    <p>추가된 보유실은 비품약 관리 탭과 마스터에 함께 생성됩니다.</p>
+                    <p>추가된 보유실은 {isNarcoticViewer ? "비치마약류 관리 화면과 마스터" : "비품약 관리 탭과 마스터"}에 함께 생성됩니다.</p>
                   </div>
                   <label>
                     보유실명
@@ -2163,35 +3218,275 @@ export function App() {
             </section>
             )}
 
+            <section className="card drug-label-card">
+              <div className="card-head">
+                <div>
+                  <h2>약품 라벨 출력</h2>
+                  <p>원하는 라벨의 형태와 크기를 선택 한 후 하단 리스트에서 약품을 선택하면 라벨 미리보기 후 인쇄 할 수 있습니다.</p>
+                </div>
+                <button
+                  type="button"
+                  className="secondary-button label-panel-toggle"
+                  aria-expanded={isDrugLabelPanelOpen}
+                  onClick={() => setIsDrugLabelPanelOpen((prev) => !prev)}
+                >
+                  <Printer size={16} />
+                  {isDrugLabelPanelOpen ? "라벨 출력 접기" : "라벨 출력 열기"}
+                </button>
+              </div>
+              {isDrugLabelPanelOpen && (
+                <div className="drug-label-tools">
+                  <div className="label-mode-row">
+                    <div className="segmented-buttons" aria-label="라벨 종류 선택">
+                    {labelModeOptions.map((option) => (
+                      <button
+                        type="button"
+                        key={option.mode}
+                        className={[labelMode === option.mode ? "active" : "", option.mode === "narcotic" ? "danger" : ""]
+                          .filter(Boolean)
+                          .join(" ")}
+                        onClick={() => {
+                          if (option.mode === "pharmacy") {
+                            setLabelMode("pharmacy");
+                            setIsPharmacyLabelWorkspaceOpen(true);
+                            return;
+                          }
+                          if (option.mode === "narcotic" && !["10x70", "15x95", "40x70"].includes(labelSize)) {
+                            setLabelSize("10x70");
+                          }
+                          setLabelMode(option.mode);
+                        }}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="label-size-groups" aria-label="라벨 크기 선택">
+                    {DRUG_LABEL_SIZE_GROUPS.map((group) => (
+                      <div className="label-size-group" key={group.id}>
+                        <div className="segmented-buttons label-size-buttons">
+                          {group.sizeKeys.map((sizeKey) => {
+                            const size = getDrugLabelSize(sizeKey);
+                            return (
+                              <button
+                                type="button"
+                                key={size.key}
+                                className={labelSize === size.key ? "active" : ""}
+                                onClick={() => {
+                                  setLabelSize(size.key);
+                                  if (group.id === "narcotic") setLabelMode("narcotic");
+                                }}
+                              >
+                                {size.label}
+                              </button>
+                            );
+                          })}
+                        </div>
+                        <span className="label-size-output-label">{group.outputLabel}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="drug-label-controls">
+                  <SearchBox value={labelQuery} onChange={setLabelQuery} placeholder="라벨 출력할 약품 검색" />
+                  <label className="label-copy-field">
+                    출력 매수
+                    <input
+                      type="number"
+                      min={1}
+                      max={20}
+                      value={labelCopies}
+                      onChange={(event) =>
+                        setLabelCopies(Math.min(20, Math.max(1, Number.parseInt(event.target.value, 10) || 1)))
+                      }
+                    />
+                  </label>
+                  <button type="button" className="secondary-button" onClick={clearLabelSelection}>
+                    선택 해제
+                  </button>
+                  <button type="button" className="print-button" onClick={openDrugLabelPrintPreview} disabled={labelPrintRows.length === 0}>
+                    <Printer size={16} />
+                    라벨 인쇄 미리보기
+                  </button>
+                </div>
+
+                <div className="drug-label-layout">
+                  <div className="label-drug-list" aria-label="라벨 출력 약품 선택">
+                    {labelMode === "pharmacy" && isHospitalDrugLabelsLoading ? (
+                      <span className="empty">약제팀 라벨 데이터를 불러오는 중입니다.</span>
+                    ) : currentLabelSourceRows.length === 0 ? (
+                      <span className="empty">검색 결과가 없습니다.</span>
+                    ) : (
+                      currentLabelSourceRows.map((row) => {
+                        const cautionLabels = labelCautionLabels(row);
+                        return (
+                          <button
+                            type="button"
+                            key={row.id}
+                            className={`label-drug-list-row ${isLabelPrintSelected(row) ? "selected" : ""}`}
+                            onClick={() => toggleLabelPrintSelection(row)}
+                          >
+                            <strong>{row.code}</strong>
+                            <span>{row.name}</span>
+                            <span className="label-list-cautions" aria-label="주의 표시">
+                              {cautionLabels.length === 0 ? (
+                                <span className="empty">-</span>
+                              ) : (
+                                cautionLabels.map((label) => (
+                                  <span key={label} className={`badge ${labelCautionBadgeClass(label)}`}>
+                                    {label}
+                                  </span>
+                                ))
+                              )}
+                            </span>
+                            {row.kind === "ecart" ? (
+                              <span className="badge gray">수량 {row.totalQuantity}</span>
+                            ) : row.kind === "fluid" ? (
+                              <span className={`fluid-list-tone ${row.fluidTone ?? "blue"}`}>수액</span>
+                            ) : (
+                              <span className={`label-storage-badge ${row.storageTone}`}>{row.storageLabel}</span>
+                            )}
+                          </button>
+                        );
+                      })
+                    )}
+                  </div>
+
+                  <div className="label-preview-panel">
+                    <div>
+                      <strong>라벨 미리보기</strong>
+                      <span>
+                        {currentModeSelectionCount > 0
+                          ? `${selectedLabelSize.label} 기준 ${currentModeSelectionCount.toLocaleString("ko-KR")}종 선택됨`
+                          : `${selectedLabelSize.label} 선택 후 약품을 클릭해 출력 목록에 추가`}
+                      </span>
+                    </div>
+                    <div className="drug-label-preview-grid mixed-label-grid">
+                      {currentModeLabelPrintRows.slice(0, 6).map((entry, index) =>
+                        renderDrugLabelArticle(entry, `preview-${entry.id}-${entry.sizeKey}-${entry.copyIndex}-${index}`),
+                      )}
+                    </div>
+                    {currentModeLabelPrintRows.length > 6 && (
+                      <small>미리보기는 현재 라벨 종류 6장까지만 표시됩니다. 인쇄 시 전체 {labelPrintRows.length}장이 출력됩니다.</small>
+                    )}
+                    {currentModeLabelPrintRows.length === 0 && labelPrintRows.length > 0 && (
+                      <small>현재 라벨 종류에서 선택된 항목은 없습니다. 인쇄 미리보기에는 선택해 둔 전체 라벨이 함께 표시됩니다.</small>
+                    )}
+                  </div>
+                </div>
+              </div>
+              )}
+            </section>
+
             <section className="card">
               <div className="card-head">
                 <div>
                   <h2>전체 비품약 마스터 보유 현황</h2>
                   <p>
-                    총 {masterRows.length}종 · 전체 보유수량{" "}
-                    {masterRows.reduce((sum, row) => sum + row.totalQuantity, 0).toLocaleString("ko-KR")}개
+                    총 {visibleMasterRows.length}종 · 전체 보유수량{" "}
+                    {visibleMasterRows.reduce((sum, row) => sum + row.totalQuantity, 0).toLocaleString("ko-KR")}개
                   </p>
+                  <div className="master-kind-filter" aria-label="마스터 분류 필터">
+                    {MASTER_KIND_FILTER_OPTIONS.map((option) => (
+                      <label key={option.kind}>
+                        <input
+                          type="checkbox"
+                          checked={masterKindFilter[option.kind]}
+                          onChange={(event) =>
+                            setMasterKindFilter((prev) => ({ ...prev, [option.kind]: event.target.checked }))
+                          }
+                        />
+                        <span>{option.label}</span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
-                <SearchBox value={masterQuery} onChange={setMasterQuery} placeholder="마스터 약품/보유실 검색" />
+                <div className="master-search-actions">
+                  <SearchBox value={masterQuery} onChange={setMasterQuery} placeholder="마스터 약품/보유실 검색" />
+                  <button
+                    type="button"
+                    className="secondary-button master-label-button"
+                    onClick={() => openSelectedMasterLabelPreview("stock")}
+                    disabled={selectedLabelRows.length === 0}
+                  >
+                    <Printer size={16} />
+                    체크 약품 라벨 출력
+                  </button>
+                  <button type="button" className="secondary-button master-excel-button" onClick={downloadMasterWorkbook}>
+                    <Download size={16} />
+                    Excel 다운로드
+                  </button>
+                </div>
               </div>
-              <div className={`master-grid ${showMasterQuickView ? "" : "single-column"}`}>
+              <div
+                className={`master-grid ${showMasterQuickView ? "" : "single-column"} ${
+                  showMasterQuickView && masterQuickPlacement === "bottom" ? "quick-bottom" : ""
+                }`}
+              >
                 <div className="table-wrap">
-                  <table className="data-table">
+                  <table className="data-table master-table">
                     <thead>
                       <tr>
+                        <th className="master-select-cell">
+                          <input
+                            type="checkbox"
+                            checked={filteredMasterRows.length > 0 && filteredMasterRows.every((row) => labelSelectedCodes.includes(row.code))}
+                            onChange={(event) => toggleFilteredMasterLabels(event.target.checked)}
+                            aria-label="현재 마스터 목록 전체 선택"
+                          />
+                        </th>
                         <th>코드</th>
                         <th>약품명</th>
+                        <th>보관방법</th>
+                        <th>고주의/고위험</th>
                         <th>보유실별 갯수</th>
                         <th>합계</th>
+                        {!isViewerMode && <th>관리</th>}
                       </tr>
                     </thead>
                     <tbody>
-                      {filteredMasterRows.map((row) => (
-                        <tr key={row.code}>
+                      {filteredMasterRows.map((row) => {
+                        const cautionLabels =
+                          row.masterKind === "psychotropic" ? ["향정"] : row.masterKind === "narcotic" ? ["마약"] : drugCautionLabels(row);
+                        return (
+                        <tr key={row.code} className={`master-row-${row.masterKind}`}>
+                          <td className="master-select-cell">
+                            <input
+                              type="checkbox"
+                              checked={labelSelectedCodes.includes(row.code)}
+                              onChange={() => toggleLabelDrug(row.code)}
+                              aria-label={`${drugTitle(row)} 라벨 선택`}
+                            />
+                          </td>
                           <td className="code">{row.code}</td>
-                          <td>
+                          <td className="master-drug-name">
                             <strong>{drugTitle(row)}</strong>
-                            <span>{row.storage}</span>
+                          </td>
+                          <td className="master-storage-cell">
+                            <span>{row.storage || "-"}</span>
+                            {storageBadge(row)}
+                          </td>
+                          <td className="master-caution-cell">
+                            {cautionLabels.length === 0 ? (
+                              <span className="empty">-</span>
+                            ) : (
+                              cautionLabels.map((label) => (
+                                <span
+                                  key={label}
+                                  className={`badge ${
+                                    row.masterKind === "psychotropic"
+                                      ? "psychotropic"
+                                      : row.masterKind === "narcotic"
+                                        ? "narcotic-group"
+                                        : label.includes("고위험")
+                                          ? "red"
+                                          : "amber"
+                                  }`}
+                                >
+                                  {label}
+                                </span>
+                              ))
+                            )}
                           </td>
                           <td>
                             <div className="room-detail-list">
@@ -2199,16 +3494,16 @@ export function App() {
                                 <span className="empty">보유실 배정 없음</span>
                               ) : (
                                 row.roomDetails.map((detail) =>
-                                  isMasterViewer ? (
+                                  isReadOnlyViewer ? (
                                     <span className="room-detail-pill" key={`${row.code}-${detail.roomId}`}>
-                                      {detail.roomId} {detail.requiredQty}
+                                      {displayRoomName(detail.roomId)} {detail.requiredQty}
                                     </span>
                                   ) : (
                                     <button
                                       key={`${row.code}-${detail.roomId}`}
-                                      onClick={() => goToStockRoom(detail.roomId)}
+                                      onClick={() => (row.masterKind === "stock" ? goToStockRoom(detail.roomId) : goToNarcoticRoom(detail.roomId))}
                                     >
-                                      {detail.roomId} {detail.requiredQty}
+                                      {displayRoomName(detail.roomId)} {detail.requiredQty}
                                     </button>
                                   ),
                                 )
@@ -2216,25 +3511,47 @@ export function App() {
                             </div>
                           </td>
                           <td className="qty-total">{row.totalQuantity}</td>
+                          {!isViewerMode && (
+                            <td className="master-row-actions">
+                              <button type="button" className="secondary-button danger-light" onClick={() => deleteMasterRow(row)}>
+                                <Trash2 size={15} />
+                                삭제
+                              </button>
+                            </td>
+                          )}
                         </tr>
-                      ))}
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
 
                 {showMasterQuickView && (
                   <aside className="master-side">
-                    <h3>빠른 확인</h3>
+                    <div className="master-side-head">
+                      <h3>빠른 확인</h3>
+                      <button
+                        type="button"
+                        className="secondary-button compact-button"
+                        onClick={() => setMasterQuickPlacement((placement) => (placement === "side" ? "bottom" : "side"))}
+                      >
+                        {masterQuickPlacement === "side" ? "아래로 이동" : "오른쪽 고정"}
+                      </button>
+                    </div>
                     {selectedMasterRow ? (
                       <>
                         <strong>{drugTitle(selectedMasterRow)}</strong>
                         <p>{selectedMasterRow.code}</p>
+                        <div className="master-side-storage">
+                          <span>{selectedMasterRow.storage || "-"}</span>
+                          {storageBadge(selectedMasterRow)}
+                        </div>
                         <div className="big-total">{selectedMasterRow.totalQuantity}</div>
                         <span>전체 보유 합계</span>
                         <div className="detail-scroll">
                           {selectedMasterRow.roomDetails.map((detail) => (
                             <div key={detail.roomId}>
-                              <span>{detail.roomId}</span>
+                              <span>{displayRoomName(detail.roomId)}</span>
                               <strong>{detail.requiredQty}</strong>
                             </div>
                           ))}
@@ -2255,9 +3572,72 @@ export function App() {
                 sections={stockGuideSections}
                 activeRoom={activeRoom}
                 uninspectedIds={uninspectedRoomIds}
+                inspectedIds={inspectedStockRoomIds}
                 onSelect={openGuideEntry}
                 onToggleUninspected={(item) => toggleUninspectedRoom(getStockGuideInspectionKey(item))}
               />
+            )}
+
+            {mainCategory === "narcotic" && (
+              <section className="card narcotic-guide">
+                <div className="narcotic-guide-head">
+                  <h3>비치마약류 보유 현황</h3>
+                  <div className="toolbar-actions">
+                    <button type="button" className="secondary-button" onClick={openNarcoticRoundSummary}>
+                      <FileText size={16} />
+                      비치마약류 순회점검표
+                    </button>
+                    <button type="button" className="secondary-button narcotic-sync-button" onClick={() => void pullNarcoticInspectionStateFromServer()}>
+                      <Download size={16} />
+                      PC에 저장
+                      <span className="sync-warning-text">(반드시 모바일 수정 내용 저장 후 누를 것!)</span>
+                    </button>
+                    <button type="button" className="secondary-button narcotic-sync-button" onClick={() => void saveNarcoticInspectionStateToServer()}>
+                      <RefreshCw size={16} />
+                      모바일 수정 내용 저장
+                    </button>
+                    <button type="button" className="secondary-button narcotic-upload-button" onClick={() => narcoticExcelInputRef.current?.click()}>
+                      <Upload size={16} />
+                      엑셀 업로드
+                    </button>
+                    <input
+                      ref={narcoticExcelInputRef}
+                      className="hidden-file-input"
+                      type="file"
+                      onChange={handleNarcoticExcelUpload}
+                    />
+                  </div>
+                </div>
+                {narcoticExcelFileName && <p className="narcotic-upload-name">선택 파일: {narcoticExcelFileName}</p>}
+                <div className="narcotic-guide-list">
+                  {currentNarcoticFloors.map((floorGroup) => (
+                    <div className="narcotic-guide-floor" key={floorGroup.floor}>
+                      <strong>{floorGroup.floor}</strong>
+                      <div className="narcotic-guide-rows">
+                        {getNarcoticFloorRows(floorGroup.floor, floorGroup.rooms).map((row, rowIndex) => (
+                          <div className="narcotic-guide-row" key={`${floorGroup.floor}-${rowIndex}`}>
+                            {row.map((room) => (
+                              <button
+                                key={room.id}
+                                className={[
+                                  narcoticActiveRoom === room.id ? "active" : "",
+                                  getStockGuideClassName(room.id, uninspectedNarcoticRoomIds, inspectedNarcoticRoomIds),
+                                ]
+                                  .filter(Boolean)
+                                  .join(" ")}
+                                onClick={() => setNarcoticActiveRoom(room.id)}
+                                onDoubleClick={() => toggleUninspectedNarcoticRoom(room.id)}
+                              >
+                                {narcoticGuideLabel(room)} ({room.allocationCount})
+                              </button>
+                            ))}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
             )}
 
             {mainCategory === "stock" ? (
@@ -2265,11 +3645,22 @@ export function App() {
                 items={currentStockRooms}
                 activeId={activeRoom}
                 getId={(room) => room.id}
-                getLabel={(room) => `${room.label} (${room.allocationCount})`}
-                getClassName={(room) => (uninspectedRoomIds.includes(room.id) ? "uninspected" : "")}
+                getLabel={(room) => `${displayRoomName(room.label)} (${room.allocationCount})`}
+                getClassName={(room) => getStockGuideClassName(room.id, uninspectedRoomIds, inspectedStockRoomIds)}
                 onSelect={(room) => setActiveRoom(room.id)}
                 onDoubleClick={(room) => toggleUninspectedRoom(room.id)}
                 tone="stock"
+              />
+            ) : mainCategory === "narcotic" ? (
+              <TabStrip
+                items={currentNarcoticRooms}
+                activeId={narcoticActiveRoom}
+                getId={(room) => room.id}
+                getLabel={(room) => `${displayRoomName(room.label)} (${room.allocationCount})`}
+                getClassName={(room) => getStockGuideClassName(room.id, uninspectedNarcoticRoomIds, inspectedNarcoticRoomIds)}
+                onSelect={(room) => setNarcoticActiveRoom(room.id)}
+                onDoubleClick={(room) => toggleUninspectedNarcoticRoom(room.id)}
+                tone={"narcotic" as "stock"}
               />
             ) : (
               <div className="ecart-tab-row">
@@ -2292,7 +3683,7 @@ export function App() {
                       className={activeEcartTarget.id === department.id ? "active" : ""}
                       onClick={() => setActiveEcartTargetId(department.id)}
                     >
-                      {department.label}
+                      {displayRoomName(department.label)}
                     </button>
                   ))}
                 </div>
@@ -2303,13 +3694,17 @@ export function App() {
               <div>
                 <h2>
                   {mainCategory === "stock"
-                    ? `${activeRoomInfo?.label ?? activeRoom} 비품약 현황판`
-                    : `${activeEcartTarget.label} E-cart 현황판`}
+                    ? `${displayRoomName(activeRoomInfo?.label ?? activeRoom)} 비품약 현황판`
+                    : mainCategory === "narcotic"
+                    ? `${displayRoomName(narcoticRoomInfo?.label ?? narcoticActiveRoom)} 비치마약류 현황판`
+                    : `${displayRoomName(activeEcartTarget.label)} E-cart 현황판`}
                 </h2>
                 <p>
                   {mainCategory === "stock"
-                    ? `원본 시트 ${activeRoomInfo?.sourceSheet ?? activeRoom} · 현재 ${currentStockItems.length}개 표시`
-                    : `점검 부서 ${activeEcartTarget.label} · 현재 ${currentEcartItems.length}개 표시`}
+                    ? `원본 시트 ${displayRoomName(activeRoomInfo?.sourceSheet ?? activeRoom)} · 현재 ${currentStockItems.length}개 표시`
+                    : mainCategory === "narcotic"
+                    ? `비치향정,마약현황 · 현재 ${currentNarcoticItems.length}개 표시`
+                    : `점검 부서 ${displayRoomName(activeEcartTarget.label)} · 현재 ${currentEcartItems.length}개 표시`}
                 </p>
               </div>
               <div className="toolbar-actions">
@@ -2318,6 +3713,12 @@ export function App() {
                   <button className="secondary-button" onClick={() => openPrintPreview("all-stock")}>
                     <Printer size={16} />
                     전체 실 일괄 출력
+                  </button>
+                )}
+                {mainCategory === "ecart" && (
+                  <button className="secondary-button" onClick={() => openPrintPreview("all-ecart")}>
+                    <Printer size={16} />
+                    전체 부서 일괄 출력
                   </button>
                 )}
                 <button className="print-button" onClick={() => openPrintPreview("single")}>
@@ -2339,19 +3740,27 @@ export function App() {
               <div>
                 <strong>
                   {printPreviewMode === "round-summary"
-                    ? "병동 순회 점검표 미리보기"
+                    ? `${activeRoundSummaryDraft.title} 미리보기`
                     : printPreviewMode === "all-stock"
                       ? "전체 실 일괄 출력 미리보기"
-                      : "보고서 미리보기"}
+                      : printPreviewMode === "all-ecart"
+                        ? "전체 E-cart 일괄 출력 미리보기"
+                        : printPreviewMode === "drug-labels"
+                          ? "약품 라벨 인쇄 미리보기"
+                          : "보고서 미리보기"}
                 </strong>
                 <span>
                   {printPreviewMode === "round-summary"
                     ? activeRoundSummaryDraft.inspectionPeriod
                     : printPreviewMode === "all-stock"
-                    ? `${currentStockRooms.length.toLocaleString("ko-KR")}개 보유실`
-                    : mainCategory === "stock"
-                      ? activeRoomInfo?.label ?? activeRoom
-                      : activeEcartTarget.label}
+                      ? `${currentStockRooms.length.toLocaleString("ko-KR")}개 보유실`
+                      : printPreviewMode === "all-ecart"
+                        ? `${getAllEcartPrintTargets(ecartTargets).length.toLocaleString("ko-KR")}개 E-cart 보유 부서`
+                        : printPreviewMode === "drug-labels"
+                          ? `${labelPrintRows.length.toLocaleString("ko-KR")}장`
+                          : mainCategory === "stock"
+                          ? displayRoomName(activeRoomInfo?.label ?? activeRoom)
+                          : displayRoomName(activeEcartTarget.label)}
                 </span>
               </div>
               <div className="preview-actions">
@@ -2379,7 +3788,11 @@ export function App() {
                 ? renderRoundSummaryReport(printPreviewRef, "round-summary-report print-preview-report")
                 : printPreviewMode === "all-stock"
                   ? renderBulkStockReports()
-                  : renderReportCard(printPreviewRef, "report-card print-preview-report")}
+                  : printPreviewMode === "all-ecart"
+                    ? renderBulkEcartReports()
+                    : printPreviewMode === "drug-labels"
+                      ? renderDrugLabelSheet(printPreviewRef, "drug-label-sheet print-preview-report")
+                      : renderReportCard(printPreviewRef, "report-card print-preview-report")}
             </div>
           </div>
         </div>
@@ -2434,12 +3847,14 @@ function StockRoomGuide({
   sections,
   activeRoom,
   uninspectedIds = [],
+  inspectedIds = [],
   onSelect,
   onToggleUninspected,
 }: {
   sections: StockGuideSection[];
   activeRoom: string;
   uninspectedIds?: string[];
+  inspectedIds?: string[];
   onSelect: (item: StockGuideEntry) => void;
   onToggleUninspected?: (item: StockGuideEntry) => void;
 }) {
@@ -2481,7 +3896,7 @@ function StockRoomGuide({
                         "guide-chip",
                         item.ecartOnly ? "ecart-only" : "",
                         item.stockRoomId === activeRoom ? "active" : "",
-                        uninspectedIds.includes(getStockGuideInspectionKey(item)) ? "uninspected" : "",
+                        getStockGuideClassName(getStockGuideInspectionKey(item), uninspectedIds, inspectedIds),
                       ]
                         .filter(Boolean)
                         .join(" ")}
@@ -2542,14 +3957,18 @@ function TabStrip<T>({
 function StockReportTable({
   refrigerated,
   roomTemperature,
+  checkedStock,
   onCheck,
+  onSplitCheck,
   onExpiry,
   onCount,
   onDelete,
 }: {
   refrigerated: EditableStockItem[];
   roomTemperature: EditableStockItem[];
+  checkedStock: Record<string, boolean>;
   onCheck: (roomId: string, drugCode: string) => void;
+  onSplitCheck: (roomId: string, drugCode: string, partIndex: number, partCount: number) => void;
   onExpiry: (roomId: string, drugCode: string, value: string) => void;
   onCount: (roomId: string, drugCode: string, value: string) => void;
   onDelete: (roomId: string, drugCode: string) => void;
@@ -2574,7 +3993,9 @@ function StockReportTable({
               label="냉장 보관 약품"
               tone="cold"
               items={refrigerated}
+              checkedStock={checkedStock}
               onCheck={onCheck}
+              onSplitCheck={onSplitCheck}
               onExpiry={onExpiry}
               onCount={onCount}
               onDelete={onDelete}
@@ -2584,7 +4005,9 @@ function StockReportTable({
             label="실온 보관 및 기타 약품"
             tone="room"
             items={roomTemperature}
+            checkedStock={checkedStock}
             onCheck={onCheck}
+            onSplitCheck={onSplitCheck}
             onExpiry={onExpiry}
             onCount={onCount}
             onDelete={onDelete}
@@ -2595,25 +4018,26 @@ function StockReportTable({
   );
 }
 
-function countInput(item: EditableStockItem, onCount: (roomId: string, drugCode: string, value: string) => void) {
-  if (item.roomId === "HBEF심혈관조영실" && item.requiredQty > 0 && item.requiredQty % 2 === 0) {
-    const half = item.requiredQty / 2;
+function countInput(
+  item: EditableStockItem,
+  checkedStock: Record<string, boolean>,
+  onCount: (roomId: string, drugCode: string, value: string) => void,
+  onSplitCheck: (roomId: string, drugCode: string, partIndex: number, partCount: number) => void,
+) {
+  const splitParts = getStockSplitParts(item.roomId, item.drugCode, item.requiredQty, `${drugTitle(item.drug)} ${item.drug.genericName}`);
+  if (splitParts) {
     return (
       <div className="split-count-inputs">
-        <input
-          className="count-input"
-          type="number"
-          min={0}
-          value={half}
-          onChange={(event) => onCount(item.roomId, item.drugCode, String((Number.parseInt(event.target.value, 10) || 0) + half))}
-        />
-        <input
-          className="count-input"
-          type="number"
-          min={0}
-          value={half}
-          onChange={(event) => onCount(item.roomId, item.drugCode, String(half + (Number.parseInt(event.target.value, 10) || 0)))}
-        />
+        {splitParts.map((count, index) => (
+          <button
+            className={`split-count-button ${checkedStock[stockSplitKey(item.roomId, item.drugCode, index)] ? "checked" : ""}`}
+            key={`${item.roomId}-${item.drugCode}-split-${index}`}
+            type="button"
+            onClick={() => onSplitCheck(item.roomId, item.drugCode, index, splitParts.length)}
+          >
+            {count}
+          </button>
+        ))}
       </div>
     );
   }
@@ -2633,33 +4057,40 @@ function GroupRows({
   label,
   tone,
   items,
+  checkedStock,
   onCheck,
+  onSplitCheck,
   onExpiry,
   onCount,
   onDelete,
+  renderExtraCells,
 }: {
   label: string;
-  tone: "cold" | "room";
+  tone: "cold" | "room" | "psychotropic" | "narcotic-group";
   items: EditableStockItem[];
+  checkedStock: Record<string, boolean>;
   onCheck: (roomId: string, drugCode: string) => void;
+  onSplitCheck: (roomId: string, drugCode: string, partIndex: number, partCount: number) => void;
   onExpiry: (roomId: string, drugCode: string, value: string) => void;
   onCount: (roomId: string, drugCode: string, value: string) => void;
   onDelete: (roomId: string, drugCode: string) => void;
+  renderExtraCells?: (item: EditableStockItem) => ReactNode;
 }) {
+  const columnCount = renderExtraCells ? 8 : 7;
   return (
     <>
       <tr className={`group-row ${tone}`}>
-        <td colSpan={7}>{label}</td>
+        <td colSpan={columnCount}>{label}</td>
       </tr>
       {items.length === 0 ? (
         <tr>
-          <td colSpan={7} className="empty-row">
+          <td colSpan={columnCount} className="empty-row">
             약품이 없습니다.
           </td>
         </tr>
       ) : (
         items.map((item) => (
-          <tr key={`${item.roomId}-${item.drugCode}`}>
+          <tr key={`${item.roomId}-${item.drugCode}`} className={`item-row ${tone}`}>
             <td className="check-cell">
               <input type="checkbox" checked={item.checked} onChange={() => onCheck(item.roomId, item.drugCode)} />
             </td>
@@ -2670,8 +4101,8 @@ function GroupRows({
               <small>{item.drug.storage}</small>
               {storageBadge(item.drug)}
             </td>
-            <td>{countInput(item, onCount)}</td>
-            <td>{warningBadge(item.drug.warning)}</td>
+            <td>{countInput(item, checkedStock, onCount, onSplitCheck)}</td>
+            {renderExtraCells ? renderExtraCells(item) : <td>{warningBadge(item.drug.warning)}</td>}
             <td>
               <input
                 className="date-input"
@@ -2787,7 +4218,12 @@ function ChecklistTable({
               <th>구분</th>
               <th>점검 내용</th>
               <th>양호</th>
-              <th>불량</th>
+              <th>
+                <span className="checklist-status-heading" aria-label="개선 필요">
+                  <span>개선</span>
+                  <span>필요</span>
+                </span>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -2797,7 +4233,7 @@ function ChecklistTable({
                 <Fragment key={item.id}>
                   <tr>
                     <td>{showSection ? `[${item.section}]` : ""}</td>
-                    <td>{item.text}</td>
+                    <td>{`${index + 1}. ${item.text}`}</td>
                     <td className="check-cell">
                       <input
                         type="checkbox"

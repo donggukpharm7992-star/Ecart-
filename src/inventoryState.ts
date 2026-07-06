@@ -5,7 +5,11 @@ export type MasterRoomDetail = {
   requiredQty: number;
 };
 
+export type MasterRowKind = "stock" | "psychotropic" | "narcotic";
+export type MasterRowKindFilter = Record<MasterRowKind, boolean>;
+
 export type MasterRow = StockDrug & {
+  masterKind: MasterRowKind;
   totalQuantity: number;
   roomDetails: MasterRoomDetail[];
 };
@@ -30,12 +34,17 @@ export function sortStockDrugsByName<T extends DrugDisplayFields>(drugs: T[]) {
   return [...drugs].sort(compareStockDrugsByName);
 }
 
-export function buildMasterRows(drugs: StockDrug[], allocations: StockAllocation[]): MasterRow[] {
+export function buildMasterRows(
+  drugs: StockDrug[],
+  allocations: StockAllocation[],
+  resolveKind: (drug: StockDrug) => MasterRowKind = () => "stock",
+): MasterRow[] {
   const rows = new Map<string, MasterRow>();
 
   for (const drug of drugs) {
     rows.set(drug.code, {
       ...drug,
+      masterKind: resolveKind(drug),
       totalQuantity: 0,
       roomDetails: [],
     });
@@ -53,6 +62,14 @@ export function buildMasterRows(drugs: StockDrug[], allocations: StockAllocation
   }
 
   return sortStockDrugsByName([...rows.values()]);
+}
+
+export function filterMasterRowsWithStock(rows: MasterRow[]) {
+  return rows.filter((row) => row.totalQuantity > 0);
+}
+
+export function filterMasterRowsByKind<T extends MasterRow>(rows: readonly T[], filter: MasterRowKindFilter) {
+  return rows.filter((row) => filter[row.masterKind]);
 }
 
 export function updateAllocationQuantity(
@@ -85,4 +102,11 @@ export function deleteAllocation(
   drugCode: string,
 ): StockAllocation[] {
   return allocations.filter((allocation) => allocation.roomId !== roomId || allocation.drugCode !== drugCode);
+}
+
+export function deleteMasterDrug(drugs: StockDrug[], allocations: StockAllocation[], drugCode: string) {
+  return {
+    drugs: drugs.filter((drug) => drug.code !== drugCode),
+    allocations: allocations.filter((allocation) => allocation.drugCode !== drugCode),
+  };
 }

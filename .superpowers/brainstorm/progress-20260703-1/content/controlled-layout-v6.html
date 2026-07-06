@@ -1,0 +1,213 @@
+<h2>비치마약류 관리 화면 배치안 v6</h2>
+<p class="subtitle">현재 비품약 관리 화면 UI를 그대로 확장합니다. 상단 탭 사이에 비치마약류 관리를 추가하고, 화면 내부 문구와 데이터만 교체합니다.</p>
+
+<div class="mockup">
+  <div class="mockup-header">Preview: 기존 비품약 관리 화면 확장형</div>
+  <div class="mockup-body" style="background:#f6f3f1;padding:0;border-radius:8px;overflow:hidden">
+    <div style="background:#84695d;color:white;padding:18px 30px;display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div style="font-size:13px">병동 비품약 & E-cart 점검</div>
+        <div style="font-size:28px;font-weight:800;margin-top:4px">비품관리 현황판</div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button class="mock-button" style="background:#ff8738;color:white;border:1px solid #f97316">병동 순회 점검표</button>
+        <button class="mock-button" style="background:#ff8738;color:white;border:1px solid #f97316">모바일 화면 보기</button>
+        <button class="mock-button" style="background:#9a7d70;color:white;border:1px solid #9a7d70">자동 저장 상태</button>
+        <button class="mock-button" style="background:#ff8738;color:white;border:1px solid #f97316">전체 약품 마스터 관리</button>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;background:#9b918d;color:white;font-weight:700;text-align:center">
+      <div style="padding:18px;background:#ff8738">비품약 관리</div>
+      <div style="padding:18px;background:#8b6b5d">비치마약류 관리</div>
+      <div style="padding:18px">응급카트 E-cart 관리</div>
+    </div>
+
+    <div style="padding:18px">
+      <section style="border:1px solid #d8d2ce;border-radius:8px;background:white;padding:18px;margin-bottom:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px">
+          <h3 style="margin:0;color:#0f172a;font-size:20px">비치마약류 보유 현황 안내</h3>
+          <div style="display:flex;gap:8px">
+            <button class="mock-button" style="background:#ff8738;color:white;border:1px solid #f97316">비치마약 순회점검표</button>
+            <button class="mock-button" style="background:white;color:#7a584b;border:1px solid #c9b6ad">재고 상세 엑셀 업로드</button>
+          </div>
+        </div>
+        <div style="display:grid;gap:8px;font-size:13px">
+          <div style="display:grid;grid-template-columns:96px 1fr;gap:8px;align-items:center">
+            <strong>1층</strong>
+            <div style="display:flex;gap:7px;flex-wrap:wrap">
+              <span style="padding:7px 10px;border-radius:7px;background:#f8fafc;border:1px solid #e2e8f0">INJ (0)</span>
+              <span style="padding:7px 10px;border-radius:7px;background:#f8fafc;border:1px solid #e2e8f0">DREMM (4)</span>
+              <span style="padding:7px 10px;border-radius:7px;background:#f8fafc;border:1px solid #e2e8f0">ER (3)</span>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:96px 1fr;gap:8px;align-items:center">
+            <strong>2층</strong>
+            <div style="display:flex;gap:7px;flex-wrap:wrap">
+              <span style="padding:7px 10px;border-radius:7px;background:#fff8f6;border:1px solid #ead9d1">GICLA (5)</span>
+              <span style="padding:7px 10px;border-radius:7px;background:#fff8f6;border:1px solid #ead9d1">HBEF (9)</span>
+              <span style="padding:7px 10px;border-radius:7px;background:#f8fafc;border:1px solid #e2e8f0">MICU (5)</span>
+              <span style="padding:7px 10px;border-radius:7px;background:#f8fafc;border:1px solid #e2e8f0">DSR (0)</span>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:96px 1fr;gap:8px;align-items:center">
+            <strong>3층</strong>
+            <div style="display:flex;gap:7px;flex-wrap:wrap">
+              <span style="padding:7px 10px;border-radius:7px;background:#fff8f6;border:1px solid #ead9d1">AN (18)</span>
+              <span style="padding:7px 10px;border-radius:7px;background:#f8fafc;border:1px solid #e2e8f0">OR (1)</span>
+              <span style="padding:7px 10px;border-radius:7px;background:#f8fafc;border:1px solid #e2e8f0">SICU (3)</span>
+              <span style="padding:7px 10px;border-radius:7px;background:#f8fafc;border:1px solid #e2e8f0">ADR (1)</span>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:96px 1fr;gap:8px;align-items:center">
+            <strong>4층</strong>
+            <div style="display:flex;gap:7px;flex-wrap:wrap">
+              <span style="padding:7px 10px;border-radius:7px;background:#fff8f6;border:1px solid #ead9d1">HPC (3)</span>
+              <span style="padding:7px 10px;border-radius:7px;background:#f8fafc;border:1px solid #e2e8f0">난임 (0)</span>
+              <span style="padding:7px 10px;border-radius:7px;background:#f8fafc;border:1px solid #e2e8f0">DRL (2)</span>
+              <span style="padding:7px 10px;border-radius:7px;background:#f8fafc;border:1px solid #e2e8f0">NICU (2)</span>
+              <span style="padding:7px 10px;border-radius:7px;background:#f8fafc;border:1px solid #e2e8f0">42 (1)</span>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:96px 1fr;gap:8px;align-items:center">
+            <strong>5층 ~ 12층</strong>
+            <div style="display:flex;gap:7px;flex-wrap:wrap">
+              <span style="padding:7px 10px;border-radius:7px;background:#f8fafc;border:1px solid #e2e8f0">51 (0)</span>
+              <span style="padding:7px 10px;border-radius:7px;background:#f8fafc;border:1px solid #e2e8f0">52 (0)</span>
+              <span style="padding:7px 10px;border-radius:7px;background:#f8fafc;border:1px solid #e2e8f0">61 (0)</span>
+              <span style="padding:7px 10px;border-radius:7px;background:#f8fafc;border:1px solid #e2e8f0">62 (0)</span>
+              <span style="padding:7px 10px;border-radius:7px;background:#f8fafc;border:1px solid #e2e8f0">71 (2)</span>
+              <span style="padding:7px 10px;border-radius:7px;background:#f8fafc;border:1px solid #e2e8f0">72 (3)</span>
+              <span style="padding:7px 10px;border-radius:7px;background:#f8fafc;border:1px solid #e2e8f0">81 (2)</span>
+              <span style="padding:7px 10px;border-radius:7px;background:#f8fafc;border:1px solid #e2e8f0">82 (1)</span>
+              <span style="padding:7px 10px;border-radius:7px;background:#f8fafc;border:1px solid #e2e8f0">91 (0)</span>
+              <span style="padding:7px 10px;border-radius:7px;background:#f8fafc;border:1px solid #e2e8f0">92 (1)</span>
+              <span style="padding:7px 10px;border-radius:7px;background:#f8fafc;border:1px solid #e2e8f0">101 (3)</span>
+              <span style="padding:7px 10px;border-radius:7px;background:#f8fafc;border:1px solid #e2e8f0">102 (2)</span>
+              <span style="padding:7px 10px;border-radius:7px;background:#f8fafc;border:1px solid #e2e8f0">RRT (1)</span>
+              <span style="padding:7px 10px;border-radius:7px;background:#f8fafc;border:1px solid #e2e8f0">111 (2)</span>
+              <span style="padding:7px 10px;border-radius:7px;background:#f8fafc;border:1px solid #e2e8f0">112 (4)</span>
+              <span style="padding:7px 10px;border-radius:7px;background:#f8fafc;border:1px solid #e2e8f0">121 (3)</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div style="display:flex;gap:5px;overflow-x:auto;border-bottom:1px solid #d7dce5;padding-bottom:6px;margin-bottom:14px;white-space:nowrap">
+        <button class="mock-button" style="background:#f8fafc;color:#1f2a44;border:1px solid #d6d1cd;border-radius:7px 7px 0 0">INJ (0)</button>
+        <button class="mock-button" style="background:#f8fafc;color:#1f2a44;border:1px solid #d6d1cd;border-radius:7px 7px 0 0">DREMM (4)</button>
+        <button class="mock-button" style="background:#f8fafc;color:#1f2a44;border:1px solid #d6d1cd;border-radius:7px 7px 0 0">ER (3)</button>
+        <button class="mock-button" style="background:#f8fafc;color:#1f2a44;border:1px solid #d6d1cd;border-radius:7px 7px 0 0">GICLA (5)</button>
+        <button class="mock-button" style="background:#8b6b5d;color:white;border:1px solid #76584c;border-radius:7px 7px 0 0">HBEF (9)</button>
+        <button class="mock-button" style="background:#f8fafc;color:#1f2a44;border:1px solid #d6d1cd;border-radius:7px 7px 0 0">MICU (5)</button>
+        <button class="mock-button" style="background:#f8fafc;color:#1f2a44;border:1px solid #d6d1cd;border-radius:7px 7px 0 0">DSR (0)</button>
+        <button class="mock-button" style="background:#f8fafc;color:#1f2a44;border:1px solid #d6d1cd;border-radius:7px 7px 0 0">AN (18)</button>
+        <button class="mock-button" style="background:#f8fafc;color:#1f2a44;border:1px solid #d6d1cd;border-radius:7px 7px 0 0">OR (1)</button>
+        <button class="mock-button" style="background:#f8fafc;color:#1f2a44;border:1px solid #d6d1cd;border-radius:7px 7px 0 0">SICU (3)</button>
+        <button class="mock-button" style="background:#f8fafc;color:#1f2a44;border:1px solid #d6d1cd;border-radius:7px 7px 0 0">ADR (1)</button>
+        <button class="mock-button" style="background:#f8fafc;color:#1f2a44;border:1px solid #d6d1cd;border-radius:7px 7px 0 0">HPC (3)</button>
+        <button class="mock-button" style="background:#f8fafc;color:#1f2a44;border:1px solid #d6d1cd;border-radius:7px 7px 0 0">난임 (0)</button>
+        <button class="mock-button" style="background:#f8fafc;color:#1f2a44;border:1px solid #d6d1cd;border-radius:7px 7px 0 0">DRL (2)</button>
+        <button class="mock-button" style="background:#f8fafc;color:#1f2a44;border:1px solid #d6d1cd;border-radius:7px 7px 0 0">NICU (2)</button>
+        <button class="mock-button" style="background:#f8fafc;color:#1f2a44;border:1px solid #d6d1cd;border-radius:7px 7px 0 0">42 (1)</button>
+        <button class="mock-button" style="background:#f8fafc;color:#1f2a44;border:1px solid #d6d1cd;border-radius:7px 7px 0 0">51 (0)</button>
+        <button class="mock-button" style="background:#f8fafc;color:#1f2a44;border:1px solid #d6d1cd;border-radius:7px 7px 0 0">52 (0)</button>
+        <button class="mock-button" style="background:#f8fafc;color:#1f2a44;border:1px solid #d6d1cd;border-radius:7px 7px 0 0">61 (0)</button>
+        <button class="mock-button" style="background:#f8fafc;color:#1f2a44;border:1px solid #d6d1cd;border-radius:7px 7px 0 0">62 (0)</button>
+        <button class="mock-button" style="background:#f8fafc;color:#1f2a44;border:1px solid #d6d1cd;border-radius:7px 7px 0 0">71 (2)</button>
+        <button class="mock-button" style="background:#f8fafc;color:#1f2a44;border:1px solid #d6d1cd;border-radius:7px 7px 0 0">72 (3)</button>
+        <button class="mock-button" style="background:#f8fafc;color:#1f2a44;border:1px solid #d6d1cd;border-radius:7px 7px 0 0">81 (2)</button>
+        <button class="mock-button" style="background:#f8fafc;color:#1f2a44;border:1px solid #d6d1cd;border-radius:7px 7px 0 0">82 (1)</button>
+        <button class="mock-button" style="background:#f8fafc;color:#1f2a44;border:1px solid #d6d1cd;border-radius:7px 7px 0 0">91 (0)</button>
+        <button class="mock-button" style="background:#f8fafc;color:#1f2a44;border:1px solid #d6d1cd;border-radius:7px 7px 0 0">92 (1)</button>
+        <button class="mock-button" style="background:#f8fafc;color:#1f2a44;border:1px solid #d6d1cd;border-radius:7px 7px 0 0">101 (3)</button>
+        <button class="mock-button" style="background:#f8fafc;color:#1f2a44;border:1px solid #d6d1cd;border-radius:7px 7px 0 0">102 (2)</button>
+        <button class="mock-button" style="background:#f8fafc;color:#1f2a44;border:1px solid #d6d1cd;border-radius:7px 7px 0 0">RRT (1)</button>
+        <button class="mock-button" style="background:#f8fafc;color:#1f2a44;border:1px solid #d6d1cd;border-radius:7px 7px 0 0">111 (2)</button>
+        <button class="mock-button" style="background:#f8fafc;color:#1f2a44;border:1px solid #d6d1cd;border-radius:7px 7px 0 0">112 (4)</button>
+        <button class="mock-button" style="background:#f8fafc;color:#1f2a44;border:1px solid #d6d1cd;border-radius:7px 7px 0 0">121 (3)</button>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px">
+        <div>
+          <h3 style="margin:0;color:#172033;font-size:18px">HBEF 비치마약류 현황판</h3>
+          <p style="margin:5px 0 0;color:#64748b;font-size:12px">원본 시트 HBEF · 현재 9개 표시</p>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input class="mock-input" style="width:220px" placeholder="현재 탭 검색">
+          <button class="mock-button" style="background:#ff8738;color:white;border:1px solid #f97316">전체 실 일괄 출력</button>
+          <button class="mock-button" style="background:#8b6b5d;color:white;border:1px solid #76584c">미리보기/인쇄</button>
+        </div>
+      </div>
+
+      <section style="border:1px solid #e5d8d3;border-radius:8px;background:white;padding:18px">
+        <div style="text-align:center;margin-bottom:20px">
+          <strong style="font-size:18px;color:#0f172a">( HBEF ) 비치마약류 점검 체크리스트</strong>
+          <div style="display:flex;justify-content:flex-end;margin-top:10px;color:#475569;font-size:12px">점검 일자: 2026. 7. 3.</div>
+        </div>
+        <div style="height:2px;background:#8b6b5d;margin-bottom:22px"></div>
+
+        <div style="border:1px solid #ead9d1;border-radius:8px;overflow:hidden;margin-bottom:14px">
+          <div style="display:flex;align-items:center;justify-content:space-between;background:#fffaf8;padding:8px 12px;border-bottom:1px solid #ead9d1">
+            <strong style="color:#c2410c">비치마약류 보유 현황</strong>
+            <span style="font-size:12px;border:1px solid #ead9d1;border-radius:6px;background:white;padding:5px 8px">마지막 수정일: 26.06.29</span>
+          </div>
+          <table style="width:100%;border-collapse:collapse;font-size:13px;background:white">
+            <thead style="background:#f8fafc;color:#1e2a44">
+              <tr>
+                <th style="padding:8px;text-align:center;width:54px">점검</th>
+                <th style="padding:8px;text-align:left;width:88px">코드</th>
+                <th style="padding:8px;text-align:left">약품명</th>
+                <th style="padding:8px;text-align:center;width:160px">수량</th>
+                <th style="padding:8px;text-align:left;width:150px">실별 LOT번호</th>
+                <th style="padding:8px;text-align:left;width:150px">조제실 LOT번호</th>
+                <th style="padding:8px;text-align:center;width:120px">3개월 미만</th>
+                <th style="padding:8px;text-align:center;width:70px">삭제</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="background:#fff7ed;color:#c2410c;font-weight:700"><td colspan="8" style="padding:8px;text-align:center">향정</td></tr>
+              <tr>
+                <td style="padding:8px;border-top:1px solid #f1f5f9;text-align:center">□</td>
+                <td style="padding:8px;border-top:1px solid #f1f5f9;font-weight:700">XMIDA5</td>
+                <td style="padding:8px;border-top:1px solid #f1f5f9"><strong>Midazolam 5mg/5ml inj</strong><br><span style="color:#64748b">향정신성의약품</span></td>
+                <td style="padding:8px;border-top:1px solid #f1f5f9"><input class="mock-input" value="4" style="width:100%;text-align:center;font-weight:700"></td>
+                <td style="padding:8px;border-top:1px solid #f1f5f9">HBEF LOT</td>
+                <td style="padding:8px;border-top:1px solid #f1f5f9">조제실 최장 LOT</td>
+                <td style="padding:8px;border-top:1px solid #f1f5f9"><input class="mock-input" placeholder="연도-월-일" style="width:100%"></td>
+                <td style="padding:8px;border-top:1px solid #f1f5f9;text-align:center;color:#94a3b8">🗑</td>
+              </tr>
+              <tr style="background:#fff7ed;color:#c2410c;font-weight:700"><td colspan="8" style="padding:8px;text-align:center">마약</td></tr>
+              <tr>
+                <td style="padding:8px;border-top:1px solid #f1f5f9;text-align:center">□</td>
+                <td style="padding:8px;border-top:1px solid #f1f5f9;font-weight:700">XFEN50</td>
+                <td style="padding:8px;border-top:1px solid #f1f5f9"><strong>Fentanyl 50mcg inj</strong><br><span style="color:#64748b">마약</span></td>
+                <td style="padding:8px;border-top:1px solid #f1f5f9"><input class="mock-input" value="4" style="width:100%;text-align:center;font-weight:700"></td>
+                <td style="padding:8px;border-top:1px solid #f1f5f9">HBEF LOT</td>
+                <td style="padding:8px;border-top:1px solid #f1f5f9">조제실 최장 LOT</td>
+                <td style="padding:8px;border-top:1px solid #f1f5f9"><input class="mock-input" placeholder="연도-월-일" style="width:100%"></td>
+                <td style="padding:8px;border-top:1px solid #f1f5f9;text-align:center;color:#94a3b8">🗑</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <section style="border:1px solid #e5e7eb;border-radius:8px;padding:12px;background:white">
+            <strong>비치마약류 점검사항</strong>
+            <div style="display:grid;gap:6px;color:#334155;font-size:12px;margin-top:10px">
+              <span>□ 규정에 따른 마약류 저장 시설에 적절하게 보관되어 있다.</span>
+              <span>□ 마약류 저장 시설의 계폐와 시건 장치에 이상이 없다.</span>
+              <span>□ 보유 중인 비치 마약류는 약품 라벨링을 하여 다른 약품과 분리 보관되어 있다.</span>
+              <span>□ 보유 중인 비치 마약류의 종류와 수량에 이상이 없다.</span>
+            </div>
+          </section>
+          <section style="border:1px solid #e5e7eb;border-radius:8px;padding:12px;background:white">
+            <strong>점검 사항</strong>
+            <textarea class="mock-input" style="width:100%;min-height:88px;margin-top:10px" placeholder="개선 필요 사항 입력"></textarea>
+          </section>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>

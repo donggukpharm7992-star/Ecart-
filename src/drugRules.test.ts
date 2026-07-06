@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { StockDrug } from "./types";
-import { isForcedRefrigeratedDrug, isHighRiskDrug, normalizeDrugWarning } from "./drugRules";
+import { getPolicyCautionLabels, isForcedRefrigeratedDrug, isHighRiskDrug, normalizeDrugWarning } from "./drugRules";
 
 const baseDrug: StockDrug = {
   code: "TEST",
@@ -38,5 +38,15 @@ describe("drug rules", () => {
 
   it("forces Grasin 300mcg into refrigerated stock grouping", () => {
     expect(isForcedRefrigeratedDrug(drug({ code: "XXFILG3", productName: "GRASIN 300mcg/0.7ml pfs" }))).toBe(true);
+  });
+
+  it("uses only the 4-3 policy list for label caution markers", () => {
+    expect(getPolicyCautionLabels(drug({ productName: "Naloxone HCl 2mg/2ml inj" }))).toContain("용량주의");
+    expect(getPolicyCautionLabels(drug({ productName: "Omapone peri 724ml inj" }))).toContain("용량주의");
+    expect(getPolicyCautionLabels(drug({ productName: "Macperan 10mg/2ml inj" }))).toContain("유사모양");
+    expect(getPolicyCautionLabels(drug({ productName: "EPInephrine 1mg/1ml inj" }))).toContain("유사발음");
+    expect(getPolicyCautionLabels(drug({ productName: "Abilify asimtufii 720mg inj", warning: "용량고주의" }))).not.toContain(
+      "용량주의",
+    );
   });
 });

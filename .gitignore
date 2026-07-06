@@ -3,5 +3,7 @@ dist/
 *.log
 .env
 .env.*
+.deploy/
+~$*.xlsx
 .agents/
 .codex/

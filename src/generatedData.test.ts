@@ -1,18 +1,62 @@
 import { describe, expect, it } from "vitest";
 import rawInventory from "./data/inventory.generated.json";
+import {
+  NARCOTIC_ALLOCATIONS,
+  NARCOTIC_DRUGS,
+  NARCOTIC_ROUND_SUMMARY_COMMON_GUIDANCE,
+  narcoticCategoryOf,
+} from "./narcoticData";
 import type { InventoryData } from "./types";
 import {
+  DRUG_LABEL_SIZE_GROUPS,
+  buildNarcoticFileLabelData,
+  buildNarcoticMasterLabelData,
+  buildStockLabelData,
+  buildReportFileName,
   clearUninspectedRoomId,
+  getAllEcartPrintTargets,
   getEcartDefaultState,
+  cleanDrugLabelName,
+  formatFluidLabelName,
+  getLabelModeOptions,
   getInitialAppMode,
+  getDrugLabelNameClass,
+  displayRoomName,
+  makeLabelPrintSelectionKey,
+  matchesMaster,
+  normalizeLabelCautionLabels,
+  resolveMasterLabelRoomId,
+  getStockRoomEcartLink,
   getStockChecklistDefaultState,
+  getStockGuideClassName,
+  getStockSplitParts,
   makeChecklistState,
   makeInspectionCycleResetState,
-} from "./App";
+  normalizeChecklistRows,
+  toggleStockSplitPart,
+} from "./appLogic";
+import { buildMasterRows } from "./inventoryState";
+import { NARCOTIC_LABEL_ROWS } from "./narcoticLabels";
 
 const inventory = rawInventory as InventoryData;
 
 describe("generated inventory data corrections", () => {
+  it("builds requested PDF file names for bulk and single reports", () => {
+    expect(buildReportFileName({ category: "stock", mode: "all-stock", date: "2026-06-24" })).toBe(
+      "비품약 현황 및 일괄점검보고서_2026-06-24.pdf",
+    );
+    expect(buildReportFileName({ category: "ecart", mode: "all-ecart", date: "2026-06-24" })).toBe(
+      "E-cart 현황 및 일괄점검보고서_2026-06-24.pdf",
+    );
+    expect(buildReportFileName({ category: "stock", mode: "drug-labels", date: "2026-06-24" })).toBe("약품라벨_2026-06-24.pdf");
+    expect(buildReportFileName({ category: "stock", mode: "single", targetName: "HBEF심혈관조영실", date: "2026-06-24" })).toBe(
+      "HBEF심혈관조영실_비품약 현황 및 일괄점검보고서_2026-06-24.pdf",
+    );
+    expect(buildReportFileName({ category: "ecart", mode: "single", targetName: "심장혈관검사실", date: "2026-06-24" })).toBe(
+      "심장혈관검사실_E-cart 현황 및 일괄점검보고서_2026-06-24.pdf",
+    );
+  });
+
   it("uses XNAK20 as the stock drug code for 0.9% NaKCl 20mEq/100ml", () => {
     const nakclDrugs = inventory.stock.drugs.filter((drug) => drug.productName.includes("0.9% NaKCl 20mEq/100ml"));
 
@@ -98,7 +142,17 @@ describe("generated inventory data corrections", () => {
   it("adds the E-cart drug type and count match checklist row", () => {
     const ecartChecklist = makeChecklistState("ecart-general:42", ["E-cart"]);
 
-    expect(ecartChecklist.map((item) => item.text)).toContain("4. E-cart 약물의 종류와 갯수가 규정과 동일 하다.");
+    expect(ecartChecklist.map((item) => item.text)).toContain("E-cart 약물의 종류와 갯수가 규정과 동일 하다.");
+  });
+
+  it("removes the E-cart reason row directly under 2-1", () => {
+    const ecartChecklist = makeChecklistState("ecart-general:42", ["E-cart"]);
+
+    expect(ecartChecklist.map((item) => item.text)).not.toContain("이상 시 사유:");
+  });
+
+  it("builds a bulk E-cart print target list including NICU", () => {
+    expect(getAllEcartPrintTargets([{ id: "AER1", label: "AER1" }]).map(({ key }) => key)).toEqual(["general:AER1", "nicu:nicu"]);
   });
 
   it("does not copy 42W E-cart Nitroglycerin inspection values into unsaved rooms", () => {
@@ -182,13 +236,25 @@ describe("generated inventory data corrections", () => {
     const texts = checklist.map((item) => item.text);
     const sections = checklist.map((item) => item.section);
 
-    expect(texts).toContain("5. 비품약 유효기간 1달에 1번 날짜로 관리한다.");
-    expect(texts).toContain("4. 청구약/ 수액의 보관 장소에 약품명 라벨링이 되어 있다.");
-    expect(texts).toContain("5. 청구약/ 수액 유효기간을 1달에 1번 관리 한다.");
+    expect(texts).toContain("비품약 유효기간 1달에 1번 날짜로 관리한다.");
+    expect(texts).toContain("청구약/ 수액의 보관 장소에 약품명 라벨링이 되어 있다.");
+    expect(texts).toContain("청구약/ 수액 유효기간을 1달에 1번 관리 한다.");
     expect(sections).toContain("청구약/ 수액");
     expect(sections).not.toContain("청구약");
     expect(texts.some((text) => text.includes("청구약/ 수액품"))).toBe(false);
     expect(texts.some((text) => /청구약(?!\/\s*수액)/.test(text))).toBe(false);
+  });
+
+  it("removes old checklist numbering before new display numbering is applied", () => {
+    const checklist = normalizeChecklistRows([
+      { section: "비품약", text: "5. 비품약 유효기간 1달에 1번 날짜로 관리한다.", id: "a", status: "", note: "" },
+      { section: "E-cart", text: "4) E-cart 약물의 종류와 갯수가 규정과 동일 하다.", id: "b", status: "", note: "" },
+    ]);
+
+    expect(checklist.map((item) => item.text)).toEqual([
+      "비품약 유효기간 1달에 1번 날짜로 관리한다.",
+      "E-cart 약물의 종류와 갯수가 규정과 동일 하다.",
+    ]);
   });
 
   it("normalizes previously saved claim drug checklist rows without rewriting server state", () => {
@@ -209,15 +275,150 @@ describe("generated inventory data corrections", () => {
 
     expect(checklist.map((item) => item.section)).toEqual(["청구약/ 수액", "청구약/ 수액"]);
     expect(checklist.map((item) => item.text)).toEqual([
-      "1. 청구약/ 수액 보관상태를 확인한다.",
-      "5. 청구약/ 수액 유효기간을 1달에 1번 관리 한다.",
+      "청구약/ 수액 보관상태를 확인한다.",
+      "청구약/ 수액 유효기간을 1달에 1번 관리 한다.",
     ]);
   });
 
   it("keeps the current route as admin and exposes a master viewer route", () => {
     expect(getInitialAppMode("/Ecart-/", "")).toBe("admin");
     expect(getInitialAppMode("/Ecart-/viewer", "")).toBe("master-viewer");
+    expect(getInitialAppMode("/Ecart-/pharmacy-viewer", "")).toBe("pharmacy-viewer");
+    expect(getInitialAppMode("/Ecart-/narcotic-viewer", "")).toBe("narcotic-viewer");
     expect(getInitialAppMode("/Ecart-/", "?view=master")).toBe("master-viewer");
+    expect(getInitialAppMode("/Ecart-/", "?view=pharmacy")).toBe("pharmacy-viewer");
+    expect(getInitialAppMode("/Ecart-/", "?view=narcotic")).toBe("narcotic-viewer");
+  });
+
+  it("shows pharmacy labels only in admin and pharmacy viewer modes", () => {
+    expect(getLabelModeOptions("admin").map((option) => option.mode)).toEqual(["stock", "ecart", "fluid", "narcotic", "pharmacy"]);
+    expect(getLabelModeOptions("pharmacy-viewer").map((option) => option.mode)).toEqual(["stock", "ecart", "fluid", "narcotic", "pharmacy"]);
+    expect(getLabelModeOptions("master-viewer").map((option) => option.mode)).toEqual(["stock", "ecart", "fluid", "narcotic"]);
+    expect(getLabelModeOptions("narcotic-viewer").map((option) => option.mode)).toEqual(["stock", "ecart", "fluid", "narcotic"]);
+  });
+
+  it("keeps label selections distinct by label type and selected size", () => {
+    expect(makeLabelPrintSelectionKey("ecart-general-XNITR10F", "ecart", "10x70")).toBe("ecart::10x70::ecart-general-XNITR10F");
+    expect(makeLabelPrintSelectionKey("fluid-XD15W", "fluid", "55x95")).toBe("fluid::55x95::fluid-XD15W");
+    expect(makeLabelPrintSelectionKey("stock-XAPH1", "stock", "10x70", "42W")).toBe("stock::10x70::42W::stock-XAPH1");
+    expect(makeLabelPrintSelectionKey("narcotic-XFENT100W", "narcotic", "40x70")).toBe("narcotic::40x70::narcotic-XFENT100W");
+  });
+
+  it("groups label sizes by the label output workflow shown in the print panel", () => {
+    expect(DRUG_LABEL_SIZE_GROUPS).toEqual([
+      {
+        id: "stock-ecart",
+        sizeKeys: ["10x70", "15x95"],
+        outputLabel: "일반 약품 라벨 / E-cart 약품 라벨 출력\n마약 라벨 출력",
+      },
+      {
+        id: "fluid",
+        sizeKeys: ["55x95", "35x100"],
+        outputLabel: "일반 수액 라벨 출력",
+      },
+      {
+        id: "narcotic",
+        sizeKeys: ["40x70"],
+        outputLabel: "마약 라벨 출력",
+      },
+    ]);
+  });
+
+  it("deduplicates label caution text and keeps fluid label names free of container suffixes", () => {
+    expect(normalizeLabelCautionLabels(["고위험의약품", "유사모양"], true)).toEqual(["유사모양", "고위험의약품"]);
+    expect(formatFluidLabelName("15% DW 1L bag")).toBe("15% DW 1L");
+    expect(formatFluidLabelName("NS 150ml btl")).toBe("NS 150ml");
+    expect(cleanDrugLabelName("고위험의약품 NaCl 40mEq/20ml", true)).toBe("NaCl 40mEq/20ml");
+  });
+
+  it("marks refrigerated psychotropic narcotic master labels with cold storage", () => {
+    const masterRows = buildMasterRows([...NARCOTIC_DRUGS], [...NARCOTIC_ALLOCATIONS], (drug) =>
+      narcoticCategoryOf(drug.code) === "마약" ? "narcotic" : "psychotropic",
+    );
+
+    for (const code of ["XATIV2W", "XATIV4W", "XKETA5W"]) {
+      const row = masterRows.find((item) => item.code === code);
+      expect(row).toBeDefined();
+      const label = buildNarcoticMasterLabelData(row!, "향정");
+
+      expect(label.cautionLabels).toEqual(["향정"]);
+      expect(label.storageLabel).toBe("냉장");
+      expect(label.storageTone).toBe("cold");
+      expect(label.storage).toContain("냉장");
+    }
+  });
+
+  it("marks refrigerated matched 40x70 narcotic labels with cold storage", () => {
+    for (const code of ["XLZPAM2", "XLZPAM4", "XKETA5"]) {
+      const row = NARCOTIC_LABEL_ROWS.find((item) => item.code === code);
+      expect(row).toBeDefined();
+      const label = buildNarcoticFileLabelData(row!);
+
+      expect(label.cautionLabels).toEqual(["향정"]);
+      expect(label.storageLabel).toBe("냉장");
+      expect(label.storageTone).toBe("cold");
+      expect(label.storage).toContain("냉장");
+    }
+  });
+
+  it("uses the searched stock room quantity for master stock labels", () => {
+    const acetphen = inventory.stock.drugs.find((drug) => drug.code === "XAPH1");
+    const roomDetails = inventory.stock.allocations
+      .filter((allocation) => allocation.drugCode === "XAPH1")
+      .map((allocation) => ({ roomId: allocation.roomId, requiredQty: allocation.requiredQty }));
+    const row = acetphen ? { ...acetphen, masterKind: "stock" as const, totalQuantity: 0, roomDetails } : undefined;
+
+    expect(resolveMasterLabelRoomId("42병동", inventory.stock.rooms)).toBe("42W");
+    expect(row && matchesMaster(row, "42병동")).toBe(true);
+    expect(row && buildStockLabelData(row, "stock", "42W").totalQuantity).toBe(2);
+    expect(row && buildStockLabelData(row, "stock").totalQuantity).toBeUndefined();
+  });
+
+  it("displays mixed Korean room names as standard English room names while keeping Korean search aliases", () => {
+    const acetphen = inventory.stock.drugs.find((drug) => drug.code === "XAPH1");
+    const row = acetphen
+      ? {
+          ...acetphen,
+          masterKind: "stock" as const,
+          totalQuantity: 1,
+          roomDetails: [{ roomId: "HBEF심혈관조영실", requiredQty: 1 }],
+        }
+      : undefined;
+    const narcoticWardRow = acetphen
+      ? {
+          ...acetphen,
+          masterKind: "psychotropic" as const,
+          totalQuantity: 1,
+          roomDetails: [{ roomId: "42", requiredQty: 1 }],
+        }
+      : undefined;
+
+    expect(displayRoomName("HBEF심혈관조영실")).toBe("HBEF");
+    expect(displayRoomName("DREMM 혈관조영실")).toBe("DREMM");
+    expect(displayRoomName("HPC 건강증진 센터")).toBe("HPC");
+    expect(displayRoomName("INJ 외래 주사실")).toBe("INJ");
+    expect(displayRoomName("PED 소아청소년과")).toBe("PED");
+    expect(displayRoomName("소화기병검사실")).toBe("GICLA");
+    expect(displayRoomName("분만장")).toBe("DRL");
+    expect(row && matchesMaster(row, "HBEF")).toBe(true);
+    expect(row && matchesMaster(row, "심혈관조영실")).toBe(true);
+    expect(narcoticWardRow && matchesMaster(narcoticWardRow, "42병동")).toBe(true);
+  });
+
+  it("keeps narcotic round summary common guidance without checklist headings", () => {
+    expect(NARCOTIC_ROUND_SUMMARY_COMMON_GUIDANCE).not.toContain("점검 사항");
+    expect(NARCOTIC_ROUND_SUMMARY_COMMON_GUIDANCE).not.toContain("공통 안내");
+    expect(NARCOTIC_ROUND_SUMMARY_COMMON_GUIDANCE).toContain("병동으로 올라온 마약류는 인계 시 수량과 이상 유무를 확인해 주세요.");
+    expect(NARCOTIC_ROUND_SUMMARY_COMMON_GUIDANCE).toContain("마약류 파손 사고 및 분실 사고가 일어나지 않도록 규정에 따라 마약류를 관리 해 주세요.");
+  });
+
+  it("classifies long drug label names so large labels can wrap without clipping", () => {
+    expect(getDrugLabelNameClass("Abilify asimtufii 720mg inj")).toBe("name-long");
+    expect(getDrugLabelNameClass("Albumin(SK) 20% 100ml inj")).toBe("name-long");
+    expect(getDrugLabelNameClass("Nitroglycerin(SL)")).toBe("");
+    expect(getDrugLabelNameClass("0.9% NaKCl 40mEq/L", "fluid", "55x95")).toBe("name-long");
+    expect(getDrugLabelNameClass("0.9% NaKCl 40mEq/L", "fluid", "10x70")).toBe("name-extra-long");
+    expect(getDrugLabelNameClass("Fentanlyl 1500mcg/30ml (Fentanyl citrate 1500mcg)", "narcotic", "10x70")).toBe("name-extra-long");
   });
 
   it("clears only inspection-cycle fields when regenerating the round summary", () => {
@@ -227,10 +428,46 @@ describe("generated inventory data corrections", () => {
       stockChecklistByRoom: {},
       ecartByTarget: {},
       roundSummaryDraft: null,
+      uninspectedRoomIds: [],
     });
   });
 
   it("clears a room's uninspected marker once stock inspection starts", () => {
     expect(clearUninspectedRoomId(["42W", "61W"], "42W")).toEqual(["61W"]);
+  });
+
+  it("resets stock guide rooms to neutral color when starting a new inspection cycle", () => {
+    const resetState = makeInspectionCycleResetState();
+
+    expect(resetState.uninspectedRoomIds).toEqual([]);
+    expect(getStockGuideClassName("42W", resetState.uninspectedRoomIds, Object.keys(resetState.checkedStock))).toBe("");
+  });
+
+  it("links HBEF cardiovascular angiography room stock checklist to its E-cart screen", () => {
+    expect(getStockRoomEcartLink("HBEF심혈관조영실")).toMatchObject({
+      targetId: "심장혈관검사실",
+      tab: "general",
+    });
+  });
+
+  it("splits HBEF Isoptin and delivery room emergency stock into checkable parts", () => {
+    expect(getStockSplitParts("HBEF심혈관조영실", "XVERAW", 3, "Isoptin 5mg inj(viatris)")).toEqual([1, 2]);
+    expect(getStockSplitParts("DRL", "XEPIN", 2, "Epinephrine 1mg/ml inj")).toEqual([1, 1]);
+    expect(getStockSplitParts("DRL", "XNALO.4", 2, "Naloxone HCl 0.4mg inj")).toEqual([1, 1]);
+    expect(getStockSplitParts("42W", "XEPIN", 2, "Epinephrine 1mg/ml inj")).toBeNull();
+  });
+
+  it("checks the parent stock row after all split parts are checked", () => {
+    const first = toggleStockSplitPart({}, "HBEF심혈관조영실", "XVERAW", 0, 2);
+    expect(first["HBEF심혈관조영실::XVERAW"]).toBeUndefined();
+
+    const second = toggleStockSplitPart(first, "HBEF심혈관조영실", "XVERAW", 1, 2);
+    expect(second["HBEF심혈관조영실::XVERAW"]).toBe(true);
+  });
+
+  it("marks inspected stock guide rooms while keeping uninspected red state dominant", () => {
+    expect(getStockGuideClassName("42W", ["42W"], ["42W"])).toBe("uninspected");
+    expect(getStockGuideClassName("42W", [], ["42W"])).toBe("inspected");
+    expect(getStockGuideClassName("42W", [], [])).toBe("");
   });
 });

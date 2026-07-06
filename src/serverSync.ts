@@ -11,8 +11,13 @@ type ServerSyncOptions = {
 const DEFAULT_SERVER_TIMEOUT_MS = 12000;
 const SAVE_RETRY_ATTEMPTS = 3;
 const SAVE_RETRY_DELAY_MS = 1200;
+let configuredBaseUrl = import.meta.env.BASE_URL;
 
-export function buildAppStateApiUrl(baseUrl = import.meta.env.BASE_URL) {
+export function configureServerSyncBaseUrl(baseUrl = import.meta.env.BASE_URL) {
+  configuredBaseUrl = baseUrl;
+}
+
+export function buildAppStateApiUrl(baseUrl = configuredBaseUrl) {
   const normalizedBase = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
   return `${normalizedBase}api/app-state`;
 }

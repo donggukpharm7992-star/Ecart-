@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { buildRoundSummaryDraft, summarizeChecklistIssues } from "./roundSummary";
+import {
+  buildInspectionCycleResetRoundSummaryDraft,
+  buildNarcoticRoundSummaryDraft,
+  buildRoundSummaryDraft,
+  summarizeChecklistIssues,
+} from "./roundSummary";
 
 describe("round summary draft", () => {
   it("summarizes only manual notes and bad checklist rows", () => {
@@ -48,5 +53,71 @@ describe("round summary draft", () => {
         details: "적합",
       },
     ]);
+  });
+
+  it("resets editable issue text while preserving row order, room names, and 91W non-operating result", () => {
+    const previousDraft = {
+      title: "병동 순회 점검표",
+      inspectionPeriod: "이전 기간",
+      commonGuidance: "이전 안내",
+      closingNote: "이전 마무리",
+      rows: [
+        { id: "stock:91W", roomName: "91W", result: "미운영", details: "미운영" },
+        { id: "stock:42W", roomName: "42병동", result: "확인 필요", details: "비품약: 수기 지적 내용" },
+      ],
+    };
+    const generatedDraft = {
+      title: "병동 순회 점검표",
+      inspectionPeriod: "새 기간",
+      commonGuidance: "새 안내",
+      closingNote: "새 마무리",
+      rows: [
+        { id: "stock:42W", roomName: "42병동", result: "적합", details: "적합" },
+        { id: "stock:91W", roomName: "91W", result: "적합", details: "적합" },
+      ],
+    };
+
+    const resetDraft = buildInspectionCycleResetRoundSummaryDraft(previousDraft, generatedDraft);
+
+    expect(resetDraft.rows).toEqual([
+      { id: "stock:91W", roomName: "91W", result: "미운영", details: "미운영" },
+      { id: "stock:42W", roomName: "42병동", result: "적합", details: "적합" },
+    ]);
+    expect(resetDraft.inspectionPeriod).toBe("새 기간");
+    expect(resetDraft.commonGuidance).toBe("새 안내");
+  });
+
+  it("builds a narcotic round summary from inventory checks and checklist issues", () => {
+    const draft = buildNarcoticRoundSummaryDraft({
+      inspectionPeriod: "2026년 7월 3일",
+      rooms: [
+        {
+          id: "42",
+          label: "42병동",
+          inventoryItems: [
+            { code: "XATIV2W", name: "Ativan 2mg inj", quantity: 1, checked: false, expiryDate: "" },
+            { code: "XMIDZ5W", name: "Midazolam 5mg/5ml Inj", quantity: 1, checked: true, expiryDate: "2026-08-01" },
+          ],
+          checklist: [
+            { section: "마약류 관리", text: "수량 이상 없음", status: "bad", note: "시건 장치 재확인 필요" },
+            { section: "마약류 관리", text: "보관 양호", status: "good", note: "양호 항목 수기 메모" },
+          ],
+        },
+      ],
+      commonGuidance: "점검 사항\n1. 수량 이상 없음",
+    });
+
+    expect(draft.title).toBe("비치마약류 순회점검표");
+    expect(draft.rows).toEqual([
+      {
+        id: "narcotic:42",
+        roomName: "42병동",
+        result: "확인 필요",
+        details:
+          "비치마약류 보유 현황: Midazolam 5mg/5ml Inj(XMIDZ5W) 3개월 미만 2026-08-01\n점검 사항: 시건 장치 재확인 필요",
+      },
+    ]);
+    expect(draft.commonGuidance).toBe("점검 사항\n1. 수량 이상 없음");
+    expect(draft.closingNote).toBe("간호부의 지속적이고 적극적인 협조 항상 감사드립니다.");
   });
 });

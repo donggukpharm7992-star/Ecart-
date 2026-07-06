@@ -1,0 +1,605 @@
+<style>
+  .edit-save-layout {
+    --brand-orange: #f68d45;
+    --brand-orange-deep: #e2631a;
+    --brand-header: #7f665a;
+    --brand-brown: #96796a;
+    --brand-bluegray: #a8b6c3;
+    --brand-orange-soft: #fff3ea;
+    --brand-brown-soft: #f3eeea;
+    --brand-bluegray-soft: #edf3f7;
+    --line: #d8d1cc;
+    --line-soft: #eee8e3;
+    --muted: #667085;
+    --ink: #17202a;
+  }
+  .edit-save-layout .shell {
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+  }
+  .edit-save-layout .topbar {
+    display: grid;
+    grid-template-columns: minmax(170px, 0.6fr) minmax(340px, 1.5fr) auto;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 14px;
+    color: #fff;
+    background: var(--brand-header);
+  }
+  .edit-save-layout .topbar h3,
+  .edit-save-layout .topbar p {
+    margin: 0;
+  }
+  .edit-save-layout .topbar p {
+    color: #f3ece7;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .edit-save-layout .header-search {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+    gap: 8px;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 8px 0 12px;
+    border: 1px solid #d7c7bc;
+    border-radius: 7px;
+    background: #fff;
+  }
+  .edit-save-layout .header-search span {
+    color: #96796a;
+    font-weight: 1000;
+  }
+  .edit-save-layout .header-search input {
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    color: var(--ink);
+    font-size: 14px;
+    font-weight: 800;
+  }
+  .edit-save-layout .btn {
+    min-height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--brand-header);
+    background: #fff;
+    font-size: 12px;
+    font-weight: 900;
+  }
+  .edit-save-layout .btn.primary {
+    border-color: var(--brand-orange-deep);
+    color: #fff;
+    background: var(--brand-orange);
+  }
+  .edit-save-layout .btn.active {
+    border-color: #6f5a50;
+    color: #fff;
+    background: var(--brand-header);
+  }
+  .edit-save-layout .btn.soft {
+    border-color: #d7c7bc;
+    color: var(--brand-header);
+    background: var(--brand-brown-soft);
+  }
+  .edit-save-layout .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line-soft);
+    background: #fff;
+  }
+  .edit-save-layout .tool-panels {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line-soft);
+    background: #f8f7f5;
+  }
+  .edit-save-layout details {
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    background: #fff;
+  }
+  .edit-save-layout summary {
+    min-height: 38px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+    align-items: center;
+    padding: 0 10px;
+    color: var(--brand-header);
+    font-size: 13px;
+    font-weight: 1000;
+    cursor: pointer;
+    list-style: none;
+  }
+  .edit-save-layout summary::-webkit-details-marker {
+    display: none;
+  }
+  .edit-save-layout summary::after {
+    content: "열기";
+    min-width: 44px;
+    padding: 3px 7px;
+    border-radius: 999px;
+    color: #546878;
+    background: var(--brand-bluegray-soft);
+    font-size: 11px;
+    text-align: center;
+  }
+  .edit-save-layout details[open] summary {
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .edit-save-layout details[open] summary::after {
+    content: "닫기";
+    color: #fff;
+    background: var(--brand-header);
+  }
+  .edit-save-layout .panel-body {
+    display: grid;
+    gap: 8px;
+    padding: 10px;
+  }
+  .edit-save-layout .control-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .edit-save-layout .control {
+    display: grid;
+    gap: 4px;
+    color: #475467;
+    font-size: 11px;
+    font-weight: 900;
+  }
+  .edit-save-layout .control input,
+  .edit-save-layout .control select {
+    min-height: 30px;
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 4px 7px;
+    color: var(--ink);
+    background: #fff;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .edit-save-layout .tool-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+  .edit-save-layout .tool-chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 27px;
+    padding: 0 9px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: #475467;
+    background: #fff;
+    font-size: 12px;
+    font-weight: 900;
+  }
+  .edit-save-layout .tool-chip.active {
+    color: var(--brand-header);
+    background: var(--brand-brown-soft);
+    border-color: #d7c7bc;
+  }
+  .edit-save-layout .tool-chip.warning {
+    color: #7f1d1d;
+    background: #fff1f3;
+  }
+  .edit-save-layout .mini-upload {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 32px;
+    width: max-content;
+    padding: 0 12px;
+    border: 1px dashed var(--brand-bluegray);
+    border-radius: 6px;
+    color: #546878;
+    background: var(--brand-bluegray-soft);
+    font-size: 12px;
+    font-weight: 900;
+  }
+  .edit-save-layout .workarea {
+    display: grid;
+    grid-template-columns: minmax(250px, 0.72fr) minmax(0, 1.4fr);
+    gap: 12px;
+    padding: 14px;
+    background: #f2f1ef;
+  }
+  .edit-save-layout .selection-panel,
+  .edit-save-layout .preview-panel {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+  }
+  .edit-save-layout .section-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    align-items: end;
+  }
+  .edit-save-layout .section-head h3,
+  .edit-save-layout .section-head p {
+    margin: 0;
+  }
+  .edit-save-layout .section-head p {
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .edit-save-layout .drug-list {
+    display: grid;
+    gap: 6px;
+    max-height: 252px;
+    overflow: auto;
+    padding: 8px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+  }
+  .edit-save-layout .drug-row {
+    display: grid;
+    grid-template-columns: 20px minmax(0, 1fr) auto;
+    gap: 8px;
+    align-items: center;
+    min-height: 44px;
+    padding: 7px 8px;
+    border: 1px solid var(--line-soft);
+    border-radius: 6px;
+    color: var(--ink);
+    background: #fff;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .edit-save-layout .drug-row.selected {
+    border-color: var(--brand-orange-deep);
+    background: var(--brand-orange-soft);
+  }
+  .edit-save-layout .drug-row strong {
+    display: block;
+    color: var(--brand-header);
+    font-size: 12px;
+  }
+  .edit-save-layout .drug-row small {
+    display: block;
+    color: var(--muted);
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .edit-save-layout .badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 900;
+  }
+  .edit-save-layout .badge.red {
+    color: #7f1d1d;
+    background: #fff1f3;
+  }
+  .edit-save-layout .badge.blue {
+    color: #546878;
+    background: var(--brand-bluegray-soft);
+  }
+  .edit-save-layout .badge.brown {
+    color: var(--brand-header);
+    background: var(--brand-brown-soft);
+  }
+  .edit-save-layout .print-toolbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+  }
+  .edit-save-layout .paper-toggle {
+    display: inline-flex;
+    gap: 5px;
+    padding: 4px;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    background: #f8f7f5;
+  }
+  .edit-save-layout .page-status {
+    color: #475467;
+    font-size: 12px;
+    font-weight: 900;
+  }
+  .edit-save-layout .canvas {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 210px;
+    gap: 12px;
+    min-height: 300px;
+    padding: 18px;
+    border: 1px solid #d7c7bc;
+    border-radius: 8px;
+    background:
+      linear-gradient(90deg, rgba(216, 209, 204, 0.38) 1px, transparent 1px) 0 0 / 24px 24px,
+      linear-gradient(rgba(216, 209, 204, 0.38) 1px, transparent 1px) 0 0 / 24px 24px,
+      #fff;
+    overflow: auto;
+  }
+  .edit-save-layout .editable-preview {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+  }
+  .edit-save-layout .label-card {
+    height: 128px;
+    display: grid;
+    grid-template-columns: 70px 1fr 58px;
+    overflow: hidden;
+    border: 2px solid #111;
+    background: #fff;
+    box-shadow: 0 6px 16px rgba(23, 32, 42, 0.08);
+  }
+  .edit-save-layout .label-warning {
+    display: grid;
+    place-items: center;
+    color: #fff;
+    background: #b42318;
+    font-size: 15px;
+    font-weight: 1000;
+    line-height: 1.1;
+    text-align: center;
+  }
+  .edit-save-layout .label-name {
+    display: grid;
+    place-items: center;
+    padding: 6px;
+    color: #111827;
+    font-size: 34px;
+    font-weight: 1000;
+    line-height: 1;
+    text-align: center;
+    -webkit-text-stroke: 0.6px #ffffff;
+    outline: 2px dashed transparent;
+  }
+  .edit-save-layout .label-name:focus {
+    outline-color: var(--brand-orange-deep);
+    background: #fffaf6;
+  }
+  .edit-save-layout .label-code {
+    display: grid;
+    place-items: center;
+    padding: 3px;
+    color: #e5e7eb;
+    background: #111;
+    font-size: 9px;
+    font-weight: 900;
+    line-height: 1.05;
+    text-align: center;
+    word-break: break-all;
+  }
+  .edit-save-layout .manual-fields {
+    display: grid;
+    gap: 7px;
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+  }
+  .edit-save-layout .manual-fields strong {
+    color: var(--brand-header);
+    font-size: 13px;
+  }
+  .edit-save-layout .manual-fields label {
+    display: grid;
+    gap: 4px;
+    color: #475467;
+    font-size: 11px;
+    font-weight: 900;
+  }
+  .edit-save-layout .manual-fields input {
+    min-height: 29px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 4px 7px;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .edit-save-layout .saved-note {
+    padding: 8px 10px;
+    border: 1px solid #d7c7bc;
+    border-radius: 7px;
+    color: var(--brand-header);
+    background: var(--brand-brown-soft);
+    font-size: 12px;
+    font-weight: 900;
+  }
+  @media (max-width: 980px) {
+    .edit-save-layout .topbar,
+    .edit-save-layout .tool-panels,
+    .edit-save-layout .workarea,
+    .edit-save-layout .print-toolbar,
+    .edit-save-layout .canvas {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<h2>세부 편집과 저장 기본값 틀</h2>
+<p class="subtitle">글자 테두리/색상/폰트 설정을 세분화하고, 미리보기 안에서 직접 수정한 뒤 저장하면 해당 약품의 기본 라벨로 다시 불러오는 흐름입니다.</p>
+
+<div class="mockup edit-save-layout">
+  <div class="mockup-header">Preview: 수기 편집 가능한 라벨 미리보기 + 저장소 기본값</div>
+  <div class="mockup-body">
+    <div class="shell">
+      <div class="topbar">
+        <div>
+          <p>별도 화면</p>
+          <h3>약제팀 라벨 작업실</h3>
+        </div>
+        <label class="header-search">
+          <span>⌕</span>
+          <input placeholder="약품명 클릭 시 마지막 저장 라벨을 기본 표시">
+          <button class="btn primary">검색</button>
+        </label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+          <button class="btn soft">비품관리로 돌아가기</button>
+          <button class="btn primary">선택 라벨 출력</button>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <button class="btn active">약품명 라벨</button>
+        <button class="btn">약품리스트</button>
+        <button class="btn">약품장 라벨</button>
+        <button class="btn">3단 약병장</button>
+        <button class="btn">외용장 라벨</button>
+      </div>
+
+      <div class="tool-panels">
+        <details>
+          <summary>라벨 생성 조건</summary>
+          <div class="panel-body">
+            <div class="tool-row">
+              <span class="tool-chip active">앰플</span>
+              <span class="tool-chip">바이알</span>
+              <span class="tool-chip">경구</span>
+              <span class="tool-chip">외용</span>
+            </div>
+            <div class="tool-row">
+              <span class="tool-chip active">차광</span>
+              <span class="tool-chip warning">항암제</span>
+              <span class="tool-chip warning">마약</span>
+            </div>
+          </div>
+        </details>
+
+        <details open>
+          <summary>크기 / 테두리 / 글자 세부 편집</summary>
+          <div class="panel-body">
+            <div class="control-grid">
+              <label class="control">라벨 가로(mm)<input value="100"></label>
+              <label class="control">라벨 세로(mm)<input value="35"></label>
+              <label class="control">라벨 외곽선 두께<input value="2mm"></label>
+              <label class="control">라벨 외곽선 색상<input value="#111111"></label>
+              <label class="control">글자 테두리 두께<input value="0.6px"></label>
+              <label class="control">글자 테두리 색상<input value="#FFFFFF"></label>
+              <label class="control">글씨 폰트<select><option>Verdana / Malgun Gothic</option></select></label>
+              <label class="control">글씨 크기<input value="34px"></label>
+              <label class="control">글씨 색상<input value="#111827"></label>
+              <label class="control">주의문구 색상<input value="#B42318"></label>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>리스트 업로드 / 분류 관리</summary>
+          <div class="panel-body">
+            <div class="tool-row">
+              <button class="mini-upload">엑셀 업로드</button>
+              <button class="btn soft">공유 파일 반영</button>
+            </div>
+            <div class="tool-row">
+              <span class="tool-chip warning">마약</span>
+              <span class="tool-chip warning">향정</span>
+              <span class="tool-chip warning">고위험</span>
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <div class="workarea">
+        <section class="selection-panel">
+          <div class="section-head">
+            <div>
+              <h3>약품리스트</h3>
+              <p>약품명 클릭 시 저장된 라벨을 기본 로드</p>
+            </div>
+            <span class="badge brown">선택 24건</span>
+          </div>
+          <div class="drug-list">
+            <label class="drug-row selected">
+              <input type="checkbox" checked>
+              <span><strong>XXARPIP72</strong><small>Abilify asimtufii 720mg inj · 저장 라벨 있음</small></span>
+              <span class="badge brown">기본값</span>
+            </label>
+            <label class="drug-row selected">
+              <input type="checkbox" checked>
+              <span><strong>X20AL1S</strong><small>Albumin(SK) 20% 100ml inj</small></span>
+              <span class="badge blue">냉장</span>
+            </label>
+            <label class="drug-row">
+              <input type="checkbox">
+              <span><strong>XMO15</strong><small>Morphine 15mg inj</small></span>
+              <span class="badge red">마약</span>
+            </label>
+          </div>
+          <div class="saved-note">저장소: 약품 라벨 / 마지막 저장본을 약품별 기본 출력 라벨로 사용</div>
+        </section>
+
+        <section class="preview-panel">
+          <div class="print-toolbar">
+            <div class="tool-row">
+              <span class="page-status">출력 용지</span>
+              <span class="paper-toggle">
+                <button class="btn active">A4</button>
+                <button class="btn">A3</button>
+              </span>
+              <span class="page-status">24개 라벨 · 3페이지</span>
+            </div>
+            <div class="tool-row" style="justify-content:flex-end">
+              <button class="btn soft">현재 라벨 저장</button>
+              <button class="btn primary">전체 페이지 한 번에 출력</button>
+            </div>
+          </div>
+          <div class="canvas">
+            <div class="editable-preview">
+              <div class="section-head">
+                <div>
+                  <h3>편집 가능한 미리보기</h3>
+                  <p>약품명 영역을 클릭해 수기로 수정 가능</p>
+                </div>
+                <span class="badge brown">마지막 저장본</span>
+              </div>
+              <div class="label-card">
+                <div class="label-warning">용량<br>주의</div>
+                <div class="label-name" contenteditable="true">Abilify<br>asimtufii</div>
+                <div class="label-code">XXARPIP72<br>차광</div>
+              </div>
+              <div class="saved-note">저장하면 다음에 XXARPIP72 약품명을 클릭할 때 이 라벨이 기본 미리보기와 출력 대상으로 표시됩니다.</div>
+            </div>
+            <aside class="manual-fields">
+              <strong>수기 수정</strong>
+              <label>표시 약품명<input value="Abilify asimtufii"></label>
+              <label>주의문구<input value="용량주의"></label>
+              <label>코드/보관<input value="XXARPIP72 / 차광"></label>
+              <button class="btn primary">수정 적용</button>
+              <button class="btn soft">저장 라벨 불러오기</button>
+            </aside>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="edit-save-ok" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>이 편집/저장 흐름이 맞다</h3>
+      <p>세부 스타일 편집, 미리보기 직접 수정, 약품별 마지막 저장 라벨 기본 로드를 설계에 반영합니다.</p>
+    </div>
+  </div>
+</div>

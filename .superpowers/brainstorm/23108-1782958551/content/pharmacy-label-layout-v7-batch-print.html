@@ -1,0 +1,563 @@
+<style>
+  .batch-print-layout {
+    --brand-orange: #f68d45;
+    --brand-orange-deep: #e2631a;
+    --brand-header: #7f665a;
+    --brand-brown: #96796a;
+    --brand-bluegray: #a8b6c3;
+    --brand-orange-soft: #fff3ea;
+    --brand-brown-soft: #f3eeea;
+    --brand-bluegray-soft: #edf3f7;
+    --line: #d8d1cc;
+    --line-soft: #eee8e3;
+    --muted: #667085;
+    --ink: #17202a;
+  }
+  .batch-print-layout .shell {
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+  }
+  .batch-print-layout .topbar {
+    display: grid;
+    grid-template-columns: minmax(170px, 0.6fr) minmax(340px, 1.5fr) auto;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 14px;
+    color: #fff;
+    background: var(--brand-header);
+  }
+  .batch-print-layout .topbar h3,
+  .batch-print-layout .topbar p {
+    margin: 0;
+  }
+  .batch-print-layout .topbar p {
+    color: #f3ece7;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .batch-print-layout .header-search {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+    gap: 8px;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 8px 0 12px;
+    border: 1px solid #d7c7bc;
+    border-radius: 7px;
+    background: #fff;
+  }
+  .batch-print-layout .header-search span {
+    color: #96796a;
+    font-weight: 1000;
+  }
+  .batch-print-layout .header-search input {
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    color: var(--ink);
+    font-size: 14px;
+    font-weight: 800;
+  }
+  .batch-print-layout .btn {
+    min-height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--brand-header);
+    background: #fff;
+    font-size: 12px;
+    font-weight: 900;
+  }
+  .batch-print-layout .btn.primary {
+    border-color: var(--brand-orange-deep);
+    color: #fff;
+    background: var(--brand-orange);
+  }
+  .batch-print-layout .btn.active {
+    border-color: #6f5a50;
+    color: #fff;
+    background: var(--brand-header);
+  }
+  .batch-print-layout .btn.soft {
+    border-color: #d7c7bc;
+    color: var(--brand-header);
+    background: var(--brand-brown-soft);
+  }
+  .batch-print-layout .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line-soft);
+    background: #fff;
+  }
+  .batch-print-layout .tool-panels {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line-soft);
+    background: #f8f7f5;
+  }
+  .batch-print-layout details {
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    background: #fff;
+  }
+  .batch-print-layout summary {
+    min-height: 38px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+    align-items: center;
+    padding: 0 10px;
+    color: var(--brand-header);
+    font-size: 13px;
+    font-weight: 1000;
+    cursor: pointer;
+    list-style: none;
+  }
+  .batch-print-layout summary::-webkit-details-marker {
+    display: none;
+  }
+  .batch-print-layout summary::after {
+    content: "열기";
+    min-width: 44px;
+    padding: 3px 7px;
+    border-radius: 999px;
+    color: #546878;
+    background: var(--brand-bluegray-soft);
+    font-size: 11px;
+    text-align: center;
+  }
+  .batch-print-layout details[open] summary {
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .batch-print-layout details[open] summary::after {
+    content: "닫기";
+    color: #fff;
+    background: var(--brand-header);
+  }
+  .batch-print-layout .panel-body {
+    display: grid;
+    gap: 8px;
+    padding: 10px;
+  }
+  .batch-print-layout .tool-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+  .batch-print-layout .tool-chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 27px;
+    padding: 0 9px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: #475467;
+    background: #fff;
+    font-size: 12px;
+    font-weight: 900;
+  }
+  .batch-print-layout .tool-chip.active {
+    color: var(--brand-header);
+    background: var(--brand-brown-soft);
+    border-color: #d7c7bc;
+  }
+  .batch-print-layout .tool-chip.cold {
+    color: #546878;
+    background: var(--brand-bluegray-soft);
+  }
+  .batch-print-layout .tool-chip.warning {
+    color: #7f1d1d;
+    background: #fff1f3;
+  }
+  .batch-print-layout .mini-upload {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 32px;
+    width: max-content;
+    padding: 0 12px;
+    border: 1px dashed var(--brand-bluegray);
+    border-radius: 6px;
+    color: #546878;
+    background: var(--brand-bluegray-soft);
+    font-size: 12px;
+    font-weight: 900;
+  }
+  .batch-print-layout .workarea {
+    display: grid;
+    grid-template-columns: minmax(250px, 0.72fr) minmax(0, 1.4fr);
+    gap: 12px;
+    padding: 14px;
+    background: #f2f1ef;
+  }
+  .batch-print-layout .selection-panel,
+  .batch-print-layout .preview-panel {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+  }
+  .batch-print-layout .section-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    align-items: end;
+  }
+  .batch-print-layout .section-head h3,
+  .batch-print-layout .section-head p {
+    margin: 0;
+  }
+  .batch-print-layout .section-head p {
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .batch-print-layout .drug-list {
+    display: grid;
+    gap: 6px;
+    max-height: 252px;
+    overflow: auto;
+    padding: 8px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+  }
+  .batch-print-layout .drug-row {
+    display: grid;
+    grid-template-columns: 20px minmax(0, 1fr) auto;
+    gap: 8px;
+    align-items: center;
+    min-height: 44px;
+    padding: 7px 8px;
+    border: 1px solid var(--line-soft);
+    border-radius: 6px;
+    color: var(--ink);
+    background: #fff;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .batch-print-layout .drug-row.selected {
+    border-color: var(--brand-orange-deep);
+    background: var(--brand-orange-soft);
+  }
+  .batch-print-layout .drug-row strong {
+    display: block;
+    color: var(--brand-header);
+    font-size: 12px;
+  }
+  .batch-print-layout .drug-row small {
+    display: block;
+    color: var(--muted);
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .batch-print-layout .badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 900;
+  }
+  .batch-print-layout .badge.red {
+    color: #7f1d1d;
+    background: #fff1f3;
+  }
+  .batch-print-layout .badge.blue {
+    color: #546878;
+    background: var(--brand-bluegray-soft);
+  }
+  .batch-print-layout .badge.brown {
+    color: var(--brand-header);
+    background: var(--brand-brown-soft);
+  }
+  .batch-print-layout .print-toolbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+  }
+  .batch-print-layout .paper-toggle {
+    display: inline-flex;
+    gap: 5px;
+    padding: 4px;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    background: #f8f7f5;
+  }
+  .batch-print-layout .page-status {
+    color: #475467;
+    font-size: 12px;
+    font-weight: 900;
+  }
+  .batch-print-layout .canvas {
+    min-height: 276px;
+    padding: 18px;
+    border: 1px solid #d7c7bc;
+    border-radius: 8px;
+    background:
+      linear-gradient(90deg, rgba(216, 209, 204, 0.38) 1px, transparent 1px) 0 0 / 24px 24px,
+      linear-gradient(rgba(216, 209, 204, 0.38) 1px, transparent 1px) 0 0 / 24px 24px,
+      #fff;
+    overflow: auto;
+  }
+  .batch-print-layout .label-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(180px, 1fr));
+    gap: 12px;
+  }
+  .batch-print-layout .label-card {
+    height: 76px;
+    display: grid;
+    grid-template-columns: 48px 1fr 44px;
+    overflow: hidden;
+    border: 1.5px solid #111;
+    background: #fff;
+    box-shadow: 0 6px 16px rgba(23, 32, 42, 0.08);
+  }
+  .batch-print-layout .label-warning {
+    display: grid;
+    place-items: center;
+    color: #fff;
+    background: #b42318;
+    font-size: 11px;
+    font-weight: 1000;
+    line-height: 1.1;
+    text-align: center;
+  }
+  .batch-print-layout .label-warning.brown {
+    background: var(--brand-header);
+  }
+  .batch-print-layout .label-name {
+    display: grid;
+    place-items: center;
+    padding: 6px;
+    color: #111827;
+    font-size: 21px;
+    font-weight: 1000;
+    line-height: 1;
+    text-align: center;
+  }
+  .batch-print-layout .label-code {
+    display: grid;
+    place-items: center;
+    padding: 3px;
+    color: #e5e7eb;
+    background: #111;
+    font-size: 7px;
+    font-weight: 900;
+    line-height: 1.05;
+    text-align: center;
+    word-break: break-all;
+  }
+  @media (max-width: 980px) {
+    .batch-print-layout .topbar,
+    .batch-print-layout .tool-panels,
+    .batch-print-layout .workarea,
+    .batch-print-layout .print-toolbar {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<h2>복수 선택과 일괄 출력 틀</h2>
+<p class="subtitle">라벨 생성 조건에 항암제/마약을 추가하고, 약품리스트 체크 선택, A4/A3 용지 선택, 여러 페이지 일괄 출력을 함께 표시한 버전입니다.</p>
+
+<div class="mockup batch-print-layout">
+  <div class="mockup-header">Preview: 복수 라벨 선택 + A4/A3 다중 페이지 출력</div>
+  <div class="mockup-body">
+    <div class="shell">
+      <div class="topbar">
+        <div>
+          <p>별도 화면</p>
+          <h3>약제팀 라벨 작업실</h3>
+        </div>
+        <label class="header-search">
+          <span>⌕</span>
+          <input placeholder="약품명, 코드, 성분명 검색 후 바로 라벨 생성">
+          <button class="btn primary">검색</button>
+        </label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+          <button class="btn soft">비품관리로 돌아가기</button>
+          <button class="btn primary">선택 라벨 출력</button>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <button class="btn active">약품명 라벨</button>
+        <button class="btn">약품리스트</button>
+        <button class="btn">약품장 라벨</button>
+        <button class="btn">3단 약병장</button>
+        <button class="btn">외용장 라벨</button>
+      </div>
+
+      <div class="tool-panels">
+        <details open>
+          <summary>라벨 생성 조건</summary>
+          <div class="panel-body">
+            <div class="tool-row">
+              <span class="tool-chip active">앰플</span>
+              <span class="tool-chip">바이알</span>
+              <span class="tool-chip">경구</span>
+              <span class="tool-chip">외용</span>
+              <span class="tool-chip">수액</span>
+            </div>
+            <div class="tool-row">
+              <span class="tool-chip cold">냉장</span>
+              <span class="tool-chip active">차광</span>
+              <span class="tool-chip active">고가</span>
+              <span class="tool-chip warning">항암제</span>
+              <span class="tool-chip warning">마약</span>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>크기 / 테두리 / 글자 편집</summary>
+          <div class="panel-body">
+            <div class="tool-row">
+              <button class="btn active">35x100</button>
+              <button class="btn">10x70</button>
+              <button class="btn soft">사용자 지정 mm</button>
+            </div>
+            <div class="tool-row">
+              <span class="tool-chip">테두리 2mm</span>
+              <span class="tool-chip">#111111</span>
+              <span class="tool-chip">약품명 41px</span>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>리스트 업로드 / 분류 관리</summary>
+          <div class="panel-body">
+            <div class="tool-row">
+              <button class="mini-upload">엑셀 업로드</button>
+              <button class="btn soft">공유 파일 반영</button>
+            </div>
+            <div class="tool-row">
+              <span class="tool-chip warning">마약</span>
+              <span class="tool-chip warning">향정</span>
+              <span class="tool-chip warning">고위험</span>
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <div class="workarea">
+        <section class="selection-panel">
+          <div class="section-head">
+            <div>
+              <h3>약품리스트</h3>
+              <p>체크한 약품을 복수 라벨로 출력</p>
+            </div>
+            <span class="badge brown">선택 24건</span>
+          </div>
+          <div class="drug-list">
+            <label class="drug-row selected">
+              <input type="checkbox" checked>
+              <span><strong>XXARPIP72</strong><small>Abilify asimtufii 720mg inj</small></span>
+              <span class="badge red">차광</span>
+            </label>
+            <label class="drug-row selected">
+              <input type="checkbox" checked>
+              <span><strong>X20AL1S</strong><small>Albumin(SK) 20% 100ml inj</small></span>
+              <span class="badge blue">냉장</span>
+            </label>
+            <label class="drug-row selected">
+              <input type="checkbox" checked>
+              <span><strong>XMO15</strong><small>Morphine 15mg inj</small></span>
+              <span class="badge red">마약</span>
+            </label>
+            <label class="drug-row">
+              <input type="checkbox">
+              <span><strong>XCHEMO1</strong><small>Cyclophosphamide inj</small></span>
+              <span class="badge red">항암제</span>
+            </label>
+            <label class="drug-row">
+              <input type="checkbox">
+              <span><strong>XMIDA</strong><small>Midazolam 5mg/5ml inj</small></span>
+              <span class="badge red">향정</span>
+            </label>
+          </div>
+          <div class="tool-row">
+            <button class="btn soft">검색 결과 전체 선택</button>
+            <button class="btn">선택 해제</button>
+          </div>
+        </section>
+
+        <section class="preview-panel">
+          <div class="print-toolbar">
+            <div class="tool-row">
+              <span class="page-status">출력 용지</span>
+              <span class="paper-toggle">
+                <button class="btn active">A4</button>
+                <button class="btn">A3</button>
+              </span>
+              <span class="page-status">24개 라벨 · 3페이지</span>
+            </div>
+            <button class="btn primary">전체 페이지 한 번에 출력</button>
+          </div>
+          <div class="canvas">
+            <div class="section-head" style="margin-bottom:10px">
+              <div>
+                <h3>A4 미리보기 1 / 3</h3>
+                <p>페이지가 넘어가도 출력 대기열 전체를 한 번에 인쇄합니다.</p>
+              </div>
+              <div class="tool-row">
+                <button class="btn active">1</button>
+                <button class="btn">2</button>
+                <button class="btn">3</button>
+              </div>
+            </div>
+            <div class="label-grid">
+              <div class="label-card">
+                <div class="label-warning">용량<br>주의</div>
+                <div class="label-name">Abilify<br>asimtufii</div>
+                <div class="label-code">XXARPIP72</div>
+              </div>
+              <div class="label-card">
+                <div class="label-warning brown">냉장</div>
+                <div class="label-name">Albumin<br>20%</div>
+                <div class="label-code">X20AL1S</div>
+              </div>
+              <div class="label-card">
+                <div class="label-warning">마약</div>
+                <div class="label-name">Morphine<br>15mg</div>
+                <div class="label-code">XMO15</div>
+              </div>
+              <div class="label-card">
+                <div class="label-warning">항암</div>
+                <div class="label-name">Cyclo<br>phosphamide</div>
+                <div class="label-code">XCHEMO1</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="batch-print-ok" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>이 출력 흐름이 맞다</h3>
+      <p>조건 확장, 약품리스트 복수 체크, A4/A3, 다중 페이지 일괄 출력을 설계에 반영합니다.</p>
+    </div>
+  </div>
+</div>
