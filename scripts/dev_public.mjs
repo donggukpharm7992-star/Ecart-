@@ -7,8 +7,8 @@ const isWindows = process.platform === "win32";
 const npmCommand = isWindows ? "npm.cmd" : "npm";
 const npxCommand = isWindows ? "npx.cmd" : "npx";
 const children = [];
-const fixedAppUrl = "https://oleroseparosc-code.github.io/Ecart-/";
-const repositoryUrl = "https://github.com/oleroseparosc-code/Ecart-.git";
+const fixedAppUrl = "https://donggukpharm7992-star.github.io/Ecart-/";
+const repositoryUrl = "https://github.com/donggukpharm7992-star/Ecart-.git";
 let publishedTunnelUrl = "";
 
 function commandForPlatform(command, args) {

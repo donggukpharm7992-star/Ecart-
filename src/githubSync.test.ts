@@ -20,12 +20,12 @@ describe("github sync helpers", () => {
   it("builds the GitHub contents API URL for the shared state file", () => {
     expect(
       buildGithubContentsUrl({
-        owner: "oleroseparosc-code",
+        owner: "donggukpharm7992-star",
         repo: "Ecart-",
         branch: "main",
         path: "app-state/shared-state.json",
       }),
-    ).toBe("https://api.github.com/repos/oleroseparosc-code/Ecart-/contents/app-state%2Fshared-state.json?ref=main");
+    ).toBe("https://api.github.com/repos/donggukpharm7992-star/Ecart-/contents/app-state%2Fshared-state.json?ref=main");
   });
 
   it("round-trips Korean JSON through base64", () => {
@@ -110,7 +110,7 @@ describe("github sync helpers", () => {
     await expect(
       loadRemoteState(
         {
-          owner: "oleroseparosc-code",
+          owner: "donggukpharm7992-star",
           repo: "Ecart-",
           branch: "main",
           path: "app-state/shared-state.json",
