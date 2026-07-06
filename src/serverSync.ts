@@ -22,6 +22,11 @@ export function buildAppStateApiUrl(baseUrl = configuredBaseUrl) {
   return `${normalizedBase}api/app-state`;
 }
 
+export function buildStaticAppStateUrl(baseUrl = configuredBaseUrl) {
+  const normalizedBase = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
+  return `${normalizedBase}app-state/shared-state.json`;
+}
+
 async function fetchServerState(url: string, init: RequestInit, timeoutMs = DEFAULT_SERVER_TIMEOUT_MS) {
   const controller = new AbortController();
   const timer = globalThis.setTimeout(() => controller.abort(), timeoutMs);
@@ -56,7 +61,26 @@ export async function loadServerState<T>(options: ServerSyncOptions = {}): Promi
     options.timeoutMs,
   );
 
-  if (response.status === 404) return null;
+  if (response.status === 404) {
+    const staticResponse = await fetchServerState(
+      buildStaticAppStateUrl(options.baseUrl),
+      {
+        method: "GET",
+        headers: { Accept: "application/json" },
+      },
+      options.timeoutMs,
+    );
+
+    if (staticResponse.status === 404) return null;
+    if (!staticResponse.ok) {
+      throw new Error(`?먮룞 ????곹깭瑜?遺덈윭?ㅼ? 紐삵뻽?듬땲??(${staticResponse.status}).`);
+    }
+
+    return {
+      envelope: (await staticResponse.json()) as RemoteStateEnvelope<T>,
+      sha: "",
+    };
+  }
   if (!response.ok) {
     throw new Error(`자동 저장 상태를 불러오지 못했습니다 (${response.status}).`);
   }

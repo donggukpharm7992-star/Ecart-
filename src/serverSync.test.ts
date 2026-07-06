@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { protectNarcoticLotAssignments } from "../vite.config";
-import { buildAppStateApiUrl, configureServerSyncBaseUrl, saveServerState } from "./serverSync";
+import { buildAppStateApiUrl, configureServerSyncBaseUrl, loadServerState, saveServerState } from "./serverSync";
 
 const originalFetch = globalThis.fetch;
 
@@ -20,6 +20,42 @@ describe("server sync client", () => {
     configureServerSyncBaseUrl("https://fixed-sync.example.com/Ecart-/");
 
     expect(buildAppStateApiUrl()).toBe("https://fixed-sync.example.com/Ecart-/api/app-state");
+  });
+
+  it("loads the deployed static app state when the app-state API is unavailable", async () => {
+    globalThis.fetch = vi
+      .fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ error: "missing API" }), { status: 404 }))
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            version: 1,
+            updatedAt: "2026-07-06T10:58:44.990Z",
+            clientId: "pc",
+            state: {
+              narcoticLotAssignments: {
+                "AN::XATIV4W": { roomLot: "ATIV4-LOT", pharmacyLot: "" },
+              },
+            },
+          }),
+          { status: 200 },
+        ),
+      );
+
+    await expect(loadServerState<{ narcoticLotAssignments: Record<string, unknown> }>({ baseUrl: "/Ecart-/" })).resolves.toMatchObject({
+      envelope: {
+        state: {
+          narcoticLotAssignments: {
+            "AN::XATIV4W": { roomLot: "ATIV4-LOT", pharmacyLot: "" },
+          },
+        },
+      },
+    });
+    expect(globalThis.fetch).toHaveBeenNthCalledWith(
+      2,
+      "/Ecart-/app-state/shared-state.json",
+      expect.objectContaining({ method: "GET" }),
+    );
   });
 
   it("retries a transient save failure before surfacing an error", async () => {
