@@ -1,7 +1,7 @@
 {
   "id": "/Ecart-/pharmacy-viewer",
-  "name": "약제팀 라벨",
-  "short_name": "약제팀 라벨",
+  "name": "약제팀 라벨 마스터 관리",
+  "short_name": "약제팀 라벨 관리",
   "description": "약제팀 라벨 출력까지 포함한 전체 비품약 마스터 조회 전용 뷰어입니다.",
   "start_url": "/Ecart-/pharmacy-viewer",
   "scope": "/Ecart-/",

@@ -1,7 +1,7 @@
 {
   "id": "/Ecart-/narcotic-viewer",
-  "name": "비치마약류관리",
-  "short_name": "비치마약류관리",
+  "name": "비치마약류 관리",
+  "short_name": "비치마약류 관리",
   "description": "비치마약류 관리와 향정/마약 마스터 편집을 위한 담당자용 뷰어입니다.",
   "start_url": "/Ecart-/narcotic-viewer",
   "scope": "/Ecart-/",

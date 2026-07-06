@@ -1,7 +1,7 @@
 {
   "id": "/Ecart-/viewer",
-  "name": "비품약 마스터 관리",
-  "short_name": "마스터 관리",
+  "name": "병동 약품 라벨 마스터관리",
+  "short_name": "병동 라벨 마스터",
   "description": "전체 비품약 마스터 현황을 조회하는 전용 뷰어입니다.",
   "start_url": "/Ecart-/viewer",
   "scope": "/Ecart-/",
