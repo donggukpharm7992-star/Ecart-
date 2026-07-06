@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-06T03:29:57.562Z",
-  "clientId": "e244b4ca-681d-405c-9588-9b3b1471f2fa",
+  "updatedAt": "2026-07-06T03:37:57.169Z",
+  "clientId": "f8e196fa-dfa3-4230-83df-bab1f9696eda",
   "state": {
     "stockDrugs": [
       {
@@ -6088,10 +6088,10 @@
         "genericName": "Ativan 2mg inj",
         "productName": "Ativan 2mg inj",
         "spec": "2mg",
-        "storage": "실온보관",
+        "storage": "냉장보관(2-8℃)",
         "note": "",
         "warning": "",
-        "storageType": "ROOM",
+        "storageType": "REFRIGERATED",
         "narcoticCategory": "향정"
       },
       {
@@ -6099,10 +6099,10 @@
         "genericName": "Ativan 4mg inj",
         "productName": "Ativan 4mg inj",
         "spec": "4mg",
-        "storage": "실온보관",
+        "storage": "냉장보관(2-8℃)",
         "note": "",
         "warning": "",
-        "storageType": "ROOM",
+        "storageType": "REFRIGERATED",
         "narcoticCategory": "향정"
       },
       {
@@ -6198,10 +6198,10 @@
         "genericName": "Ketamine 500mg Inj",
         "productName": "Ketamine 500mg Inj",
         "spec": "500mg",
-        "storage": "실온보관",
+        "storage": "냉장보관(2-8℃)",
         "note": "",
         "warning": "",
-        "storageType": "ROOM",
+        "storageType": "REFRIGERATED",
         "narcoticCategory": "향정"
       },
       {
