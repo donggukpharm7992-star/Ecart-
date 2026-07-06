@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-06T11:11:52.049Z",
+  "updatedAt": "2026-07-06T11:18:48.053Z",
   "clientId": "8661a136-891e-48dd-8980-7d1523f6c473",
   "state": {
     "stockDrugs": [
@@ -6069,6 +6069,278 @@
         "roomId": "AER",
         "drugCode": "XMCARBA5Y",
         "requiredQty": 2
+      }
+    ],
+    "narcoticRooms": [
+      {
+        "id": "INJ",
+        "label": "INJ",
+        "sourceColumn": "INJ",
+        "sourceSheet": "비치향정,마약현황",
+        "sourceUpdatedAt": "",
+        "allocationCount": 0,
+        "totalQuantity": 0
+      },
+      {
+        "id": "DREMM",
+        "label": "DREMM",
+        "sourceColumn": "DREMM",
+        "sourceSheet": "비치향정,마약현황",
+        "sourceUpdatedAt": "",
+        "allocationCount": 4,
+        "totalQuantity": 45
+      },
+      {
+        "id": "ER",
+        "label": "ER (응급실)",
+        "sourceColumn": "ER",
+        "sourceSheet": "비치향정,마약현황",
+        "sourceUpdatedAt": "",
+        "allocationCount": 3,
+        "totalQuantity": 11
+      },
+      {
+        "id": "GICLA",
+        "label": "GICLA",
+        "sourceColumn": "GICLA",
+        "sourceSheet": "비치향정,마약현황",
+        "sourceUpdatedAt": "",
+        "allocationCount": 6,
+        "totalQuantity": 142
+      },
+      {
+        "id": "HBEF",
+        "label": "HBEF",
+        "sourceColumn": "HBEF",
+        "sourceSheet": "비치향정,마약현황",
+        "sourceUpdatedAt": "",
+        "allocationCount": 8,
+        "totalQuantity": 23
+      },
+      {
+        "id": "MICU",
+        "label": "MICU (내과중환자실)",
+        "sourceColumn": "MICU",
+        "sourceSheet": "비치향정,마약현황",
+        "sourceUpdatedAt": "",
+        "allocationCount": 4,
+        "totalQuantity": 10
+      },
+      {
+        "id": "AN",
+        "label": "AN (마취통증의학과)",
+        "sourceColumn": "AN",
+        "sourceSheet": "비치향정,마약현황",
+        "sourceUpdatedAt": "",
+        "allocationCount": 15,
+        "totalQuantity": 271
+      },
+      {
+        "id": "OR",
+        "label": "OR (수술실)",
+        "sourceColumn": "OR",
+        "sourceSheet": "비치향정,마약현황",
+        "sourceUpdatedAt": "",
+        "allocationCount": 1,
+        "totalQuantity": 1
+      },
+      {
+        "id": "SICU",
+        "label": "SICU (외과중환자실)",
+        "sourceColumn": "SICU",
+        "sourceSheet": "비치향정,마약현황",
+        "sourceUpdatedAt": "",
+        "allocationCount": 3,
+        "totalQuantity": 15
+      },
+      {
+        "id": "ADR",
+        "label": "ADR",
+        "sourceColumn": "ADR",
+        "sourceSheet": "비치향정,마약현황",
+        "sourceUpdatedAt": "",
+        "allocationCount": 1,
+        "totalQuantity": 2
+      },
+      {
+        "id": "HPC",
+        "label": "HPC",
+        "sourceColumn": "HPC",
+        "sourceSheet": "비치향정,마약현황",
+        "sourceUpdatedAt": "",
+        "allocationCount": 2,
+        "totalQuantity": 95
+      },
+      {
+        "id": "난임",
+        "label": "난임",
+        "sourceColumn": "난임",
+        "sourceSheet": "비치향정,마약현황",
+        "sourceUpdatedAt": "",
+        "allocationCount": 0,
+        "totalQuantity": 0
+      },
+      {
+        "id": "DRL",
+        "label": "DRL",
+        "sourceColumn": "DRL",
+        "sourceSheet": "비치향정,마약현황",
+        "sourceUpdatedAt": "",
+        "allocationCount": 3,
+        "totalQuantity": 9
+      },
+      {
+        "id": "NICU",
+        "label": "NICU (신생아중환자실)",
+        "sourceColumn": "NICU",
+        "sourceSheet": "비치향정,마약현황",
+        "sourceUpdatedAt": "",
+        "allocationCount": 2,
+        "totalQuantity": 5
+      },
+      {
+        "id": "42",
+        "label": "42병동",
+        "sourceColumn": "42",
+        "sourceSheet": "비치향정,마약현황",
+        "sourceUpdatedAt": "",
+        "allocationCount": 1,
+        "totalQuantity": 1
+      },
+      {
+        "id": "51",
+        "label": "51병동",
+        "sourceColumn": "51",
+        "sourceSheet": "비치향정,마약현황",
+        "sourceUpdatedAt": "",
+        "allocationCount": 0,
+        "totalQuantity": 0
+      },
+      {
+        "id": "52",
+        "label": "52병동",
+        "sourceColumn": "52",
+        "sourceSheet": "비치향정,마약현황",
+        "sourceUpdatedAt": "",
+        "allocationCount": 0,
+        "totalQuantity": 0
+      },
+      {
+        "id": "61",
+        "label": "61병동",
+        "sourceColumn": "61",
+        "sourceSheet": "비치향정,마약현황",
+        "sourceUpdatedAt": "",
+        "allocationCount": 1,
+        "totalQuantity": 1
+      },
+      {
+        "id": "62",
+        "label": "62병동",
+        "sourceColumn": "62",
+        "sourceSheet": "비치향정,마약현황",
+        "sourceUpdatedAt": "",
+        "allocationCount": 1,
+        "totalQuantity": 1
+      },
+      {
+        "id": "71",
+        "label": "71병동",
+        "sourceColumn": "71",
+        "sourceSheet": "비치향정,마약현황",
+        "sourceUpdatedAt": "",
+        "allocationCount": 2,
+        "totalQuantity": 2
+      },
+      {
+        "id": "72",
+        "label": "72병동",
+        "sourceColumn": "72",
+        "sourceSheet": "비치향정,마약현황",
+        "sourceUpdatedAt": "",
+        "allocationCount": 3,
+        "totalQuantity": 4
+      },
+      {
+        "id": "81",
+        "label": "81병동",
+        "sourceColumn": "81",
+        "sourceSheet": "비치향정,마약현황",
+        "sourceUpdatedAt": "",
+        "allocationCount": 2,
+        "totalQuantity": 3
+      },
+      {
+        "id": "82",
+        "label": "82병동",
+        "sourceColumn": "82",
+        "sourceSheet": "비치향정,마약현황",
+        "sourceUpdatedAt": "",
+        "allocationCount": 2,
+        "totalQuantity": 4
+      },
+      {
+        "id": "91",
+        "label": "91병동",
+        "sourceColumn": "91",
+        "sourceSheet": "비치향정,마약현황",
+        "sourceUpdatedAt": "",
+        "allocationCount": 3,
+        "totalQuantity": 6
+      },
+      {
+        "id": "92",
+        "label": "92병동",
+        "sourceColumn": "92",
+        "sourceSheet": "비치향정,마약현황",
+        "sourceUpdatedAt": "",
+        "allocationCount": 2,
+        "totalQuantity": 3
+      },
+      {
+        "id": "101",
+        "label": "101병동",
+        "sourceColumn": "101",
+        "sourceSheet": "비치향정,마약현황",
+        "sourceUpdatedAt": "",
+        "allocationCount": 3,
+        "totalQuantity": 8
+      },
+      {
+        "id": "102",
+        "label": "102병동",
+        "sourceColumn": "102",
+        "sourceSheet": "비치향정,마약현황",
+        "sourceUpdatedAt": "",
+        "allocationCount": 2,
+        "totalQuantity": 2
+      },
+      {
+        "id": "111",
+        "label": "111병동",
+        "sourceColumn": "111",
+        "sourceSheet": "비치향정,마약현황",
+        "sourceUpdatedAt": "",
+        "allocationCount": 2,
+        "totalQuantity": 4
+      },
+      {
+        "id": "112",
+        "label": "112병동",
+        "sourceColumn": "112",
+        "sourceSheet": "비치향정,마약현황",
+        "sourceUpdatedAt": "",
+        "allocationCount": 4,
+        "totalQuantity": 15
+      },
+      {
+        "id": "121",
+        "label": "121병동",
+        "sourceColumn": "121",
+        "sourceSheet": "비치향정,마약현황",
+        "sourceUpdatedAt": "",
+        "allocationCount": 3,
+        "totalQuantity": 9
       }
     ],
     "narcoticDrugs": [
