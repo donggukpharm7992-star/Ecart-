@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-06T02:06:36.651Z",
+  "updatedAt": "2026-07-06T02:09:13.199Z",
   "clientId": "e244b4ca-681d-405c-9588-9b3b1471f2fa",
   "state": {
     "stockDrugs": [
@@ -7070,7 +7070,7 @@
         "pharmacyLot": ""
       },
       "INJ::XATIV2W": {
-        "roomLot": "",
+        "roomLot": "CWD025, CWD024, CWD021, CWD022",
         "pharmacyLot": "CWD021"
       },
       "INJ::XATIV4W": {
@@ -7078,7 +7078,7 @@
         "pharmacyLot": ""
       },
       "INJ::XDIAZ10W": {
-        "roomLot": "",
+        "roomLot": "DIAC004M",
         "pharmacyLot": "DIAC003M"
       },
       "INJ::XFENT50W": {
@@ -7086,7 +7086,7 @@
         "pharmacyLot": ""
       },
       "INJ::XFENT100W": {
-        "roomLot": "",
+        "roomLot": "226207",
         "pharmacyLot": "226207"
       },
       "INJ::XFEN500": {
@@ -7102,11 +7102,11 @@
         "pharmacyLot": ""
       },
       "INJ::XPROP1T": {
-        "roomLot": "",
+        "roomLot": "16UE4023",
         "pharmacyLot": "16UE4023"
       },
       "INJ::XPROP2T": {
-        "roomLot": "",
+        "roomLot": "16WA5801",
         "pharmacyLot": "16WA5801"
       },
       "INJ::XKETA5W": {
@@ -7114,7 +7114,7 @@
         "pharmacyLot": ""
       },
       "INJ::XMIDZ5W": {
-        "roomLot": "",
+        "roomLot": "26005, 26004, 26001",
         "pharmacyLot": "26004"
       },
       "INJ::XMIDZ15W": {
@@ -7122,7 +7122,7 @@
         "pharmacyLot": "25018"
       },
       "INJ::XMORPS5W": {
-        "roomLot": "",
+        "roomLot": "26001",
         "pharmacyLot": "26001"
       },
       "INJ::XNALB10": {
@@ -7146,7 +7146,7 @@
         "pharmacyLot": "PLY902"
       },
       "INJ::XREMIF1W": {
-        "roomLot": "",
+        "roomLot": "DJZ201",
         "pharmacyLot": "DJZ102"
       },
       "DREMM::XALFEN1W": {
@@ -7198,7 +7198,7 @@
         "pharmacyLot": ""
       },
       "DREMM::XMIDZ5W": {
-        "roomLot": "",
+        "roomLot": "25075",
         "pharmacyLot": "26004"
       },
       "DREMM::XMIDZ15W": {
@@ -7226,7 +7226,7 @@
         "pharmacyLot": ""
       },
       "DREMM::XPOCR5S": {
-        "roomLot": "",
+        "roomLot": "PLY902",
         "pharmacyLot": "PLY902"
       },
       "DREMM::XREMIF1W": {
@@ -7238,7 +7238,7 @@
         "pharmacyLot": ""
       },
       "ER::XATIV2W": {
-        "roomLot": "",
+        "roomLot": "CWD025, CWD024, CWD021, CWD022",
         "pharmacyLot": "CWD021"
       },
       "ER::XATIV4W": {
@@ -7246,7 +7246,7 @@
         "pharmacyLot": ""
       },
       "ER::XDIAZ10W": {
-        "roomLot": "",
+        "roomLot": "DIAC004M",
         "pharmacyLot": "DIAC003M"
       },
       "ER::XFENT50W": {
@@ -7254,7 +7254,7 @@
         "pharmacyLot": ""
       },
       "ER::XFENT100W": {
-        "roomLot": "",
+        "roomLot": "226207",
         "pharmacyLot": "226207"
       },
       "ER::XFEN500": {
@@ -7270,11 +7270,11 @@
         "pharmacyLot": ""
       },
       "ER::XPROP1T": {
-        "roomLot": "",
+        "roomLot": "16UE4023",
         "pharmacyLot": "16UE4023"
       },
       "ER::XPROP2T": {
-        "roomLot": "",
+        "roomLot": "16WA5801",
         "pharmacyLot": "16WA5801"
       },
       "ER::XKETA5W": {
@@ -7282,7 +7282,7 @@
         "pharmacyLot": ""
       },
       "ER::XMIDZ5W": {
-        "roomLot": "",
+        "roomLot": "26005, 26004, 26001",
         "pharmacyLot": "26004"
       },
       "ER::XMIDZ15W": {
@@ -7290,7 +7290,7 @@
         "pharmacyLot": "25018"
       },
       "ER::XMORPS5W": {
-        "roomLot": "",
+        "roomLot": "26001",
         "pharmacyLot": "26001"
       },
       "ER::XNALB10": {
@@ -7314,7 +7314,7 @@
         "pharmacyLot": "PLY902"
       },
       "ER::XREMIF1W": {
-        "roomLot": "",
+        "roomLot": "DJZ201",
         "pharmacyLot": "DJZ102"
       },
       "GICLA::XALFEN1W": {
@@ -7442,7 +7442,7 @@
         "pharmacyLot": "16UE4023"
       },
       "HBEF::XPROP2T": {
-        "roomLot": "",
+        "roomLot": "16UI5058",
         "pharmacyLot": "16WA5801"
       },
       "HBEF::XKETA5W": {
@@ -7450,15 +7450,15 @@
         "pharmacyLot": ""
       },
       "HBEF::XMIDZ5W": {
-        "roomLot": "",
+        "roomLot": "25075",
         "pharmacyLot": "26004"
       },
       "HBEF::XMIDZ15W": {
-        "roomLot": "",
+        "roomLot": "25016",
         "pharmacyLot": "25018"
       },
       "HBEF::XMORPS5W": {
-        "roomLot": "",
+        "roomLot": "25002",
         "pharmacyLot": "26001"
       },
       "HBEF::XNALB10": {
@@ -7482,7 +7482,7 @@
         "pharmacyLot": "PLY902"
       },
       "HBEF::XREMIF1W": {
-        "roomLot": "",
+        "roomLot": "DJY503",
         "pharmacyLot": "DJZ102"
       },
       "MICU::XALFEN1W": {
@@ -7490,7 +7490,7 @@
         "pharmacyLot": ""
       },
       "MICU::XATIV2W": {
-        "roomLot": "",
+        "roomLot": "CWD025, CWD024, CWD021, CWD022",
         "pharmacyLot": "CWD021"
       },
       "MICU::XATIV4W": {
@@ -7498,7 +7498,7 @@
         "pharmacyLot": ""
       },
       "MICU::XDIAZ10W": {
-        "roomLot": "",
+        "roomLot": "DIAC004M",
         "pharmacyLot": "DIAC003M"
       },
       "MICU::XFENT50W": {
@@ -7506,7 +7506,7 @@
         "pharmacyLot": ""
       },
       "MICU::XFENT100W": {
-        "roomLot": "",
+        "roomLot": "226207",
         "pharmacyLot": "226207"
       },
       "MICU::XFEN500": {
@@ -7522,11 +7522,11 @@
         "pharmacyLot": ""
       },
       "MICU::XPROP1T": {
-        "roomLot": "",
+        "roomLot": "16UE4023",
         "pharmacyLot": "16UE4023"
       },
       "MICU::XPROP2T": {
-        "roomLot": "",
+        "roomLot": "16WA5801",
         "pharmacyLot": "16WA5801"
       },
       "MICU::XKETA5W": {
@@ -7534,7 +7534,7 @@
         "pharmacyLot": ""
       },
       "MICU::XMIDZ5W": {
-        "roomLot": "",
+        "roomLot": "26005, 26004, 26001",
         "pharmacyLot": "26004"
       },
       "MICU::XMIDZ15W": {
@@ -7542,7 +7542,7 @@
         "pharmacyLot": "25018"
       },
       "MICU::XMORPS5W": {
-        "roomLot": "",
+        "roomLot": "26001",
         "pharmacyLot": "26001"
       },
       "MICU::XNALB10": {
@@ -7566,7 +7566,7 @@
         "pharmacyLot": "PLY902"
       },
       "MICU::XREMIF1W": {
-        "roomLot": "",
+        "roomLot": "DJZ201",
         "pharmacyLot": "DJZ102"
       },
       "AN::XALFEN1W": {
@@ -7658,7 +7658,7 @@
         "pharmacyLot": ""
       },
       "OR::XATIV2W": {
-        "roomLot": "",
+        "roomLot": "CWD025, CWD024, CWD021, CWD022",
         "pharmacyLot": "CWD021"
       },
       "OR::XATIV4W": {
@@ -7666,7 +7666,7 @@
         "pharmacyLot": ""
       },
       "OR::XDIAZ10W": {
-        "roomLot": "",
+        "roomLot": "DIAC004M",
         "pharmacyLot": "DIAC003M"
       },
       "OR::XFENT50W": {
@@ -7674,7 +7674,7 @@
         "pharmacyLot": ""
       },
       "OR::XFENT100W": {
-        "roomLot": "",
+        "roomLot": "226207",
         "pharmacyLot": "226207"
       },
       "OR::XFEN500": {
@@ -7690,11 +7690,11 @@
         "pharmacyLot": ""
       },
       "OR::XPROP1T": {
-        "roomLot": "",
+        "roomLot": "16UE4023",
         "pharmacyLot": "16UE4023"
       },
       "OR::XPROP2T": {
-        "roomLot": "",
+        "roomLot": "16WA5801",
         "pharmacyLot": "16WA5801"
       },
       "OR::XKETA5W": {
@@ -7702,7 +7702,7 @@
         "pharmacyLot": ""
       },
       "OR::XMIDZ5W": {
-        "roomLot": "",
+        "roomLot": "26005, 26004, 26001",
         "pharmacyLot": "26004"
       },
       "OR::XMIDZ15W": {
@@ -7710,7 +7710,7 @@
         "pharmacyLot": "25018"
       },
       "OR::XMORPS5W": {
-        "roomLot": "",
+        "roomLot": "26001",
         "pharmacyLot": "26001"
       },
       "OR::XNALB10": {
@@ -7734,7 +7734,7 @@
         "pharmacyLot": "PLY902"
       },
       "OR::XREMIF1W": {
-        "roomLot": "",
+        "roomLot": "DJZ201",
         "pharmacyLot": "DJZ102"
       },
       "SICU::XALFEN1W": {
@@ -7742,7 +7742,7 @@
         "pharmacyLot": ""
       },
       "SICU::XATIV2W": {
-        "roomLot": "",
+        "roomLot": "CWD025, CWD024, CWD021, CWD022",
         "pharmacyLot": "CWD021"
       },
       "SICU::XATIV4W": {
@@ -7750,7 +7750,7 @@
         "pharmacyLot": ""
       },
       "SICU::XDIAZ10W": {
-        "roomLot": "",
+        "roomLot": "DIAC004M",
         "pharmacyLot": "DIAC003M"
       },
       "SICU::XFENT50W": {
@@ -7758,7 +7758,7 @@
         "pharmacyLot": ""
       },
       "SICU::XFENT100W": {
-        "roomLot": "",
+        "roomLot": "226207",
         "pharmacyLot": "226207"
       },
       "SICU::XFEN500": {
@@ -7774,11 +7774,11 @@
         "pharmacyLot": ""
       },
       "SICU::XPROP1T": {
-        "roomLot": "",
+        "roomLot": "16UE4023",
         "pharmacyLot": "16UE4023"
       },
       "SICU::XPROP2T": {
-        "roomLot": "",
+        "roomLot": "16WA5801",
         "pharmacyLot": "16WA5801"
       },
       "SICU::XKETA5W": {
@@ -7786,7 +7786,7 @@
         "pharmacyLot": ""
       },
       "SICU::XMIDZ5W": {
-        "roomLot": "",
+        "roomLot": "26005, 26004, 26001",
         "pharmacyLot": "26004"
       },
       "SICU::XMIDZ15W": {
@@ -7794,7 +7794,7 @@
         "pharmacyLot": "25018"
       },
       "SICU::XMORPS5W": {
-        "roomLot": "",
+        "roomLot": "26001",
         "pharmacyLot": "26001"
       },
       "SICU::XNALB10": {
@@ -7818,7 +7818,7 @@
         "pharmacyLot": "PLY902"
       },
       "SICU::XREMIF1W": {
-        "roomLot": "",
+        "roomLot": "DJZ201",
         "pharmacyLot": "DJZ102"
       },
       "ADR::XALFEN1W": {
@@ -7826,7 +7826,7 @@
         "pharmacyLot": ""
       },
       "ADR::XATIV2W": {
-        "roomLot": "",
+        "roomLot": "CWD025, CWD024, CWD021, CWD022",
         "pharmacyLot": "CWD021"
       },
       "ADR::XATIV4W": {
@@ -7834,7 +7834,7 @@
         "pharmacyLot": ""
       },
       "ADR::XDIAZ10W": {
-        "roomLot": "",
+        "roomLot": "DIAC004M",
         "pharmacyLot": "DIAC003M"
       },
       "ADR::XFENT50W": {
@@ -7842,7 +7842,7 @@
         "pharmacyLot": ""
       },
       "ADR::XFENT100W": {
-        "roomLot": "",
+        "roomLot": "226207",
         "pharmacyLot": "226207"
       },
       "ADR::XFEN500": {
@@ -7858,11 +7858,11 @@
         "pharmacyLot": ""
       },
       "ADR::XPROP1T": {
-        "roomLot": "",
+        "roomLot": "16UE4023",
         "pharmacyLot": "16UE4023"
       },
       "ADR::XPROP2T": {
-        "roomLot": "",
+        "roomLot": "16WA5801",
         "pharmacyLot": "16WA5801"
       },
       "ADR::XKETA5W": {
@@ -7870,7 +7870,7 @@
         "pharmacyLot": ""
       },
       "ADR::XMIDZ5W": {
-        "roomLot": "",
+        "roomLot": "26005, 26004, 26001",
         "pharmacyLot": "26004"
       },
       "ADR::XMIDZ15W": {
@@ -7878,7 +7878,7 @@
         "pharmacyLot": "25018"
       },
       "ADR::XMORPS5W": {
-        "roomLot": "",
+        "roomLot": "26001",
         "pharmacyLot": "26001"
       },
       "ADR::XNALB10": {
@@ -7902,7 +7902,7 @@
         "pharmacyLot": "PLY902"
       },
       "ADR::XREMIF1W": {
-        "roomLot": "",
+        "roomLot": "DJZ201",
         "pharmacyLot": "DJZ102"
       },
       "HPC::XALFEN1W": {
@@ -7994,7 +7994,7 @@
         "pharmacyLot": ""
       },
       "난임::XATIV2W": {
-        "roomLot": "",
+        "roomLot": "CWD025, CWD024, CWD021, CWD022",
         "pharmacyLot": "CWD021"
       },
       "난임::XATIV4W": {
@@ -8002,7 +8002,7 @@
         "pharmacyLot": ""
       },
       "난임::XDIAZ10W": {
-        "roomLot": "",
+        "roomLot": "DIAC004M",
         "pharmacyLot": "DIAC003M"
       },
       "난임::XFENT50W": {
@@ -8010,7 +8010,7 @@
         "pharmacyLot": ""
       },
       "난임::XFENT100W": {
-        "roomLot": "",
+        "roomLot": "226207",
         "pharmacyLot": "226207"
       },
       "난임::XFEN500": {
@@ -8026,11 +8026,11 @@
         "pharmacyLot": ""
       },
       "난임::XPROP1T": {
-        "roomLot": "",
+        "roomLot": "16UE4023",
         "pharmacyLot": "16UE4023"
       },
       "난임::XPROP2T": {
-        "roomLot": "",
+        "roomLot": "16WA5801",
         "pharmacyLot": "16WA5801"
       },
       "난임::XKETA5W": {
@@ -8038,7 +8038,7 @@
         "pharmacyLot": ""
       },
       "난임::XMIDZ5W": {
-        "roomLot": "",
+        "roomLot": "26005, 26004, 26001",
         "pharmacyLot": "26004"
       },
       "난임::XMIDZ15W": {
@@ -8046,7 +8046,7 @@
         "pharmacyLot": "25018"
       },
       "난임::XMORPS5W": {
-        "roomLot": "",
+        "roomLot": "26001",
         "pharmacyLot": "26001"
       },
       "난임::XNALB10": {
@@ -8070,7 +8070,7 @@
         "pharmacyLot": "PLY902"
       },
       "난임::XREMIF1W": {
-        "roomLot": "",
+        "roomLot": "DJZ201",
         "pharmacyLot": "DJZ102"
       },
       "DRL::XALFEN1W": {
@@ -8078,7 +8078,7 @@
         "pharmacyLot": ""
       },
       "DRL::XATIV2W": {
-        "roomLot": "",
+        "roomLot": "CWD025, CWD024, CWD021, CWD022",
         "pharmacyLot": "CWD021"
       },
       "DRL::XATIV4W": {
@@ -8086,7 +8086,7 @@
         "pharmacyLot": ""
       },
       "DRL::XDIAZ10W": {
-        "roomLot": "",
+        "roomLot": "DIAC004M",
         "pharmacyLot": "DIAC003M"
       },
       "DRL::XFENT50W": {
@@ -8094,7 +8094,7 @@
         "pharmacyLot": ""
       },
       "DRL::XFENT100W": {
-        "roomLot": "",
+        "roomLot": "226207",
         "pharmacyLot": "226207"
       },
       "DRL::XFEN500": {
@@ -8110,11 +8110,11 @@
         "pharmacyLot": ""
       },
       "DRL::XPROP1T": {
-        "roomLot": "",
+        "roomLot": "16UE4023",
         "pharmacyLot": "16UE4023"
       },
       "DRL::XPROP2T": {
-        "roomLot": "",
+        "roomLot": "16WA5801",
         "pharmacyLot": "16WA5801"
       },
       "DRL::XKETA5W": {
@@ -8122,7 +8122,7 @@
         "pharmacyLot": ""
       },
       "DRL::XMIDZ5W": {
-        "roomLot": "",
+        "roomLot": "26005, 26004, 26001",
         "pharmacyLot": "26004"
       },
       "DRL::XMIDZ15W": {
@@ -8130,7 +8130,7 @@
         "pharmacyLot": "25018"
       },
       "DRL::XMORPS5W": {
-        "roomLot": "",
+        "roomLot": "26001",
         "pharmacyLot": "26001"
       },
       "DRL::XNALB10": {
@@ -8154,7 +8154,7 @@
         "pharmacyLot": "PLY902"
       },
       "DRL::XREMIF1W": {
-        "roomLot": "",
+        "roomLot": "DJZ201",
         "pharmacyLot": "DJZ102"
       },
       "NICU::XALFEN1W": {
@@ -8162,7 +8162,7 @@
         "pharmacyLot": ""
       },
       "NICU::XATIV2W": {
-        "roomLot": "",
+        "roomLot": "CWD025, CWD024, CWD021, CWD022",
         "pharmacyLot": "CWD021"
       },
       "NICU::XATIV4W": {
@@ -8170,7 +8170,7 @@
         "pharmacyLot": ""
       },
       "NICU::XDIAZ10W": {
-        "roomLot": "",
+        "roomLot": "DIAC004M",
         "pharmacyLot": "DIAC003M"
       },
       "NICU::XFENT50W": {
@@ -8178,7 +8178,7 @@
         "pharmacyLot": ""
       },
       "NICU::XFENT100W": {
-        "roomLot": "",
+        "roomLot": "226207",
         "pharmacyLot": "226207"
       },
       "NICU::XFEN500": {
@@ -8194,11 +8194,11 @@
         "pharmacyLot": ""
       },
       "NICU::XPROP1T": {
-        "roomLot": "",
+        "roomLot": "16UE4023",
         "pharmacyLot": "16UE4023"
       },
       "NICU::XPROP2T": {
-        "roomLot": "",
+        "roomLot": "16WA5801",
         "pharmacyLot": "16WA5801"
       },
       "NICU::XKETA5W": {
@@ -8206,7 +8206,7 @@
         "pharmacyLot": ""
       },
       "NICU::XMIDZ5W": {
-        "roomLot": "",
+        "roomLot": "26005, 26004, 26001",
         "pharmacyLot": "26004"
       },
       "NICU::XMIDZ15W": {
@@ -8214,7 +8214,7 @@
         "pharmacyLot": "25018"
       },
       "NICU::XMORPS5W": {
-        "roomLot": "",
+        "roomLot": "26001",
         "pharmacyLot": "26001"
       },
       "NICU::XNALB10": {
@@ -8238,7 +8238,7 @@
         "pharmacyLot": "PLY902"
       },
       "NICU::XREMIF1W": {
-        "roomLot": "",
+        "roomLot": "DJZ201",
         "pharmacyLot": "DJZ102"
       },
       "42::XALFEN1W": {
@@ -8246,7 +8246,7 @@
         "pharmacyLot": ""
       },
       "42::XATIV2W": {
-        "roomLot": "",
+        "roomLot": "CWD025, CWD024, CWD021, CWD022",
         "pharmacyLot": "CWD021"
       },
       "42::XATIV4W": {
@@ -8254,7 +8254,7 @@
         "pharmacyLot": ""
       },
       "42::XDIAZ10W": {
-        "roomLot": "",
+        "roomLot": "DIAC004M",
         "pharmacyLot": "DIAC003M"
       },
       "42::XFENT50W": {
@@ -8262,7 +8262,7 @@
         "pharmacyLot": ""
       },
       "42::XFENT100W": {
-        "roomLot": "",
+        "roomLot": "226207",
         "pharmacyLot": "226207"
       },
       "42::XFEN500": {
@@ -8278,11 +8278,11 @@
         "pharmacyLot": ""
       },
       "42::XPROP1T": {
-        "roomLot": "",
+        "roomLot": "16UE4023",
         "pharmacyLot": "16UE4023"
       },
       "42::XPROP2T": {
-        "roomLot": "",
+        "roomLot": "16WA5801",
         "pharmacyLot": "16WA5801"
       },
       "42::XKETA5W": {
@@ -8290,7 +8290,7 @@
         "pharmacyLot": ""
       },
       "42::XMIDZ5W": {
-        "roomLot": "",
+        "roomLot": "26005, 26004, 26001",
         "pharmacyLot": "26004"
       },
       "42::XMIDZ15W": {
@@ -8298,7 +8298,7 @@
         "pharmacyLot": "25018"
       },
       "42::XMORPS5W": {
-        "roomLot": "",
+        "roomLot": "26001",
         "pharmacyLot": "26001"
       },
       "42::XNALB10": {
@@ -8322,7 +8322,7 @@
         "pharmacyLot": "PLY902"
       },
       "42::XREMIF1W": {
-        "roomLot": "",
+        "roomLot": "DJZ201",
         "pharmacyLot": "DJZ102"
       },
       "51::XALFEN1W": {
@@ -8330,7 +8330,7 @@
         "pharmacyLot": ""
       },
       "51::XATIV2W": {
-        "roomLot": "",
+        "roomLot": "CWD025, CWD024, CWD021, CWD022",
         "pharmacyLot": "CWD021"
       },
       "51::XATIV4W": {
@@ -8338,7 +8338,7 @@
         "pharmacyLot": ""
       },
       "51::XDIAZ10W": {
-        "roomLot": "",
+        "roomLot": "DIAC004M",
         "pharmacyLot": "DIAC003M"
       },
       "51::XFENT50W": {
@@ -8346,7 +8346,7 @@
         "pharmacyLot": ""
       },
       "51::XFENT100W": {
-        "roomLot": "",
+        "roomLot": "226207",
         "pharmacyLot": "226207"
       },
       "51::XFEN500": {
@@ -8362,11 +8362,11 @@
         "pharmacyLot": ""
       },
       "51::XPROP1T": {
-        "roomLot": "",
+        "roomLot": "16UE4023",
         "pharmacyLot": "16UE4023"
       },
       "51::XPROP2T": {
-        "roomLot": "",
+        "roomLot": "16WA5801",
         "pharmacyLot": "16WA5801"
       },
       "51::XKETA5W": {
@@ -8374,7 +8374,7 @@
         "pharmacyLot": ""
       },
       "51::XMIDZ5W": {
-        "roomLot": "",
+        "roomLot": "26005, 26004, 26001",
         "pharmacyLot": "26004"
       },
       "51::XMIDZ15W": {
@@ -8382,7 +8382,7 @@
         "pharmacyLot": "25018"
       },
       "51::XMORPS5W": {
-        "roomLot": "",
+        "roomLot": "26001",
         "pharmacyLot": "26001"
       },
       "51::XNALB10": {
@@ -8406,7 +8406,7 @@
         "pharmacyLot": "PLY902"
       },
       "51::XREMIF1W": {
-        "roomLot": "",
+        "roomLot": "DJZ201",
         "pharmacyLot": "DJZ102"
       },
       "52::XALFEN1W": {
@@ -8414,7 +8414,7 @@
         "pharmacyLot": ""
       },
       "52::XATIV2W": {
-        "roomLot": "",
+        "roomLot": "CWD025, CWD024, CWD021, CWD022",
         "pharmacyLot": "CWD021"
       },
       "52::XATIV4W": {
@@ -8422,7 +8422,7 @@
         "pharmacyLot": ""
       },
       "52::XDIAZ10W": {
-        "roomLot": "",
+        "roomLot": "DIAC004M",
         "pharmacyLot": "DIAC003M"
       },
       "52::XFENT50W": {
@@ -8430,7 +8430,7 @@
         "pharmacyLot": ""
       },
       "52::XFENT100W": {
-        "roomLot": "",
+        "roomLot": "226207",
         "pharmacyLot": "226207"
       },
       "52::XFEN500": {
@@ -8446,11 +8446,11 @@
         "pharmacyLot": ""
       },
       "52::XPROP1T": {
-        "roomLot": "",
+        "roomLot": "16UE4023",
         "pharmacyLot": "16UE4023"
       },
       "52::XPROP2T": {
-        "roomLot": "",
+        "roomLot": "16WA5801",
         "pharmacyLot": "16WA5801"
       },
       "52::XKETA5W": {
@@ -8458,7 +8458,7 @@
         "pharmacyLot": ""
       },
       "52::XMIDZ5W": {
-        "roomLot": "",
+        "roomLot": "26005, 26004, 26001",
         "pharmacyLot": "26004"
       },
       "52::XMIDZ15W": {
@@ -8466,7 +8466,7 @@
         "pharmacyLot": "25018"
       },
       "52::XMORPS5W": {
-        "roomLot": "",
+        "roomLot": "26001",
         "pharmacyLot": "26001"
       },
       "52::XNALB10": {
@@ -8490,7 +8490,7 @@
         "pharmacyLot": "PLY902"
       },
       "52::XREMIF1W": {
-        "roomLot": "",
+        "roomLot": "DJZ201",
         "pharmacyLot": "DJZ102"
       },
       "61::XALFEN1W": {
@@ -8498,7 +8498,7 @@
         "pharmacyLot": ""
       },
       "61::XATIV2W": {
-        "roomLot": "",
+        "roomLot": "CWD025, CWD024, CWD021, CWD022",
         "pharmacyLot": "CWD021"
       },
       "61::XATIV4W": {
@@ -8506,7 +8506,7 @@
         "pharmacyLot": ""
       },
       "61::XDIAZ10W": {
-        "roomLot": "",
+        "roomLot": "DIAC004M",
         "pharmacyLot": "DIAC003M"
       },
       "61::XFENT50W": {
@@ -8514,7 +8514,7 @@
         "pharmacyLot": ""
       },
       "61::XFENT100W": {
-        "roomLot": "",
+        "roomLot": "226207",
         "pharmacyLot": "226207"
       },
       "61::XFEN500": {
@@ -8530,11 +8530,11 @@
         "pharmacyLot": ""
       },
       "61::XPROP1T": {
-        "roomLot": "",
+        "roomLot": "16UE4023",
         "pharmacyLot": "16UE4023"
       },
       "61::XPROP2T": {
-        "roomLot": "",
+        "roomLot": "16WA5801",
         "pharmacyLot": "16WA5801"
       },
       "61::XKETA5W": {
@@ -8542,7 +8542,7 @@
         "pharmacyLot": ""
       },
       "61::XMIDZ5W": {
-        "roomLot": "",
+        "roomLot": "26005, 26004, 26001",
         "pharmacyLot": "26004"
       },
       "61::XMIDZ15W": {
@@ -8550,7 +8550,7 @@
         "pharmacyLot": "25018"
       },
       "61::XMORPS5W": {
-        "roomLot": "",
+        "roomLot": "26001",
         "pharmacyLot": "26001"
       },
       "61::XNALB10": {
@@ -8574,7 +8574,7 @@
         "pharmacyLot": "PLY902"
       },
       "61::XREMIF1W": {
-        "roomLot": "",
+        "roomLot": "DJZ201",
         "pharmacyLot": "DJZ102"
       },
       "62::XALFEN1W": {
@@ -8582,7 +8582,7 @@
         "pharmacyLot": ""
       },
       "62::XATIV2W": {
-        "roomLot": "",
+        "roomLot": "CWD025, CWD024, CWD021, CWD022",
         "pharmacyLot": "CWD021"
       },
       "62::XATIV4W": {
@@ -8590,7 +8590,7 @@
         "pharmacyLot": ""
       },
       "62::XDIAZ10W": {
-        "roomLot": "",
+        "roomLot": "DIAC004M",
         "pharmacyLot": "DIAC003M"
       },
       "62::XFENT50W": {
@@ -8598,7 +8598,7 @@
         "pharmacyLot": ""
       },
       "62::XFENT100W": {
-        "roomLot": "",
+        "roomLot": "226207",
         "pharmacyLot": "226207"
       },
       "62::XFEN500": {
@@ -8614,11 +8614,11 @@
         "pharmacyLot": ""
       },
       "62::XPROP1T": {
-        "roomLot": "",
+        "roomLot": "16UE4023",
         "pharmacyLot": "16UE4023"
       },
       "62::XPROP2T": {
-        "roomLot": "",
+        "roomLot": "16WA5801",
         "pharmacyLot": "16WA5801"
       },
       "62::XKETA5W": {
@@ -8626,7 +8626,7 @@
         "pharmacyLot": ""
       },
       "62::XMIDZ5W": {
-        "roomLot": "",
+        "roomLot": "26005, 26004, 26001",
         "pharmacyLot": "26004"
       },
       "62::XMIDZ15W": {
@@ -8634,7 +8634,7 @@
         "pharmacyLot": "25018"
       },
       "62::XMORPS5W": {
-        "roomLot": "",
+        "roomLot": "26001",
         "pharmacyLot": "26001"
       },
       "62::XNALB10": {
@@ -8658,7 +8658,7 @@
         "pharmacyLot": "PLY902"
       },
       "62::XREMIF1W": {
-        "roomLot": "",
+        "roomLot": "DJZ201",
         "pharmacyLot": "DJZ102"
       },
       "71::XALFEN1W": {
@@ -8666,7 +8666,7 @@
         "pharmacyLot": ""
       },
       "71::XATIV2W": {
-        "roomLot": "",
+        "roomLot": "CWD025, CWD024, CWD021, CWD022",
         "pharmacyLot": "CWD021"
       },
       "71::XATIV4W": {
@@ -8674,7 +8674,7 @@
         "pharmacyLot": ""
       },
       "71::XDIAZ10W": {
-        "roomLot": "",
+        "roomLot": "DIAC004M",
         "pharmacyLot": "DIAC003M"
       },
       "71::XFENT50W": {
@@ -8682,7 +8682,7 @@
         "pharmacyLot": ""
       },
       "71::XFENT100W": {
-        "roomLot": "",
+        "roomLot": "226207",
         "pharmacyLot": "226207"
       },
       "71::XFEN500": {
@@ -8698,11 +8698,11 @@
         "pharmacyLot": ""
       },
       "71::XPROP1T": {
-        "roomLot": "",
+        "roomLot": "16UE4023",
         "pharmacyLot": "16UE4023"
       },
       "71::XPROP2T": {
-        "roomLot": "",
+        "roomLot": "16WA5801",
         "pharmacyLot": "16WA5801"
       },
       "71::XKETA5W": {
@@ -8710,7 +8710,7 @@
         "pharmacyLot": ""
       },
       "71::XMIDZ5W": {
-        "roomLot": "",
+        "roomLot": "26005, 26004, 26001",
         "pharmacyLot": "26004"
       },
       "71::XMIDZ15W": {
@@ -8718,7 +8718,7 @@
         "pharmacyLot": "25018"
       },
       "71::XMORPS5W": {
-        "roomLot": "",
+        "roomLot": "26001",
         "pharmacyLot": "26001"
       },
       "71::XNALB10": {
@@ -8742,7 +8742,7 @@
         "pharmacyLot": "PLY902"
       },
       "71::XREMIF1W": {
-        "roomLot": "",
+        "roomLot": "DJZ201",
         "pharmacyLot": "DJZ102"
       },
       "72::XALFEN1W": {
@@ -8750,7 +8750,7 @@
         "pharmacyLot": ""
       },
       "72::XATIV2W": {
-        "roomLot": "",
+        "roomLot": "CWD025, CWD024, CWD021, CWD022",
         "pharmacyLot": "CWD021"
       },
       "72::XATIV4W": {
@@ -8758,7 +8758,7 @@
         "pharmacyLot": ""
       },
       "72::XDIAZ10W": {
-        "roomLot": "",
+        "roomLot": "DIAC004M",
         "pharmacyLot": "DIAC003M"
       },
       "72::XFENT50W": {
@@ -8766,7 +8766,7 @@
         "pharmacyLot": ""
       },
       "72::XFENT100W": {
-        "roomLot": "",
+        "roomLot": "226207",
         "pharmacyLot": "226207"
       },
       "72::XFEN500": {
@@ -8782,11 +8782,11 @@
         "pharmacyLot": ""
       },
       "72::XPROP1T": {
-        "roomLot": "",
+        "roomLot": "16UE4023",
         "pharmacyLot": "16UE4023"
       },
       "72::XPROP2T": {
-        "roomLot": "",
+        "roomLot": "16WA5801",
         "pharmacyLot": "16WA5801"
       },
       "72::XKETA5W": {
@@ -8794,7 +8794,7 @@
         "pharmacyLot": ""
       },
       "72::XMIDZ5W": {
-        "roomLot": "",
+        "roomLot": "26005, 26004, 26001",
         "pharmacyLot": "26004"
       },
       "72::XMIDZ15W": {
@@ -8802,7 +8802,7 @@
         "pharmacyLot": "25018"
       },
       "72::XMORPS5W": {
-        "roomLot": "",
+        "roomLot": "26001",
         "pharmacyLot": "26001"
       },
       "72::XNALB10": {
@@ -8826,7 +8826,7 @@
         "pharmacyLot": "PLY902"
       },
       "72::XREMIF1W": {
-        "roomLot": "",
+        "roomLot": "DJZ201",
         "pharmacyLot": "DJZ102"
       },
       "81::XALFEN1W": {
@@ -8834,7 +8834,7 @@
         "pharmacyLot": ""
       },
       "81::XATIV2W": {
-        "roomLot": "",
+        "roomLot": "CWD025, CWD024, CWD021, CWD022",
         "pharmacyLot": "CWD021"
       },
       "81::XATIV4W": {
@@ -8842,7 +8842,7 @@
         "pharmacyLot": ""
       },
       "81::XDIAZ10W": {
-        "roomLot": "",
+        "roomLot": "DIAC004M",
         "pharmacyLot": "DIAC003M"
       },
       "81::XFENT50W": {
@@ -8850,7 +8850,7 @@
         "pharmacyLot": ""
       },
       "81::XFENT100W": {
-        "roomLot": "",
+        "roomLot": "226207",
         "pharmacyLot": "226207"
       },
       "81::XFEN500": {
@@ -8866,11 +8866,11 @@
         "pharmacyLot": ""
       },
       "81::XPROP1T": {
-        "roomLot": "",
+        "roomLot": "16UE4023",
         "pharmacyLot": "16UE4023"
       },
       "81::XPROP2T": {
-        "roomLot": "",
+        "roomLot": "16WA5801",
         "pharmacyLot": "16WA5801"
       },
       "81::XKETA5W": {
@@ -8878,7 +8878,7 @@
         "pharmacyLot": ""
       },
       "81::XMIDZ5W": {
-        "roomLot": "",
+        "roomLot": "26005, 26004, 26001",
         "pharmacyLot": "26004"
       },
       "81::XMIDZ15W": {
@@ -8886,7 +8886,7 @@
         "pharmacyLot": "25018"
       },
       "81::XMORPS5W": {
-        "roomLot": "",
+        "roomLot": "26001",
         "pharmacyLot": "26001"
       },
       "81::XNALB10": {
@@ -8910,7 +8910,7 @@
         "pharmacyLot": "PLY902"
       },
       "81::XREMIF1W": {
-        "roomLot": "",
+        "roomLot": "DJZ201",
         "pharmacyLot": "DJZ102"
       },
       "82::XALFEN1W": {
@@ -8918,7 +8918,7 @@
         "pharmacyLot": ""
       },
       "82::XATIV2W": {
-        "roomLot": "",
+        "roomLot": "CWD025, CWD024, CWD021, CWD022",
         "pharmacyLot": "CWD021"
       },
       "82::XATIV4W": {
@@ -8926,7 +8926,7 @@
         "pharmacyLot": ""
       },
       "82::XDIAZ10W": {
-        "roomLot": "",
+        "roomLot": "DIAC004M",
         "pharmacyLot": "DIAC003M"
       },
       "82::XFENT50W": {
@@ -8934,7 +8934,7 @@
         "pharmacyLot": ""
       },
       "82::XFENT100W": {
-        "roomLot": "",
+        "roomLot": "226207",
         "pharmacyLot": "226207"
       },
       "82::XFEN500": {
@@ -8950,11 +8950,11 @@
         "pharmacyLot": ""
       },
       "82::XPROP1T": {
-        "roomLot": "",
+        "roomLot": "16UE4023",
         "pharmacyLot": "16UE4023"
       },
       "82::XPROP2T": {
-        "roomLot": "",
+        "roomLot": "16WA5801",
         "pharmacyLot": "16WA5801"
       },
       "82::XKETA5W": {
@@ -8962,7 +8962,7 @@
         "pharmacyLot": ""
       },
       "82::XMIDZ5W": {
-        "roomLot": "",
+        "roomLot": "26005, 26004, 26001",
         "pharmacyLot": "26004"
       },
       "82::XMIDZ15W": {
@@ -8970,7 +8970,7 @@
         "pharmacyLot": "25018"
       },
       "82::XMORPS5W": {
-        "roomLot": "",
+        "roomLot": "26001",
         "pharmacyLot": "26001"
       },
       "82::XNALB10": {
@@ -8994,7 +8994,7 @@
         "pharmacyLot": "PLY902"
       },
       "82::XREMIF1W": {
-        "roomLot": "",
+        "roomLot": "DJZ201",
         "pharmacyLot": "DJZ102"
       },
       "91::XALFEN1W": {
@@ -9002,7 +9002,7 @@
         "pharmacyLot": ""
       },
       "91::XATIV2W": {
-        "roomLot": "",
+        "roomLot": "CWD025, CWD024, CWD021, CWD022",
         "pharmacyLot": "CWD021"
       },
       "91::XATIV4W": {
@@ -9010,7 +9010,7 @@
         "pharmacyLot": ""
       },
       "91::XDIAZ10W": {
-        "roomLot": "",
+        "roomLot": "DIAC004M",
         "pharmacyLot": "DIAC003M"
       },
       "91::XFENT50W": {
@@ -9018,7 +9018,7 @@
         "pharmacyLot": ""
       },
       "91::XFENT100W": {
-        "roomLot": "",
+        "roomLot": "226207",
         "pharmacyLot": "226207"
       },
       "91::XFEN500": {
@@ -9034,11 +9034,11 @@
         "pharmacyLot": ""
       },
       "91::XPROP1T": {
-        "roomLot": "",
+        "roomLot": "16UE4023",
         "pharmacyLot": "16UE4023"
       },
       "91::XPROP2T": {
-        "roomLot": "",
+        "roomLot": "16WA5801",
         "pharmacyLot": "16WA5801"
       },
       "91::XKETA5W": {
@@ -9046,7 +9046,7 @@
         "pharmacyLot": ""
       },
       "91::XMIDZ5W": {
-        "roomLot": "",
+        "roomLot": "26005, 26004, 26001",
         "pharmacyLot": "26004"
       },
       "91::XMIDZ15W": {
@@ -9054,7 +9054,7 @@
         "pharmacyLot": "25018"
       },
       "91::XMORPS5W": {
-        "roomLot": "",
+        "roomLot": "26001",
         "pharmacyLot": "26001"
       },
       "91::XNALB10": {
@@ -9078,7 +9078,7 @@
         "pharmacyLot": "PLY902"
       },
       "91::XREMIF1W": {
-        "roomLot": "",
+        "roomLot": "DJZ201",
         "pharmacyLot": "DJZ102"
       },
       "92::XALFEN1W": {
@@ -9086,7 +9086,7 @@
         "pharmacyLot": ""
       },
       "92::XATIV2W": {
-        "roomLot": "",
+        "roomLot": "CWD025, CWD024, CWD021, CWD022",
         "pharmacyLot": "CWD021"
       },
       "92::XATIV4W": {
@@ -9094,7 +9094,7 @@
         "pharmacyLot": ""
       },
       "92::XDIAZ10W": {
-        "roomLot": "",
+        "roomLot": "DIAC004M",
         "pharmacyLot": "DIAC003M"
       },
       "92::XFENT50W": {
@@ -9102,7 +9102,7 @@
         "pharmacyLot": ""
       },
       "92::XFENT100W": {
-        "roomLot": "",
+        "roomLot": "226207",
         "pharmacyLot": "226207"
       },
       "92::XFEN500": {
@@ -9118,11 +9118,11 @@
         "pharmacyLot": ""
       },
       "92::XPROP1T": {
-        "roomLot": "",
+        "roomLot": "16UE4023",
         "pharmacyLot": "16UE4023"
       },
       "92::XPROP2T": {
-        "roomLot": "",
+        "roomLot": "16WA5801",
         "pharmacyLot": "16WA5801"
       },
       "92::XKETA5W": {
@@ -9130,7 +9130,7 @@
         "pharmacyLot": ""
       },
       "92::XMIDZ5W": {
-        "roomLot": "",
+        "roomLot": "26005, 26004, 26001",
         "pharmacyLot": "26004"
       },
       "92::XMIDZ15W": {
@@ -9138,7 +9138,7 @@
         "pharmacyLot": "25018"
       },
       "92::XMORPS5W": {
-        "roomLot": "",
+        "roomLot": "26001",
         "pharmacyLot": "26001"
       },
       "92::XNALB10": {
@@ -9162,7 +9162,7 @@
         "pharmacyLot": "PLY902"
       },
       "92::XREMIF1W": {
-        "roomLot": "",
+        "roomLot": "DJZ201",
         "pharmacyLot": "DJZ102"
       },
       "101::XALFEN1W": {
@@ -9170,7 +9170,7 @@
         "pharmacyLot": ""
       },
       "101::XATIV2W": {
-        "roomLot": "",
+        "roomLot": "CWD025, CWD024, CWD021, CWD022",
         "pharmacyLot": "CWD021"
       },
       "101::XATIV4W": {
@@ -9178,7 +9178,7 @@
         "pharmacyLot": ""
       },
       "101::XDIAZ10W": {
-        "roomLot": "",
+        "roomLot": "DIAC004M",
         "pharmacyLot": "DIAC003M"
       },
       "101::XFENT50W": {
@@ -9186,7 +9186,7 @@
         "pharmacyLot": ""
       },
       "101::XFENT100W": {
-        "roomLot": "",
+        "roomLot": "226207",
         "pharmacyLot": "226207"
       },
       "101::XFEN500": {
@@ -9202,11 +9202,11 @@
         "pharmacyLot": ""
       },
       "101::XPROP1T": {
-        "roomLot": "",
+        "roomLot": "16UE4023",
         "pharmacyLot": "16UE4023"
       },
       "101::XPROP2T": {
-        "roomLot": "",
+        "roomLot": "16WA5801",
         "pharmacyLot": "16WA5801"
       },
       "101::XKETA5W": {
@@ -9214,7 +9214,7 @@
         "pharmacyLot": ""
       },
       "101::XMIDZ5W": {
-        "roomLot": "",
+        "roomLot": "26005, 26004, 26001",
         "pharmacyLot": "26004"
       },
       "101::XMIDZ15W": {
@@ -9222,7 +9222,7 @@
         "pharmacyLot": "25018"
       },
       "101::XMORPS5W": {
-        "roomLot": "",
+        "roomLot": "26001",
         "pharmacyLot": "26001"
       },
       "101::XNALB10": {
@@ -9246,7 +9246,7 @@
         "pharmacyLot": "PLY902"
       },
       "101::XREMIF1W": {
-        "roomLot": "",
+        "roomLot": "DJZ201",
         "pharmacyLot": "DJZ102"
       },
       "102::XALFEN1W": {
@@ -9254,7 +9254,7 @@
         "pharmacyLot": ""
       },
       "102::XATIV2W": {
-        "roomLot": "",
+        "roomLot": "CWD025, CWD024, CWD021, CWD022",
         "pharmacyLot": "CWD021"
       },
       "102::XATIV4W": {
@@ -9262,7 +9262,7 @@
         "pharmacyLot": ""
       },
       "102::XDIAZ10W": {
-        "roomLot": "",
+        "roomLot": "DIAC004M",
         "pharmacyLot": "DIAC003M"
       },
       "102::XFENT50W": {
@@ -9270,7 +9270,7 @@
         "pharmacyLot": ""
       },
       "102::XFENT100W": {
-        "roomLot": "",
+        "roomLot": "226207",
         "pharmacyLot": "226207"
       },
       "102::XFEN500": {
@@ -9286,11 +9286,11 @@
         "pharmacyLot": ""
       },
       "102::XPROP1T": {
-        "roomLot": "",
+        "roomLot": "16UE4023",
         "pharmacyLot": "16UE4023"
       },
       "102::XPROP2T": {
-        "roomLot": "",
+        "roomLot": "16WA5801",
         "pharmacyLot": "16WA5801"
       },
       "102::XKETA5W": {
@@ -9298,7 +9298,7 @@
         "pharmacyLot": ""
       },
       "102::XMIDZ5W": {
-        "roomLot": "",
+        "roomLot": "26005, 26004, 26001",
         "pharmacyLot": "26004"
       },
       "102::XMIDZ15W": {
@@ -9306,7 +9306,7 @@
         "pharmacyLot": "25018"
       },
       "102::XMORPS5W": {
-        "roomLot": "",
+        "roomLot": "26001",
         "pharmacyLot": "26001"
       },
       "102::XNALB10": {
@@ -9330,7 +9330,7 @@
         "pharmacyLot": "PLY902"
       },
       "102::XREMIF1W": {
-        "roomLot": "",
+        "roomLot": "DJZ201",
         "pharmacyLot": "DJZ102"
       },
       "111::XALFEN1W": {
@@ -9338,7 +9338,7 @@
         "pharmacyLot": ""
       },
       "111::XATIV2W": {
-        "roomLot": "",
+        "roomLot": "CWD025, CWD024, CWD021, CWD022",
         "pharmacyLot": "CWD021"
       },
       "111::XATIV4W": {
@@ -9346,7 +9346,7 @@
         "pharmacyLot": ""
       },
       "111::XDIAZ10W": {
-        "roomLot": "",
+        "roomLot": "DIAC004M",
         "pharmacyLot": "DIAC003M"
       },
       "111::XFENT50W": {
@@ -9354,7 +9354,7 @@
         "pharmacyLot": ""
       },
       "111::XFENT100W": {
-        "roomLot": "",
+        "roomLot": "226207",
         "pharmacyLot": "226207"
       },
       "111::XFEN500": {
@@ -9370,11 +9370,11 @@
         "pharmacyLot": ""
       },
       "111::XPROP1T": {
-        "roomLot": "",
+        "roomLot": "16UE4023",
         "pharmacyLot": "16UE4023"
       },
       "111::XPROP2T": {
-        "roomLot": "",
+        "roomLot": "16WA5801",
         "pharmacyLot": "16WA5801"
       },
       "111::XKETA5W": {
@@ -9382,7 +9382,7 @@
         "pharmacyLot": ""
       },
       "111::XMIDZ5W": {
-        "roomLot": "",
+        "roomLot": "26005, 26004, 26001",
         "pharmacyLot": "26004"
       },
       "111::XMIDZ15W": {
@@ -9390,7 +9390,7 @@
         "pharmacyLot": "25018"
       },
       "111::XMORPS5W": {
-        "roomLot": "",
+        "roomLot": "26001",
         "pharmacyLot": "26001"
       },
       "111::XNALB10": {
@@ -9414,7 +9414,7 @@
         "pharmacyLot": "PLY902"
       },
       "111::XREMIF1W": {
-        "roomLot": "",
+        "roomLot": "DJZ201",
         "pharmacyLot": "DJZ102"
       },
       "112::XALFEN1W": {
@@ -9422,7 +9422,7 @@
         "pharmacyLot": ""
       },
       "112::XATIV2W": {
-        "roomLot": "",
+        "roomLot": "CWD025, CWD024, CWD021, CWD022",
         "pharmacyLot": "CWD021"
       },
       "112::XATIV4W": {
@@ -9430,7 +9430,7 @@
         "pharmacyLot": ""
       },
       "112::XDIAZ10W": {
-        "roomLot": "",
+        "roomLot": "DIAC004M",
         "pharmacyLot": "DIAC003M"
       },
       "112::XFENT50W": {
@@ -9438,7 +9438,7 @@
         "pharmacyLot": ""
       },
       "112::XFENT100W": {
-        "roomLot": "",
+        "roomLot": "226207",
         "pharmacyLot": "226207"
       },
       "112::XFEN500": {
@@ -9454,11 +9454,11 @@
         "pharmacyLot": ""
       },
       "112::XPROP1T": {
-        "roomLot": "",
+        "roomLot": "16UE4023",
         "pharmacyLot": "16UE4023"
       },
       "112::XPROP2T": {
-        "roomLot": "",
+        "roomLot": "16WA5801",
         "pharmacyLot": "16WA5801"
       },
       "112::XKETA5W": {
@@ -9466,7 +9466,7 @@
         "pharmacyLot": ""
       },
       "112::XMIDZ5W": {
-        "roomLot": "",
+        "roomLot": "26005, 26004, 26001",
         "pharmacyLot": "26004"
       },
       "112::XMIDZ15W": {
@@ -9474,7 +9474,7 @@
         "pharmacyLot": "25018"
       },
       "112::XMORPS5W": {
-        "roomLot": "",
+        "roomLot": "26001",
         "pharmacyLot": "26001"
       },
       "112::XNALB10": {
@@ -9498,7 +9498,7 @@
         "pharmacyLot": "PLY902"
       },
       "112::XREMIF1W": {
-        "roomLot": "",
+        "roomLot": "DJZ201",
         "pharmacyLot": "DJZ102"
       },
       "121::XALFEN1W": {
@@ -9506,7 +9506,7 @@
         "pharmacyLot": ""
       },
       "121::XATIV2W": {
-        "roomLot": "",
+        "roomLot": "CWD025, CWD024, CWD021, CWD022",
         "pharmacyLot": "CWD021"
       },
       "121::XATIV4W": {
@@ -9514,7 +9514,7 @@
         "pharmacyLot": ""
       },
       "121::XDIAZ10W": {
-        "roomLot": "",
+        "roomLot": "DIAC004M",
         "pharmacyLot": "DIAC003M"
       },
       "121::XFENT50W": {
@@ -9522,7 +9522,7 @@
         "pharmacyLot": ""
       },
       "121::XFENT100W": {
-        "roomLot": "",
+        "roomLot": "226207",
         "pharmacyLot": "226207"
       },
       "121::XFEN500": {
@@ -9538,11 +9538,11 @@
         "pharmacyLot": ""
       },
       "121::XPROP1T": {
-        "roomLot": "",
+        "roomLot": "16UE4023",
         "pharmacyLot": "16UE4023"
       },
       "121::XPROP2T": {
-        "roomLot": "",
+        "roomLot": "16WA5801",
         "pharmacyLot": "16WA5801"
       },
       "121::XKETA5W": {
@@ -9550,7 +9550,7 @@
         "pharmacyLot": ""
       },
       "121::XMIDZ5W": {
-        "roomLot": "",
+        "roomLot": "26005, 26004, 26001",
         "pharmacyLot": "26004"
       },
       "121::XMIDZ15W": {
@@ -9558,7 +9558,7 @@
         "pharmacyLot": "25018"
       },
       "121::XMORPS5W": {
-        "roomLot": "",
+        "roomLot": "26001",
         "pharmacyLot": "26001"
       },
       "121::XNALB10": {
@@ -9582,10 +9582,10 @@
         "pharmacyLot": "PLY902"
       },
       "121::XREMIF1W": {
-        "roomLot": "",
+        "roomLot": "DJZ201",
         "pharmacyLot": "DJZ102"
       }
     },
-    "narcoticLotFileName": "의약품_재고_상세_20260704.xls"
+    "narcoticLotFileName": "의약품_재고_상세_20260706.xls"
   }
 }
