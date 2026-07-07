@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-07T03:03:23.398Z",
-  "clientId": "dd51fd45-c3d2-44fc-be97-870b18725507",
+  "updatedAt": "2026-07-07T03:25:52.128Z",
+  "clientId": "c62dbb57-d4ac-4fd3-b8a2-8436412c60d3",
   "state": {
     "stockDrugs": [
       {
@@ -7017,7 +7017,7 @@
           "text": "마약류 저장 시설의 개폐와 시건 장치에 이상이 없다.",
           "id": "narcotic-DREMM-0",
           "status": "bad",
-          "note": "Fvfjfj"
+          "note": ""
         },
         {
           "section": "마약류 관리",
@@ -7084,7 +7084,7 @@
           "id": "narcotic:DREMM",
           "roomName": "DREMM",
           "result": "확인 필요",
-          "details": "점검 사항: Fvfjfj"
+          "details": "점검 사항: 마약류 저장 시설의 개폐와 시건 장치에 이상이 없다. 확인 필요"
         },
         {
           "id": "narcotic:ER",
