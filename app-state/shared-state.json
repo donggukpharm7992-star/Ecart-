@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-07T02:33:48.434Z",
-  "clientId": "c62dbb57-d4ac-4fd3-b8a2-8436412c60d3",
+  "updatedAt": "2026-07-07T02:37:09.257Z",
+  "clientId": "dd51fd45-c3d2-44fc-be97-870b18725507",
   "state": {
     "stockDrugs": [
       {
@@ -6598,11 +6598,6 @@
         "requiredQty": 5
       },
       {
-        "roomId": "GICLA",
-        "drugCode": "XATIV2W",
-        "requiredQty": 2
-      },
-      {
         "roomId": "MICU",
         "drugCode": "XATIV2W",
         "requiredQty": 3
@@ -6686,11 +6681,6 @@
         "roomId": "ER",
         "drugCode": "XKETA5W",
         "requiredQty": 2
-      },
-      {
-        "roomId": "GICLA",
-        "drugCode": "XKETA5W",
-        "requiredQty": 5
       },
       {
         "roomId": "MICU",
@@ -7861,10 +7851,6 @@
         "roomLot": "",
         "pharmacyLot": ""
       },
-      "GICLA::XATIV2W": {
-        "roomLot": "",
-        "pharmacyLot": "CWD021"
-      },
       "GICLA::XATIV4W": {
         "roomLot": "",
         "pharmacyLot": "CVD007"
@@ -7900,10 +7886,6 @@
       "GICLA::XPROP2T": {
         "roomLot": "",
         "pharmacyLot": "16WA5801"
-      },
-      "GICLA::XKETA5W": {
-        "roomLot": "",
-        "pharmacyLot": "VDJ502"
       },
       "GICLA::XMIDZ5W": {
         "roomLot": "25080",
