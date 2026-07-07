@@ -3,6 +3,8 @@ import {
   buildInspectionCycleResetRoundSummaryDraft,
   buildNarcoticRoundSummaryDraft,
   buildRoundSummaryDraft,
+  materializeRoundSummaryDraft,
+  refreshRoundSummaryDraftFromGenerated,
   summarizeChecklistIssues,
 } from "./roundSummary";
 
@@ -53,6 +55,24 @@ describe("round summary draft", () => {
         details: "적합",
       },
     ]);
+  });
+
+  it("does not repeat the same linked checklist note under stock and E-cart", () => {
+    const draft = buildRoundSummaryDraft({
+      inspectionPeriod: "2026-07",
+      stockRooms: [
+        {
+          id: "42W",
+          label: "42병동",
+          stockChecklist: [{ section: "비품약", text: "수량 일치", status: "bad", note: "수량 재확인 필요" }],
+          ecartChecklist: [{ section: "E-cart", text: "봉인지 확인", status: "bad", note: "수량 재확인 필요" }],
+        },
+      ],
+      ecartOnlyTargets: [],
+      commonGuidance: "안내",
+    });
+
+    expect(draft.rows[0].details).toBe("비품약: 수량 재확인 필요");
   });
 
   it("resets editable issue text while preserving row order, room names, and 91W non-operating result", () => {
@@ -119,5 +139,62 @@ describe("round summary draft", () => {
     ]);
     expect(draft.commonGuidance).toBe("점검 사항\n1. 수량 이상 없음");
     expect(draft.closingNote).toBe("간호부의 지속적이고 적극적인 협조 항상 감사드립니다.");
+  });
+
+  it("materializes a generated draft without sharing editable row references", () => {
+    const generatedDraft = {
+      title: "Generated",
+      inspectionPeriod: "2026-07",
+      commonGuidance: "Guide",
+      closingNote: "Close",
+      rows: [{ id: "narcotic:42", roomName: "42W", result: "OK", details: "generated" }],
+    };
+
+    const draft = materializeRoundSummaryDraft(null, generatedDraft);
+    draft.rows[0].details = "edited";
+
+    expect(draft).not.toBe(generatedDraft);
+    expect(draft.rows[0]).not.toBe(generatedDraft.rows[0]);
+    expect(generatedDraft.rows[0].details).toBe("generated");
+  });
+
+  it("keeps an existing draft when materializing", () => {
+    const existingDraft = {
+      title: "Existing",
+      inspectionPeriod: "2026-07",
+      commonGuidance: "Guide",
+      closingNote: "Close",
+      rows: [{ id: "narcotic:42", roomName: "42W", result: "Needs review", details: "manual memo" }],
+    };
+    const generatedDraft = {
+      ...existingDraft,
+      title: "Generated",
+      rows: [{ id: "narcotic:42", roomName: "42W", result: "OK", details: "generated" }],
+    };
+
+    expect(materializeRoundSummaryDraft(existingDraft, generatedDraft)).toBe(existingDraft);
+  });
+
+  it("refreshes stored narcotic draft rows from the latest generated checklist result", () => {
+    const storedDraft = {
+      title: "Narcotic summary",
+      inspectionPeriod: "2026-07",
+      commonGuidance: "Guide",
+      closingNote: "Close",
+      rows: [{ id: "narcotic:DREMM", roomName: "DREMM", result: "OK", details: "OK" }],
+    };
+    const generatedDraft = {
+      ...storedDraft,
+      rows: [{ id: "narcotic:DREMM", roomName: "DREMM", result: "Needs review", details: "Checklist: Fvfjfj" }],
+    };
+
+    const refreshed = refreshRoundSummaryDraftFromGenerated(storedDraft, generatedDraft);
+
+    expect(refreshed.rows[0]).toEqual({
+      id: "narcotic:DREMM",
+      roomName: "DREMM",
+      result: "Needs review",
+      details: "Checklist: Fvfjfj",
+    });
   });
 });

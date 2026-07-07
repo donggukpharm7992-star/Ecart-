@@ -35,6 +35,46 @@ export type RoundSummaryDraft = {
   closingNote: string;
 };
 
+export function cloneRoundSummaryDraft(draft: RoundSummaryDraft): RoundSummaryDraft {
+  return {
+    ...draft,
+    rows: draft.rows.map((row) => ({ ...row })),
+  };
+}
+
+export function materializeRoundSummaryDraft(currentDraft: RoundSummaryDraft | null, generatedDraft: RoundSummaryDraft): RoundSummaryDraft {
+  return currentDraft ?? cloneRoundSummaryDraft(generatedDraft);
+}
+
+export function refreshRoundSummaryDraftFromGenerated(
+  currentDraft: RoundSummaryDraft | null,
+  generatedDraft: RoundSummaryDraft,
+): RoundSummaryDraft {
+  if (!currentDraft) return cloneRoundSummaryDraft(generatedDraft);
+
+  const generatedRowsById = new Map(generatedDraft.rows.map((row) => [row.id, row]));
+  const currentRowIds = new Set(currentDraft.rows.map((row) => row.id));
+  const refreshedRows = currentDraft.rows.map((row) => {
+    const generatedRow = generatedRowsById.get(row.id);
+    if (!generatedRow) return row;
+    return {
+      ...row,
+      roomName: generatedRow.roomName,
+      result: generatedRow.result,
+      details: generatedRow.details,
+    };
+  });
+  for (const generatedRow of generatedDraft.rows) {
+    if (!currentRowIds.has(generatedRow.id)) refreshedRows.push({ ...generatedRow });
+  }
+
+  return {
+    ...currentDraft,
+    title: generatedDraft.title,
+    rows: refreshedRows,
+  };
+}
+
 export type RoundSummaryInput = {
   inspectionPeriod: string;
   stockRooms: StockSummaryInput[];
@@ -83,9 +123,11 @@ export function summarizeChecklistIssues(items: SummaryChecklistItem[]) {
 }
 
 function formatDetails(stockIssues: string[], ecartIssues: string[]) {
+  const stockIssueSet = new Set(stockIssues);
+  const uniqueEcartIssues = ecartIssues.filter((issue) => !stockIssueSet.has(issue));
   const lines = [
     ...stockIssues.map((issue) => `비품약: ${issue}`),
-    ...ecartIssues.map((issue) => `E-cart: ${issue}`),
+    ...uniqueEcartIssues.map((issue) => `E-cart: ${issue}`),
   ];
 
   return lines.length > 0 ? lines.join("\n") : "적합";

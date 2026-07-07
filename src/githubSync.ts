@@ -66,7 +66,6 @@ export function shouldApplyRemoteState({
   hasUnsavedLocalChanges?: boolean;
 }) {
   if (remoteClientId === clientId) return false;
-  if (!hasUnsavedLocalChanges) return true;
   return Date.parse(remoteUpdatedAt) > Date.parse(localUpdatedAt || "1970-01-01T00:00:00.000Z");
 }
 

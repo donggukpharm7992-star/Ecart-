@@ -54,6 +54,7 @@ import {
   getEcartDefaultState,
   getInitialAppMode,
   getInitialMasterKindFilter,
+  isMasterKindFilterDisabled,
   getLabelModeOptions,
   getStockChecklistDefaultState,
   getStockGuideClassName,
@@ -67,6 +68,7 @@ import {
   matchesDrug,
   matchesMaster,
   matchesMasterRoom,
+  matchesMasterSearch,
   nicuTarget,
   normalizeChecklistRows,
   normalizeEcartInspectionState,
@@ -74,7 +76,7 @@ import {
   normalizeLabelCautionLabels,
   removeStockDrugRecords,
   resolveDrugLabelPrintRow,
-  resolveMasterLabelRoomId,
+  resolveMasterLabelRoomIds,
   stockGuideSections,
   stockRoomEcartLinks,
   stockKey,
@@ -119,6 +121,8 @@ import {
   buildInspectionCycleResetRoundSummaryDraft,
   buildNarcoticRoundSummaryDraft,
   buildRoundSummaryDraft,
+  materializeRoundSummaryDraft,
+  refreshRoundSummaryDraftFromGenerated,
   type RoundSummaryDraft,
   type RoundSummaryRow,
 } from "./roundSummary";
@@ -781,6 +785,7 @@ export function App() {
   );
   const [narcoticExcelFileName, setNarcoticExcelFileName] = useState(persistedState.narcoticLotFileName ?? "");
   const [showSyncSettings, setShowSyncSettings] = useState(false);
+  const [showViewerLinks, setShowViewerLinks] = useState(false);
   const [syncStatus, setSyncStatus] = useState<SyncStatus>({ mode: "syncing", message: "자동 저장 서버 연결 중..." });
   const [isSyncConfigReady, setIsSyncConfigReady] = useState(false);
   const [pdfStatus, setPdfStatus] = useState<PdfStatus>("idle");
@@ -948,7 +953,7 @@ export function App() {
     };
     setSyncStatus({ mode: "syncing", message: "자동 저장 중..." });
     try {
-      const result = await saveServerState(envelope, { baseSha: remoteShaRef.current });
+      const result = await saveServerState(envelope, { baseSha: remoteShaRef.current, forceOnConflict: true });
       remoteShaRef.current = result.sha;
       localUpdatedAtRef.current = updatedAt;
       hasUnsavedLocalChangesRef.current = false;
@@ -962,7 +967,7 @@ export function App() {
   }
 
   async function forceUploadCurrentDeviceState() {
-    if (!latestStateRef.current) return;
+    const currentState = persistedAppState;
     const confirmed = window.confirm(
       "이 기기에 남아 있는 현재 입력 내용을 PC/모바일 공유 상태로 덮어씁니다. 모바일에서 점검한 내용과 병동 순회점검표 내용을 PC로 옮길 때만 사용하세요.",
     );
@@ -973,7 +978,7 @@ export function App() {
       version: 1,
       updatedAt,
       clientId: syncClientId,
-      state: latestStateRef.current,
+      state: currentState,
     };
 
     setSyncStatus({ mode: "syncing", message: "이 기기 내용으로 서버 반영 중..." });
@@ -1010,7 +1015,7 @@ export function App() {
   }
 
   async function pullNarcoticInspectionStateFromServer() {
-    const localState = latestStateRef.current ?? persistedAppState;
+    const localState = persistedAppState;
     setSyncStatus({ mode: "syncing", message: "비치마약류 점검 내용 불러오는 중..." });
     try {
       const remote = await loadServerState<PersistedAppState>();
@@ -1033,7 +1038,11 @@ export function App() {
   }
 
   async function saveNarcoticInspectionStateToServer() {
-    const localState = latestStateRef.current ?? persistedAppState;
+    const localState = persistedAppState;
+    const localNarcoticState = {
+      ...localState,
+      narcoticRoundSummaryDraft: refreshRoundSummaryDraftFromGenerated(localState.narcoticRoundSummaryDraft, generatedNarcoticRoundSummaryDraft),
+    };
     const confirmed = window.confirm(
       "현재 기기의 비치마약류 체크, 3개월 미만 날짜, 체크리스트 메모, LOT, 순회점검표 내용을 PC/모바일 공유 상태로 저장합니다.",
     );
@@ -1042,8 +1051,8 @@ export function App() {
     setSyncStatus({ mode: "syncing", message: "비치마약류 점검 내용 저장 중..." });
     try {
       const remote = await loadServerState<PersistedAppState>();
-      const baseState = remote ? ({ ...localState, ...remote.envelope.state } as PersistedAppState) : localState;
-      const mergedState = mergeNarcoticInspectionFields(baseState, localState);
+      const baseState = remote ? ({ ...localNarcoticState, ...remote.envelope.state } as PersistedAppState) : localNarcoticState;
+      const mergedState = mergeNarcoticInspectionFields(baseState, localNarcoticState);
       const updatedAt = new Date().toISOString();
       const envelope: RemoteStateEnvelope<PersistedAppState> = {
         version: 1,
@@ -1051,7 +1060,7 @@ export function App() {
         clientId: syncClientId,
         state: mergedState,
       };
-      const result = await saveServerState(envelope, remote?.sha ? { baseSha: remote.sha } : { force: true });
+      const result = await saveServerState(envelope, remote?.sha ? { baseSha: remote.sha, forceOnConflict: true } : { force: true });
       remoteShaRef.current = result.sha;
       localUpdatedAtRef.current = updatedAt;
       hasUnsavedLocalChangesRef.current = false;
@@ -1308,16 +1317,16 @@ export function App() {
     () => filterMasterRowsByKind(stockedMasterRows, masterKindFilter),
     [masterKindFilter, stockedMasterRows],
   );
-  const activeMasterLabelRoomId = useMemo(
-    () => resolveMasterLabelRoomId(masterQuery, [...stockRooms, ...currentNarcoticRooms]),
+  const activeMasterLabelRoomIds = useMemo(
+    () => resolveMasterLabelRoomIds(masterQuery, [...stockRooms, ...currentNarcoticRooms]),
     [currentNarcoticRooms, masterQuery, stockRooms],
   );
   const filteredMasterRows = useMemo(
     () =>
-      activeMasterLabelRoomId
-        ? visibleMasterRows.filter((row) => matchesMasterRoom(row, activeMasterLabelRoomId))
-        : visibleMasterRows.filter((row) => matchesMaster(row, masterQuery.trim().toLowerCase())),
-    [activeMasterLabelRoomId, visibleMasterRows, masterQuery],
+      visibleMasterRows.filter((row) =>
+        matchesMasterSearch(row, masterQuery.trim().toLowerCase(), activeMasterLabelRoomIds),
+      ),
+    [activeMasterLabelRoomIds, visibleMasterRows, masterQuery],
   );
   const assignmentDrugs = useMemo(
     () => sortStockDrugsByName(isNarcoticViewer ? narcoticDrugs : [...stockDrugs, ...narcoticDrugs]),
@@ -1414,6 +1423,7 @@ export function App() {
   const selectedMasterRow = filteredMasterRows[0];
   const showMasterQuickView = masterQuery.trim().length > 0;
   const labelModeOptions = useMemo(() => getLabelModeOptions(appMode), [appMode]);
+  const masterLabelRoomIdForRow = (row: MasterRow) => activeMasterLabelRoomIds.find((roomId) => matchesMasterRoom(row, roomId));
   const labelSearchRows = useMemo(() => {
     const trimmed = labelQuery.trim().toLowerCase();
     const rows = trimmed ? visibleMasterRows.filter((row) => matchesMaster(row, trimmed)) : filteredMasterRows;
@@ -1439,9 +1449,9 @@ export function App() {
   const narcoticMasterLabelRows = useMemo(
     () =>
       narcoticMasterRowsForLabels.map((row) =>
-        buildNarcoticMasterLabelData(row, row.masterKind === "narcotic" ? "마약" : "향정", activeMasterLabelRoomId),
+        buildNarcoticMasterLabelData(row, row.masterKind === "narcotic" ? "마약" : "향정", masterLabelRoomIdForRow(row)),
       ),
-    [activeMasterLabelRoomId, narcoticMasterRowsForLabels],
+    [activeMasterLabelRoomIds, narcoticMasterRowsForLabels],
   );
   const allNarcoticFileLabelRows = useMemo(() => NARCOTIC_LABEL_ROWS.map(buildNarcoticFileLabelData), []);
   const filteredNarcoticFileLabelRows = useMemo(() => {
@@ -1450,8 +1460,8 @@ export function App() {
     return rows.slice(0, 80).map(buildNarcoticFileLabelData);
   }, [labelQuery]);
   const stockLabelBaseRows = useMemo(
-    () => labelSearchRows.map((row) => buildStockLabelData(row, "stock", activeMasterLabelRoomId)),
-    [activeMasterLabelRoomId, labelSearchRows],
+    () => labelSearchRows.map((row) => buildStockLabelData(row, "stock", masterLabelRoomIdForRow(row))),
+    [activeMasterLabelRoomIds, labelSearchRows],
   );
   const allStockLabelRows = useMemo(() => visibleMasterRows.map((row) => buildStockLabelData(row, "stock")), [visibleMasterRows]);
   const hospitalDrugRowsByLabelId = useMemo(
@@ -1829,6 +1839,7 @@ export function App() {
   }
 
   function openNarcoticRoundSummary() {
+    setNarcoticRoundSummaryDraft((prev) => refreshRoundSummaryDraftFromGenerated(prev, generatedNarcoticRoundSummaryDraft));
     setRoundSummaryMode("narcotic");
     setShowMaster(false);
     setShowRoundSummary(true);
@@ -2078,61 +2089,17 @@ export function App() {
   }
 
   function updateStockChecklistNoteForRoom(roomId: string, id: string, note: string) {
-    const stockChecklist = getStockChecklistDefaultState(stockChecklistByRoom, roomId);
-    const index = stockChecklist.findIndex((item) => item.id === id);
-
     setStockChecklistByRoom((prev) => {
       const current = getStockChecklistDefaultState(prev, roomId);
       return { ...prev, [roomId]: updateChecklistRows(current, id, { note }) };
     });
-
-    const ecartLink = stockRoomEcartLinks.get(roomId);
-    if (ecartLink && index >= 0) {
-      const ecartKey = makeEcartKey(ecartLink.tab, ecartLink.targetId);
-      setEcartByTarget((prev) => {
-        const currentEcart = getEcartDefaultState(prev, ecartLink.tab, ecartKey);
-        if (index < currentEcart.checklist.length) {
-          const ecartId = currentEcart.checklist[index].id;
-          return {
-            ...prev,
-            [ecartKey]: {
-              ...currentEcart,
-              checklist: updateChecklistRows(currentEcart.checklist, ecartId, { note }),
-            },
-          };
-        }
-        return prev;
-      });
-    }
   }
 
   function updateStockChecklistStatusForRoom(roomId: string, id: string, status: CheckStatus) {
-    const stockChecklist = getStockChecklistDefaultState(stockChecklistByRoom, roomId);
-    const index = stockChecklist.findIndex((item) => item.id === id);
-
     setStockChecklistByRoom((prev) => {
       const current = getStockChecklistDefaultState(prev, roomId);
       return { ...prev, [roomId]: updateChecklistRows(current, id, { status }) };
     });
-
-    const ecartLink = stockRoomEcartLinks.get(roomId);
-    if (ecartLink && index >= 0) {
-      const ecartKey = makeEcartKey(ecartLink.tab, ecartLink.targetId);
-      setEcartByTarget((prev) => {
-        const currentEcart = getEcartDefaultState(prev, ecartLink.tab, ecartKey);
-        if (index < currentEcart.checklist.length) {
-          const ecartId = currentEcart.checklist[index].id;
-          return {
-            ...prev,
-            [ecartKey]: {
-              ...currentEcart,
-              checklist: updateChecklistRows(currentEcart.checklist, ecartId, { status }),
-            },
-          };
-        }
-        return prev;
-      });
-    }
   }
 
   // ── Narcotic checklist/state helpers ──
@@ -2160,9 +2127,11 @@ export function App() {
   }
   function updateNarcoticCount(roomId: string, drugCode: string, value: string) {
     const count = Number.parseInt(value, 10);
+    markImmediateLocalChange();
     setNarcoticAllocations((prev) => updateAllocationQuantity(prev, roomId, drugCode, Number.isNaN(count) ? 0 : count));
   }
   function deleteNarcoticItem(roomId: string, drugCode: string) {
+    markImmediateLocalChange();
     setNarcoticAllocations((prev) => deleteAllocation(prev, roomId, drugCode));
     setNarcoticCheckedItems((prev) => {
       const next = { ...prev };
@@ -2174,12 +2143,14 @@ export function App() {
       delete next[stockKey(roomId, drugCode)];
       return next;
     });
+    setNarcoticLotAssignments((prev) => {
+      const next = { ...prev };
+      delete next[stockKey(roomId, drugCode)];
+      return next;
+    });
   }
 
   function updateEcartChecklistNote(id: string, note: string) {
-    const currentEcart = getEcartDefaultState(ecartByTarget, activeEcartTab, activeEcartKey);
-    const index = currentEcart.checklist.findIndex((item) => item.id === id);
-
     setEcartByTarget((prev) => {
       const current = getEcartDefaultState(prev, activeEcartTab, activeEcartKey);
       return {
@@ -2190,27 +2161,9 @@ export function App() {
         },
       };
     });
-
-    const roomId = [...stockRoomEcartLinks.entries()].find(
-      ([_, link]) => makeEcartKey(link.tab, link.targetId) === activeEcartKey
-    )?.[0];
-
-    if (roomId && index >= 0) {
-      setStockChecklistByRoom((prev) => {
-        const currentStock = getStockChecklistDefaultState(prev, roomId);
-        if (index < currentStock.length) {
-          const stockId = currentStock[index].id;
-          return { ...prev, [roomId]: updateChecklistRows(currentStock, stockId, { note }) };
-        }
-        return prev;
-      });
-    }
   }
 
   function updateEcartChecklistStatus(id: string, status: CheckStatus) {
-    const currentEcart = getEcartDefaultState(ecartByTarget, activeEcartTab, activeEcartKey);
-    const index = currentEcart.checklist.findIndex((item) => item.id === id);
-
     setEcartByTarget((prev) => {
       const current = getEcartDefaultState(prev, activeEcartTab, activeEcartKey);
       return {
@@ -2221,21 +2174,6 @@ export function App() {
         },
       };
     });
-
-    const roomId = [...stockRoomEcartLinks.entries()].find(
-      ([_, link]) => makeEcartKey(link.tab, link.targetId) === activeEcartKey
-    )?.[0];
-
-    if (roomId && index >= 0) {
-      setStockChecklistByRoom((prev) => {
-        const currentStock = getStockChecklistDefaultState(prev, roomId);
-        if (index < currentStock.length) {
-          const stockId = currentStock[index].id;
-          return { ...prev, [roomId]: updateChecklistRows(currentStock, stockId, { status }) };
-        }
-        return prev;
-      });
-    }
   }
 
   function updateRoundSummaryDraft(patch: Partial<Omit<RoundSummaryDraft, "rows">>) {
@@ -2381,7 +2319,7 @@ export function App() {
     setLabelMode(mode);
     setLabelPrintSelections(
       selectedLabelRows.map((row) => {
-        const labelRow = buildStockLabelData(row, mode, activeMasterLabelRoomId);
+        const labelRow = buildStockLabelData(row, mode, masterLabelRoomIdForRow(row));
         return {
           id: labelRow.id,
           mode: labelRow.kind,
@@ -2921,10 +2859,10 @@ export function App() {
         ? "뷰어 전용"
         : "병동 비품약 & E-cart 점검";
   const headerTitle = isPharmacyViewer
-    ? "약제팀 라벨 뷰어"
+    ? "약제팀 라벨 마스터 관리"
     : isNarcoticViewer
       ? showMaster
-        ? "전체 약품 마스터"
+        ? "병동 약품 라벨 마스터관리"
         : "비치마약류 관리"
       : isViewerMode
         ? "전체 약품 마스터"
@@ -2953,6 +2891,10 @@ export function App() {
                   <RefreshCw size={18} />
                   자동 저장 상태
                 </button>
+                <button className={`admin-toggle ${showViewerLinks ? "active" : ""}`} onClick={() => setShowViewerLinks((prev) => !prev)}>
+                  <Monitor size={18} />
+                  뷰어관리
+                </button>
               </>
             )}
             <button className={`admin-toggle ${showMaster ? "danger" : ""}`} onClick={toggleMasterView}>
@@ -2962,6 +2904,31 @@ export function App() {
           </div>
         )}
       </header>
+
+      {!isViewerMode && showViewerLinks && (
+        <section className="viewer-links-panel">
+          <div className="viewer-link-list">
+            <div className="viewer-link-item">
+              <a href="https://donggukpharm7992-star.github.io/Ecart-/narcotic-viewer/" target="_blank" rel="noreferrer">
+                비치마약류 관리
+              </a>
+              <code>https://donggukpharm7992-star.github.io/Ecart-/narcotic-viewer/</code>
+            </div>
+            <div className="viewer-link-item">
+              <a href="https://donggukpharm7992-star.github.io/Ecart-/viewer/" target="_blank" rel="noreferrer">
+                병동 약품 라벨 마스터관리
+              </a>
+              <code>https://donggukpharm7992-star.github.io/Ecart-/viewer/</code>
+            </div>
+            <div className="viewer-link-item">
+              <a href="https://donggukpharm7992-star.github.io/Ecart-/pharmacy-viewer/" target="_blank" rel="noreferrer">
+                약제팀 라벨 마스터 관리
+              </a>
+              <code>https://donggukpharm7992-star.github.io/Ecart-/pharmacy-viewer/</code>
+            </div>
+          </div>
+        </section>
+      )}
 
       {!isViewerMode && showSyncSettings && (
         <section className="sync-panel">
@@ -2975,10 +2942,10 @@ export function App() {
             </div>
             <div className="sync-panel-actions">
               <button type="button" onClick={() => void pullRemoteState(true)}>
-                서버 내용 다시 받기
+                저장된 내용 PC로 반영
               </button>
               <button type="button" className="danger" onClick={() => void forceUploadCurrentDeviceState()}>
-                이 기기 내용으로 PC 반영
+                현재 기기 내용으로 서버 덮어쓰기
               </button>
             </div>
           </div>
@@ -3387,18 +3354,22 @@ export function App() {
                     {visibleMasterRows.reduce((sum, row) => sum + row.totalQuantity, 0).toLocaleString("ko-KR")}개
                   </p>
                   <div className="master-kind-filter" aria-label="마스터 분류 필터">
-                    {MASTER_KIND_FILTER_OPTIONS.map((option) => (
+                    {MASTER_KIND_FILTER_OPTIONS.map((option) => {
+                      const isDisabled = isMasterKindFilterDisabled(appMode, option.kind);
+                      return (
                       <label key={option.kind}>
                         <input
                           type="checkbox"
                           checked={masterKindFilter[option.kind]}
+                          disabled={isDisabled}
                           onChange={(event) =>
-                            setMasterKindFilter((prev) => ({ ...prev, [option.kind]: event.target.checked }))
+                            !isDisabled && setMasterKindFilter((prev) => ({ ...prev, [option.kind]: event.target.checked }))
                           }
                         />
                         <span>{option.label}</span>
                       </label>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
                 <div className="master-search-actions">
@@ -3589,8 +3560,8 @@ export function App() {
                     </button>
                     <button type="button" className="secondary-button narcotic-sync-button" onClick={() => void pullNarcoticInspectionStateFromServer()}>
                       <Download size={16} />
-                      PC에 저장
-                      <span className="sync-warning-text">(반드시 모바일 수정 내용 저장 후 누를 것!)</span>
+                      모바일 저장 내용 PC로 받기
+                      <span className="sync-warning-text">(모바일 수정 내용 저장 후 누르세요)</span>
                     </button>
                     <button type="button" className="secondary-button narcotic-sync-button" onClick={() => void saveNarcoticInspectionStateToServer()}>
                       <RefreshCw size={16} />
