@@ -9,7 +9,7 @@
     <meta name="apple-mobile-web-app-title" content="비품점검" />
     <script>
       (() => {
-        const version = "20260701a";
+        const version = "20260707c";
         const normalizedPath = window.location.pathname.replace(/\/+$/, "");
         const isNarcoticViewer = normalizedPath.endsWith("/narcotic-viewer");
         const isPharmacyViewer = normalizedPath.endsWith("/pharmacy-viewer");
@@ -18,21 +18,21 @@
           ? {
               manifest: "narcotic-viewer.webmanifest",
               icon: "icons/narcotic-icon-192.png",
-              title: "비치마약류관리",
+              title: "비치마약류 관리",
               theme: "#b91c1c",
             }
           : isPharmacyViewer
           ? {
               manifest: "pharmacy-viewer.webmanifest",
               icon: "icons/app-icon-192.png",
-              title: "약제팀 라벨",
+              title: "약제팀 라벨 마스터 관리",
               theme: "#f97316",
             }
           : isViewer
           ? {
               manifest: "viewer.webmanifest",
-              icon: "icons/app-icon-192.png",
-              title: "비품약 마스터 관리",
+              icon: "icons/viewer-icon-192.png",
+              title: "병동 약품 라벨 마스터관리",
               theme: "#f97316",
             }
           : {
@@ -44,6 +44,7 @@
 
         document.querySelector('meta[name="theme-color"]')?.setAttribute("content", metadata.theme);
         document.querySelector('meta[name="apple-mobile-web-app-title"]')?.setAttribute("content", metadata.title);
+        document.title = metadata.title;
 
         const manifest = document.createElement("link");
         manifest.rel = "manifest";
@@ -63,10 +64,10 @@
       })();
     </script>
     <title>약사용 병동 비품관리</title>
-    <script type="module" crossorigin src="/Ecart-/assets/index-mQ4W14eX.js"></script>
-    <link rel="stylesheet" crossorigin href="/Ecart-/assets/index-BxgUGK9L.css">
+    <script type="module" crossorigin src="/Ecart-/assets/index-8XoZuG7B.js"></script>
+    <link rel="stylesheet" crossorigin href="/Ecart-/assets/index-C_oPrqJn.css">
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root"></div>
   </body>
 </html>
