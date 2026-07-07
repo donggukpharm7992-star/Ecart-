@@ -1,14 +1,17 @@
-const CACHE_NAME = "hospital-inventory-app-v13";
+const CACHE_NAME = "hospital-inventory-app-v14";
 const APP_SHELL = [
   "/Ecart-/",
-  "/Ecart-/manifest.webmanifest?v=20260707a",
-  "/Ecart-/viewer.webmanifest?v=20260707a",
-  "/Ecart-/pharmacy-viewer.webmanifest?v=20260707a",
-  "/Ecart-/narcotic-viewer.webmanifest?v=20260707a",
-  "/Ecart-/icons/app-icon-192.png?v=20260707a",
-  "/Ecart-/icons/app-icon-desktop-512.png?v=20260707a",
-  "/Ecart-/icons/narcotic-icon-192.png?v=20260707a",
-  "/Ecart-/icons/narcotic-icon-desktop-512.png?v=20260707a",
+  "/Ecart-/viewer/",
+  "/Ecart-/pharmacy-viewer/",
+  "/Ecart-/narcotic-viewer/",
+  "/Ecart-/manifest.webmanifest?v=20260707b",
+  "/Ecart-/viewer.webmanifest?v=20260707b",
+  "/Ecart-/pharmacy-viewer.webmanifest?v=20260707b",
+  "/Ecart-/narcotic-viewer.webmanifest?v=20260707b",
+  "/Ecart-/icons/app-icon-192.png?v=20260707b",
+  "/Ecart-/icons/app-icon-desktop-512.png?v=20260707b",
+  "/Ecart-/icons/narcotic-icon-192.png?v=20260707b",
+  "/Ecart-/icons/narcotic-icon-desktop-512.png?v=20260707b",
 ];
 
 self.addEventListener("install", (event) => {

@@ -9,7 +9,7 @@
     <meta name="apple-mobile-web-app-title" content="비품점검" />
     <script>
       (() => {
-        const version = "20260707a";
+        const version = "20260707b";
         const normalizedPath = window.location.pathname.replace(/\/+$/, "");
         const isNarcoticViewer = normalizedPath.endsWith("/narcotic-viewer");
         const isPharmacyViewer = normalizedPath.endsWith("/pharmacy-viewer");
@@ -44,6 +44,7 @@
 
         document.querySelector('meta[name="theme-color"]')?.setAttribute("content", metadata.theme);
         document.querySelector('meta[name="apple-mobile-web-app-title"]')?.setAttribute("content", metadata.title);
+        document.title = metadata.title;
 
         const manifest = document.createElement("link");
         manifest.rel = "manifest";
@@ -63,7 +64,7 @@
       })();
     </script>
     <title>약사용 병동 비품관리</title>
-    <script type="module" crossorigin src="/Ecart-/assets/index-DeCsVNUG.js"></script>
+    <script type="module" crossorigin src="/Ecart-/assets/index-CHUcK_Bc.js"></script>
     <link rel="stylesheet" crossorigin href="/Ecart-/assets/index-C_oPrqJn.css">
   </head>
   <body>
