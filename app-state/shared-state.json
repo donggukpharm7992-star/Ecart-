@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-06T11:33:55.583Z",
-  "clientId": "8661a136-891e-48dd-8980-7d1523f6c473",
+  "updatedAt": "2026-07-07T02:30:57.344Z",
+  "clientId": "c62dbb57-d4ac-4fd3-b8a2-8436412c60d3",
   "state": {
     "stockDrugs": [
       {
@@ -7025,7 +7025,9 @@
     "uninspectedNarcoticRoomIds": [
       "HBEF"
     ],
-    "checkedStock": {},
+    "checkedStock": {
+      "재활의학과::XXHYAL60": true
+    },
     "stockExpiry": {},
     "stockChecklistByRoom": {},
     "ecartByTarget": {},
