@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-07T02:30:57.344Z",
+  "updatedAt": "2026-07-07T02:31:01.246Z",
   "clientId": "c62dbb57-d4ac-4fd3-b8a2-8436412c60d3",
   "state": {
     "stockDrugs": [
@@ -7028,7 +7028,9 @@
     "checkedStock": {
       "재활의학과::XXHYAL60": true
     },
-    "stockExpiry": {},
+    "stockExpiry": {
+      "재활의학과::XXHYAL60": "2026-07-31"
+    },
     "stockChecklistByRoom": {},
     "ecartByTarget": {},
     "roundSummaryDraft": {
