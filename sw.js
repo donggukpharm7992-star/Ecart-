@@ -1,4 +1,4 @@
-const CACHE_NAME = "hospital-inventory-app-v15";
+const CACHE_NAME = "hospital-inventory-app-v16";
 const APP_SHELL = [
   "/Ecart-/",
   "/Ecart-/viewer/",
@@ -35,6 +35,11 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(request.url);
 
   if (request.method !== "GET" || url.pathname.includes("/api/")) return;
+
+  if (url.pathname.endsWith("/sync-config.json") || url.pathname.includes("/app-state/") || url.pathname.endsWith("/sw.js")) {
+    event.respondWith(fetch(request));
+    return;
+  }
 
   if (request.mode === "navigate") {
     event.respondWith(fetch(request).catch(() => caches.match("/Ecart-/")));
