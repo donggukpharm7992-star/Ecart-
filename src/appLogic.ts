@@ -483,21 +483,7 @@ export function getStockChecklistDefaultState(
 ): ChecklistState[] {
   const current = prev[roomId];
   if (current) return normalizeChecklistRows(current);
-
-  const base = makeStockChecklist(roomId);
-  const w42 = prev["42W"];
-  if (roomId !== "42W" && w42) {
-    const w42Norm = normalizeChecklistRows(w42);
-    return normalizeChecklistRows(base).map((item, index) => {
-      const w42Item = w42Norm[index];
-      return {
-        ...item,
-        status: w42Item ? w42Item.status : item.status,
-        note: w42Item ? w42Item.note : item.note,
-      };
-    });
-  }
-  return normalizeChecklistRows(base);
+  return normalizeChecklistRows(makeStockChecklist(roomId));
 }
 
 export function getEcartDefaultState(

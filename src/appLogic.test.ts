@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   buildStockLabelData,
+  getStockChecklistDefaultState,
   getDrugLabelFlagLabels,
   getInitialAppMode,
   getInitialMasterKindFilter,
@@ -109,4 +110,24 @@ describe("app label logic", () => {
     expect(matchesMasterRoom(fresofol, selectedRoomId)).toBe(true);
     expect(buildStockLabelData(fresofol, "stock", selectedRoomId).totalQuantity).toBe(2);
   });
+  it("does not copy 42W checklist edits into another stock room default checklist", () => {
+    const checklist = getStockChecklistDefaultState(
+      {
+        "42W": [
+          {
+            id: "stock-42W-0",
+            section: "stock",
+            text: "room specific check",
+            status: "bad",
+            note: "42W only note",
+          },
+        ],
+      },
+      "61W",
+    );
+
+    expect(checklist.some((item) => item.note === "42W only note")).toBe(false);
+    expect(checklist.some((item) => item.status === "bad" && item.note === "42W only note")).toBe(false);
+  });
+
 });

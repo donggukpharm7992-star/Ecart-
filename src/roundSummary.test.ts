@@ -141,6 +141,30 @@ describe("round summary draft", () => {
     expect(draft.closingNote).toBe("간호부의 지속적이고 적극적인 협조 항상 감사드립니다.");
   });
 
+  it("keeps narcotic checklist issues scoped to the edited room", () => {
+    const draft = buildNarcoticRoundSummaryDraft({
+      inspectionPeriod: "2026-07",
+      rooms: [
+        {
+          id: "42",
+          label: "42W",
+          inventoryItems: [],
+          checklist: [{ section: "narcotic", text: "sealed", status: "bad", note: "42W only note" }],
+        },
+        {
+          id: "61",
+          label: "61W",
+          inventoryItems: [],
+          checklist: [{ section: "narcotic", text: "sealed", status: "good", note: "" }],
+        },
+      ],
+      commonGuidance: "guide",
+    });
+
+    expect(draft.rows.find((row) => row.id === "narcotic:42")?.details).toContain("42W only note");
+    expect(draft.rows.find((row) => row.id === "narcotic:61")?.details).not.toContain("42W only note");
+  });
+
   it("materializes a generated draft without sharing editable row references", () => {
     const generatedDraft = {
       title: "Generated",
