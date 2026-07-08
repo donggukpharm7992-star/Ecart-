@@ -46,15 +46,19 @@ export function isNarcoticLotWorkbookFileName(fileName: string) {
 }
 
 const narcoticUploadCodeAliases = new Map([
-  ["XAFEN1", "XALFEN1W"],
-  ["XLZPAM2", "XATIV2W"],
-  ["XLZPAM4", "XATIV4W"],
-  ["XFEN50", "XFENT50W"],
-  ["XKETA5", "XKETA5W"],
-  ["XNALBUP10W", "XNALB10"],
-  ["XPROPO115W", "XPROP1"],
-  ["XPROPO120", "XPROP1T"],
-  ["XPROPO250", "XPROP2T"],
+  ["XPOCR5S", "CHR5-S"],
+  ["XATIV2W", "XLZPAM2"],
+  ["XATIV4W", "XLZPAM4"],
+  ["XFENT50W", "XFEN50"],
+  ["XKETA5W", "XKETA5"],
+  ["XDIAZ10W", "XDDP"],
+  ["XMIDZ15W", "XMIDA15"],
+  ["XMIDZ5W", "XMIDA5"],
+  ["XNALB10", "XNALBUP10W"],
+  ["XPROP1", "XPROPO115W"],
+  ["XPROP1T", "XPROPO120"],
+  ["XPROP2T", "XPROPO250"],
+  ["XPENT5", "XPTS500W"],
 ]);
 
 function normalizeValue(value: string | number | undefined) {
@@ -197,6 +201,14 @@ function normalizeStorage(value: string | number | undefined) {
   return normalizeValue(value).replace(/\s+/g, "").toUpperCase();
 }
 
+const roomSpecificStorageAliases = new Map([
+  ["GICLA", ["소화기병검사실", "소화기병 검사실", "소화기검사실", "소화기 검사실"]],
+]);
+
+function storageMatchesRoom(storage: string, roomId: string) {
+  return storage.includes(roomId) || (roomSpecificStorageAliases.get(roomId) ?? []).some((alias) => storage.includes(normalizeStorage(alias)));
+}
+
 function uniqueLots(values: string[]) {
   return [...new Set(values.map((value) => value.trim()).filter(Boolean))];
 }
@@ -332,7 +344,7 @@ export function buildNarcoticLotAssignments(input: BuildNarcoticLotAssignmentsIn
 
     for (const code of codes) {
       for (const roomId of roomSpecificStorageIds) {
-        if (storage.includes(roomId)) appendLot(roomSpecificLots, narcoticLotKey(roomId, code), lot);
+        if (storageMatchesRoom(storage, roomId)) appendLot(roomSpecificLots, narcoticLotKey(roomId, code), lot);
       }
       if (storage.includes("기타병동") || storage.includes("기타보관소") || storage.includes("약무정보")) appendLot(otherStorageLots, code, lot);
       if (storage.includes("조제실")) {

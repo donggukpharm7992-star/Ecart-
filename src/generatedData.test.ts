@@ -3,7 +3,9 @@ import rawInventory from "./data/inventory.generated.json";
 import {
   NARCOTIC_ALLOCATIONS,
   NARCOTIC_DRUGS,
+  NARCOTIC_ROOMS,
   NARCOTIC_ROUND_SUMMARY_COMMON_GUIDANCE,
+  normalizeNarcoticDrugCode,
   narcoticCategoryOf,
 } from "./narcoticData";
 import type { InventoryData } from "./types";
@@ -47,6 +49,9 @@ describe("generated inventory data corrections", () => {
     );
     expect(buildReportFileName({ category: "ecart", mode: "all-ecart", date: "2026-06-24" })).toBe(
       "E-cart 현황 및 일괄점검보고서_2026-06-24.pdf",
+    );
+    expect(buildReportFileName({ category: "narcotic", mode: "all-narcotic", date: "2026-06-24" })).toBe(
+      "비치마약류 현황 및 일괄점검보고서_2026-06-24.pdf",
     );
     expect(buildReportFileName({ category: "stock", mode: "drug-labels", date: "2026-06-24" })).toBe("약품라벨_2026-06-24.pdf");
     expect(buildReportFileName({ category: "stock", mode: "single", targetName: "HBEF심혈관조영실", date: "2026-06-24" })).toBe(
@@ -99,6 +104,40 @@ describe("generated inventory data corrections", () => {
     expect(byCode.get("XTPA20")?.productName).toBe("Actilyse 20mg/20ml inj");
     expect(byCode.get("XETOM")?.productName).toBe("Etomidate lipuro 20mg/10ml inj");
     expect(byCode.get("XETOM")?.productName).not.toMatch(/^\[(마약|향정)\]/);
+  });
+
+  it("uses hospital common names for narcotic stock master drug names", () => {
+    const byCode = new Map(NARCOTIC_DRUGS.map((drug) => [drug.code, drug]));
+
+    expect(byCode.get("CHR5-S")?.productName).toBe("Pocral syr 5ml/btl");
+    expect(byCode.get("XLZPAM4")?.productName).toBe("ATIVAN 4mg/1ml inj");
+    expect(byCode.get("XKETA5")?.productName).toBe("Ketamine HCl 500mg/10ml inj");
+    expect(byCode.get("XPROPO115W")?.productName).toBe("FRESOFOL MCT 1% 150mg/15ml inj");
+    expect(byCode.get("XPTS500W")?.productName).toBe("Advanz thiopental 500mg inj");
+    expect(byCode.get("XSUFEN50")?.productName).toBe("Sufental 50mcg/ml inj");
+    expect(byCode.get("XFEN50")?.productName).toBe("Fentanyl citrate 50mcg/ml inj");
+    expect(byCode.get("XOXCON1W")?.productName).toBe("Ocodone 10mg/1ml inj");
+    expect(byCode.get("XPETH50W")?.productName).toBe("Pethidine 50mg/1ml inj (HANA)");
+  });
+
+  it("uses only the narcotic check sheet codes, rooms, and quantities", () => {
+    const drugCodes = new Set(NARCOTIC_DRUGS.map((drug) => drug.code));
+    const roomById = new Map(NARCOTIC_ROOMS.map((room) => [room.id, room]));
+    const allocationByKey = new Map(NARCOTIC_ALLOCATIONS.map((allocation) => [`${allocation.roomId}::${allocation.drugCode}`, allocation]));
+
+    expect(drugCodes.has("XPROPO115W")).toBe(true);
+    expect(drugCodes.has("XPROP1")).toBe(false);
+    expect(NARCOTIC_ALLOCATIONS.some((allocation) => allocation.drugCode === "XPROP1")).toBe(false);
+    expect(allocationByKey.get("GICLA::XPROPO115W")?.requiredQty).toBe(20);
+    expect(allocationByKey.get("AN::XPROPO115W")?.requiredQty).toBe(50);
+    expect(roomById.get("DSR")?.sourceSheet).toBe("점검");
+    expect(roomById.get("RRT")?.sourceSheet).toBe("점검");
+  });
+
+  it("normalizes previous narcotic app codes to hospital drug list codes", () => {
+    expect(normalizeNarcoticDrugCode("XATIV4W")).toBe("XLZPAM4");
+    expect(normalizeNarcoticDrugCode("XPROP1")).toBe("XPROPO115W");
+    expect(normalizeNarcoticDrugCode("XFENT50W")).toBe("XFEN50");
   });
 
   it("uses hospital common names while preserving E-cart dosage corrections", () => {
@@ -305,11 +344,11 @@ describe("generated inventory data corrections", () => {
     expect(getInitialAppMode("/Ecart-/", "?view=narcotic")).toBe("narcotic-viewer");
   });
 
-  it("shows pharmacy labels only in admin and pharmacy viewer modes", () => {
+  it("shows pharmacy labels in admin, pharmacy viewer, and narcotic viewer modes", () => {
     expect(getLabelModeOptions("admin").map((option) => option.mode)).toEqual(["stock", "ecart", "fluid", "narcotic", "pharmacy"]);
     expect(getLabelModeOptions("pharmacy-viewer").map((option) => option.mode)).toEqual(["stock", "ecart", "fluid", "narcotic", "pharmacy"]);
     expect(getLabelModeOptions("master-viewer").map((option) => option.mode)).toEqual(["stock", "ecart", "fluid", "narcotic"]);
-    expect(getLabelModeOptions("narcotic-viewer").map((option) => option.mode)).toEqual(["stock", "ecart", "fluid", "narcotic"]);
+    expect(getLabelModeOptions("narcotic-viewer").map((option) => option.mode)).toEqual(["stock", "ecart", "fluid", "narcotic", "pharmacy"]);
   });
 
   it("keeps label selections distinct by label type and selected size", () => {
@@ -351,7 +390,7 @@ describe("generated inventory data corrections", () => {
       narcoticCategoryOf(drug.code) === "마약" ? "narcotic" : "psychotropic",
     );
 
-    for (const code of ["XATIV2W", "XATIV4W", "XKETA5W"]) {
+    for (const code of ["XLZPAM2", "XLZPAM4", "XKETA5"]) {
       const row = masterRows.find((item) => item.code === code);
       expect(row).toBeDefined();
       const label = buildNarcoticMasterLabelData(row!, "향정");

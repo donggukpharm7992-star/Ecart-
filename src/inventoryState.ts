@@ -15,6 +15,7 @@ export type MasterRow = StockDrug & {
 };
 
 type DrugDisplayFields = Pick<StockDrug, "code" | "genericName" | "productName">;
+type CanonicalDrugDisplayFields = Pick<StockDrug, "code"> & Partial<Pick<StockDrug, "genericName" | "productName">>;
 
 export function drugDisplayName(drug: DrugDisplayFields) {
   return drug.productName || drug.genericName || drug.code;
@@ -32,6 +33,27 @@ export function compareStockDrugsByName(a: DrugDisplayFields, b: DrugDisplayFiel
 
 export function sortStockDrugsByName<T extends DrugDisplayFields>(drugs: T[]) {
   return [...drugs].sort(compareStockDrugsByName);
+}
+
+export function applyCanonicalDrugNames<T extends StockDrug>(
+  drugs: readonly T[],
+  canonicalDrugs: readonly CanonicalDrugDisplayFields[],
+  codeAliases: Readonly<Record<string, string>> = {},
+): T[] {
+  const canonicalByCode = new Map(canonicalDrugs.map((drug) => [drug.code, drug]));
+
+  return drugs.map((drug) => {
+    const canonical = canonicalByCode.get(codeAliases[drug.code] ?? drug.code);
+    if (!canonical) return drug;
+
+    const productName = canonical.productName?.trim();
+    const genericName = canonical.genericName?.trim();
+    return {
+      ...drug,
+      ...(genericName ? { genericName } : {}),
+      ...(productName ? { productName } : {}),
+    };
+  });
 }
 
 export function buildMasterRows(

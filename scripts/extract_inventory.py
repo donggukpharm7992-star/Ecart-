@@ -11,7 +11,10 @@ import openpyxl
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "src" / "data" / "inventory.generated.json"
+NARCOTIC_INVENTORY_OUT = ROOT / "src" / "data" / "narcoticInventory.generated.json"
 HOSPITAL_DRUG_LIST_KEYWORD = "\uc6d0\ub0b4\ubcf4\uc720\uc758\uc57d\ud488\ub9ac\uc2a4\ud2b8"
+NARCOTIC_STATUS_KEYWORD = "\ube44\uce58\ud5a5\uc815,\ub9c8\uc57d\ud604\ud669"
+NARCOTIC_CHECK_SHEET_NAME = "\uc810\uac80"
 CONTROLLED_DRUG_PREFIX_RE = re.compile(r"^\[(?:\ub9c8\uc57d|\ud5a5\uc815)\]\s*")
 
 
@@ -60,6 +63,25 @@ STOCK_FIELD_OVERRIDES = {
     "XMEXO": {"warning": "유사모양"},
     "XMVH": {"storageType": "REFRIGERATED"},
     "XNA40": {"warning": "고위험의약품"},
+}
+
+NARCOTIC_COLD_STORAGE_CODES = {"XLZPAM2", "XLZPAM4", "XKETA5"}
+NARCOTIC_ROOM_FLOORS = {
+    "INJ": "1\uce35",
+    "DREMM": "1\uce35",
+    "ER": "1\uce35",
+    "GICLA": "2\uce35",
+    "HBEF": "2\uce35",
+    "MICU": "2\uce35",
+    "DSR": "2\uce35",
+    "AN": "3\uce35",
+    "OR": "3\uce35",
+    "SICU": "3\uce35",
+    "ADR": "4\uce35",
+    "HPC": "4\uce35",
+    "\ub09c\uc784": "4\uce35",
+    "DRL": "4\uce35",
+    "NICU": "4\uce35",
 }
 
 ECART_FIELD_OVERRIDES = {
@@ -139,7 +161,7 @@ def is_retired_checklist_row(text: str) -> bool:
 
 
 def find_workbook(keyword: str) -> Path:
-    matches = [p for p in ROOT.glob("*.xlsx") if keyword in p.name and not p.name.startswith("~$")]
+    matches = [p for p in ROOT.rglob("*.xlsx") if keyword in p.name and not p.name.startswith("~$")]
     if not matches:
         raise FileNotFoundError(f"Cannot find workbook containing {keyword!r}")
     return matches[0]
@@ -159,6 +181,104 @@ def load_hospital_common_names(hospital_path: Path) -> dict[str, str]:
         if code and common_name and code not in common_names:
             common_names[code] = common_name
     return common_names
+
+
+def narcotic_source_updated_at(title: str) -> str:
+    match = re.search(r"(\d{4})\ub144\s*(\d{1,2})\uc6d4\s*(\d{1,2})\uc77c", title)
+    if not match:
+        return ""
+    year, month, day = match.groups()
+    return f"{year[-2:]}.{int(month):02d}.{int(day):02d}"
+
+
+def narcotic_room_floor(room_id: str) -> str:
+    if room_id in NARCOTIC_ROOM_FLOORS:
+        return NARCOTIC_ROOM_FLOORS[room_id]
+    if room_id.isdigit() or room_id == "RRT":
+        return "5\uce35 ~ 12\uce35"
+    return "\uae30\ud0c0"
+
+
+def parse_narcotic_inventory(narcotic_path: Path, hospital_common_names: dict[str, str]) -> dict[str, Any]:
+    wb = openpyxl.load_workbook(narcotic_path, read_only=True, data_only=True)
+    ws = wb[NARCOTIC_CHECK_SHEET_NAME]
+    title = clean(ws.cell(row=1, column=1).value)
+    source_updated_at = narcotic_source_updated_at(title)
+    header = [clean(cell.value) for cell in next(ws.iter_rows(min_row=2, max_row=2))]
+    room_columns: list[tuple[int, str]] = []
+    for idx, room_id in enumerate(header[3:], start=3):
+        if not room_id:
+            continue
+        if room_id == "\ud569\uacc4":
+            break
+        room_columns.append((idx, room_id))
+
+    drugs = []
+    allocations = []
+    categories: dict[str, str] = {}
+    room_stats = {room_id: {"allocationCount": 0, "totalQuantity": 0} for _, room_id in room_columns}
+    current_category = ""
+
+    for row in ws.iter_rows(min_row=3, values_only=True):
+        category = clean(row[0] if len(row) > 0 else "")
+        if category in {"\ud5a5\uc815", "\ub9c8\uc57d"}:
+            current_category = category
+        code = clean(row[1] if len(row) > 1 else "")
+        source_product_name = strip_controlled_drug_prefix(row[2] if len(row) > 2 else "")
+        if not code or not source_product_name or current_category not in {"\ud5a5\uc815", "\ub9c8\uc57d"}:
+            continue
+
+        product_name = hospital_common_names.get(code, source_product_name)
+        is_cold = code in NARCOTIC_COLD_STORAGE_CODES
+        drugs.append(
+            {
+                "code": code,
+                "genericName": source_product_name,
+                "productName": product_name,
+                "spec": "",
+                "storage": "\ub0c9\uc7a5\ubcf4\uad00(2-8\u2103)" if is_cold else "\uc2e4\uc628\ubcf4\uad00",
+                "note": "",
+                "warning": "",
+                "storageType": "REFRIGERATED" if is_cold else "ROOM",
+                "narcoticCategory": current_category,
+            }
+        )
+        categories[code] = current_category
+
+        for idx, room_id in room_columns:
+            required_qty = qty(row[idx] if idx < len(row) else None)
+            if required_qty > 0:
+                allocations.append({"roomId": room_id, "drugCode": code, "requiredQty": required_qty})
+                room_stats[room_id]["allocationCount"] += 1
+                room_stats[room_id]["totalQuantity"] += required_qty
+
+    rooms = [
+        {
+            "id": room_id,
+            "label": room_id,
+            "sourceColumn": room_id,
+            "sourceSheet": NARCOTIC_CHECK_SHEET_NAME,
+            "sourceUpdatedAt": source_updated_at,
+            "floor": narcotic_room_floor(room_id),
+            **room_stats[room_id],
+        }
+        for _, room_id in room_columns
+    ]
+    return {
+        "generatedAt": datetime.now().astimezone().isoformat(timespec="seconds"),
+        "sourceFile": narcotic_path.name,
+        "sourceSheet": NARCOTIC_CHECK_SHEET_NAME,
+        "sourceUpdatedAt": source_updated_at,
+        "drugs": drugs,
+        "rooms": rooms,
+        "allocations": allocations,
+        "drugCategories": categories,
+        "summary": {
+            "drugCount": len(drugs),
+            "roomCount": len(rooms),
+            "allocationCount": len(allocations),
+        },
+    }
 
 
 def normalized_name_key(name: str) -> str:
@@ -337,10 +457,12 @@ def main() -> None:
     ecart_path = find_workbook("E-cart")
     checklist_path = find_workbook("체크리스트")
     hospital_path = find_workbook(HOSPITAL_DRUG_LIST_KEYWORD)
+    narcotic_path = find_workbook(NARCOTIC_STATUS_KEYWORD)
     hospital_common_names = load_hospital_common_names(hospital_path)
     stock = parse_stock(stock_path, hospital_common_names)
     ecart = parse_ecart(ecart_path, hospital_common_names)
     checklist = parse_checklist(checklist_path)
+    narcotic = parse_narcotic_inventory(narcotic_path, hospital_common_names)
     data = {
         "generatedAt": datetime.now().astimezone().isoformat(timespec="seconds"),
         "sourceFiles": {
@@ -363,8 +485,11 @@ def main() -> None:
     }
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    NARCOTIC_INVENTORY_OUT.write_text(json.dumps(narcotic, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(data["summary"], ensure_ascii=False, indent=2))
     print(f"wrote {OUT.relative_to(ROOT)}")
+    print(json.dumps(narcotic["summary"], ensure_ascii=False, indent=2))
+    print(f"wrote {NARCOTIC_INVENTORY_OUT.relative_to(ROOT)}")
 
 
 if __name__ == "__main__":

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { StockAllocation, StockDrug } from "./types";
 import {
+  applyCanonicalDrugNames,
   buildMasterRows,
   deleteAllocation,
   deleteMasterDrug,
@@ -66,6 +67,20 @@ describe("inventory allocation state", () => {
     expect(rows.map((row) => row.productName)).toEqual(["Abilify tab", "Bisoprolol tab", "Zofran inj"]);
   });
 
+  it("applies canonical drug names by code while keeping custom drugs unchanged", () => {
+    const next = applyCanonicalDrugNames(
+      [
+        { ...drugs[0], productName: "Old stock name", genericName: "Old generic" },
+        { ...drugs[1], code: "XCUSTOM", productName: "Custom ward stock" },
+      ],
+      [{ code: "XAAA", productName: "Actilyse 20mg/20ml inj", genericName: "Alteplase" }],
+    );
+
+    expect(next.find((drug) => drug.code === "XAAA")?.productName).toBe("Actilyse 20mg/20ml inj");
+    expect(next.find((drug) => drug.code === "XAAA")?.genericName).toBe("Alteplase");
+    expect(next.find((drug) => drug.code === "XCUSTOM")?.productName).toBe("Custom ward stock");
+  });
+
   it("recalculates master totals and room details from current allocations", () => {
     const rows = buildMasterRows(drugs, allocations);
     const alpha = rows.find((row) => row.code === "XAAA");
@@ -95,6 +110,21 @@ describe("inventory allocation state", () => {
       "XAAA",
       "XNAR",
     ]);
+  });
+
+  it("keeps stock and narcotic room allocations in separate holding lists", () => {
+    const stockRows = buildMasterRows(drugs, [{ roomId: "42W", drugCode: "XAAA", requiredQty: 2 }]);
+    const narcoticRows = buildMasterRows(
+      [{ ...drugs[1], code: "XNAR", productName: "Narcotic inj" }],
+      [{ roomId: "ER", drugCode: "XNAR", requiredQty: 4 }],
+      () => "narcotic",
+    );
+    const allRows = [...stockRows, ...narcoticRows];
+
+    expect(stockRows.map((row) => row.code)).not.toContain("XNAR");
+    expect(narcoticRows.map((row) => row.code)).not.toContain("XAAA");
+    expect(allRows.find((row) => row.code === "XAAA")?.masterKind).toBe("stock");
+    expect(allRows.find((row) => row.code === "XNAR")?.masterKind).toBe("narcotic");
   });
 
   it("updates a room quantity and immediately changes the master summary", () => {

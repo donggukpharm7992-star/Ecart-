@@ -177,17 +177,17 @@ describe("narcotic lot assignments", () => {
         { storage: "마취통증의학과AN", lot: "PENT-LOT", drugName: "Advanz thiopental 500mg inj" },
       ],
       roomIds: ["DRL", "112", "AN"],
-      drugCodes: ["XNALB10", "XOXCON1W", "XPENT5"],
+      drugCodes: ["XNALBUP10W", "XOXCON1W", "XPTS500W"],
       drugs: [
-        { code: "XNALB10", productName: "Nalbupine 10mg" },
+        { code: "XNALBUP10W", productName: "Nalbuphine 10mg/ml inj" },
         { code: "XOXCON1W", genericName: "Oxynorm 10mg inj", productName: "Oxycodone 10mg inj" },
-        { code: "XPENT5", productName: "Pentothal-sodium 0.5g Inj" },
+        { code: "XPTS500W", productName: "Advanz thiopental 500mg inj" },
       ],
     });
 
-    expect(assignments[narcoticLotKey("DRL", "XNALB10")]).toEqual({ roomLot: "NALB-LOT", pharmacyLot: "" });
+    expect(assignments[narcoticLotKey("DRL", "XNALBUP10W")]).toEqual({ roomLot: "NALB-LOT", pharmacyLot: "" });
     expect(assignments[narcoticLotKey("112", "XOXCON1W")]).toEqual({ roomLot: "OXY-LOT", pharmacyLot: "" });
-    expect(assignments[narcoticLotKey("AN", "XPENT5")]).toEqual({ roomLot: "PENT-LOT", pharmacyLot: "" });
+    expect(assignments[narcoticLotKey("AN", "XPTS500W")]).toEqual({ roomLot: "PENT-LOT", pharmacyLot: "" });
   });
 
   it("follows room-specific lot rules from the narcotic rule workbook", () => {
@@ -199,17 +199,40 @@ describe("narcotic lot assignments", () => {
         { storage: "기타병동", lot: "WARD-LOT", drugCode: "XATIV2W" },
       ],
       roomIds: ["AN", "HPC", "GICLA", "DREMM", "HBEF", "ER", "42"],
-      drugCodes: ["XATIV4W", "XMIDZ5W", "XKETA5W", "XATIV2W"],
+      drugCodes: ["XLZPAM4", "XMIDA5", "XKETA5", "XLZPAM2"],
     });
 
-    expect(assignments[narcoticLotKey("AN", "XATIV4W")]).toEqual({ roomLot: "AN-LOT", pharmacyLot: "" });
-    expect(assignments[narcoticLotKey("HPC", "XMIDZ5W")]).toEqual({ roomLot: "HPC-LOT", pharmacyLot: "" });
-    expect(assignments[narcoticLotKey("GICLA", "XKETA5W")]).toEqual({ roomLot: "GICLA-LOT", pharmacyLot: "" });
-    expect(assignments[narcoticLotKey("ER", "XATIV2W")]).toEqual({ roomLot: "WARD-LOT", pharmacyLot: "" });
-    expect(assignments[narcoticLotKey("42", "XATIV2W")]).toEqual({ roomLot: "WARD-LOT", pharmacyLot: "" });
-    expect(assignments[narcoticLotKey("AN", "XATIV2W")]).toEqual({ roomLot: "", pharmacyLot: "" });
-    expect(assignments[narcoticLotKey("DREMM", "XATIV2W")]).toEqual({ roomLot: "", pharmacyLot: "" });
-    expect(assignments[narcoticLotKey("HBEF", "XATIV2W")]).toEqual({ roomLot: "", pharmacyLot: "" });
+    expect(assignments[narcoticLotKey("AN", "XLZPAM4")]).toEqual({ roomLot: "AN-LOT", pharmacyLot: "" });
+    expect(assignments[narcoticLotKey("HPC", "XMIDA5")]).toEqual({ roomLot: "HPC-LOT", pharmacyLot: "" });
+    expect(assignments[narcoticLotKey("GICLA", "XKETA5")]).toEqual({ roomLot: "GICLA-LOT", pharmacyLot: "" });
+    expect(assignments[narcoticLotKey("ER", "XLZPAM2")]).toEqual({ roomLot: "WARD-LOT", pharmacyLot: "" });
+    expect(assignments[narcoticLotKey("42", "XLZPAM2")]).toEqual({ roomLot: "WARD-LOT", pharmacyLot: "" });
+    expect(assignments[narcoticLotKey("AN", "XLZPAM2")]).toEqual({ roomLot: "", pharmacyLot: "" });
+    expect(assignments[narcoticLotKey("DREMM", "XLZPAM2")]).toEqual({ roomLot: "", pharmacyLot: "" });
+    expect(assignments[narcoticLotKey("HBEF", "XLZPAM2")]).toEqual({ roomLot: "", pharmacyLot: "" });
+  });
+
+  it("fills GICLA Ativan and Ketamine from GICLA storage aliases only", () => {
+    const assignments = buildNarcoticLotAssignments({
+      rows: [
+        { storage: "소화기검사실", lot: "ATIVAN-GICLA-LOT", drugCode: "XLZPAM2" },
+        { storage: "소화기 검사실", lot: "KETAMINE-GICLA-LOT", drugCode: "XKETA5" },
+        { storage: "기타병동", lot: "ATIVAN-WARD-LOT", drugCode: "XLZPAM2" },
+        { storage: "기타병동", lot: "KETAMINE-WARD-LOT", drugCode: "XKETA5" },
+      ],
+      roomIds: ["GICLA", "AN", "HPC", "ER"],
+      drugCodes: ["XLZPAM2", "XKETA5"],
+      drugs: [
+        { code: "XLZPAM2", productName: "Ativan 2mg/0.5ml inj" },
+        { code: "XKETA5", productName: "Ketamine HCl 500mg/10ml inj" },
+      ],
+    });
+
+    expect(assignments[narcoticLotKey("GICLA", "XLZPAM2")]).toEqual({ roomLot: "ATIVAN-GICLA-LOT", pharmacyLot: "" });
+    expect(assignments[narcoticLotKey("GICLA", "XKETA5")]).toEqual({ roomLot: "KETAMINE-GICLA-LOT", pharmacyLot: "" });
+    expect(assignments[narcoticLotKey("AN", "XLZPAM2")]).toEqual({ roomLot: "", pharmacyLot: "" });
+    expect(assignments[narcoticLotKey("HPC", "XKETA5")]).toEqual({ roomLot: "", pharmacyLot: "" });
+    expect(assignments[narcoticLotKey("ER", "XLZPAM2")]).toEqual({ roomLot: "ATIVAN-WARD-LOT", pharmacyLot: "" });
   });
 
   it.skipIf(!existsSync(sampleXlsPath))("reads the hospital drug stock detail .xls workbook", async () => {

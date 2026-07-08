@@ -29,10 +29,14 @@ This app previews a pharmacist ward inventory workflow with real Excel data. The
   - Source for 40*70mm narcotic/psychotropic label text.
   - Code-label pairs are generated into `src/data/narcoticLabels.generated.json`.
 - `마약/마약 실별 LOT 넣는 규칙.xlsx`
-  - Source for narcotic LOT upload display rules: AN/HPC/GICLA/DREMM/HBEF storage maps to the matching room, `기타병동` maps to other narcotic rooms, and `조제실` fills pharmacy LOT.
+  - Source for narcotic LOT upload display rules: AN/HPC/GICLA/DREMM/HBEF storage maps to the matching room, `소화기병검사실` and `소화기검사실` aliases map to GICLA, `기타병동` maps to other narcotic rooms, and `조제실` fills pharmacy LOT.
   - Uploaded stock-detail drug names prefer exact conversion-map name/code aliases, then fall back to meaningful leading drug-name tokens plus equivalent dose/concentration text such as `50mg/ml` and `500mg/10ml`.
 - `마약/마약류 약품명 약품코드 변환.xlsx`
   - Source for matching uploaded narcotic LOT drug names to app drug codes when stock-detail files use external codes.
+- `마약/비치향정,마약현황.xlsx`
+  - Only the `점검` sheet is imported for placed narcotic/psychotropic master drugs, rooms, and room quantities.
+  - `Sheet1` and `Sheet3` are ignored.
+  - Drug codes come from the `점검` sheet / hospital drug-list code, and display names prefer `원내보유의약품리스트.xlsx` column B with `[마약]`/`[향정]` removed.
 
 ## Generated Shape
 - `stock.drugs`: one row per registered drug code from the stock workbook.
@@ -50,6 +54,7 @@ This app previews a pharmacist ward inventory workflow with real Excel data. The
 - `pharmacyLabelMatches.generated.json`: matched pharmacy label text, match status, source file, source location, and caution/storage flags.
 - `narcoticLabels.generated.json`: narcotic/psychotropic label text, category, source file, and source cell for 40*70mm label matching.
 - `narcoticDrugCodeMap.generated.json`: narcotic drug-name/code conversion rows used before fuzzy LOT name matching.
+- `narcoticInventory.generated.json`: placed narcotic/psychotropic drugs, rooms, allocations, and categories generated only from `비치향정,마약현황.xlsx` `점검`.
 
 ## App Flow
 1. Load generated JSON at startup.
@@ -70,4 +75,4 @@ This app previews a pharmacist ward inventory workflow with real Excel data. The
 8. Build the round-summary report from bad checklist statuses and manual note text, then print/PDF it through the shared preview flow.
 
 ## Update Rule
-When stock/checklist Excel files change, run `npm run generate:data` and `npm run validate:data`. When `원내보유의약품리스트.xlsx` changes, run both `npm run generate:data` and `npm run generate:labels`. When `원내보유의약품_라벨매칭_20260702.xlsx` changes, run `npm run generate:label-matches`. When narcotic label or conversion workbooks in `마약/` change, refresh their generated JSON. The UI should update from generated data without editing React components.
+When stock/checklist/narcotic inventory Excel files change, run `npm run generate:data` and `npm run validate:data`. When `원내보유의약품리스트.xlsx` changes, run both `npm run generate:data` and `npm run generate:labels`. When `원내보유의약품_라벨매칭_20260702.xlsx` changes, run `npm run generate:label-matches`. When narcotic label or conversion workbooks in `마약/` change, refresh their generated JSON. The UI should update from generated data without editing React components.

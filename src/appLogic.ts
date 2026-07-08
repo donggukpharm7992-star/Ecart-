@@ -9,10 +9,10 @@ import type { ChecklistItem, EcartItem, InventoryData, StockDrug, StockRoom } fr
 
 const inventory = rawInventory as InventoryData;
 
-export type MainCategory = "stock" | "ecart";
+export type MainCategory = "stock" | "ecart" | "narcotic";
 export type EcartTab = "general" | "nicu";
 export type CheckStatus = "" | "good" | "bad";
-export type PrintPreviewMode = "single" | "all-stock" | "all-ecart" | "round-summary" | "drug-labels";
+export type PrintPreviewMode = "single" | "all-stock" | "all-ecart" | "all-narcotic" | "round-summary" | "drug-labels";
 export type AppMode = "admin" | "master-viewer" | "pharmacy-viewer" | "narcotic-viewer";
 export type DrugLabelMode = "stock" | "ecart" | "fluid" | "narcotic" | "pharmacy";
 export type DrugLabelSizeKey = "10x70" | "15x95" | "40x70" | "55x95" | "35x100";
@@ -91,10 +91,29 @@ export type InspectionCycleResetState = Pick<
 >;
 
 const STANDARD_ROOM_NAMES = [
-  { display: "DREMM", aliases: ["DREMM", "DREMM혈관조영실", "DREMM 혈관조영실", "혈관조영실"] },
-  { display: "HPC", aliases: ["HPC", "HPC건강증진센터", "HPC 건강증진 센터", "건강증진센터", "건강증진 센터"] },
+  {
+    display: "DREMM",
+    aliases: ["DREMM", "DREMM혈관조영실", "DREMM 혈관조영실", "DREMM영상의학과", "DREMM 영상의학과", "혈관조영실", "영상의학과"],
+  },
+  {
+    display: "HPC",
+    aliases: ["HPC", "HPC건강증진센터", "HPC 건강증진 센터", "건강증진센터", "건강증진 센터", "동서의학건진센터", "동서의학건진 센터"],
+  },
   { display: "DRL", aliases: ["DRL", "DRL분만장", "DRL 분만장", "분만장"] },
-  { display: "GICLA", aliases: ["GICLA", "GICLA소화기병검사실", "GICLA 소화기병 검사실", "소화기병검사실", "소화기병 검사실"] },
+  {
+    display: "GICLA",
+    aliases: [
+      "GICLA",
+      "GICLA소화기병검사실",
+      "GICLA 소화기병 검사실",
+      "GICLA소화기검사실",
+      "GICLA 소화기 검사실",
+      "소화기병검사실",
+      "소화기병 검사실",
+      "소화기검사실",
+      "소화기 검사실",
+    ],
+  },
   { display: "HBEF", aliases: ["HBEF", "HBEF심혈관조영실", "HBEF 심혈관조영실", "심혈관조영실", "심장혈관검사실"] },
   { display: "INJ", aliases: ["INJ", "INJ외래주사실", "INJ 외래 주사실", "외래주사실", "외래 주사실"] },
   { display: "PED", aliases: ["PED", "PED소아청소년과", "PED 소아청소년과", "소아청소년과"] },
@@ -206,13 +225,17 @@ const BASE_LABEL_MODE_OPTIONS: LabelModeOption[] = [
 ];
 
 export function getLabelModeOptions(appMode: AppMode): LabelModeOption[] {
-  if (appMode === "master-viewer" || appMode === "narcotic-viewer") return BASE_LABEL_MODE_OPTIONS;
+  if (appMode === "master-viewer") return BASE_LABEL_MODE_OPTIONS;
   return [...BASE_LABEL_MODE_OPTIONS, { mode: "pharmacy", label: "약제팀 라벨" }];
 }
 
 export function getInitialMasterKindFilter(appMode: AppMode): MasterRowKindFilter {
   if (appMode === "narcotic-viewer") return { stock: false, psychotropic: true, narcotic: true };
   return { stock: true, psychotropic: true, narcotic: true };
+}
+
+export function isMasterKindFilterDisabled(appMode: AppMode, kind: keyof MasterRowKindFilter) {
+  return appMode === "narcotic-viewer" && kind === "stock";
 }
 
 export function makeLabelPrintSelectionKey(id: string, mode: DrugLabelMode, sizeKey: DrugLabelSizeKey, roomId?: string) {
@@ -599,10 +622,21 @@ function roomLookupTokens(room: StockRoom) {
 }
 
 export function resolveMasterLabelRoomId(query: string, rooms: StockRoom[]) {
-  const normalized = normalizeRoomLookupValue(query);
-  if (!normalized) return undefined;
+  return resolveMasterLabelRoomIds(query, rooms)[0];
+}
 
-  return rooms.find((room) => roomLookupTokens(room).has(normalized))?.id;
+export function resolveMasterLabelRoomIds(query: string, rooms: StockRoom[]) {
+  const normalized = normalizeRoomLookupValue(query);
+  if (!normalized) return [];
+  const queryTokens = roomLookupTokensFromValue(query);
+
+  return [
+    ...new Set(
+      rooms
+        .filter((room) => [...roomLookupTokens(room)].some((roomToken) => [...queryTokens].some((queryToken) => roomToken.includes(queryToken))))
+        .map((room) => room.id),
+    ),
+  ];
 }
 
 function getMasterRoomQuantity(row: MasterRow, roomId?: string) {
@@ -651,7 +685,7 @@ export function cleanDrugLabelName(name: string, highRisk: boolean) {
     .trim();
 }
 
-const FORCE_COLD_LABEL_CODES = new Set(["XATIV2W", "XATIV4W", "XKETA5W"]);
+const FORCE_COLD_LABEL_CODES = new Set(["XATIV2W", "XATIV4W", "XLZPAM2", "XLZPAM4", "XKETA5", "XKETA5W"]);
 
 function labelStorage(row: MasterRow) {
   const forcedCold = FORCE_COLD_LABEL_CODES.has(row.code);
@@ -781,6 +815,11 @@ export function matchesMaster(row: MasterRow, query: string) {
       return [...roomTokens].some((token) => token.includes(normalizedRoomQuery));
     })
   );
+}
+
+export function matchesMasterSearch(row: MasterRow, query: string, roomIds: string[] = []) {
+  if (roomIds.length > 0) return roomIds.some((roomId) => matchesMasterRoom(row, roomId));
+  return matchesMaster(row, query);
 }
 
 function isChecklistLabelOnly(text: string) {
@@ -981,7 +1020,12 @@ export function buildReportFileName({
     return `${sanitizeFileName(`E-cart 현황 및 일괄점검보고서_${date}`)}.pdf`;
   }
 
-  const reportTitle = category === "stock" ? "비품약 현황 및 일괄점검보고서" : "E-cart 현황 및 일괄점검보고서";
+  if (mode === "all-narcotic") {
+    return `${sanitizeFileName(`비치마약류 현황 및 일괄점검보고서_${date}`)}.pdf`;
+  }
+
+  const reportTitle =
+    category === "stock" ? "비품약 현황 및 일괄점검보고서" : category === "narcotic" ? "비치마약류 현황 및 일괄점검보고서" : "E-cart 현황 및 일괄점검보고서";
   const prefix = targetName ? `${targetName}_` : "";
   return `${sanitizeFileName(`${prefix}${reportTitle}_${date}`)}.pdf`;
 }
