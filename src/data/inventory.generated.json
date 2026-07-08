@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-08T14:16:01+09:00",
+  "generatedAt": "2026-07-08T14:35:37+09:00",
   "sourceFiles": {
     "stockWorkbook": "병동별비품현황 202606.xlsx",
     "ecartWorkbook": "20260302E-cart 약품목록_ cortisolu 삭제.xlsx",
@@ -139,7 +139,7 @@
       {
         "code": "XPALON",
         "genericName": "Palonsetron 0.05mg/ml",
-        "productName": "Aloxi 0.25mg/5ml Inj",
+        "productName": "ALOXI 0.25mg/5ml Inj",
         "spec": "1VIAL/BOX",
         "storage": "실온(1∼30℃)보관, 밀봉용기, 빛을 피하여 보관",
         "note": "용량고주의",
@@ -519,7 +519,7 @@
       {
         "code": "XABCIX",
         "genericName": "Abciximab 10mg",
-        "productName": "Clotinab 10mg/5ml Inj",
+        "productName": "Clotinab 10mg/5ml inj",
         "spec": "1VIAL",
         "storage": "밀봉용기, 냉장보관(2~8℃)",
         "note": "",
@@ -679,7 +679,7 @@
       {
         "code": "XDOB5D2",
         "genericName": "Dobutamine/D5W 500mg/250ml bag",
-        "productName": "DOBUTamine/D5W 500mg/250ml bag",
+        "productName": "doBUTAmine/D5W 500mg/250ml bag",
         "spec": "20BAG/BOX",
         "storage": "밀봉용기, 25℃이하에서 보관",
         "note": "유사발음",
@@ -759,7 +759,7 @@
       {
         "code": "XLEVET500W",
         "genericName": "Levetiracetam 500mg",
-        "productName": "Epilatam 500mg inj",
+        "productName": "epiLATAM 500mg inj",
         "spec": "10vial/BOX",
         "storage": "밀봉용기, 실온(1~30℃)보관",
         "note": "유사발음",
@@ -769,7 +769,7 @@
       {
         "code": "XEPIN",
         "genericName": "Epinephrine HCl 1mg",
-        "productName": "Epinephrine 1mg/1ml inj",
+        "productName": "EPInephrine 1mg/1ml inj",
         "spec": "50AMP/BOX",
         "storage": "차광밀봉용기, 25℃이하 보관, 냉장보관하지 말 것.",
         "note": "유사발음",
@@ -789,7 +789,7 @@
       {
         "code": "XXEPOA2",
         "genericName": "Erythropoetin alpha 2000IU",
-        "productName": "Epokine pfs 2000iu inj",
+        "productName": "Epokine PFS 2000iu inj",
         "spec": "6SRG/BOX",
         "storage": "밀봉용기, 2-8℃에서 냉장보관",
         "note": "",
@@ -799,7 +799,7 @@
       {
         "code": "XXEPOA3K",
         "genericName": "Erythropoetin alpha 3000IU",
-        "productName": "Epokine pfs 3000iu inj",
+        "productName": "Epokine PFS 3000iu inj",
         "spec": "6SRG/BOX",
         "storage": "밀봉용기, 2-8℃에서 냉장보관",
         "note": "",
@@ -809,7 +809,7 @@
       {
         "code": "XXEPOA4K",
         "genericName": "Erythropoetin alpha 4000IU",
-        "productName": "Epokine pfs 4000iu inj",
+        "productName": "Epokine PFS 4000iu inj",
         "spec": "6SRG/BOX",
         "storage": "밀봉용기, 2-8℃에서 냉장보관",
         "note": "",
@@ -819,7 +819,7 @@
       {
         "code": "XXEPOA6K",
         "genericName": "Erythropoetin alpha 6000IU",
-        "productName": "Epokine pfs 6000iu inj",
+        "productName": "Epokine PFS 6000iu inj",
         "spec": "6SRG/BOX*16",
         "storage": "밀봉용기, 2-8℃에서 냉장보관",
         "note": "",
@@ -829,7 +829,7 @@
       {
         "code": "XXEPOA8K",
         "genericName": "Erythropoietin alpha 8000IU",
-        "productName": "Epokine pfs 8000iu inj",
+        "productName": "Epokine PFS 8000iu inj",
         "spec": "6SRG/BOX",
         "storage": "밀봉용기, 2-8℃에서 냉장보관",
         "note": "",
@@ -959,7 +959,7 @@
       {
         "code": "XFMXEF",
         "genericName": "Flomoxef sodium 500mg",
-        "productName": "Flumarin 0.5g inj",
+        "productName": "FluMARIN 0.5g inj",
         "spec": "10VIA/BOX",
         "storage": "실온보관 밀봉용기",
         "note": "유사발음",
@@ -969,7 +969,7 @@
       {
         "code": "XFLUMA3",
         "genericName": "Flumazenil 0.3mg",
-        "productName": "Flunil 0.3mg/3ml inj",
+        "productName": "Flunil 0.3mg/3mL inj",
         "spec": "5AMP/BOX",
         "storage": "밀봉용기, 30℃이하 보관",
         "note": "",
@@ -1129,7 +1129,7 @@
       {
         "code": "XHEPAR5",
         "genericName": "Heparin sodium 25000u",
-        "productName": "Heparin sod. 25000IU/5ml inj",
+        "productName": "Heparin sod. 25000iu/5ml inj",
         "spec": "10VIA/BOX",
         "storage": "밀봉용기, 실온보존",
         "note": "고위험의약품",
@@ -1489,7 +1489,7 @@
       {
         "code": "XMEROP",
         "genericName": "Meropenem 500mg",
-        "productName": "Meropen 500mg inj",
+        "productName": "MeROPen 500mg inj",
         "spec": "10VIA/BOX*45",
         "storage": "밀봉용기, 실온보관",
         "note": "유사모양",
@@ -1619,7 +1619,7 @@
       {
         "code": "XACYST3",
         "genericName": "acetylcysteine 100㎎/㎖",
-        "productName": "Muteran 300mg/3mL inj",
+        "productName": "MUTeran 300mg/3mL inj",
         "spec": "10AMP/BOX",
         "storage": "차광밀봉용기, 실온보관",
         "note": "",
@@ -1709,7 +1709,7 @@
       {
         "code": "XNALO.4",
         "genericName": "Naloxone 0.4mg",
-        "productName": "Naloxone HCl 0.4mg inj",
+        "productName": "NaloXONE HCl 0.4MG inj",
         "spec": "10AMP/BOX",
         "storage": "밀봉용기, 차광보존",
         "note": "용량고주의",
@@ -2189,7 +2189,7 @@
       {
         "code": "BUD2-RP",
         "genericName": "Budesonide nebulizer 0.5mg/2ml amp",
-        "productName": "Pulmican sus 0.5mg/2ml amp",
+        "productName": "PULmican sus 0.5mg/2ml amp",
         "spec": "30AMP/BOX",
         "storage": "기밀용기, 실온(1~30℃)보관",
         "note": "유사모양",
@@ -2289,7 +2289,7 @@
       {
         "code": "X20SMOF50",
         "genericName": "Intralipid 20% 500ml Inj",
-        "productName": "SMOFlipid 20% 500ml Inj",
+        "productName": "SMOFlipid 20% 500ml inj",
         "spec": "10BTL/BOX",
         "storage": "밀봉용기, 1-25℃에서 보관",
         "note": "용량고주의",
@@ -2659,7 +2659,7 @@
       {
         "code": "SALB-NB",
         "genericName": "Salbutamol inhalation nebule 2.5mg",
-        "productName": "Ventolin nebule 2.5mg",
+        "productName": "Ventolin Nebule 2.5mg",
         "spec": "20AMP/BOX*54",
         "storage": "기밀용기, 30℃이하 차광보관",
         "note": "유사모양",
