@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-23T17:40:44+09:00",
+  "generatedAt": "2026-07-08T14:16:01+09:00",
   "sourceFiles": {
     "stockWorkbook": "병동별비품현황 202606.xlsx",
     "ecartWorkbook": "20260302E-cart 약품목록_ cortisolu 삭제.xlsx",
@@ -69,7 +69,7 @@
       {
         "code": "XTPA20",
         "genericName": "RH-tissue-type plasminogen activator",
-        "productName": "Actylase 20mg/20ml inj",
+        "productName": "Actilyse 20mg/20ml inj",
         "spec": "1VIAL/BOX",
         "storage": "밀봉용기, 실온(1-30℃) 보관, 빛을 피하여 보관",
         "note": "",
@@ -79,7 +79,7 @@
       {
         "code": "XTPA50",
         "genericName": "RH-tissue-type plasminogen activator",
-        "productName": "Actylase 50mg/50ml inj",
+        "productName": "Actilyse 50mg/50ml inj",
         "spec": "1VIAL/BOX",
         "storage": "밀봉용기, 실온(1-30℃) 보관, 빛을 피하여 보관",
         "note": "",
@@ -149,7 +149,7 @@
       {
         "code": "XAMBR15",
         "genericName": "Ambroxol 15mg",
-        "productName": "Ambroxol 15mg inj",
+        "productName": "Ambroxol 15mg/2ml inj",
         "spec": "50AMP/BOX",
         "storage": "차광밀봉용기, 실온(1~30℃)보관",
         "note": "유사모양",
@@ -249,7 +249,7 @@
       {
         "code": "XBMETHA4W",
         "genericName": "Betamethasone 4mg inj*",
-        "productName": "Betamethasone 4mg inj",
+        "productName": "BETAmethasone 4mg/ml inj",
         "spec": "50AMP/BOX",
         "storage": "차광밀봉용기, 실온(1~30℃)보관",
         "note": "유사발음",
@@ -319,7 +319,7 @@
       {
         "code": "XEMOL1",
         "genericName": "Esmolol HCl 100mg",
-        "productName": "Brevibloc 100mg inj",
+        "productName": "Brevibloc 100mg/10ml inj",
         "spec": "20VIA/BOX",
         "storage": "실온보관",
         "note": "",
@@ -329,7 +329,7 @@
       {
         "code": "XEMOL25W",
         "genericName": "Esmolol HCl 2.5g",
-        "productName": "Brevibloc 2.5g inj(vial)",
+        "productName": "Brevibloc 2.5g/10ml inj(vial)",
         "spec": "10VIAL/BOX",
         "storage": "차광한 밀봉용기, 실온(1~30℃)보관",
         "note": "",
@@ -349,7 +349,7 @@
       {
         "code": "BSS-L",
         "genericName": "BSS*",
-        "productName": "BSS 500ml",
+        "productName": "BSS 500ml btl",
         "spec": "500ML/BTL",
         "storage": "2 ~ 25℃ 보관, 밀봉용기",
         "note": "",
@@ -419,7 +419,7 @@
       {
         "code": "XCAGL",
         "genericName": "Calcium gluconate 9.29mEq/amp",
-        "productName": "Calcium gluconate 2g inj",
+        "productName": "Calcium gluconate 2g/20ml inj",
         "spec": "50AMP/BOX",
         "storage": "밀봉용기, 실온(1 - 30℃)보관",
         "note": "",
@@ -429,7 +429,7 @@
       {
         "code": "XICARM",
         "genericName": "Indigocarmine 0.8%",
-        "productName": "Carmine 0.8% 5ml inj",
+        "productName": "Carmine 0.8% 40mg/5ml inj",
         "spec": "10AMP/BOX",
         "storage": "차광한 밀봉용기, 실온(1~30℃)보관",
         "note": "",
@@ -449,7 +449,7 @@
       {
         "code": "XCZOL1W",
         "genericName": "Cefazolin 1g inj",
-        "productName": "Cefazolin 1g inj",
+        "productName": "Cefazolin 1g inj CKD",
         "spec": "10VIA/BOX",
         "storage": "밀봉용기, 실온보관",
         "note": "",
@@ -459,7 +459,7 @@
       {
         "code": "XCTXM5W",
         "genericName": "Cefotaxime 500mg inj",
-        "productName": "Cefotaxime 500mg inj (cefotaxime)",
+        "productName": "Cefotaxime 500mg inj",
         "spec": "10VIA/BOX",
         "storage": "밀봉용기, 실온(1-30℃)보관",
         "note": "",
@@ -469,7 +469,7 @@
       {
         "code": "XCTXM",
         "genericName": "Cefotaxime 1g",
-        "productName": "Cefotaxime 1g inj CJ",
+        "productName": "CefoTAXIME 1g inj 이노엔",
         "spec": "10VIA/BOX",
         "storage": "밀봉용기, 실온(1-30℃)보관",
         "note": "",
@@ -479,7 +479,7 @@
       {
         "code": "XCTXM2G",
         "genericName": "CefoTAXIME 2g inj",
-        "productName": "CefoTAXIME 2g inj (cefotaxime)",
+        "productName": "CefoTAXIME 2g inj",
         "spec": "10VIA/BOX",
         "storage": "밀봉용기, 실온(1-31℃)보관",
         "note": "",
@@ -499,7 +499,7 @@
       {
         "code": "XCTRX5",
         "genericName": "Ceftriaxone 500mg",
-        "productName": "Ceftriaxone 500mg inj CJ",
+        "productName": "CEFTRIAXONE 0.5g inj",
         "spec": "10VIA/BOX",
         "storage": "밀봉용기, 25도씨에서 차광보관",
         "note": "",
@@ -549,7 +549,7 @@
       {
         "code": "XCFACT120",
         "genericName": "Poractant alfa 120mg",
-        "productName": "Curosurf 120mg inj.",
+        "productName": "Curosurf 120mg/1.5ml inj",
         "spec": "1SRG/BOX",
         "storage": "밀봉용기, 5 ±3℃ 냉암소보관",
         "note": "",
@@ -569,7 +569,7 @@
       {
         "code": "XD31",
         "genericName": "Cholecalciferol 2.5mg",
-        "productName": "D3 Base 100000IU inj",
+        "productName": "D3 Base 100,000 iu inj",
         "spec": "6AMP/BOX",
         "storage": "밀봉용기, 차광하여 실온(1~30℃) 보관",
         "note": "",
@@ -579,7 +579,7 @@
       {
         "code": "XD33",
         "genericName": "Cholecalciferol 7.5mg",
-        "productName": "D3 Base 300000IU inj",
+        "productName": "D3 BASE 300,000 iu inj",
         "spec": "2AMP/BOX",
         "storage": "밀봉용기, 차광하여 실온(1~30℃)보관",
         "note": "",
@@ -609,7 +609,7 @@
       {
         "code": "XDXM",
         "genericName": "Dexamethasone 5mg",
-        "productName": "Dexamethasone 5mg inj",
+        "productName": "Dexamethasone 5mg/1ml inj",
         "spec": "50AMP/BOX",
         "storage": "차광한 밀봉용기, 실온(1 ~ 30℃) 보관",
         "note": "유사발음",
@@ -689,7 +689,7 @@
       {
         "code": "XDOPA4D2",
         "genericName": "Dopamine/D5W 400mg/200ml bag",
-        "productName": "DOPamine/D5W 400mg/200ml bag CJ",
+        "productName": "DOPAmine/D5W 400mg/200ml inj",
         "spec": "30BAG/BOX",
         "storage": "밀봉용기, 실온(1-30℃)보관",
         "note": "유사발음",
@@ -699,7 +699,7 @@
       {
         "code": "XXDPT.5W",
         "genericName": "DTaP vaccine 0.5ml pfs",
-        "productName": "DTaP 0.5ml vaccine(Boryung)",
+        "productName": "DTaP 0.5ml vaccine(BORYUNG) (국가예방접종)",
         "spec": "10SRG/BOX",
         "storage": "밀봉용기, 2-8℃에서 동결을 피하여 보관",
         "note": "",
@@ -709,7 +709,7 @@
       {
         "code": "BISA1-P",
         "genericName": "Bisacodyl supp",
-        "productName": "Dulcolax suppo",
+        "productName": "Dulcolax Supp",
         "spec": "50PILL/BOX",
         "storage": "기밀용기, 25℃이하 보관",
         "note": "",
@@ -749,7 +749,7 @@
       {
         "code": "XEPHE",
         "genericName": "Ephedrine HCl 40mg",
-        "productName": "Ephedrine HCl 40mg inj",
+        "productName": "EPHEDrine 40mg inj",
         "spec": "50AMP/BOX",
         "storage": "차광한 밀봉용기, 실온(1～30℃)보관,",
         "note": "유사발음",
@@ -779,7 +779,7 @@
       {
         "code": "XXEPOA10K",
         "genericName": "Erythropoietin alpha 10,000IU",
-        "productName": "Epokine pfs 10000iu inj",
+        "productName": "Epokine PFS 10,000iu inj",
         "spec": "6SRG/BOX",
         "storage": "밀봉용기, 2-8℃에서 냉장보관",
         "note": "",
@@ -879,7 +879,7 @@
       {
         "code": "XHINFB5",
         "genericName": "H.influenzae B comb. with toxoids",
-        "productName": "euHIB 0.5ml inj",
+        "productName": "euHIB 0.5ml inj (국가예방접종)",
         "spec": "10 SRG/BOX",
         "storage": "밀봉용기, 동결을 피하여 2～8℃에서 보관",
         "note": "",
@@ -889,7 +889,7 @@
       {
         "code": "XEUV-P",
         "genericName": "Purified hepatitis B surface antigen protein 10mcg",
-        "productName": "Euvax-B 0.5ml inj",
+        "productName": "Euvax-B 10mcg/0.5ml inj (국가예방접종)",
         "spec": "20VIA/BOX",
         "storage": "밀봉용기, 2-8℃에서 보관",
         "note": "",
@@ -899,7 +899,7 @@
       {
         "code": "XXHBV20W",
         "genericName": "Hepatitis B vaccine 20mcg pfs",
-        "productName": "Euvax-B 20mcg pfs",
+        "productName": "EUVAX-B 20mcg pfs (국가예방접종)",
         "spec": "10SRG/BOX",
         "storage": "밀봉용기, 2-8℃에서 동결을 피하여 보관",
         "note": "",
@@ -909,7 +909,7 @@
       {
         "code": "XXROMO1",
         "genericName": "Romosozumab 105mg",
-        "productName": "Evenity 105mg/1.17ml",
+        "productName": "Evenity 105mg/1.17ml*2pfs/box",
         "spec": "2pfs/box",
         "storage": "밀봉용기, 차광하여 냉장 보관(2-8°C)",
         "note": "",
@@ -1019,7 +1019,7 @@
       {
         "code": "XCLM",
         "genericName": "Clindamycin 300mg",
-        "productName": "Fullgram 300mg/2ml",
+        "productName": "Fullgram 300mg/2ml inj",
         "spec": "50AMP/BOX",
         "storage": "밀봉용기, 실온(1~30℃)보관",
         "note": "",
@@ -1069,7 +1069,7 @@
       {
         "code": "XGM80",
         "genericName": "Gentamicin sulfate 80mg",
-        "productName": "Gentamicin 80mg inj",
+        "productName": "gentaMICIN 80mg/2ml inj",
         "spec": "50AMP/BOX",
         "storage": "앰플: 밀봉용기, 실온(1 ∼30℃)보관",
         "note": "",
@@ -1119,7 +1119,7 @@
       {
         "code": "XHEPAR1",
         "genericName": "Heparin sodium 20000IU/20ml",
-        "productName": "Heparin sod. 20000IU/20ml inj 중외",
+        "productName": "Heparin sod. 20000iu/20ml inj",
         "spec": "10VIA/BOX",
         "storage": "차광한 밀봉용기",
         "note": "고위험의약품",
@@ -1139,7 +1139,7 @@
       {
         "code": "XHEP100PM",
         "genericName": "Heparin sodium 100IU/ml",
-        "productName": "Heparin sodium inj 100IU/ml",
+        "productName": "Heparin sodium 1000iu/10ml inj",
         "spec": "10VIAL/BOX",
         "storage": "차광밀봉용기, 실온(1~30℃)보관",
         "note": "고위험의약품",
@@ -1169,7 +1169,7 @@
       {
         "code": "XXHEXA6",
         "genericName": "",
-        "productName": "Hexaxim pfs inj",
+        "productName": "Hexaxim pfs inj (일반)",
         "spec": "",
         "storage": "동결을 피하여 2~8 ℃에서 차광하여 냉장보관",
         "note": "",
@@ -1189,7 +1189,7 @@
       {
         "code": "XHYOS2Y",
         "genericName": "Hyspan 20mg inj",
-        "productName": "Hyspan 20mg inj",
+        "productName": "Hyspan 20mg/ml inj",
         "spec": "50AMP/BOX",
         "storage": "차광밀봉용기, 실온(1~30℃)보관",
         "note": "",
@@ -1209,7 +1209,7 @@
       {
         "code": "XPALP100L",
         "genericName": "Palliperidone palmitate 156mg(100mg)",
-        "productName": "Invega sustenna 156mg(100mg) inj. 1ml/srg",
+        "productName": "Invega sustenna 156mg(100mg) inj",
         "spec": "1ML/SRG",
         "storage": "밀봉용기, 실온보관(15~30℃)",
         "note": "",
@@ -1219,7 +1219,7 @@
       {
         "code": "XPALP150L",
         "genericName": "Palliperidone palmitate 234mg(150mg)",
-        "productName": "Invega sustenna 234mg(150mg) inj. 1.5ml/srg",
+        "productName": "Invega sustenna 234mg(150mg) inj",
         "spec": "1.5ML/SRG",
         "storage": "밀봉용기, 실온보관(15~30℃)",
         "note": "",
@@ -1229,7 +1229,7 @@
       {
         "code": "XXPALP350",
         "genericName": "Paliperidone 546mg(350mg)/1.75ml",
-        "productName": "Invega Trinza 410mg(263mg) pfs",
+        "productName": "Invega Trinza 546mg(350mg) pfs",
         "spec": "1SRG/BOX",
         "storage": "밀봉용기, 실온(15~30℃)보관",
         "note": "",
@@ -1239,7 +1239,7 @@
       {
         "code": "XXPALP263",
         "genericName": "Paliperidone 410mg(263mg)/1.315ml",
-        "productName": "Invega Trinza 546mg(350mg) pfs",
+        "productName": "Invega Trinza 410mg(263mg) pfs",
         "spec": "1SRG/BOX",
         "storage": "밀봉용기, 실온(15~30℃)보관",
         "note": "",
@@ -1259,7 +1259,7 @@
       {
         "code": "XXPOLI5W",
         "genericName": "Poliovirus vaccine",
-        "productName": "IPVAX 0.5ml inj",
+        "productName": "IPVAX 0.5ml inj (국가예방접종)",
         "spec": "5SRG/BOX",
         "storage": "밀봉용기, 2~8°C 보관",
         "note": "",
@@ -1269,7 +1269,7 @@
       {
         "code": "XVERAW",
         "genericName": "Verapamil 5mg inj",
-        "productName": "Isoptin 5mg inj(viatris)",
+        "productName": "Isoptin 5mg/2ml (Viatris)",
         "spec": "10AMP/BOX",
         "storage": "차광용기, 실온보관",
         "note": "",
@@ -1279,7 +1279,7 @@
       {
         "code": "XJENCVB2",
         "genericName": "Inactivated Cell Culture-derived J.E.V",
-        "productName": "J.E.V 0.4ml inj (Cell Culture)",
+        "productName": "J.E.V 0.4ml inj(Cell Culture) (국가예방접종)",
         "spec": "10VIA/BOX",
         "storage": "밀봉용기, 차광하여 2~8℃에서 냉장보관",
         "note": "",
@@ -1289,7 +1289,7 @@
       {
         "code": "XJENCVB",
         "genericName": "Inactivated Cell Culture-derived J.E.Virus",
-        "productName": "J.E.V 0.7ml inj (Cell Culture)",
+        "productName": "J.E.V 0.7ml inj(Cell Culture) (국가예방접종)",
         "spec": "10VIA/BOX",
         "storage": "밀봉용기, 차광하여 2~8℃에서 냉장보관",
         "note": "",
@@ -1299,7 +1299,7 @@
       {
         "code": "XKROL",
         "genericName": "Ketorolac tromethamine 30mg",
-        "productName": "Keromin 30mg Inj",
+        "productName": "Keromin 30mg/ml inj",
         "spec": "50AMP/BOX",
         "storage": "차광밀봉용기, 실온(1-30℃)보관",
         "note": "",
@@ -1319,7 +1319,7 @@
       {
         "code": "HCORT1-LT",
         "genericName": "",
-        "productName": "Lacticare HC lotion1% 118g",
+        "productName": "Lacticare-HC 1% lotion 118g",
         "spec": "",
         "storage": "기밀용기, 실온(1~30℃)보관",
         "note": "",
@@ -1339,7 +1339,7 @@
       {
         "code": "XFURO",
         "genericName": "Furosemide 20mg",
-        "productName": "Lasix 20mg inj",
+        "productName": "Lasix 20MG/2ml inj",
         "spec": "50AMP/BOX",
         "storage": "밀봉용기 실온보관 차광.",
         "note": "유사모양",
@@ -1349,7 +1349,7 @@
       {
         "code": "XRITOD",
         "genericName": "Ritodrine 50mg",
-        "productName": "Lavopar 50mg inj",
+        "productName": "Lavopa 50mg/5ml inj",
         "spec": "10AMP/BOX",
         "storage": "차광밀봉용기, 30도 이하 보관",
         "note": "",
@@ -1359,7 +1359,7 @@
       {
         "code": "XXLEUPD11",
         "genericName": "Leuprolide acetate 11.25mg",
-        "productName": "LEUPLIN DPS 11.25mg Inj",
+        "productName": "LEUPLIN DPS 11.25mg Inj.",
         "spec": "1 SRG/BOX",
         "storage": "밀봉용기, 실온(1~30℃)보관,",
         "note": "용량고주의",
@@ -1369,7 +1369,7 @@
       {
         "code": "XLEUPD375",
         "genericName": "Leuprolide acetate 3.75mg vial",
-        "productName": "Leuplin vial 3.75mg",
+        "productName": "Leuplin 3.75mg inj",
         "spec": "1 VIAL/BOX",
         "storage": "밀봉용기, 실온(1∼30℃)보관",
         "note": "용량고주의",
@@ -1379,7 +1379,7 @@
       {
         "code": "XLID2W",
         "genericName": "Lidocaine 2% 20mg/ml",
-        "productName": "Lidocaine HCI 2% 20ml inj",
+        "productName": "2% LIDOcaine 20ml inj",
         "spec": "10VIA/BOX",
         "storage": "밀봉용기, 실온(1∼30℃)보관",
         "note": "",
@@ -1409,7 +1409,7 @@
       {
         "code": "XLEUPD3",
         "genericName": "Leuprolide acetate 3.75mg inj",
-        "productName": "Luphere Depot inj 3.75mg",
+        "productName": "Luphere Depot 3.75mg inj",
         "spec": "1SRG/BOX",
         "storage": "밀봉용기,실온보관(1~30℃)",
         "note": "",
@@ -1429,7 +1429,7 @@
       {
         "code": "XMEXO",
         "genericName": "Metoclopramide",
-        "productName": "Macperan 10mg inj",
+        "productName": "MACperan 10mg/2ml inj",
         "spec": "50AMP/BOX",
         "storage": "밀봉용기, 차광, 실온(1~30℃)보관",
         "note": "",
@@ -1439,7 +1439,7 @@
       {
         "code": "XMGSF10",
         "genericName": "MgSO4 10% 20ml",
-        "productName": "Magnesium sulfate 10% 20ml inj",
+        "productName": "Magnesium sulfate 10% 2g/20ml inj",
         "spec": "50AMP/BOX",
         "storage": "밀봉용기, 실온(1∼30℃)보관",
         "note": "",
@@ -1449,7 +1449,7 @@
       {
         "code": "X20M1X",
         "genericName": "Mannitol(D-) 20% 100ml",
-        "productName": "Mannitol 20% 100ml bag대한",
+        "productName": "Mannitol 20% 100ml bag",
         "spec": "50BAG/BOX",
         "storage": "밀봉용기",
         "note": "",
@@ -1569,7 +1569,7 @@
       {
         "code": "XMMR2",
         "genericName": "MMR virus vaccine 0.5ml",
-        "productName": "MMR II 0.5ml inj",
+        "productName": "MMR II 0.5ml inj (국가예방접종)",
         "spec": "5VIAL/BOX",
         "storage": "밀봉용기 2 ~ 8℃에서 보관",
         "note": "",
@@ -1629,7 +1629,7 @@
       {
         "code": "XMVH",
         "genericName": "Multivitamin inj 5ml",
-        "productName": "MVH 5ml inj",
+        "productName": "M.V.H 5ml inj",
         "spec": "25VIA/BOX",
         "storage": "기밀용기에 넣어 차광냉소보관",
         "note": "",
@@ -1639,7 +1639,7 @@
       {
         "code": "MYP-T",
         "genericName": "Tropicamide/Phenylephrine oph sol",
-        "productName": "Mydrin-P oph sol",
+        "productName": "Mydrin-P oph sol*",
         "spec": "10ML/BTL",
         "storage": "기밀용기, 실온보관(1~30℃)",
         "note": "",
@@ -1679,7 +1679,7 @@
       {
         "code": "XNA40",
         "genericName": "NaCl 40mEq/20ml plastic amp",
-        "productName": "NaCl 40mEq/20ml",
+        "productName": "NaCl 40mEq/20ml inj",
         "spec": "50AMP/BOX",
         "storage": "밀봉용기, 실온(1~30℃)보관",
         "note": "",
@@ -1719,7 +1719,7 @@
       {
         "code": "XRPCA7",
         "genericName": "Ropivacaine 0.75% 20ml",
-        "productName": "Naropin 7.5mg/ml 20ml inj",
+        "productName": "NAROPIN 7.5mg/ml (20ml) inj",
         "spec": "5AMP/BOX",
         "storage": "밀봉용기, 실온보관.",
         "note": "",
@@ -1729,7 +1729,7 @@
       {
         "code": "XRAMOSET",
         "genericName": "Ramosetron 0.3mg/2ml",
-        "productName": "Nasea 0.3mg inj",
+        "productName": "Nasea 0.3mg/2ml inj",
         "spec": "5AMP/BOX*5",
         "storage": "밀봉용기, 차광보존, 실온(1~30℃)보관",
         "note": "",
@@ -1739,7 +1739,7 @@
       {
         "code": "XTESTUN1W",
         "genericName": "Testosterone undecanoate 1000mg/4ml",
-        "productName": "Nebido inj",
+        "productName": "Nebido 1g/4ml inj",
         "spec": "4ML/VIAL/BOX",
         "storage": "차광밀봉용기, 실온(1-30℃) 보관",
         "note": "",
@@ -1809,7 +1809,7 @@
       {
         "code": "XESOME40",
         "genericName": "Esomerazole sodium",
-        "productName": "Nexium 40mg inj.",
+        "productName": "Nexium IV 40mg inj",
         "spec": "40MG/VIAL*10*12",
         "storage": "밀봉용기, 차광하여 30℃이하 보관",
         "note": "",
@@ -1829,7 +1829,7 @@
       {
         "code": "XNIMO",
         "genericName": "Nimodipine 10mg",
-        "productName": "Nimodipine 10mg inj",
+        "productName": "Nimodipine 10mg/50ml inj",
         "spec": "1VIAL/BOX*10",
         "storage": "차광밀봉용기, 실온(1~30℃)보관",
         "note": "",
@@ -1849,7 +1849,7 @@
       {
         "code": "XNITR10F",
         "genericName": "Nitroglycerin 10mg",
-        "productName": "Nitrolingual 10mg inj",
+        "productName": "Nitrolingual 10mg/10ml inj",
         "spec": "10 AMP/BOX",
         "storage": "밀봉용기, 실온보관",
         "note": "유사모양",
@@ -1869,7 +1869,7 @@
       {
         "code": "XNTPRUS",
         "genericName": "Nitroprusside 50mg",
-        "productName": "Nitropress 50mg inj",
+        "productName": "Nitropress 50mg/2ml inj",
         "spec": "1VIAL/BOX",
         "storage": "20～25℃, 차광보관",
         "note": "",
@@ -1879,7 +1879,7 @@
       {
         "code": "XNORE10",
         "genericName": "Norepinephrine 10mg/10ml",
-        "productName": "Norpin 10mg inj",
+        "productName": "Norpin 10mg/10ml inj",
         "spec": "10AMP/BOX",
         "storage": "차광밀봉용기, 실온보관(1-30)",
         "note": "",
@@ -1969,7 +1969,7 @@
       {
         "code": "XPAPA",
         "genericName": "Papaverine 30mg",
-        "productName": "Papaverine 30mg/1ml inj",
+        "productName": "Papaverine HCl 30mg/1ml inj",
         "spec": "50AMP/BOX",
         "storage": "차광, 밀봉용기, 실온보관(1∼30℃)",
         "note": "",
@@ -2009,7 +2009,7 @@
       {
         "code": "XXDTPHBP",
         "genericName": "DTPPHIB vaccine inj",
-        "productName": "Pentaxim inj",
+        "productName": "Pentaxim inj (일반)",
         "spec": "0.5ml/SRG",
         "storage": "동결을 피하여 2～8℃에 냉장보관, 밀봉용기",
         "note": "",
@@ -2019,7 +2019,7 @@
       {
         "code": "XNICAR",
         "genericName": "Nicardipine 10mg",
-        "productName": "Perdipine 10mg inj",
+        "productName": "Perdipine 10mg/10ml inj",
         "spec": "10AMP/BOX",
         "storage": "차광,실온보관",
         "note": "유사모양",
@@ -2029,7 +2029,7 @@
       {
         "code": "XHPD",
         "genericName": "Haloperidol 5mg/1ml",
-        "productName": "Peridol 5mg inj",
+        "productName": "PEridol 5mg/1ml inj",
         "spec": "10AMP/BOX",
         "storage": "밀봉용기, 차광하여 실온보관",
         "note": "유사발음",
@@ -2039,7 +2039,7 @@
       {
         "code": "XPHEPH1",
         "genericName": "Phenylephrine 10mg inj",
-        "productName": "Phenylephrine 1% 1ml inj",
+        "productName": "Phenylephrine 10mg/ml inj",
         "spec": "10VIA/BOX",
         "storage": "차광 밀봉용기(15-30℃ 보관)",
         "note": "",
@@ -2089,7 +2089,7 @@
       {
         "code": "XDEXMED2B",
         "genericName": "Dexmedetomidine 199mcg",
-        "productName": "Precedex 200mcg/50ml premix inj",
+        "productName": "pREceDex 200mcg/50ml premix",
         "spec": "20vial/box",
         "storage": "밀봉용기, 15-30℃보관",
         "note": "유사발음",
@@ -2099,7 +2099,7 @@
       {
         "code": "XMPD1W",
         "genericName": "",
-        "productName": "Predisol 125mg inj",
+        "productName": "Predi-sol 125mg inj",
         "spec": "",
         "storage": "실온보관,밀봉용기",
         "note": "",
@@ -2109,7 +2109,7 @@
       {
         "code": "XPNEUM20A",
         "genericName": "",
-        "productName": "Prevenar 20 pfs (adult)",
+        "productName": "Prevenar 20 pfs (성인)",
         "spec": "",
         "storage": "밀봉용기, 냉장(2~8℃)보관",
         "note": "",
@@ -2139,7 +2139,7 @@
       {
         "code": "XMILRIN",
         "genericName": "Milrinone 10mg",
-        "productName": "Primacor 10mg inj",
+        "productName": "Primacor 10mg/10ml inj",
         "spec": "10AMP/BOX",
         "storage": "밀봉용기,실온.차광보관",
         "note": "",
@@ -2149,7 +2149,7 @@
       {
         "code": "XPROG",
         "genericName": "Progesterone 500mg",
-        "productName": "Progesterone 500mg Inj(Taiyu)",
+        "productName": "Progesterone 500mg/10ml Inj(Taiyu)",
         "spec": "10VIA/BOX",
         "storage": "차광한 밀봉용기, 15~30℃보관",
         "note": "",
@@ -2169,7 +2169,7 @@
       {
         "code": "XPROT",
         "genericName": "Protamine 50mg",
-        "productName": "Protamine sulfate 50mg inj",
+        "productName": "Protamine sulfate 50mg/5ml inj",
         "spec": "5AMP/BOX",
         "storage": "밀봉용기, 실온보존",
         "note": "",
@@ -2269,7 +2269,7 @@
       {
         "code": "XVARICVS",
         "genericName": "VARICELAZOSTER",
-        "productName": "Sky Varicella 0.5ml inj",
+        "productName": "Sky Varicella 0.5ml inj (국가예방접종)",
         "spec": "5VIAL/BOX",
         "storage": "밀봉용기, 차광하여 2~8℃에서 냉장보관",
         "note": "",
@@ -2279,7 +2279,7 @@
       {
         "code": "X20SMOF1",
         "genericName": "MCT/Soy bean oil/Olive oil/Fish oil 100ml",
-        "productName": "SMOFlipid 20% 100ml Inj",
+        "productName": "smof LIPID 20% 100ml inj",
         "spec": "10 BTL/BOX",
         "storage": "밀봉용기, 1-25℃에서 보관",
         "note": "용량고주의",
@@ -2299,7 +2299,7 @@
       {
         "code": "XNB84",
         "genericName": "NaHCO3 8.4% 20ml amp",
-        "productName": "Sod.bicarbonate 8.4% 20ml inj",
+        "productName": "Sodium bicarbonate 8.4% 1.68g/20ml inj.",
         "spec": "50AMP/BOX",
         "storage": "밀봉용기, 실온보관(1~30℃)",
         "note": "",
@@ -2309,7 +2309,7 @@
       {
         "code": "XSUGAM1W",
         "genericName": "Sugammadex 199mg Inj",
-        "productName": "Sugammadex Sodium 100mg/1ml inj",
+        "productName": "Sugammadex sodium (1ml)/100mg inj",
         "spec": "9 VIAL/BOX",
         "storage": "2∼30℃보관, 차광보관, 밀봉용기",
         "note": "",
@@ -2319,7 +2319,7 @@
       {
         "code": "XSUGAM2W",
         "genericName": "Sugammadex 200mg Inj",
-        "productName": "Sugammadex Sodium 200mg/2ml inj",
+        "productName": "Sugammadex sodium (2ml)/200mg inj",
         "spec": "10 VIAL/BOX",
         "storage": "2∼30℃보관, 차광보관, 밀봉용기",
         "note": "",
@@ -2339,7 +2339,7 @@
       {
         "code": "XMVP12",
         "genericName": "Multivitamins",
-        "productName": "Tamipool inj.",
+        "productName": "Tamipool inj",
         "spec": "10VIA/BOX",
         "storage": "밀봉용기, 실온보관(1-30℃)",
         "note": "",
@@ -2349,7 +2349,7 @@
       {
         "code": "X2TAUR2",
         "genericName": "Taurolidine 2% 250ml",
-        "productName": "Taurolin 2% 250ml inj.",
+        "productName": "Taurolin 2% 250ml inj",
         "spec": "10btl/box",
         "storage": "밀봉용기,상온보관",
         "note": "",
@@ -2359,7 +2359,7 @@
       {
         "code": "XTAZOC4W",
         "genericName": "Piperacillin sod 4g/Tazobactam 0.5g",
-        "productName": "Tazoractam 4.5g inj",
+        "productName": "Tazolactam 4.5g inj",
         "spec": "10VIAL/BOX",
         "storage": "밀봉용기, 실온(1-30℃) 보관",
         "note": "",
@@ -2369,7 +2369,7 @@
       {
         "code": "XXDT5",
         "genericName": "Diphtheria/Tetanus Vaccine",
-        "productName": "TD vaccine (GC) 0.5ml/srg",
+        "productName": "TD vaccine 0.5ml/srg(GC) (국가예방접종)",
         "spec": "10SRG/BOX",
         "storage": "2-8℃에서 얼리지 말고 보관",
         "note": "",
@@ -2389,7 +2389,7 @@
       {
         "code": "XTESTO2W",
         "genericName": "Testosterone enanthate 250mg/ml",
-        "productName": "Testosterone Enanthate inj",
+        "productName": "Testosterone enanthate 250mg/ml Inj(QLpharma)",
         "spec": "10 AMP/BOX",
         "storage": "차광밀봉용기, 25℃ 미만 실온 보관",
         "note": "",
@@ -2429,7 +2429,7 @@
       {
         "code": "XATOSB3",
         "genericName": "Atosiban 37.5mg",
-        "productName": "Tractocile 37.5mg inj",
+        "productName": "Tractocile 37.5mg/5ml inj",
         "spec": "1VIAL/BOX",
         "storage": "밀봉용기, 냉장보관(2-8℃)",
         "note": "",
@@ -2439,7 +2439,7 @@
       {
         "code": "XATOSB6",
         "genericName": "Atosiban6.75mg",
-        "productName": "Tractocile 6.75mg inj",
+        "productName": "Tractocile 6.75mg/0.9ml inj",
         "spec": "10VIAL/BOX",
         "storage": "밀봉용기, 냉장보관(2-8℃)",
         "note": "",
@@ -2449,7 +2449,7 @@
       {
         "code": "XTRANEX5",
         "genericName": "tranexamic acid 500㎎/5㎖",
-        "productName": "Tranexamic acid inj 500mg/5ml",
+        "productName": "Tranexamic acid 500mg/5ml inj.",
         "spec": "50AMP/BOX",
         "storage": "밀봉용기, 실온(1～30℃)보관",
         "note": "",
@@ -2509,7 +2509,7 @@
       {
         "code": "XCRO2NS",
         "genericName": "",
-        "productName": "Triaxone mapset kit 2g ijj",
+        "productName": "Triaxone mapset kit 2g inj",
         "spec": "",
         "storage": "밀봉용기, 실온(1-30℃)보관",
         "note": "",
@@ -2519,7 +2519,7 @@
       {
         "code": "XTRAM100",
         "genericName": "Tramadol 100mg",
-        "productName": "Tridol 100mg inj",
+        "productName": "TRIDOL 100mg/2ml inj",
         "spec": "50AMP/BOX",
         "storage": "밀봉용기, 실온(1～30℃)보관",
         "note": "",
@@ -2529,7 +2529,7 @@
       {
         "code": "XTRAM50",
         "genericName": "Tramadol 50mg/ml",
-        "productName": "Tridol 50mg inj",
+        "productName": "Tridol 50mg/1ml inj",
         "spec": "50AMP/BOX",
         "storage": "밀봉용기, 실온(1～30℃)보관",
         "note": "",
@@ -2539,7 +2539,7 @@
       {
         "code": "XDOPA4",
         "genericName": "Dopamine HCl 400mg",
-        "productName": "Tropin 400mg inj",
+        "productName": "Tropin 400mg/5ml inj",
         "spec": "5AMP/BOX",
         "storage": "차광한 밀봉용기",
         "note": "",
@@ -2549,7 +2549,7 @@
       {
         "code": "XPPD",
         "genericName": "Tuberculin PPD",
-        "productName": "Tuberculin PPD RT 23",
+        "productName": "Tuberculin PPD AJV",
         "spec": "10VIA/BOX",
         "storage": "2-8℃ 차광보관/개봉후 2-8℃ 보관하고 24시간 이내 사용",
         "note": "",
@@ -2559,7 +2559,7 @@
       {
         "code": "XAMPSUL7",
         "genericName": "Ubacsin 750mg inj",
-        "productName": "Ubacsin 750mg inj (ampicillin/sulbactam)",
+        "productName": "Ubacsin 750mg inj",
         "spec": "10VIA/BOX",
         "storage": "밀봉용기, 실온(1~30℃)보관",
         "note": "",
@@ -2579,7 +2579,7 @@
       {
         "code": "XULIST10",
         "genericName": "Ulinastatin 100,000 IU",
-        "productName": "Ulistin 100000 IU inj",
+        "productName": "Ulistin 100,000 iu/2ml Inj",
         "spec": "10AMP/BOX",
         "storage": "밀봉용기, 실온보관(1~30℃)",
         "note": "",
@@ -2599,7 +2599,7 @@
       {
         "code": "XVANCO",
         "genericName": "Vancomycin 500mg",
-        "productName": "VANCOMYCIN HCI CJ INJ 500mg/V",
+        "productName": "Vancomycin 500mg inj",
         "spec": "10VIA/BOX",
         "storage": "밀봉용기, 실온보관",
         "note": "",
@@ -2609,7 +2609,7 @@
       {
         "code": "XXHAV.5W",
         "genericName": "Hepatitis A vaccine 80U",
-        "productName": "Vaqta 0.5ml pfs(ped)-25IU",
+        "productName": "Vaqta 0.5ml pfs(ped)-25iu (국가예방접종)",
         "spec": "1amp",
         "storage": "밀봉용기, 동결을 피하여 2～8℃에서 차광보관",
         "note": "",
@@ -2619,7 +2619,7 @@
       {
         "code": "XADH",
         "genericName": "Vasopressin 20u",
-        "productName": "Vasopressin 20u inj",
+        "productName": "Vasopressin 20u/ml inj",
         "spec": "10AMP/BOX",
         "storage": "동결을 피하여 냉소보존(15℃이하), 밀봉용기",
         "note": "",
@@ -6073,133 +6073,133 @@
       {
         "id": "XLID2W",
         "code": "XLID2W",
-        "name": "2% Lidocaine 400mg",
+        "name": "2% LIDOcaine 20ml inj",
         "dosage": "2% 20mL/Vial",
         "quantity": 2
       },
       {
         "id": "XNS20",
         "code": "XNS20",
-        "name": "N/S 20cc",
+        "name": "NS 20ml inj",
         "dosage": "20mL/Amp",
         "quantity": 3
       },
       {
         "id": "NITR",
         "code": "NITR",
-        "name": "Nitroglycerin(SL)",
+        "name": "Nitroglycerine 0.6mg tab",
         "dosage": "0.6mg/Tab",
         "quantity": 3
       },
       {
         "id": "XCPENIR",
         "code": "XCPENIR",
-        "name": "Peniramin",
+        "name": "Peniramin 4mg/2ml inj",
         "dosage": "4mg/2ml/Amp",
         "quantity": 3
       },
       {
         "id": "XNITR10F",
         "code": "XNITR10F",
-        "name": "Nitrolingual 0.1%",
+        "name": "Nitrolingual 10mg/10ml inj",
         "dosage": "10mg/10ml",
         "quantity": 5
       },
       {
         "id": "XFURO",
         "code": "XFURO",
-        "name": "Lasix",
+        "name": "Lasix 20MG/2ml inj",
         "dosage": "20mg/Amp",
         "quantity": 5
       },
       {
         "id": "XNALO.4",
         "code": "XNALO.4",
-        "name": "Naloxone",
+        "name": "NaloXONE HCl 0.4MG inj",
         "dosage": "0.4mg/Amp",
         "quantity": 3
       },
       {
         "id": "XADENO6",
         "code": "XADENO6",
-        "name": "Adenocor( Adenosin )",
+        "name": "Adenocor 6mg/2ml inj",
         "dosage": "6mg/Vial",
         "quantity": 3
       },
       {
         "id": "XNORE10",
         "code": "XNORE10",
-        "name": "Norpin",
+        "name": "Norpin 10mg/10ml inj",
         "dosage": "10mg/Amp",
         "quantity": 3
       },
       {
         "id": "XAMIOD",
         "code": "XAMIOD",
-        "name": "Cordarone",
+        "name": "Cordarone 150mg/3ml inj",
         "dosage": "150mg/Amp",
         "quantity": 2
       },
       {
         "id": "XATRO",
         "code": "XATRO",
-        "name": "Atropine",
+        "name": "Atropine sulfate 0.5mg/1ml inj",
         "dosage": "0.5mg/Amp",
         "quantity": 10
       },
       {
         "id": "XEPIN",
         "code": "XEPIN",
-        "name": "Epinephrine",
+        "name": "EPInephrine 1mg/1ml inj",
         "dosage": "1mg/ml/Amp",
         "quantity": 20
       },
       {
         "id": "XNB84",
         "code": "XNB84",
-        "name": "Sodium Bicabonate",
+        "name": "Sodium bicarbonate 8.4% 1.68g/20ml inj.",
         "dosage": "20mEq/20mL/Amp",
         "quantity": 10
       },
       {
         "id": "XCAGL",
         "code": "XCAGL",
-        "name": "Ca Gluconate",
+        "name": "Calcium gluconate 2g/20ml inj",
         "dosage": "2g/20ml/ Amp",
         "quantity": 3
       },
       {
         "id": "XNS1L",
         "code": "XNS1L",
-        "name": "N/S 1L",
+        "name": "NS 1L bag",
         "dosage": "1L / Bag",
         "quantity": 2
       },
       {
         "id": "XD5W100",
         "code": "XD5W100",
-        "name": "5% D/W",
+        "name": "5% DW 100ml bag",
         "dosage": "100ml / Bag",
         "quantity": 2
       },
       {
         "id": "XD50W1",
         "code": "XD50W1",
-        "name": "50% D/W",
+        "name": "50% DW 100ml bag중외",
         "dosage": "100ml / Bottle",
         "quantity": 2
       },
       {
         "id": "XDOB5D2",
         "code": "XDOB5D2",
-        "name": "Dobutamine premix",
+        "name": "doBUTAmine/D5W 500mg/250ml bag",
         "dosage": "Dobu 500mg + 5% D/W 250ml",
         "quantity": 1
       },
       {
         "id": "XDOPA4D2",
         "code": "XDOPA4D2",
-        "name": "Dopamine premix",
+        "name": "DOPAmine/D5W 400mg/200ml inj",
         "dosage": "Dopa 400mg + 5% D/W 200ml",
         "quantity": 2
       }
@@ -6208,42 +6208,42 @@
       {
         "id": "NICU-01",
         "code": "",
-        "name": "2% Lidocaine 400mg",
+        "name": "2% LIDOcaine 20ml inj",
         "dosage": "2%20ml/Vial",
         "quantity": 1
       },
       {
         "id": "NICU-02",
         "code": "",
-        "name": "N/S 20cc",
+        "name": "NS 20ml inj",
         "dosage": "20ml",
         "quantity": 2
       },
       {
         "id": "NICU-03",
         "code": "",
-        "name": "Peniramine",
+        "name": "Peniramin 4mg/2ml inj",
         "dosage": "4mg/2ml",
         "quantity": 2
       },
       {
         "id": "NICU-04",
         "code": "",
-        "name": "Lasix",
+        "name": "Lasix 20MG/2ml inj",
         "dosage": "20mg/Amp",
         "quantity": 2
       },
       {
         "id": "NICU-05",
         "code": "",
-        "name": "Naloxone",
+        "name": "NaloXONE HCl 0.4MG inj",
         "dosage": "0.4mg/Amp",
         "quantity": 2
       },
       {
         "id": "NICU-06",
         "code": "",
-        "name": "Adenocor(Adenosin)",
+        "name": "Adenocor 6mg/2ml inj",
         "dosage": "6mg/Vial",
         "quantity": 2
       },
@@ -6257,35 +6257,35 @@
       {
         "id": "NICU-08",
         "code": "",
-        "name": "Norpin",
+        "name": "Norpin 10mg/10ml inj",
         "dosage": "10mg/Amp",
         "quantity": 3
       },
       {
         "id": "NICU-09",
         "code": "",
-        "name": "Cordarone",
+        "name": "Cordarone 150mg/3ml inj",
         "dosage": "150mg/Amp",
         "quantity": 2
       },
       {
         "id": "NICU-10",
         "code": "",
-        "name": "Atropine",
+        "name": "Atropine sulfate 0.5mg/1ml inj",
         "dosage": "0.5mg/Amp",
         "quantity": 2
       },
       {
         "id": "NICU-11",
         "code": "",
-        "name": "Epinephrine",
+        "name": "EPInephrine 1mg/1ml inj",
         "dosage": "1mg/ml/Amp",
         "quantity": 5
       },
       {
         "id": "NICU-12",
         "code": "",
-        "name": "Sodium Bicarbonate",
+        "name": "Sodium bicarbonate 8.4% 1.68g/20ml inj.",
         "dosage": "20mEq/20ml/Amp",
         "quantity": 2
       },
@@ -6299,7 +6299,7 @@
       {
         "id": "NICU-14",
         "code": "",
-        "name": "Ca Gluconate",
+        "name": "Calcium gluconate 2g/20ml inj",
         "dosage": "2g/20ml/ Amp",
         "quantity": 2
       },
@@ -6369,7 +6369,7 @@
       {
         "id": "NICU-24",
         "code": "",
-        "name": "5% D/W",
+        "name": "5% DW 100ml bag",
         "dosage": "100ml - Bag",
         "quantity": 1
       },
@@ -6383,7 +6383,7 @@
       {
         "id": "NICU-26",
         "code": "",
-        "name": "50% D/W",
+        "name": "50% DW 100ml bag중외",
         "dosage": "100ml - Bottle",
         "quantity": 1
       },
@@ -6404,7 +6404,7 @@
       {
         "id": "NICU-29",
         "code": "",
-        "name": "5% D/W",
+        "name": "5% DW 100ml bag",
         "dosage": "500ml - Bag",
         "quantity": 1
       }

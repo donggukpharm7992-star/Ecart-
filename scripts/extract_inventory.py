@@ -11,6 +11,8 @@ import openpyxl
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "src" / "data" / "inventory.generated.json"
+HOSPITAL_DRUG_LIST_KEYWORD = "\uc6d0\ub0b4\ubcf4\uc720\uc758\uc57d\ud488\ub9ac\uc2a4\ud2b8"
+CONTROLLED_DRUG_PREFIX_RE = re.compile(r"^\[(?:\ub9c8\uc57d|\ud5a5\uc815)\]\s*")
 
 
 SHEET_ALIAS = {
@@ -143,6 +145,26 @@ def find_workbook(keyword: str) -> Path:
     return matches[0]
 
 
+def strip_controlled_drug_prefix(name: str) -> str:
+    return CONTROLLED_DRUG_PREFIX_RE.sub("", clean(name))
+
+
+def load_hospital_common_names(hospital_path: Path) -> dict[str, str]:
+    wb = openpyxl.load_workbook(hospital_path, read_only=True, data_only=True)
+    ws = wb.worksheets[0]
+    common_names: dict[str, str] = {}
+    for row in ws.iter_rows(min_row=2, values_only=True):
+        code = clean(row[0] if len(row) > 0 else "")
+        common_name = strip_controlled_drug_prefix(row[1] if len(row) > 1 else "")
+        if code and common_name and code not in common_names:
+            common_names[code] = common_name
+    return common_names
+
+
+def normalized_name_key(name: str) -> str:
+    return re.sub(r"[^0-9a-z]+", "", clean(name).lower())
+
+
 def collect_warnings(stock_path: Path) -> dict[str, str]:
     wb = openpyxl.load_workbook(stock_path, read_only=True, data_only=True)
     warnings: dict[str, set[str]] = defaultdict(set)
@@ -165,7 +187,7 @@ def collect_warnings(stock_path: Path) -> dict[str, str]:
     return {code: ", ".join(sorted(values)) for code, values in warnings.items()}
 
 
-def parse_stock(stock_path: Path) -> dict[str, Any]:
+def parse_stock(stock_path: Path, hospital_common_names: dict[str, str]) -> dict[str, Any]:
     warnings = collect_warnings(stock_path)
     wb = openpyxl.load_workbook(stock_path, read_only=True, data_only=True)
     room_update_dates = collect_room_update_dates(wb)
@@ -179,8 +201,9 @@ def parse_stock(stock_path: Path) -> dict[str, Any]:
 
     for row in ws.iter_rows(min_row=2, values_only=True):
         raw_code = clean(row[0] if len(row) > 0 else "")
-        product_name = clean(row[2] if len(row) > 2 else "")
-        code = stock_code(raw_code, product_name)
+        source_product_name = clean(row[2] if len(row) > 2 else "")
+        code = stock_code(raw_code, source_product_name)
+        product_name = hospital_common_names.get(code, hospital_common_names.get(raw_code, source_product_name))
         if not raw_code or not code:
             continue
         drug = {
@@ -216,25 +239,33 @@ def parse_stock(stock_path: Path) -> dict[str, Any]:
     return {"drugs": drugs, "rooms": rooms, "allocations": allocations}
 
 
-def parse_ecart(ecart_path: Path) -> dict[str, Any]:
+def parse_ecart(ecart_path: Path, hospital_common_names: dict[str, str]) -> dict[str, Any]:
     wb = openpyxl.load_workbook(ecart_path, read_only=True, data_only=True)
     general_ws = wb.worksheets[0]
     general_items = []
+    ecart_name_aliases: dict[str, str] = {}
     for row in general_ws.iter_rows(min_row=1, values_only=True):
         if not clean(row[0] if len(row) > 0 else "").isdigit():
             continue
         code = clean(row[1] if len(row) > 1 else "")
-        name = clean(row[2] if len(row) > 2 else "")
+        source_name = clean(row[2] if len(row) > 2 else "")
+        name = hospital_common_names.get(code, source_name)
         if not code or not name:
             continue
         item = {
             "id": code,
             "code": code,
-            "name": name,
+            "name": source_name,
             "dosage": clean(row[3] if len(row) > 3 else ""),
             "quantity": qty(row[4] if len(row) > 4 else None),
         }
         item.update(ECART_FIELD_OVERRIDES.get(code, {}))
+        if code in hospital_common_names:
+            item["name"] = name
+            for alias in {source_name, ECART_FIELD_OVERRIDES.get(code, {}).get("name", "")}:
+                alias_key = normalized_name_key(alias)
+                if alias_key:
+                    ecart_name_aliases[alias_key] = name
         general_items.append(item)
 
     nicu_items = []
@@ -246,6 +277,7 @@ def parse_ecart(ecart_path: Path) -> dict[str, Any]:
         name = clean(row[1] if len(row) > 1 else "")
         if not name:
             continue
+        name = ecart_name_aliases.get(normalized_name_key(name), name)
         nicu_items.append(
             {
                 "id": f"NICU-{int(no):02d}",
@@ -304,8 +336,10 @@ def main() -> None:
     stock_path = find_workbook("202606")
     ecart_path = find_workbook("E-cart")
     checklist_path = find_workbook("체크리스트")
-    stock = parse_stock(stock_path)
-    ecart = parse_ecart(ecart_path)
+    hospital_path = find_workbook(HOSPITAL_DRUG_LIST_KEYWORD)
+    hospital_common_names = load_hospital_common_names(hospital_path)
+    stock = parse_stock(stock_path, hospital_common_names)
+    ecart = parse_ecart(ecart_path, hospital_common_names)
     checklist = parse_checklist(checklist_path)
     data = {
         "generatedAt": datetime.now().astimezone().isoformat(timespec="seconds"),

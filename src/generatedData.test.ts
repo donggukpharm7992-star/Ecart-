@@ -93,14 +93,29 @@ describe("generated inventory data corrections", () => {
     expect(byCode.get("XBPCA5W")?.warning).not.toContain("LMT");
   });
 
-  it("uses the policy E-cart item labels for corrected emergency cart rows", () => {
+  it("uses hospital common names for stock master drug names", () => {
+    const byCode = new Map(inventory.stock.drugs.map((drug) => [drug.code, drug]));
+
+    expect(byCode.get("XTPA20")?.productName).toBe("Actilyse 20mg/20ml inj");
+    expect(byCode.get("XETOM")?.productName).toBe("Etomidate lipuro 20mg/10ml inj");
+    expect(byCode.get("XETOM")?.productName).not.toMatch(/^\[(마약|향정)\]/);
+  });
+
+  it("uses hospital common names while preserving E-cart dosage corrections", () => {
     const byCode = new Map(inventory.ecart.generalItems.map((item) => [item.code, item]));
 
-    expect(byCode.get("XNS20")?.name).toBe("N/S 20cc");
-    expect(byCode.get("NITR")?.name).toBe("Nitroglycerin(SL)");
-    expect(byCode.get("XCPENIR")?.name).toBe("Peniramin");
-    expect(byCode.get("XADENO6")?.name).toBe("Adenocor( Adenosin )");
+    expect(byCode.get("XNS20")?.name).toBe("NS 20ml inj");
+    expect(byCode.get("NITR")?.name).toBe("Nitroglycerine 0.6mg tab");
+    expect(byCode.get("XCPENIR")?.name).toBe("Peniramin 4mg/2ml inj");
+    expect(byCode.get("XADENO6")?.name).toBe("Adenocor 6mg/2ml inj");
     expect(byCode.get("XNB84")?.dosage).toBe("20mEq/20mL/Amp");
+  });
+
+  it("uses hospital common names for E-cart coded item names", () => {
+    const byCode = new Map(inventory.ecart.generalItems.map((item) => [item.code, item]));
+
+    expect(byCode.get("XLID2W")?.name).toBe("2% LIDOcaine 20ml inj");
+    expect(byCode.get("XNS20")?.name).toBe("NS 20ml inj");
   });
 
   it("stores source sheet top dates for room inventory lists", () => {
