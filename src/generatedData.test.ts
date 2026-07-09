@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import rawInventory from "./data/inventory.generated.json";
 import rawHospitalDrugLabels from "./data/hospitalDrugLabels.generated.json";
@@ -174,6 +175,16 @@ describe("generated inventory data corrections", () => {
     expect(inventory.ecart.nicuItems.every((item) => item.code && normalizeText(item.name) === normalizeText(hospitalNamesByCode.get(item.code) ?? ""))).toBe(
       true,
     );
+  });
+
+  it("keeps the deployed static app state stock names aligned with generated common names", () => {
+    const staticState = JSON.parse(readFileSync("app-state/shared-state.json", "utf8")) as { state?: { stockDrugs?: typeof inventory.stock.drugs } };
+    const generatedNamesByCode = new Map(inventory.stock.drugs.map((drug) => [drug.code, normalizeText(drug.productName)]));
+    const staleNames = (staticState.state?.stockDrugs ?? [])
+      .filter((drug) => generatedNamesByCode.has(drug.code) && normalizeText(drug.productName) !== generatedNamesByCode.get(drug.code))
+      .map((drug) => `${drug.code}: ${drug.productName}`);
+
+    expect(staleNames).toEqual([]);
   });
 
   it("refreshes persisted NICU E-cart rows with generated hospital common names", () => {

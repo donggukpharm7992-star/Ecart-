@@ -7,6 +7,7 @@ export function buildPwaAssetUrl(baseUrl: string, assetPath: string) {
 export type PwaMetadata = {
   manifestPath: string;
   iconPath: string;
+  documentTitle: string;
   appleTitle: string;
   themeColor: string;
 };
@@ -18,7 +19,8 @@ export function getPwaMetadata(pathname = "/"): PwaMetadata {
     return {
       manifestPath: "narcotic-viewer.webmanifest",
       iconPath: "icons/narcotic-icon-192.png",
-      appleTitle: "비치마약류관리",
+      documentTitle: "비치마약류 관리",
+      appleTitle: "비치마약류 관리",
       themeColor: "#b91c1c",
     };
   }
@@ -28,7 +30,8 @@ export function getPwaMetadata(pathname = "/"): PwaMetadata {
     return {
       manifestPath: "pharmacy-viewer.webmanifest",
       iconPath: "icons/app-icon-192.png",
-      appleTitle: "약제팀 라벨",
+      documentTitle: "약제팀 라벨 마스터 관리",
+      appleTitle: "약제팀 라벨 마스터 관리",
       themeColor: "#f97316",
     };
   }
@@ -37,8 +40,9 @@ export function getPwaMetadata(pathname = "/"): PwaMetadata {
   if (isViewer) {
     return {
       manifestPath: "viewer.webmanifest",
-      iconPath: "icons/app-icon-192.png",
-      appleTitle: "비품약 마스터 관리",
+      iconPath: "icons/viewer-icon-192.png",
+      documentTitle: "병동 약품 라벨 마스터관리",
+      appleTitle: "병동 약품 라벨 마스터관리",
       themeColor: "#f97316",
     };
   }
@@ -46,6 +50,7 @@ export function getPwaMetadata(pathname = "/"): PwaMetadata {
   return {
     manifestPath: "manifest.webmanifest",
     iconPath: "icons/app-icon-192.png",
+    documentTitle: "약사용 병동 비품관리",
     appleTitle: "비품점검",
     themeColor: "#f97316",
   };
@@ -63,16 +68,24 @@ function setMetaContent(selector: string, content: string) {
 
 export function applyPwaMetadata() {
   if (typeof window === "undefined") return;
-  const version = "20260701a";
+  const version = "20260709a";
   const metadata = getPwaMetadata(window.location.pathname);
   const manifestHref = buildPwaAssetUrl(import.meta.env.BASE_URL, `${metadata.manifestPath}?v=${version}`);
   const iconHref = buildPwaAssetUrl(import.meta.env.BASE_URL, `${metadata.iconPath}?v=${version}`);
 
   setMetaContent('meta[name="theme-color"]', metadata.themeColor);
   setMetaContent('meta[name="apple-mobile-web-app-title"]', metadata.appleTitle);
+  document.title = metadata.documentTitle;
   setLinkHref('link[rel="manifest"]', manifestHref);
   setLinkHref('link[rel="icon"]', iconHref);
   setLinkHref('link[rel="apple-touch-icon"]', iconHref);
+}
+
+export function shouldReloadAfterServiceWorkerUpdate(state: {
+  wasControlled: boolean;
+  isReloading: boolean;
+}) {
+  return state.wasControlled && !state.isReloading;
 }
 
 export function registerAppServiceWorker() {
@@ -80,8 +93,18 @@ export function registerAppServiceWorker() {
 
   window.addEventListener("load", () => {
     const serviceWorkerUrl = buildPwaAssetUrl(import.meta.env.BASE_URL, "sw.js");
-    void navigator.serviceWorker.register(serviceWorkerUrl).catch((error) => {
-      console.warn("Service worker registration failed", error);
+    const wasControlled = Boolean(navigator.serviceWorker.controller);
+    let isReloading = false;
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      if (!shouldReloadAfterServiceWorkerUpdate({ wasControlled, isReloading })) return;
+      isReloading = true;
+      window.location.reload();
     });
+    void navigator.serviceWorker
+      .register(serviceWorkerUrl)
+      .then((registration) => registration.update())
+      .catch((error) => {
+        console.warn("Service worker registration failed", error);
+      });
   });
 }

@@ -1,9 +1,9 @@
 import { existsSync, readFileSync } from "node:fs";
 import { inflateSync } from "node:zlib";
 import { describe, expect, it } from "vitest";
-import { buildPwaAssetUrl, getPwaMetadata } from "./pwa";
+import { buildPwaAssetUrl, getPwaMetadata, shouldReloadAfterServiceWorkerUpdate } from "./pwa";
 
-const iconVersion = "20260701a";
+const iconVersion = "20260709a";
 
 function readPngSize(path: string) {
   const bytes = readFileSync(path);
@@ -105,24 +105,52 @@ describe("PWA install metadata", () => {
     expect(buildPwaAssetUrl("/Ecart-/", "manifest.webmanifest")).toBe("/Ecart-/manifest.webmanifest");
   });
 
+  it("reloads installed app windows once when a service worker update takes control", () => {
+    expect(shouldReloadAfterServiceWorkerUpdate({ wasControlled: true, isReloading: false })).toBe(true);
+    expect(shouldReloadAfterServiceWorkerUpdate({ wasControlled: false, isReloading: false })).toBe(false);
+    expect(shouldReloadAfterServiceWorkerUpdate({ wasControlled: true, isReloading: true })).toBe(false);
+  });
+
+  it("keeps runtime sync config out of the service worker cache", () => {
+    const serviceWorker = readFileSync("public/sw.js", "utf8");
+
+    expect(serviceWorker).toContain("sync-config.json");
+    expect(serviceWorker).toContain("fetch(request)");
+  });
+
+  it("adds an asset version query to built CSS and JS links", async () => {
+    // @ts-ignore build script is plain JavaScript.
+    const { versionAssetLinks } = await import("../scripts/create_pwa_routes.mjs");
+    const html = [
+      '<script type="module" crossorigin src="/Ecart-/assets/index-demo.js"></script>',
+      '<link rel="stylesheet" crossorigin href="/Ecart-/assets/index-demo.css">',
+    ].join("\n");
+
+    expect(versionAssetLinks(html, "20260709a")).toContain('/Ecart-/assets/index-demo.js?v=20260709a');
+    expect(versionAssetLinks(html, "20260709a")).toContain('/Ecart-/assets/index-demo.css?v=20260709a');
+  });
+
   it("selects separate install metadata for the master viewer route", () => {
     expect(getPwaMetadata("/Ecart-/").manifestPath).toBe("manifest.webmanifest");
     expect(getPwaMetadata("/Ecart-/viewer")).toEqual({
       manifestPath: "viewer.webmanifest",
-      iconPath: "icons/app-icon-192.png",
-      appleTitle: "비품약 마스터 관리",
+      iconPath: "icons/viewer-icon-192.png",
+      documentTitle: "병동 약품 라벨 마스터관리",
+      appleTitle: "병동 약품 라벨 마스터관리",
       themeColor: "#f97316",
     });
     expect(getPwaMetadata("/Ecart-/pharmacy-viewer")).toEqual({
       manifestPath: "pharmacy-viewer.webmanifest",
       iconPath: "icons/app-icon-192.png",
-      appleTitle: "약제팀 라벨",
+      documentTitle: "약제팀 라벨 마스터 관리",
+      appleTitle: "약제팀 라벨 마스터 관리",
       themeColor: "#f97316",
     });
     expect(getPwaMetadata("/Ecart-/narcotic-viewer")).toEqual({
       manifestPath: "narcotic-viewer.webmanifest",
       iconPath: "icons/narcotic-icon-192.png",
-      appleTitle: "비치마약류관리",
+      documentTitle: "비치마약류 관리",
+      appleTitle: "비치마약류 관리",
       themeColor: "#b91c1c",
     });
   });
@@ -171,37 +199,42 @@ describe("PWA install metadata", () => {
   it("defines a separate installable manifest for the master viewer", () => {
     const manifest = JSON.parse(readFileSync("public/viewer.webmanifest", "utf8"));
 
-    expect(manifest.name).toBe("비품약 마스터 관리");
-    expect(manifest.short_name).toBe("마스터 관리");
+    expect(manifest.name).toBe("병동 약품 라벨 마스터관리");
+    expect(manifest.short_name).toBe("병동 라벨 마스터");
     expect(manifest.display).toBe("standalone");
     expect(manifest.id).toBe("/Ecart-/viewer");
-    expect(manifest.start_url).toBe("/Ecart-/viewer");
-    expect(manifest.scope).toBe("/Ecart-/");
+    expect(manifest.start_url).toBe("/Ecart-/viewer/");
+    expect(manifest.scope).toBe("/Ecart-/viewer/");
     expect(manifest.background_color).toBe("#f97316");
     expect(manifest.theme_color).toBe("#f97316");
     expect(manifest.icons).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ src: `/Ecart-/icons/app-icon-192.png?v=${iconVersion}`, sizes: "192x192", type: "image/png", purpose: "any" }),
+        expect.objectContaining({ src: `/Ecart-/icons/viewer-icon-192.png?v=${iconVersion}`, sizes: "192x192", type: "image/png", purpose: "any" }),
         expect.objectContaining({
-          src: `/Ecart-/icons/app-icon-desktop-512.png?v=${iconVersion}`,
+          src: `/Ecart-/icons/viewer-icon-desktop-512.png?v=${iconVersion}`,
           sizes: "512x512",
           type: "image/png",
           purpose: "any",
         }),
       ]),
     );
-    expect(manifest.icons).not.toEqual(expect.arrayContaining([expect.objectContaining({ src: expect.stringContaining("master-icon") })]));
+    expect(existsSync("public/icons/viewer-icon-192.png")).toBe(true);
+    expect(existsSync("public/icons/viewer-icon-desktop-512.png")).toBe(true);
+    expect(readPngSize("public/icons/viewer-icon-192.png")).toEqual({ width: 192, height: 192 });
+    expect(readPngSize("public/icons/viewer-icon-desktop-512.png")).toEqual({ width: 512, height: 512 });
+    expect(Object.values(readPngAlphaBounds("public/icons/viewer-icon-192.png")).every((inset) => inset > 0)).toBe(true);
+    expect(Object.values(readPngAlphaBounds("public/icons/viewer-icon-desktop-512.png")).every((inset) => inset > 0)).toBe(true);
   });
 
   it("defines a separate installable manifest for the pharmacy label viewer", () => {
     const manifest = JSON.parse(readFileSync("public/pharmacy-viewer.webmanifest", "utf8"));
 
-    expect(manifest.name).toBe("약제팀 라벨");
-    expect(manifest.short_name).toBe("약제팀 라벨");
+    expect(manifest.name).toBe("약제팀 라벨 마스터 관리");
+    expect(manifest.short_name).toBe("약제팀 라벨 관리");
     expect(manifest.display).toBe("standalone");
     expect(manifest.id).toBe("/Ecart-/pharmacy-viewer");
-    expect(manifest.start_url).toBe("/Ecart-/pharmacy-viewer");
-    expect(manifest.scope).toBe("/Ecart-/");
+    expect(manifest.start_url).toBe("/Ecart-/pharmacy-viewer/");
+    expect(manifest.scope).toBe("/Ecart-/pharmacy-viewer/");
     expect(manifest.background_color).toBe("#f97316");
     expect(manifest.theme_color).toBe("#f97316");
     expect(manifest.icons).toEqual(
@@ -220,12 +253,12 @@ describe("PWA install metadata", () => {
   it("defines a separate installable manifest and icon set for the narcotic viewer", () => {
     const manifest = JSON.parse(readFileSync("public/narcotic-viewer.webmanifest", "utf8"));
 
-    expect(manifest.name).toBe("비치마약류관리");
-    expect(manifest.short_name).toBe("비치마약류관리");
+    expect(manifest.name).toBe("비치마약류 관리");
+    expect(manifest.short_name).toBe("비치마약류 관리");
     expect(manifest.display).toBe("standalone");
     expect(manifest.id).toBe("/Ecart-/narcotic-viewer");
-    expect(manifest.start_url).toBe("/Ecart-/narcotic-viewer");
-    expect(manifest.scope).toBe("/Ecart-/");
+    expect(manifest.start_url).toBe("/Ecart-/narcotic-viewer/");
+    expect(manifest.scope).toBe("/Ecart-/narcotic-viewer/");
     expect(manifest.background_color).toBe("#b91c1c");
     expect(manifest.theme_color).toBe("#b91c1c");
     expect(manifest.icons).toEqual(
@@ -251,11 +284,13 @@ describe("PWA install metadata", () => {
     const html = readFileSync("index.html", "utf8");
 
     expect(html).toContain(`viewer.webmanifest`);
+    expect(html).toContain(`icons/viewer-icon-192.png`);
     expect(html).toContain(`narcotic-viewer.webmanifest`);
     expect(html).toContain(`icons/narcotic-icon-192.png`);
     expect(html).toContain(`icons/app-icon-192.png`);
     expect(html).toContain(`manifest.webmanifest`);
     expect(html).toContain(`icons/app-icon-192.png`);
+    expect(html).toContain(`document.title = metadata.title`);
     expect(html).not.toContain(`%BASE_URL%`);
     expect(html).not.toContain(`/Ecart-/Ecart-/`);
   });
