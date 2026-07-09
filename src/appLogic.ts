@@ -549,8 +549,23 @@ const ECART_GENERAL_CORRECTIONS = new Map(
   ] satisfies Array<[string, Partial<EcartItem>]>,
 );
 
+const GENERATED_ECART_ITEMS = [...inventory.ecart.generalItems, ...inventory.ecart.nicuItems];
+const GENERATED_ECART_ITEMS_BY_ID = new Map(GENERATED_ECART_ITEMS.map((item) => [item.id, item]));
+const GENERATED_ECART_ITEMS_BY_CODE = new Map(GENERATED_ECART_ITEMS.filter((item) => item.code).map((item) => [item.code, item]));
+
 export function normalizeEcartItem(item: EcartItem): EcartItem {
-  return { ...item, ...ECART_GENERAL_CORRECTIONS.get(item.code) };
+  const generated = GENERATED_ECART_ITEMS_BY_ID.get(item.id) ?? (item.code ? GENERATED_ECART_ITEMS_BY_CODE.get(item.code) : undefined);
+  const normalized = generated
+    ? {
+        ...item,
+        code: generated.code,
+        name: generated.name,
+        dosage: generated.dosage,
+      }
+    : item;
+
+  if (normalized.id.startsWith("NICU-")) return normalized;
+  return { ...normalized, ...ECART_GENERAL_CORRECTIONS.get(normalized.code) };
 }
 
 export function normalizeEcartInspectionState(state: EcartInspectionState): EcartInspectionState {

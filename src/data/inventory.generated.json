@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-08T15:03:33+09:00",
+  "generatedAt": "2026-07-09T15:38:58+09:00",
   "sourceFiles": {
     "stockWorkbook": "병동별비품현황 202606.xlsx",
     "ecartWorkbook": "20260302E-cart 약품목록_ cortisolu 삭제.xlsx",
@@ -6207,204 +6207,204 @@
     "nicuItems": [
       {
         "id": "NICU-01",
-        "code": "",
+        "code": "XLID2W",
         "name": "2% LIDOcaine 20ml inj",
         "dosage": "2%20ml/Vial",
         "quantity": 1
       },
       {
         "id": "NICU-02",
-        "code": "",
+        "code": "XNS20",
         "name": "NS 20ml inj",
         "dosage": "20ml",
         "quantity": 2
       },
       {
         "id": "NICU-03",
-        "code": "",
+        "code": "XCPENIR",
         "name": "Peniramin 4mg/2ml inj",
         "dosage": "4mg/2ml",
         "quantity": 2
       },
       {
         "id": "NICU-04",
-        "code": "",
+        "code": "XFURO",
         "name": "Lasix 20MG/2ml inj",
         "dosage": "20mg/Amp",
         "quantity": 2
       },
       {
         "id": "NICU-05",
-        "code": "",
+        "code": "XNALO.4",
         "name": "NaloXONE HCl 0.4MG inj",
         "dosage": "0.4mg/Amp",
         "quantity": 2
       },
       {
         "id": "NICU-06",
-        "code": "",
+        "code": "XADENO6",
         "name": "Adenocor 6mg/2ml inj",
         "dosage": "6mg/Vial",
         "quantity": 2
       },
       {
         "id": "NICU-07",
-        "code": "",
-        "name": "Ephedrine",
+        "code": "XEPHE",
+        "name": "EPHEDrine 40mg inj",
         "dosage": "40mg/Amp",
         "quantity": 2
       },
       {
         "id": "NICU-08",
-        "code": "",
+        "code": "XNORE10",
         "name": "Norpin 10mg/10ml inj",
         "dosage": "10mg/Amp",
         "quantity": 3
       },
       {
         "id": "NICU-09",
-        "code": "",
+        "code": "XAMIOD",
         "name": "Cordarone 150mg/3ml inj",
         "dosage": "150mg/Amp",
         "quantity": 2
       },
       {
         "id": "NICU-10",
-        "code": "",
+        "code": "XATRO",
         "name": "Atropine sulfate 0.5mg/1ml inj",
         "dosage": "0.5mg/Amp",
         "quantity": 2
       },
       {
         "id": "NICU-11",
-        "code": "",
+        "code": "XEPIN",
         "name": "EPInephrine 1mg/1ml inj",
         "dosage": "1mg/ml/Amp",
         "quantity": 5
       },
       {
         "id": "NICU-12",
-        "code": "",
+        "code": "XNB84",
         "name": "Sodium bicarbonate 8.4% 1.68g/20ml inj.",
         "dosage": "20mEq/20ml/Amp",
         "quantity": 2
       },
       {
         "id": "NICU-13",
-        "code": "",
-        "name": "Tropin(Dopamine hcl)",
+        "code": "XDOPA4",
+        "name": "Tropin 400mg/5ml inj",
         "dosage": "200mg/Amp",
         "quantity": 2
       },
       {
         "id": "NICU-14",
-        "code": "",
+        "code": "XCAGL",
         "name": "Calcium gluconate 2g/20ml inj",
         "dosage": "2g/20ml/ Amp",
         "quantity": 2
       },
       {
         "id": "NICU-15",
-        "code": "",
-        "name": "Digoxin",
+        "code": "XDGX",
+        "name": "Digoxin 0.25mg inj",
         "dosage": "주:0.25mg/Amp",
         "quantity": 2
       },
       {
         "id": "NICU-16",
-        "code": "",
-        "name": "Doburan",
+        "code": "XDOB250",
+        "name": "Doburan 250mg/5ml Inj",
         "dosage": "주:250mg/Pfs",
         "quantity": 2
       },
       {
         "id": "NICU-17",
-        "code": "",
-        "name": "Magnesium sulfate",
+        "code": "XMGSF10",
+        "name": "Magnesium sulfate 10% 2g/20ml inj",
         "dosage": "주:10% 20ml Amp",
         "quantity": 2
       },
       {
         "id": "NICU-18",
-        "code": "",
-        "name": "Predisol 125mg inj",
+        "code": "XMPD1W",
+        "name": "Predi-sol 125mg inj",
         "dosage": "주:125mg/2ml/ Vial",
         "quantity": 2
       },
       {
         "id": "NICU-19",
-        "code": "",
-        "name": "Protamin Sulfate",
+        "code": "XPROT",
+        "name": "Protamine sulfate 50mg/5ml inj",
         "dosage": "주:50mg/Amp",
         "quantity": 2
       },
       {
         "id": "NICU-20",
-        "code": "",
-        "name": "Isoptin",
+        "code": "XVERAW",
+        "name": "Isoptin 5mg/2ml (Viatris)",
         "dosage": "주:5mg/Amp",
         "quantity": 2
       },
       {
         "id": "NICU-21",
-        "code": "",
-        "name": "Sodium Chloride 3%",
+        "code": "X3NACL5",
+        "name": "NaCl 3% 500ml inj",
         "dosage": "주: 3% 500ml/Btl",
         "quantity": 1
       },
       {
         "id": "NICU-22",
-        "code": "",
-        "name": "Water for Injection",
+        "code": "XAQD",
+        "name": "Water for injection 1L중외 bag",
         "dosage": "주:1000ml/Bag",
         "quantity": 1
       },
       {
         "id": "NICU-23",
-        "code": "",
-        "name": "N/S",
+        "code": "XNS500",
+        "name": "NS 500ml bag",
         "dosage": "500ml - Bag",
         "quantity": 1
       },
       {
         "id": "NICU-24",
-        "code": "",
+        "code": "XD5W100",
         "name": "5% DW 100ml bag",
         "dosage": "100ml - Bag",
         "quantity": 1
       },
       {
         "id": "NICU-25",
-        "code": "",
-        "name": "20% D/W",
+        "code": "XD20W20",
+        "name": "20% DW 4g/20ml inj",
         "dosage": "4g/20ml/Amp",
         "quantity": 2
       },
       {
         "id": "NICU-26",
-        "code": "",
+        "code": "XD50W1",
         "name": "50% DW 100ml bag중외",
         "dosage": "100ml - Bottle",
         "quantity": 1
       },
       {
         "id": "NICU-27",
-        "code": "",
-        "name": "Normal saline",
+        "code": "XNS50C",
+        "name": "NS 50ml bag",
         "dosage": "50ml - Bag",
         "quantity": 1
       },
       {
         "id": "NICU-28",
-        "code": "",
-        "name": "5%DNK 3",
+        "code": "XDNK35",
+        "name": "5% DW NaK3 500ml bag",
         "dosage": "주:(Na34,K20)500ml/Bag",
         "quantity": 1
       },
       {
         "id": "NICU-29",
-        "code": "",
-        "name": "5% DW 100ml bag",
+        "code": "XD5W5",
+        "name": "5% DW 500ml bag",
         "dosage": "500ml - Bag",
         "quantity": 1
       }

@@ -94,6 +94,25 @@ ECART_FIELD_OVERRIDES = {
     "NITR": {"name": "Nitroglycerin(SL)", "dosage": "0.6mg/Tab", "quantity": 3},
 }
 
+ECART_NICU_CODE_OVERRIDES = [
+    ("Ephedrine", "40mg/Amp", "XEPHE"),
+    ("Tropin(Dopamine hcl)", "200mg/Amp", "XDOPA4"),
+    ("Digoxin", "\uc8fc:0.25mg/Amp", "XDGX"),
+    ("Doburan", "\uc8fc:250mg/Pfs", "XDOB250"),
+    ("Magnesium sulfate", "\uc8fc:10% 20ml Amp", "XMGSF10"),
+    ("Predisol 125mg inj", "\uc8fc:125mg/2ml/ Vial", "XMPD1W"),
+    ("Protamin Sulfate", "\uc8fc:50mg/Amp", "XPROT"),
+    ("Isoptin", "\uc8fc:5mg/Amp", "XVERAW"),
+    ("Sodium Chloride 3%", "\uc8fc: 3% 500ml/Btl", "X3NACL5"),
+    ("Water for Injection", "\uc8fc:1000ml/Bag", "XAQD"),
+    ("N/S", "500ml - Bag", "XNS500"),
+    ("5% D/W", "500ml - Bag", "XD5W5"),
+    ("5% DW 100ml bag", "500ml - Bag", "XD5W5"),
+    ("20% D/W", "4g/20ml/Amp", "XD20W20"),
+    ("Normal saline", "50ml - Bag", "XNS50C"),
+    ("5%DNK 3", "\uc8fc:(Na34,K20)500ml/Bag", "XDNK35"),
+]
+
 
 def clean(value: Any) -> str:
     if value is None:
@@ -363,7 +382,13 @@ def parse_ecart(ecart_path: Path, hospital_common_names: dict[str, str]) -> dict
     wb = openpyxl.load_workbook(ecart_path, read_only=True, data_only=True)
     general_ws = wb.worksheets[0]
     general_items = []
-    ecart_name_aliases: dict[str, str] = {}
+    ecart_name_aliases: dict[str, tuple[str, str]] = {}
+    hospital_name_aliases: dict[str, tuple[str, str]] = {}
+    for code, common_name in hospital_common_names.items():
+        alias_key = normalized_name_key(common_name)
+        if alias_key and alias_key not in hospital_name_aliases:
+            hospital_name_aliases[alias_key] = (code, common_name)
+
     for row in general_ws.iter_rows(min_row=1, values_only=True):
         if not clean(row[0] if len(row) > 0 else "").isdigit():
             continue
@@ -382,28 +407,41 @@ def parse_ecart(ecart_path: Path, hospital_common_names: dict[str, str]) -> dict
         item.update(ECART_FIELD_OVERRIDES.get(code, {}))
         if code in hospital_common_names:
             item["name"] = name
-            for alias in {source_name, ECART_FIELD_OVERRIDES.get(code, {}).get("name", "")}:
+            for alias in {source_name, name, ECART_FIELD_OVERRIDES.get(code, {}).get("name", "")}:
                 alias_key = normalized_name_key(alias)
                 if alias_key:
-                    ecart_name_aliases[alias_key] = name
+                    ecart_name_aliases[alias_key] = (code, name)
         general_items.append(item)
 
     nicu_items = []
     nicu_ws = wb.worksheets[1]
+    nicu_code_overrides = {
+        (normalized_name_key(name), normalized_name_key(dosage)): code
+        for name, dosage, code in ECART_NICU_CODE_OVERRIDES
+    }
     for row in nicu_ws.iter_rows(min_row=1, values_only=True):
         no = clean(row[0] if len(row) > 0 else "")
         if not no.isdigit():
             continue
-        name = clean(row[1] if len(row) > 1 else "")
-        if not name:
+        source_name = clean(row[1] if len(row) > 1 else "")
+        dosage = clean(row[2] if len(row) > 2 else "")
+        if not source_name:
             continue
-        name = ecart_name_aliases.get(normalized_name_key(name), name)
+        alias_key = normalized_name_key(source_name)
+        override_code = nicu_code_overrides.get((alias_key, normalized_name_key(dosage)))
+        resolved = (
+            (override_code, hospital_common_names[override_code])
+            if override_code and override_code in hospital_common_names
+            else ecart_name_aliases.get(alias_key) or hospital_name_aliases.get(alias_key)
+        )
+        code = resolved[0] if resolved else ""
+        name = resolved[1] if resolved else source_name
         nicu_items.append(
             {
                 "id": f"NICU-{int(no):02d}",
-                "code": "",
+                "code": code,
                 "name": name,
-                "dosage": clean(row[2] if len(row) > 2 else ""),
+                "dosage": dosage,
                 "quantity": qty(row[4] if len(row) > 4 else None),
             }
         )

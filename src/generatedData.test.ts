@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import rawInventory from "./data/inventory.generated.json";
+import rawHospitalDrugLabels from "./data/hospitalDrugLabels.generated.json";
 import {
   NARCOTIC_ALLOCATIONS,
   NARCOTIC_DRUGS,
@@ -35,6 +36,7 @@ import {
   getStockSplitParts,
   makeChecklistState,
   makeInspectionCycleResetState,
+  normalizeEcartInspectionState,
   normalizeChecklistRows,
   toggleStockSplitPart,
 } from "./appLogic";
@@ -42,6 +44,8 @@ import { buildMasterRows } from "./inventoryState";
 import { NARCOTIC_LABEL_ROWS } from "./narcoticLabels";
 
 const inventory = rawInventory as InventoryData;
+const hospitalDrugLabels = rawHospitalDrugLabels as Array<{ code: string; name: string }>;
+const normalizeText = (value: string) => value.replace(/\s+/g, " ").trim();
 
 describe("generated inventory data corrections", () => {
   it("builds requested PDF file names for bulk and single reports", () => {
@@ -156,6 +160,29 @@ describe("generated inventory data corrections", () => {
 
     expect(byCode.get("XLID2W")?.name).toBe("2% LIDOcaine 20ml inj");
     expect(byCode.get("XNS20")?.name).toBe("NS 20ml inj");
+  });
+
+  it("uses hospital common names and codes for NICU E-cart aliases", () => {
+    const hospitalNamesByCode = new Map(hospitalDrugLabels.map((drug) => [drug.code, drug.name]));
+    const normalSaline50 = inventory.ecart.nicuItems.find((item) => item.dosage === "50ml - Bag");
+    const normalSaline500 = inventory.ecart.nicuItems.find((item) => item.dosage === "500ml - Bag");
+    const dextrose500 = inventory.ecart.nicuItems.find((item) => item.id === "NICU-29");
+
+    expect(normalSaline50).toMatchObject({ code: "XNS50C", name: "NS 50ml bag" });
+    expect(normalSaline500).toMatchObject({ code: "XNS500", name: "NS 500ml bag" });
+    expect(dextrose500).toMatchObject({ code: "XD5W5", name: "5% DW 500ml bag" });
+    expect(inventory.ecart.nicuItems.every((item) => item.code && normalizeText(item.name) === normalizeText(hospitalNamesByCode.get(item.code) ?? ""))).toBe(
+      true,
+    );
+  });
+
+  it("refreshes persisted NICU E-cart rows with generated hospital common names", () => {
+    const state = normalizeEcartInspectionState({
+      items: [{ id: "NICU-27", code: "", name: "Normal saline", dosage: "50ml - Bag", quantity: 1, checked: true, expiryDate: "2026-12-31" }],
+      checklist: [],
+    });
+
+    expect(state.items[0]).toMatchObject({ id: "NICU-27", code: "XNS50C", name: "NS 50ml bag", checked: true, expiryDate: "2026-12-31" });
   });
 
   it("stores source sheet top dates for room inventory lists", () => {
