@@ -1,19 +1,19 @@
-const CACHE_NAME = "hospital-inventory-app-v20";
+const CACHE_NAME = "hospital-inventory-app-v21";
 const APP_SHELL = [
   "/Ecart-/",
   "/Ecart-/viewer/",
   "/Ecart-/pharmacy-viewer/",
   "/Ecart-/narcotic-viewer/",
-  "/Ecart-/manifest.webmanifest?v=20260709d",
-  "/Ecart-/viewer.webmanifest?v=20260709d",
-  "/Ecart-/pharmacy-viewer.webmanifest?v=20260709d",
-  "/Ecart-/narcotic-viewer.webmanifest?v=20260709d",
-  "/Ecart-/icons/app-icon-192.png?v=20260709d",
-  "/Ecart-/icons/app-icon-desktop-512.png?v=20260709d",
-  "/Ecart-/icons/viewer-icon-192.png?v=20260709d",
-  "/Ecart-/icons/viewer-icon-desktop-512.png?v=20260709d",
-  "/Ecart-/icons/narcotic-icon-192.png?v=20260709d",
-  "/Ecart-/icons/narcotic-icon-desktop-512.png?v=20260709d",
+  "/Ecart-/manifest.webmanifest?v=20260709e",
+  "/Ecart-/viewer.webmanifest?v=20260709e",
+  "/Ecart-/pharmacy-viewer.webmanifest?v=20260709e",
+  "/Ecart-/narcotic-viewer.webmanifest?v=20260709e",
+  "/Ecart-/icons/app-icon-192.png?v=20260709e",
+  "/Ecart-/icons/app-icon-desktop-512.png?v=20260709e",
+  "/Ecart-/icons/viewer-icon-192.png?v=20260709e",
+  "/Ecart-/icons/viewer-icon-desktop-512.png?v=20260709e",
+  "/Ecart-/icons/narcotic-icon-192.png?v=20260709e",
+  "/Ecart-/icons/narcotic-icon-desktop-512.png?v=20260709e",
 ];
 
 self.addEventListener("install", (event) => {
