@@ -52,6 +52,7 @@ import {
   getDrugLabelSize,
   getDrugLabelFlagLabels,
   getEcartDefaultState,
+  getEcartLabelItemsForMode,
   getInitialAppMode,
   getInitialMasterKindFilter,
   isMasterKindFilterDisabled,
@@ -179,7 +180,7 @@ type CheckStatus = "" | "good" | "bad";
 type PrintPreviewMode = "single" | "all-stock" | "all-ecart" | "all-narcotic" | "round-summary" | "drug-labels";
 type RoundSummaryMode = "ward" | "narcotic";
 type AppMode = "admin" | "master-viewer" | "pharmacy-viewer" | "narcotic-viewer";
-type DrugLabelMode = "stock" | "ecart" | "fluid" | "narcotic" | "pharmacy";
+type DrugLabelMode = "stock" | "ecart" | "ecart-nicu" | "fluid" | "narcotic" | "pharmacy";
 type DrugLabelSizeKey = "10x70" | "15x95" | "40x70" | "55x95" | "35x100";
 
 const MASTER_KIND_FILTER_OPTIONS: { kind: MasterRowKind; label: string }[] = [
@@ -597,11 +598,12 @@ function buildEcartLabelData(
   item: EcartItem,
   totalQuantity: number,
   suffix: string,
+  kind: Extract<DrugLabelMode, "ecart" | "ecart-nicu"> = "ecart",
 ): DrugLabelData {
   const fields = drugRuleFieldsFromEcartItem(item);
   return {
-    id: `ecart-${suffix}-${item.code}-${item.name}`,
-    kind: "ecart",
+    id: `${kind}-${suffix}-${item.code}-${item.name}`,
+    kind,
     code: item.code,
     name: item.name,
     spec: item.dosage,
@@ -613,6 +615,10 @@ function buildEcartLabelData(
     cautionLabels: getPolicyCautionLabels(fields),
     highRisk: isHighRiskDrug(fields),
   };
+}
+
+function isEcartLabelKind(kind: DrugLabelMode) {
+  return kind === "ecart" || kind === "ecart-nicu";
 }
 
 function buildFluidLabelData(item: FluidLabelSource): DrugLabelData {
@@ -664,14 +670,14 @@ function labelCautionBadgeClass(label: string) {
 
 function renderLabelTopline(row: DrugLabelData) {
   const cautionText = labelFlagLabels(row).join(" / ");
-  const showCodeStorageLabel = row.kind !== "ecart" && row.kind !== "fluid" && row.storageTone !== "room";
+  const showCodeStorageLabel = !isEcartLabelKind(row.kind) && row.kind !== "fluid" && row.storageTone !== "room";
   return (
     <div className="drug-label-topline">
       {cautionText ? <span className="drug-label-warning-flag">{cautionText}</span> : <span className="drug-label-warning-spacer" />}
       <div className="drug-label-code-stack">
         <strong>{row.code}</strong>
         {showCodeStorageLabel ? <small className={`label-code-storage ${row.storageTone}`}>{row.storageLabel}</small> : null}
-        {row.kind === "ecart" ? <span className="label-storage-badge ecart">E-cart</span> : null}
+        {isEcartLabelKind(row.kind) ? <span className="label-storage-badge ecart">E-cart</span> : null}
         {row.totalQuantity !== undefined ? <small className="label-quantity-circle">{row.totalQuantity}</small> : null}
       </div>
     </div>
@@ -679,7 +685,7 @@ function renderLabelTopline(row: DrugLabelData) {
 }
 
 function renderLabelSpec(row: DrugLabelData) {
-  if (row.kind !== "ecart" || !row.spec) return null;
+  if (!isEcartLabelKind(row.kind) || !row.spec) return null;
   return <p>{row.spec}</p>;
 }
 
@@ -1492,11 +1498,10 @@ export function App() {
     const rows = trimmed ? hospitalDrugLabelRows.filter((row) => matchesHospitalDrugLabel(row, trimmed)) : hospitalDrugLabelRows;
     return rows.slice(0, 80).map(buildHospitalDrugLabelData);
   }, [hospitalDrugLabelRows, labelQuery]);
-  const ecartLabelBaseRows = useMemo(() => {
+  const ecartGeneralLabelRows = useMemo(() => {
     const allTargets = getAllEcartPrintTargets(ecartTargets);
     const generalTargets = allTargets.filter((entry) => entry.tab === "general");
-    const nicuTargets = allTargets.filter((entry) => entry.tab === "nicu");
-    const generalRows = inventory.ecart.generalItems.map((item, index) => {
+    return getEcartLabelItemsForMode("ecart", inventory.ecart).map((item, index) => {
       const setQuantity =
         generalTargets
           .map(({ tab, key }) => {
@@ -1506,7 +1511,11 @@ export function App() {
           .find((quantity) => quantity > 0) ?? normalizeEcartItem(item).quantity;
       return buildEcartLabelData(item, setQuantity, `general-${index}`);
     });
-    const nicuRows = inventory.ecart.nicuItems.map((item, index) => {
+  }, [ecartByTarget]);
+  const ecartNicuLabelRows = useMemo(() => {
+    const allTargets = getAllEcartPrintTargets(ecartTargets);
+    const nicuTargets = allTargets.filter((entry) => entry.tab === "nicu");
+    return getEcartLabelItemsForMode("ecart-nicu", inventory.ecart).map((item, index) => {
       const setQuantity =
         nicuTargets
           .map(({ tab, key }) => {
@@ -1514,10 +1523,15 @@ export function App() {
             return getEcartLabelQuantity(state, item);
           })
           .find((quantity) => quantity > 0) ?? normalizeEcartItem(item).quantity;
-      return buildEcartLabelData(item, setQuantity, `nicu-${index}`);
+      return buildEcartLabelData(item, setQuantity, `nicu-${index}`, "ecart-nicu");
     });
-    return [...generalRows, ...nicuRows];
   }, [ecartByTarget]);
+  const ecartLabelBaseRows = useMemo(() => {
+    return [...ecartGeneralLabelRows, ...ecartNicuLabelRows];
+  }, [ecartGeneralLabelRows, ecartNicuLabelRows]);
+  const activeEcartLabelRows = useMemo(() => {
+    return labelMode === "ecart-nicu" ? ecartNicuLabelRows : ecartGeneralLabelRows;
+  }, [ecartGeneralLabelRows, ecartNicuLabelRows, labelMode]);
   const fluidLabelBaseRows = useMemo(() => {
     const trimmed = labelQuery.trim().toLowerCase();
     const rows = GENERAL_FLUID_LABELS.map(buildFluidLabelData);
@@ -1526,11 +1540,11 @@ export function App() {
   }, [labelQuery]);
   const filteredEcartLabelRows = useMemo(() => {
     const trimmed = labelQuery.trim().toLowerCase();
-    if (!trimmed) return ecartLabelBaseRows;
-    return ecartLabelBaseRows.filter((row) => [row.code, row.name, row.spec].join(" ").toLowerCase().includes(trimmed));
-  }, [ecartLabelBaseRows, labelQuery]);
+    if (!trimmed) return activeEcartLabelRows;
+    return activeEcartLabelRows.filter((row) => [row.code, row.name, row.spec].join(" ").toLowerCase().includes(trimmed));
+  }, [activeEcartLabelRows, labelQuery]);
   const currentLabelSourceRows = useMemo<DrugLabelData[]>(() => {
-    if (labelMode === "ecart") return filteredEcartLabelRows;
+    if (isEcartLabelKind(labelMode)) return filteredEcartLabelRows;
     if (labelMode === "fluid") return fluidLabelBaseRows;
     if (labelMode === "narcotic") return labelSize === "40x70" ? filteredNarcoticFileLabelRows : narcoticMasterLabelRows;
     if (labelMode === "pharmacy") return pharmacyLabelBaseRows;
@@ -2723,12 +2737,13 @@ export function App() {
   function renderDrugLabelArticle(entry: PrintableDrugLabel, key: string) {
     const { row, sizeKey } = entry;
     const flagLabels = labelFlagLabels(row);
-    const nameClass = getDrugLabelNameClass(row.name, row.kind, sizeKey);
+    const renderedKind = isEcartLabelKind(row.kind) ? "ecart" : row.kind;
+    const nameClass = getDrugLabelNameClass(row.name, renderedKind, sizeKey);
     const className = [
       "drug-label-item",
       "print-label",
       `label-size-${sizeKey}`,
-      `label-kind-${row.kind}`,
+      `label-kind-${renderedKind}`,
       nameClass,
       row.fluidTone ? "fluid-label" : "",
       row.fluidTone ? `fluid-tone-${row.fluidTone}` : "",
@@ -3396,7 +3411,7 @@ export function App() {
                                   ))
                                 )}
                               </span>
-                              {row.kind === "ecart" ? (
+                              {isEcartLabelKind(row.kind) ? (
                                 <span className="badge gray">수량 {row.totalQuantity}</span>
                               ) : row.kind === "fluid" ? (
                                 <span className={`fluid-list-tone ${row.fluidTone ?? "blue"}`}>수액</span>

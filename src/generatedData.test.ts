@@ -17,6 +17,7 @@ import {
   buildReportFileName,
   clearUninspectedRoomId,
   getAllEcartPrintTargets,
+  getEcartLabelItemsForMode,
   getEcartDefaultState,
   cleanDrugLabelName,
   formatFluidLabelName,
@@ -345,10 +346,16 @@ describe("generated inventory data corrections", () => {
   });
 
   it("shows pharmacy labels in admin, pharmacy viewer, and narcotic viewer modes", () => {
-    expect(getLabelModeOptions("admin").map((option) => option.mode)).toEqual(["stock", "ecart", "fluid", "narcotic", "pharmacy"]);
-    expect(getLabelModeOptions("pharmacy-viewer").map((option) => option.mode)).toEqual(["stock", "ecart", "fluid", "narcotic", "pharmacy"]);
-    expect(getLabelModeOptions("master-viewer").map((option) => option.mode)).toEqual(["stock", "ecart", "fluid", "narcotic"]);
-    expect(getLabelModeOptions("narcotic-viewer").map((option) => option.mode)).toEqual(["stock", "ecart", "fluid", "narcotic", "pharmacy"]);
+    expect(getLabelModeOptions("admin").map((option) => option.mode)).toEqual(["stock", "ecart", "ecart-nicu", "fluid", "narcotic", "pharmacy"]);
+    expect(getLabelModeOptions("pharmacy-viewer").map((option) => option.mode)).toEqual(["stock", "ecart", "ecart-nicu", "fluid", "narcotic", "pharmacy"]);
+    expect(getLabelModeOptions("master-viewer").map((option) => option.mode)).toEqual(["stock", "ecart", "ecart-nicu", "fluid", "narcotic"]);
+    expect(getLabelModeOptions("narcotic-viewer").map((option) => option.mode)).toEqual(["stock", "ecart", "ecart-nicu", "fluid", "narcotic", "pharmacy"]);
+  });
+
+  it("keeps general and NICU E-cart label source lists separate", () => {
+    expect(getEcartLabelItemsForMode("ecart", inventory.ecart)).toEqual(inventory.ecart.generalItems);
+    expect(getEcartLabelItemsForMode("ecart-nicu", inventory.ecart)).toEqual(inventory.ecart.nicuItems);
+    expect(getEcartLabelItemsForMode("ecart-nicu", inventory.ecart)).not.toEqual(getEcartLabelItemsForMode("ecart", inventory.ecart));
   });
 
   it("keeps label selections distinct by label type and selected size", () => {

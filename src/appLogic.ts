@@ -14,7 +14,7 @@ export type EcartTab = "general" | "nicu";
 export type CheckStatus = "" | "good" | "bad";
 export type PrintPreviewMode = "single" | "all-stock" | "all-ecart" | "all-narcotic" | "round-summary" | "drug-labels";
 export type AppMode = "admin" | "master-viewer" | "pharmacy-viewer" | "narcotic-viewer";
-export type DrugLabelMode = "stock" | "ecart" | "fluid" | "narcotic" | "pharmacy";
+export type DrugLabelMode = "stock" | "ecart" | "ecart-nicu" | "fluid" | "narcotic" | "pharmacy";
 export type DrugLabelSizeKey = "10x70" | "15x95" | "40x70" | "55x95" | "35x100";
 
 export type DrugLabelData = {
@@ -220,6 +220,7 @@ export const DRUG_LABEL_SIZE_GROUPS: DrugLabelSizeGroup[] = [
 const BASE_LABEL_MODE_OPTIONS: LabelModeOption[] = [
   { mode: "stock", label: "일반 약품 라벨" },
   { mode: "ecart", label: "E-cart 약품 라벨" },
+  { mode: "ecart-nicu", label: "E-cart 라벨(NICU)" },
   { mode: "fluid", label: "일반 수액 라벨" },
   { mode: "narcotic", label: "마약/향정 라벨" },
 ];
@@ -227,6 +228,12 @@ const BASE_LABEL_MODE_OPTIONS: LabelModeOption[] = [
 export function getLabelModeOptions(appMode: AppMode): LabelModeOption[] {
   if (appMode === "master-viewer") return BASE_LABEL_MODE_OPTIONS;
   return [...BASE_LABEL_MODE_OPTIONS, { mode: "pharmacy", label: "약제팀 라벨" }];
+}
+
+export function getEcartLabelItemsForMode(mode: DrugLabelMode, ecart: InventoryData["ecart"]) {
+  if (mode === "ecart-nicu") return ecart.nicuItems;
+  if (mode === "ecart") return ecart.generalItems;
+  return [];
 }
 
 export function getInitialMasterKindFilter(appMode: AppMode): MasterRowKindFilter {
