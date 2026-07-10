@@ -7,6 +7,7 @@ import {
   deleteMasterDrug,
   filterMasterRowsByKind,
   filterMasterRowsWithStock,
+  mergeGeneratedRooms,
   type MasterRow,
   sortStockDrugsByName,
   updateAllocationQuantity,
@@ -150,5 +151,36 @@ describe("inventory allocation state", () => {
 
     expect(next.drugs.map((drug) => drug.code)).toEqual(["XBBB"]);
     expect(next.allocations).toEqual([{ roomId: "42W", drugCode: "XBBB", requiredQty: 1 }]);
+  });
+
+  it("keeps saved room edits while adding new generated rooms such as DSR", () => {
+    const savedRooms = [
+      {
+        id: "DREMM",
+        label: "DREMM",
+        sourceColumn: "DREMM",
+        sourceSheet: "점검",
+        sourceUpdatedAt: "26.06.18",
+        allocationCount: 10,
+        totalQuantity: 12,
+      },
+    ];
+    const generatedRooms = [
+      { ...savedRooms[0], allocationCount: 9, totalQuantity: 11 },
+      {
+        id: "DSR",
+        label: "DSR",
+        sourceColumn: "DSR",
+        sourceSheet: "점검",
+        sourceUpdatedAt: "26.06.18",
+        allocationCount: 0,
+        totalQuantity: 0,
+      },
+    ];
+
+    expect(mergeGeneratedRooms(savedRooms, generatedRooms).map((room) => [room.id, room.allocationCount])).toEqual([
+      ["DREMM", 10],
+      ["DSR", 0],
+    ]);
   });
 });

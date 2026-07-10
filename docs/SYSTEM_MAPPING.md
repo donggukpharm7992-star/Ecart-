@@ -70,7 +70,8 @@ This app previews a pharmacist ward inventory workflow with real Excel data. The
 6. Persist user edits in localStorage: stock counts, expiry checks, room checklists, E-cart target checklists, edited room update dates, uninspected stock-room flags, and the editable round-summary draft.
 7. The Vite dev server exposes `/api/app-state` and persists the same app state in `app-state/shared-state.json`.
    - The server commits and pushes that file to GitHub with the local repository's existing Git credentials.
-   - The app polls for newer server updates and automatically saves every local edit after changes settle.
+   - Admin mode polls for newer server updates and automatically saves local edits after changes settle.
+   - The narcotic viewer keeps edits local until the user presses `관리자 PC로 반영`, then saves only narcotic-room state into the shared admin state.
    - Master drug, room, and allocation edits are queued for automatic save even while initial server checking is still in progress.
    - Saves include the last-read server state hash; the server rejects stale writes so old browser tabs cannot overwrite newer shared state.
    - The sync panel can force-upload the current device state to recover edits that only exist in that browser's local storage.

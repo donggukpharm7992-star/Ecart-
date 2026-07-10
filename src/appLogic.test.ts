@@ -7,6 +7,7 @@ import {
   getDrugLabelFlagLabels,
   getInitialAppMode,
   getInitialMasterKindFilter,
+  getInspectedRoomIdsFromCheckedItems,
   getNarcoticDoseCautionCodes,
   getNarcoticFortyLabelNameLines,
   isMasterKindFilterDisabled,
@@ -18,6 +19,8 @@ import {
   resolveDrugLabelPrintRow,
   getStockChecklistDefaultState,
   stripControlledDrugLabelPrefix,
+  EMPTY_NARCOTIC_STOCK_CODE,
+  EMPTY_NARCOTIC_STOCK_LABEL,
 } from "./appLogic";
 import type { MasterRow } from "./inventoryState";
 import type { StockRoom } from "./types";
@@ -355,5 +358,10 @@ describe("app label logic", () => {
 
     expect(checklist.some((item) => item.note === "42W only note")).toBe(false);
     expect(checklist.some((item) => item.status === "bad" && item.note === "42W only note")).toBe(false);
+  });
+
+  it("marks an empty narcotic room inspected when the no-stock row is checked", () => {
+    expect(EMPTY_NARCOTIC_STOCK_LABEL).toBe("보유약 없음");
+    expect(getInspectedRoomIdsFromCheckedItems({ [`DSR::${EMPTY_NARCOTIC_STOCK_CODE}`]: true })).toEqual(["DSR"]);
   });
 });

@@ -69,6 +69,7 @@ export function shouldApplyRemoteState({
 }) {
   if (remoteClientId === clientId) return false;
   if (remoteRevisionChanged && !hasUnsavedLocalChanges) return true;
+  if (!hasUnsavedLocalChanges && remoteUpdatedAt !== localUpdatedAt) return true;
   return Date.parse(remoteUpdatedAt) > Date.parse(localUpdatedAt || "1970-01-01T00:00:00.000Z");
 }
 

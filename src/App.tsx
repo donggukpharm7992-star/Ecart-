@@ -33,6 +33,8 @@ import { getPolicyCautionLabels, isHighRiskDrug, normalizeDrugWarning, type Drug
 import { shouldApplyRemoteState, shouldMarkLocalChange, shouldPushLocalState, type RemoteStateEnvelope } from "./githubSync";
 import {
   DRUG_LABEL_SIZE_GROUPS,
+  EMPTY_NARCOTIC_STOCK_CODE,
+  EMPTY_NARCOTIC_STOCK_LABEL,
   ROUND_SUMMARY_COMMON_GUIDANCE,
   buildReportFileName,
   buildStockLabelData,
@@ -52,6 +54,7 @@ import {
   getEcartLabelItemsForMode,
   getInitialAppMode,
   getInitialMasterKindFilter,
+  getInspectedRoomIdsFromCheckedItems,
   getDoseHighlightTextParts,
   getNarcoticDoseCautionCodes,
   getNarcoticFortyLabelNameLines,
@@ -121,6 +124,7 @@ import {
   filterMasterRowsByKind,
   filterMasterRowsWithStock,
   applyCanonicalDrugNames,
+  mergeGeneratedRooms,
   type MasterRow,
   type MasterRowKind,
   sortStockDrugsByName,
@@ -249,7 +253,35 @@ type EditableStockItem = StockAllocation & {
   drug: StockDrug;
   checked: boolean;
   expiryDate: string;
+  isEmptyInventoryPlaceholder?: boolean;
 };
+
+const EMPTY_NARCOTIC_STOCK_DRUG: StockDrug = {
+  code: EMPTY_NARCOTIC_STOCK_CODE,
+  genericName: "",
+  productName: EMPTY_NARCOTIC_STOCK_LABEL,
+  spec: "",
+  storage: "",
+  note: "",
+  warning: "",
+  storageType: "ROOM",
+};
+
+function makeEmptyNarcoticStockItem(roomId: string, checked: boolean): EditableStockItem {
+  return {
+    roomId,
+    drugCode: EMPTY_NARCOTIC_STOCK_CODE,
+    requiredQty: 0,
+    drug: EMPTY_NARCOTIC_STOCK_DRUG,
+    checked,
+    expiryDate: "",
+    isEmptyInventoryPlaceholder: true,
+  };
+}
+
+function isEmptyNarcoticStockItem(item: EditableStockItem) {
+  return item.isEmptyInventoryPlaceholder === true;
+}
 
 type EditableEcartItem = EcartItem & {
   checked: boolean;
@@ -445,15 +477,7 @@ function normalizeStockAllocations(allocations: StockAllocation[], normalizeCode
 }
 
 function normalizeRooms(rooms: StockRoom[], generatedRooms: readonly StockRoom[]) {
-  const generatedById = new Map(generatedRooms.map((room) => [room.id, room]));
-  return rooms.map((room) => {
-    const generated = generatedById.get(room.id);
-    return {
-      ...generated,
-      ...room,
-      sourceUpdatedAt: room.sourceUpdatedAt ?? generated?.sourceUpdatedAt ?? "",
-    };
-  });
+  return mergeGeneratedRooms(rooms, generatedRooms);
 }
 
 function normalizeStockRooms(rooms: StockRoom[]) {
@@ -1126,14 +1150,14 @@ export function App() {
       narcoticRoundSummaryDraft: refreshRoundSummaryDraftFromGenerated(localState.narcoticRoundSummaryDraft, generatedNarcoticRoundSummaryDraft),
     };
     const confirmed = window.confirm(
-      "현재 기기의 비치마약류 체크, 3개월 미만 날짜, 체크리스트 메모, LOT, 순회점검표 내용을 PC/모바일 공유 상태로 저장합니다.",
+      "현재 비치마약류 뷰어에서 수정한 보유실, 약품, 체크, 3개월 미만 날짜, 체크리스트 메모, LOT, 순회점검표 내용을 관리자 PC 공유 상태로 반영합니다.",
     );
     if (!confirmed) return;
 
-    setSyncStatus({ mode: "syncing", message: "비치마약류 점검 내용 저장 중..." });
+    setSyncStatus({ mode: "syncing", message: "관리자 PC로 반영 중..." });
     try {
       const remote = await loadServerState<PersistedAppState>();
-      const baseState = remote ? ({ ...localNarcoticState, ...remote.envelope.state } as PersistedAppState) : localNarcoticState;
+      const baseState = remote ? ({ ...localState, ...normalizePersistedState(remote.envelope.state) } as PersistedAppState) : localNarcoticState;
       const mergedState = mergeNarcoticInspectionFields(baseState, localNarcoticState);
       const updatedAt = new Date().toISOString();
       const envelope: RemoteStateEnvelope<PersistedAppState> = {
@@ -1149,9 +1173,9 @@ export function App() {
       pendingPushRef.current = false;
       window.localStorage.setItem(LOCAL_UPDATED_AT_KEY, updatedAt);
       applyPersistedAppState(mergedState);
-      setSyncStatus({ mode: "synced", message: "비치마약류 점검 내용 저장 완료", lastSyncedAt: new Date().toISOString() });
+      setSyncStatus({ mode: "synced", message: "관리자 PC로 반영 완료", lastSyncedAt: new Date().toISOString() });
     } catch (error) {
-      setSyncStatus({ mode: "error", message: error instanceof Error ? error.message : "비치마약류 점검 내용 저장 실패" });
+      setSyncStatus({ mode: "error", message: error instanceof Error ? error.message : "관리자 PC로 반영 실패" });
     }
   }
 
@@ -1188,11 +1212,15 @@ export function App() {
       localUpdatedAtRef.current = updatedAt;
       hasUnsavedLocalChangesRef.current = true;
       window.localStorage.setItem(LOCAL_UPDATED_AT_KEY, updatedAt);
-      scheduleRemotePush();
+      if (appMode === "admin") {
+        scheduleRemotePush();
+      } else {
+        setSyncStatus({ mode: "idle", message: "수정 내용은 관리자 PC로 반영 버튼을 눌러 저장하세요." });
+      }
     } else if (applyingRemoteRef.current) {
       applyingRemoteRef.current = false;
     }
-  }, [persistedAppState]);
+  }, [appMode, persistedAppState]);
 
   useEffect(() => {
     let cancelled = false;
@@ -1341,25 +1369,9 @@ export function App() {
     return extraRooms.length > 0 ? [...floors, { floor: "추가 보유실", rooms: extraRooms }] : floors;
   }, [currentNarcoticRooms]);
 
-  const inspectedStockRoomIds = useMemo(() => {
-    const ids = new Set<string>();
-    for (const [key, checked] of Object.entries(checkedStock)) {
-      if (!checked) continue;
-      const [roomId] = key.split("::");
-      if (roomId) ids.add(roomId);
-    }
-    return [...ids];
-  }, [checkedStock]);
+  const inspectedStockRoomIds = useMemo(() => getInspectedRoomIdsFromCheckedItems(checkedStock), [checkedStock]);
 
-  const inspectedNarcoticRoomIds = useMemo(() => {
-    const ids = new Set<string>();
-    for (const [key, checked] of Object.entries(narcoticCheckedItems)) {
-      if (!checked) continue;
-      const [roomId] = key.split("::");
-      if (roomId) ids.add(roomId);
-    }
-    return [...ids];
-  }, [narcoticCheckedItems]);
+  const inspectedNarcoticRoomIds = useMemo(() => getInspectedRoomIdsFromCheckedItems(narcoticCheckedItems), [narcoticCheckedItems]);
 
   const drugByCode = useMemo(() => new Map(stockDrugs.map((drug) => [drug.code, drug])), [stockDrugs]);
   const narcoticDrugByCode = useMemo(() => new Map(narcoticDrugs.map((drug) => [drug.code, drug])), [narcoticDrugs]);
@@ -2667,8 +2679,15 @@ export function App() {
     items?: EditableStockItem[];
     checklist?: ChecklistState[];
   }) {
-    const psychotropicItems = items.filter((item) => (narcoticDrugCategories[item.drugCode] ?? narcoticCategoryOf(item.drugCode)) === "향정");
-    const narcoticItems = items.filter((item) => (narcoticDrugCategories[item.drugCode] ?? narcoticCategoryOf(item.drugCode)) === "마약");
+    const roomHasAssignedItems = (narcoticItemsByRoom.get(room.id)?.length ?? items.length) > 0;
+    const displayItems =
+      items.length === 0 && !roomHasAssignedItems
+        ? [makeEmptyNarcoticStockItem(room.id, narcoticCheckedItems[stockKey(room.id, EMPTY_NARCOTIC_STOCK_CODE)] ?? false)]
+        : items;
+    const emptyInventoryItems = displayItems.filter(isEmptyNarcoticStockItem);
+    const realItems = displayItems.filter((item) => !isEmptyNarcoticStockItem(item));
+    const psychotropicItems = realItems.filter((item) => (narcoticDrugCategories[item.drugCode] ?? narcoticCategoryOf(item.drugCode)) === "향정");
+    const narcoticItems = realItems.filter((item) => (narcoticDrugCategories[item.drugCode] ?? narcoticCategoryOf(item.drugCode)) === "마약");
 
     return (
       <section ref={targetRef} className={className}>
@@ -2700,6 +2719,22 @@ export function App() {
               </tr>
             </thead>
             <tbody>
+              {emptyInventoryItems.map((item) => (
+                <tr key={`${item.roomId}-${item.drugCode}`} className="item-row psychotropic empty-narcotic-stock-row">
+                  <td className="check-cell">
+                    <input type="checkbox" checked={item.checked} onChange={() => toggleNarcoticItemCheck(item.roomId, item.drugCode)} />
+                  </td>
+                  <td className="code">-</td>
+                  <td>
+                    <strong>{EMPTY_NARCOTIC_STOCK_LABEL}</strong>
+                  </td>
+                  <td>-</td>
+                  <td className="lot-cell">-</td>
+                  <td className="lot-cell">-</td>
+                  <td>-</td>
+                  <td>-</td>
+                </tr>
+              ))}
               {psychotropicItems.length > 0 && (
                 <GroupRows
                   label="향정신성의약품"
@@ -2728,7 +2763,7 @@ export function App() {
                   renderExtraCells={renderNarcoticLotCells}
                 />
               )}
-              {psychotropicItems.length === 0 && narcoticItems.length === 0 && (
+              {emptyInventoryItems.length === 0 && psychotropicItems.length === 0 && narcoticItems.length === 0 && (
                 <tr>
                   <td colSpan={8} className="empty-row">
                     이 실에 배정된 마약류가 없습니다.
@@ -3757,15 +3792,12 @@ export function App() {
                       <FileText size={16} />
                       비치마약류 순회점검표
                     </button>
-                    <button type="button" className="secondary-button narcotic-sync-button" onClick={() => void pullNarcoticInspectionStateFromServer()}>
-                      <Download size={16} />
-                      모바일 저장 내용 PC로 받기
-                      <span className="sync-warning-text">(모바일 수정 내용 저장 후 누르세요)</span>
-                    </button>
-                    <button type="button" className="secondary-button narcotic-sync-button" onClick={() => void saveNarcoticInspectionStateToServer()}>
-                      <RefreshCw size={16} />
-                      모바일 수정 내용 저장
-                    </button>
+                    {!isNarcoticViewer && (
+                      <button type="button" className="secondary-button narcotic-sync-button" onClick={() => void pullNarcoticInspectionStateFromServer()}>
+                        <Download size={16} />
+                        뷰어 반영 내용 받기
+                      </button>
+                    )}
                     <button type="button" className="secondary-button narcotic-upload-button" onClick={() => narcoticExcelInputRef.current?.click()}>
                       <Upload size={16} />
                       엑셀 업로드
@@ -3779,6 +3811,19 @@ export function App() {
                   </div>
                 </div>
                 {narcoticExcelFileName && <p className="narcotic-upload-name">선택 파일: {narcoticExcelFileName}</p>}
+                {isNarcoticViewer && (
+                  <div className="narcotic-apply-panel">
+                    <button
+                      type="button"
+                      className="secondary-button narcotic-sync-button"
+                      onClick={() => void saveNarcoticInspectionStateToServer()}
+                      title="비치마약류 뷰어 수정 내용을 관리자 PC로 반영"
+                    >
+                      <RefreshCw size={16} />
+                      관리자 PC로 반영
+                    </button>
+                  </div>
+                )}
                 <div className="narcotic-guide-list">
                   {currentNarcoticFloors.map((floorGroup) => (
                     <div className="narcotic-guide-floor" key={floorGroup.floor}>

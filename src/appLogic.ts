@@ -57,6 +57,9 @@ export type EditableEcartItem = EcartItem & {
   expiryDate: string;
 };
 
+export const EMPTY_NARCOTIC_STOCK_CODE = "__NO_NARCOTIC_STOCK__";
+export const EMPTY_NARCOTIC_STOCK_LABEL = "보유약 없음";
+
 export type ChecklistState = ChecklistItem & {
   id: string;
   status: CheckStatus;
@@ -1061,6 +1064,16 @@ export function normalizeChecklistRows<T extends { id?: string; note?: string; s
 
 export function stockKey(roomId: string, drugCode: string) {
   return `${roomId}::${drugCode}`;
+}
+
+export function getInspectedRoomIdsFromCheckedItems(checkedItems: Record<string, boolean>) {
+  const ids = new Set<string>();
+  for (const [key, checked] of Object.entries(checkedItems)) {
+    if (!checked) continue;
+    const [roomId] = key.split("::");
+    if (roomId) ids.add(roomId);
+  }
+  return [...ids];
 }
 
 export function removeStockDrugRecords<T>(record: Record<string, T>, drugCode: string) {

@@ -1390,6 +1390,12 @@ button {
   font-weight: 900;
 }
 
+.narcotic-apply-panel {
+  display: flex;
+  justify-content: flex-end;
+  margin: 6px 0 10px;
+}
+
 .narcotic-guide-list {
   display: grid;
   gap: 8px;

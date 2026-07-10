@@ -63,16 +63,28 @@ describe("github sync helpers", () => {
     ).toBe(false);
   });
 
-  it("keeps a newer local cache even after the app restarts", () => {
+  it("keeps a newer local cache only while this browser still has unsaved edits", () => {
     expect(
       shouldApplyRemoteState({
         remoteUpdatedAt: "2026-06-23T10:00:05.000Z",
         localUpdatedAt: "2026-06-23T10:00:10.000Z",
         remoteClientId: "pc",
         clientId: "phone",
-        hasUnsavedLocalChanges: false,
+        hasUnsavedLocalChanges: true,
       }),
     ).toBe(false);
+  });
+
+  it("applies server state over an idle stale viewer cache even when the viewer clock is ahead", () => {
+    expect(
+      shouldApplyRemoteState({
+        remoteUpdatedAt: "2026-06-23T10:00:05.000Z",
+        localUpdatedAt: "2026-06-23T10:00:10.000Z",
+        remoteClientId: "admin-pc",
+        clientId: "narcotic-viewer-pc",
+        hasUnsavedLocalChanges: false,
+      }),
+    ).toBe(true);
   });
 
   it("applies a newer remote state over an idle older local cache", () => {

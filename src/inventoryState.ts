@@ -1,4 +1,4 @@
-import type { StockAllocation, StockDrug } from "./types";
+import type { StockAllocation, StockDrug, StockRoom } from "./types";
 
 export type MasterRoomDetail = {
   roomId: string;
@@ -54,6 +54,26 @@ export function applyCanonicalDrugNames<T extends StockDrug>(
       ...(productName ? { productName } : {}),
     };
   });
+}
+
+export function mergeGeneratedRooms(rooms: StockRoom[], generatedRooms: readonly StockRoom[]) {
+  const generatedById = new Map(generatedRooms.map((room) => [room.id, room]));
+  const seen = new Set<string>();
+  const merged = rooms.map((room) => {
+    seen.add(room.id);
+    const generated = generatedById.get(room.id);
+    return {
+      ...generated,
+      ...room,
+      sourceUpdatedAt: room.sourceUpdatedAt ?? generated?.sourceUpdatedAt ?? "",
+    };
+  });
+
+  for (const generated of generatedRooms) {
+    if (!seen.has(generated.id)) merged.push({ ...generated });
+  }
+
+  return merged;
 }
 
 export function buildMasterRows(
