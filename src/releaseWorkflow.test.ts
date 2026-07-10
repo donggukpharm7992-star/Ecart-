@@ -15,6 +15,8 @@ describe("release workflow", () => {
     expect(releaseScript).toContain('runNpm(["run", "publish"])');
     expect(releaseScript).toContain('pushRemote("origin", branch)');
     expect(releaseScript).toContain('pushRemote("backup", branch)');
+    expect(releaseScript).toContain('GIT_TERMINAL_PROMPT: "0"');
+    expect(releaseScript).toContain('"credential.helper="');
   });
 
   it("records the automatic release rule for future app edits", () => {
