@@ -1112,6 +1112,7 @@ export function App() {
     try {
       const remote = await loadServerState<PersistedAppState>();
       if (!remote) {
+        window.alert("불러올 비치마약류 점검 내용이 없습니다. (서버에 저장된 데이터가 없습니다)");
         setSyncStatus({ mode: "idle", message: "불러올 비치마약류 점검 내용이 없습니다." });
         return;
       }
@@ -1141,7 +1142,9 @@ export function App() {
       window.alert("비치마약류 뷰어 반영 내용이 관리자 화면에 적용되었습니다.");
       setSyncStatus({ mode: "synced", message: "비치마약류 점검 내용 불러오기 완료", lastSyncedAt: new Date().toISOString() });
     } catch (error) {
-      setSyncStatus({ mode: "error", message: error instanceof Error ? error.message : "비치마약류 점검 내용 불러오기 실패" });
+      const msg = error instanceof Error ? error.message : "비치마약류 점검 내용 불러오기 실패";
+      window.alert(`불러오기 실패: ${msg}\n\n관리자 PC에서 npm run dev:public 서버가 켜져 있는지 확인해 주세요.`);
+      setSyncStatus({ mode: "error", message: msg });
     }
   }
 
@@ -1177,7 +1180,9 @@ export function App() {
       applyPersistedAppState(mergedState);
       setSyncStatus({ mode: "synced", message: "관리자 PC로 반영 완료", lastSyncedAt: new Date().toISOString() });
     } catch (error) {
-      setSyncStatus({ mode: "error", message: error instanceof Error ? error.message : "관리자 PC로 반영 실패" });
+      const msg = error instanceof Error ? error.message : "관리자 PC로 반영 실패";
+      window.alert(`관리자 PC로 반영 실패: ${msg}\n\n관리자 PC에서 npm run dev:public 서버가 켜져 있는지 확인해 주세요.`);
+      setSyncStatus({ mode: "error", message: msg });
     }
   }
 
