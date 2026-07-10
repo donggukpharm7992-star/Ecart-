@@ -87,6 +87,19 @@ describe("github sync helpers", () => {
     ).toBe(true);
   });
 
+  it("applies a changed server revision from another PC even when that PC clock is behind", () => {
+    expect(
+      shouldApplyRemoteState({
+        remoteUpdatedAt: "2026-06-23T10:00:05.000Z",
+        localUpdatedAt: "2026-06-23T10:00:10.000Z",
+        remoteClientId: "narcotic-viewer-pc",
+        clientId: "admin-pc",
+        hasUnsavedLocalChanges: false,
+        remoteRevisionChanged: true,
+      }),
+    ).toBe(true);
+  });
+
   it("pushes local state only when this session has unsaved edits", () => {
     expect(
       shouldPushLocalState({

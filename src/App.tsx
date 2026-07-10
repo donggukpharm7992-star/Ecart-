@@ -88,6 +88,9 @@ import {
   getHospitalDrugControlledCategory,
   getHospitalDrugLabelWarnings,
   getHospitalDrugStorageLabel,
+  isHospitalControlledDrugType,
+  isHospitalDrugType,
+  isSelectableHospitalDrugLabelRow,
   loadHospitalDrugLabelRows,
   makeHospitalControlledDrugLabelId,
   makeHospitalDrugLabelId,
@@ -975,6 +978,8 @@ export function App() {
         scheduleRemotePush();
         return false;
       }
+      const previousRemoteSha = remoteShaRef.current;
+      const remoteRevisionChanged = Boolean(previousRemoteSha && remote.sha && remote.sha !== previousRemoteSha);
       remoteShaRef.current = remote.sha;
       const shouldApply =
         forceApply ||
@@ -984,6 +989,7 @@ export function App() {
           remoteClientId: remote.envelope.clientId,
           clientId: syncClientId,
           hasUnsavedLocalChanges: hasUnsavedLocalChangesRef.current || pendingPushRef.current,
+          remoteRevisionChanged,
         });
       if (shouldApply) {
         localUpdatedAtRef.current = remote.envelope.updatedAt;
@@ -1506,32 +1512,43 @@ export function App() {
     () => filteredMasterRows.filter((row) => labelSelectedCodes.includes(row.code)),
     [filteredMasterRows, labelSelectedCodes],
   );
-  const hospitalDrugRowsByLabelId = useMemo(
-    () => new Map(hospitalDrugLabelRows.map((row) => [makeHospitalDrugLabelId(row), row])),
+  const hospitalDrugSelectableRows = useMemo(
+    () => hospitalDrugLabelRows.filter(isSelectableHospitalDrugLabelRow),
     [hospitalDrugLabelRows],
+  );
+  const hospitalDrugRowsByLabelId = useMemo(
+    () => new Map(hospitalDrugSelectableRows.map((row) => [makeHospitalDrugLabelId(row), row])),
+    [hospitalDrugSelectableRows],
   );
   const hospitalDrugSearchRows = useMemo(() => {
-    if (hospitalDrugLabelRows.length === 0) return [];
+    if (hospitalDrugSelectableRows.length === 0) return [];
     const trimmed = labelQuery.trim().toLowerCase();
-    const rows = trimmed ? hospitalDrugLabelRows.filter((row) => matchesHospitalDrugLabel(row, trimmed)) : hospitalDrugLabelRows;
+    const rows = trimmed ? hospitalDrugSelectableRows.filter((row) => matchesHospitalDrugLabel(row, trimmed)) : hospitalDrugSelectableRows;
     return rows.slice(0, 80);
-  }, [hospitalDrugLabelRows, labelQuery]);
+  }, [hospitalDrugSelectableRows, labelQuery]);
   const hospitalStockLabelRows = useMemo(() => hospitalDrugSearchRows.map((row) => buildHospitalDrugLabelData(row, "stock")), [hospitalDrugSearchRows]);
   const allHospitalStockLabelRows = useMemo(
-    () => hospitalDrugLabelRows.map((row) => buildHospitalDrugLabelData(row, "stock")),
-    [hospitalDrugLabelRows],
+    () => hospitalDrugSelectableRows.map((row) => buildHospitalDrugLabelData(row, "stock")),
+    [hospitalDrugSelectableRows],
   );
-  const hospitalFluidLabelRows = useMemo(() => hospitalDrugSearchRows.map((row) => buildHospitalDrugLabelData(row, "fluid")), [hospitalDrugSearchRows]);
+  const hospitalFluidDrugRows = useMemo(() => hospitalDrugSelectableRows.filter((row) => isHospitalDrugType(row, "일반수액")), [hospitalDrugSelectableRows]);
+  const hospitalFluidSearchRows = useMemo(() => {
+    if (hospitalFluidDrugRows.length === 0) return [];
+    const trimmed = labelQuery.trim().toLowerCase();
+    const rows = trimmed ? hospitalFluidDrugRows.filter((row) => matchesHospitalDrugLabel(row, trimmed)) : hospitalFluidDrugRows;
+    return rows.slice(0, 80);
+  }, [hospitalFluidDrugRows, labelQuery]);
+  const hospitalFluidLabelRows = useMemo(() => hospitalFluidSearchRows.map((row) => buildHospitalDrugLabelData(row, "fluid")), [hospitalFluidSearchRows]);
   const allHospitalFluidLabelRows = useMemo(
-    () => hospitalDrugLabelRows.map((row) => buildHospitalDrugLabelData(row, "fluid")),
-    [hospitalDrugLabelRows],
+    () => hospitalFluidDrugRows.map((row) => buildHospitalDrugLabelData(row, "fluid")),
+    [hospitalFluidDrugRows],
   );
   const pharmacyLabelBaseRows = useMemo(() => {
     return hospitalDrugSearchRows.map((row) => buildHospitalDrugLabelData(row, "pharmacy"));
   }, [hospitalDrugSearchRows]);
   const hospitalControlledDrugRows = useMemo(
-    () => hospitalDrugLabelRows.filter((row) => getHospitalDrugControlledCategory(row) && !shouldExcludeHospitalControlledDrugLabel(row)),
-    [hospitalDrugLabelRows],
+    () => hospitalDrugSelectableRows.filter((row) => isHospitalControlledDrugType(row) && !shouldExcludeHospitalControlledDrugLabel(row)),
+    [hospitalDrugSelectableRows],
   );
   const hospitalControlledDoseCautionCodes = useMemo(
     () =>

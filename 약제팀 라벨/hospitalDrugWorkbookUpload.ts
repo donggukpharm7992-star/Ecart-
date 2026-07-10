@@ -33,6 +33,7 @@ const HOSPITAL_DRUG_HEADERS = [
   "유사발음",
   "용량주의",
 ] as const;
+const HOSPITAL_DRUG_TYPE_HEADERS = ["약품유형", "약품 유형"] as const;
 
 const textDecoder = new TextDecoder("utf-8");
 
@@ -173,7 +174,10 @@ function parseWorksheetRows(xml: string, sharedStrings: string[]) {
 }
 
 function requireHeaders(headers: string[]) {
-  const missing = HOSPITAL_DRUG_HEADERS.filter((header) => !headers.includes(header));
+  const missing: string[] = HOSPITAL_DRUG_HEADERS.filter((header) => !headers.includes(header));
+  if (!HOSPITAL_DRUG_TYPE_HEADERS.some((header) => headers.includes(header))) {
+    missing.push("약품유형");
+  }
   if (missing.length > 0) {
     throw new Error(`원내보유의약품리스트 양식이 아닙니다. 누락 열: ${missing.join(", ")}`);
   }
@@ -184,6 +188,10 @@ function rowsToHospitalDrugLabels(rows: string[][]): HospitalDrugLabelRow[] {
   requireHeaders(headers);
   const index = new Map(headers.map((header, position) => [header, position]));
   const read = (row: string[], header: string) => clean(row[index.get(header) ?? -1]);
+  const readAny = (row: string[], possibleHeaders: readonly string[]) => {
+    const header = possibleHeaders.find((candidate) => index.has(candidate));
+    return header ? read(row, header) : "";
+  };
 
   return rows
     .slice(1)
@@ -196,6 +204,7 @@ function rowsToHospitalDrugLabels(rows: string[][]): HospitalDrugLabelRow[] {
         name,
         koreanName: read(row, "한글약품명"),
         strength: read(row, "함량"),
+        drugType: readAny(row, HOSPITAL_DRUG_TYPE_HEADERS),
         spec: read(row, "규격"),
         package: read(row, "포장"),
         storage: read(row, "보관법"),

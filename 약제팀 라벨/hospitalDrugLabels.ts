@@ -5,6 +5,7 @@ export type HospitalDrugLabelRow = {
   name: string;
   koreanName: string;
   strength: string;
+  drugType: string;
   spec: string;
   package: string;
   storage: string;
@@ -28,6 +29,7 @@ function compact(value: string) {
 }
 
 const CONTROLLED_DRUG_PREFIX_PATTERN = /^\s*\[(마약|향정)\]\s*/;
+const NUMERIC_COMMON_NAME_PATTERN = /^\d+(?:\.\d+)?$/;
 
 export function makeHospitalDrugLabelId(row: Pick<HospitalDrugLabelRow, "code">) {
   return `pharmacy-${row.code}`;
@@ -38,10 +40,25 @@ export function makeHospitalControlledDrugLabelId(row: Pick<HospitalDrugLabelRow
 }
 
 export function getHospitalDrugControlledCategory(
-  row: Pick<HospitalDrugLabelRow, "name" | "koreanName">,
+  row: Pick<HospitalDrugLabelRow, "name" | "koreanName"> & Partial<Pick<HospitalDrugLabelRow, "drugType">>,
 ): HospitalDrugControlledCategory | undefined {
+  if (isHospitalDrugType(row, "마약")) return "마약";
+  if (isHospitalDrugType(row, "향정")) return "향정";
   const match = row.name.match(CONTROLLED_DRUG_PREFIX_PATTERN) ?? row.koreanName.match(CONTROLLED_DRUG_PREFIX_PATTERN);
   return match?.[1] as HospitalDrugControlledCategory | undefined;
+}
+
+export function isHospitalDrugType(row: Partial<Pick<HospitalDrugLabelRow, "drugType">>, drugType: string) {
+  return compact(row.drugType ?? "") === compact(drugType);
+}
+
+export function isHospitalControlledDrugType(row: Partial<Pick<HospitalDrugLabelRow, "drugType">>) {
+  return isHospitalDrugType(row, "마약") || isHospitalDrugType(row, "향정");
+}
+
+export function isSelectableHospitalDrugLabelRow(row: Pick<HospitalDrugLabelRow, "name" | "inHospital">) {
+  const name = row.name.trim();
+  return row.inHospital && name.length > 0 && !NUMERIC_COMMON_NAME_PATTERN.test(name);
 }
 
 export function stripHospitalDrugControlledPrefix(name: string) {

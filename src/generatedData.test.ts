@@ -45,7 +45,7 @@ import { buildMasterRows } from "./inventoryState";
 import { NARCOTIC_LABEL_ROWS } from "./narcoticLabels";
 
 const inventory = rawInventory as InventoryData;
-const hospitalDrugLabels = rawHospitalDrugLabels as Array<{ code: string; name: string }>;
+const hospitalDrugLabels = rawHospitalDrugLabels as Array<{ code: string; name: string; drugType: string; inHospital: boolean }>;
 const normalizeText = (value: string) => value.replace(/\s+/g, " ").trim();
 
 describe("generated inventory data corrections", () => {
@@ -110,6 +110,16 @@ describe("generated inventory data corrections", () => {
     expect(byCode.get("XTPA20")?.productName).toBe("Actilyse 20mg/20ml inj");
     expect(byCode.get("XETOM")?.productName).toBe("Etomidate lipuro 20mg/10ml inj");
     expect(byCode.get("XETOM")?.productName).not.toMatch(/^\[(마약|향정)\]/);
+  });
+
+  it("extracts hospital drug types for fluid and controlled label lists", () => {
+    const inHospitalRows = hospitalDrugLabels.filter((row) => row.inHospital);
+    const fluids = inHospitalRows.filter((row) => row.drugType === "일반수액");
+    const controlled = inHospitalRows.filter((row) => row.drugType === "마약" || row.drugType === "향정");
+
+    expect(hospitalDrugLabels.find((row) => row.code === "XAQD")?.drugType).toBe("일반수액");
+    expect(fluids.length).toBeGreaterThanOrEqual(30);
+    expect(controlled.length).toBeGreaterThanOrEqual(70);
   });
 
   it("uses hospital common names for narcotic stock master drug names", () => {

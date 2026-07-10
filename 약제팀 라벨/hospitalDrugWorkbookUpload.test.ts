@@ -23,6 +23,7 @@ describe("hospital drug workbook upload", () => {
     expect(abilify?.name).toBe("Abilify asimtufii 720mg inj");
     expect(abilify?.koreanName).toContain("아빌리파이");
     expect(abilify?.lightProtected).toBe(true);
+    expect(rows.find((row) => row.code === "XAQD")?.drugType).toBe("일반수액");
   });
 
   it("updates the pharmacy label list while preserving existing match details by drug code", () => {
@@ -33,6 +34,7 @@ describe("hospital drug workbook upload", () => {
           name: "Atropine oph 0.01% 5mL",
           koreanName: "아트로핀",
           strength: "0.01%",
+          drugType: "외용점안제",
           spec: "5mL",
           package: "",
           storage: "차광",
@@ -95,6 +97,7 @@ describe("hospital drug workbook upload", () => {
           name: "Esmeron 50mg/5ml inj",
           koreanName: "에스메론주 50mg/5ml",
           strength: "50 mg",
+          drugType: "바이알",
           spec: "5 ml",
           package: "1 via",
           storage: "냉장",

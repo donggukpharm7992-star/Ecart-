@@ -3,7 +3,10 @@ import {
   getHospitalDrugControlledCategory,
   getHospitalDrugLabelWarnings,
   getHospitalDrugStorageLabel,
+  isHospitalControlledDrugType,
+  isHospitalDrugType,
   isHospitalDrugLightProtected,
+  isSelectableHospitalDrugLabelRow,
   loadHospitalDrugLabelRows,
   matchesHospitalDrugLabel,
   shouldExcludeHospitalControlledDrugLabel,
@@ -19,6 +22,40 @@ describe("hospital drug label source", () => {
     expect(rows.length).toBeGreaterThan(2700);
     expect(abilify?.name).toBe("Abilify asimtufii 720mg inj");
     expect(albumin?.name).toBe("Albumin(SK) 20% 100ml inj");
+  });
+
+  it("keeps the workbook drug type used by label source buttons", async () => {
+    const rows = await loadHospitalDrugLabelRows();
+    const fluids = rows.filter((row) => isHospitalDrugType(row, "일반수액") && isSelectableHospitalDrugLabelRow(row));
+    const controlled = rows.filter((row) => isHospitalControlledDrugType(row) && isSelectableHospitalDrugLabelRow(row));
+
+    expect(rows.find((row) => row.code === "XAQD")?.drugType).toBe("일반수액");
+    expect(fluids.length).toBeGreaterThanOrEqual(30);
+    expect(controlled.length).toBeGreaterThanOrEqual(70);
+    expect(controlled.every((row) => row.drugType === "마약" || row.drugType === "향정")).toBe(true);
+  });
+
+  it("selects only in-hospital rows with real common names for label lists", () => {
+    const base = {
+      code: "XVALID",
+      name: "Valid common name",
+      koreanName: "테스트",
+      strength: "",
+      drugType: "",
+      spec: "",
+      package: "",
+      storage: "",
+      lightProtected: false,
+      inHospital: true,
+      similarLook: false,
+      similarSound: false,
+      doseCaution: false,
+    };
+
+    expect(isSelectableHospitalDrugLabelRow(base)).toBe(true);
+    expect(isSelectableHospitalDrugLabelRow({ ...base, inHospital: false })).toBe(false);
+    expect(isSelectableHospitalDrugLabelRow({ ...base, name: "607" })).toBe(false);
+    expect(isSelectableHospitalDrugLabelRow({ ...base, name: "" })).toBe(false);
   });
 
   it("uses workbook storage, light protection, and caution columns for labels", async () => {
@@ -38,6 +75,7 @@ describe("hospital drug label source", () => {
       name: "1% Lidocaine HCI 20ml inj",
       koreanName: "휴온스리도카인염산수화물주1% 20ml",
       strength: "200 mg",
+      drugType: "",
       spec: "20 ml",
       package: "1 via",
       storage: "실온",

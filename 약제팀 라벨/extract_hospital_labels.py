@@ -21,6 +21,13 @@ def is_yes(value: object) -> bool:
     return clean(value).upper() == "Y"
 
 
+def column_index(index: dict[str, int], *headers: str) -> int:
+    for header in headers:
+        if header in index:
+            return index[header]
+    raise KeyError(" / ".join(headers))
+
+
 def main() -> None:
     if not SOURCE.exists():
         raise FileNotFoundError(f"Missing source workbook: {SOURCE}")
@@ -43,6 +50,7 @@ def main() -> None:
                 "name": name,
                 "koreanName": clean(raw[index["한글약품명"]]),
                 "strength": clean(raw[index["함량"]]),
+                "drugType": clean(raw[column_index(index, "약품유형", "약품 유형")]),
                 "spec": clean(raw[index["규격"]]),
                 "package": clean(raw[index["포장"]]),
                 "storage": clean(raw[index["보관법"]]),

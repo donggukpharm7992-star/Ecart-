@@ -19,9 +19,10 @@ This app previews a pharmacist ward inventory workflow with real Excel data. The
 - `약제팀 라벨/원내보유의약품리스트.xlsx`
   - Label-only source for pharmacy-wide drug labels.
   - Column B `상용약품명` overrides stock and E-cart display drug names by `약품코드`; leading `[마약]`/`[향정]` prefixes are stripped for inventory names.
-  - `약품조회` rows are generated into `약제팀 라벨/data/hospitalDrugLabels.generated.json`.
+  - `약품조회` rows are generated into `약제팀 라벨/data/hospitalDrugLabels.generated.json`, including `약품유형` as `drugType`.
   - Label fields use workbook storage, light-protection, similar-look, similar-sound, dose-caution, and derived high-risk flags.
-  - Drug-label output lists for general drugs, fluids, narcotic/psychotropic labels, and the pharmacy label workspace use this hospital list as their selectable source; E-cart labels continue to use the E-cart workbook lists.
+  - General drug and pharmacy label lists use in-hospital common names from this hospital list; fluid labels show only `drugType=일반수액`, and narcotic/psychotropic labels show only `drugType=마약` or `drugType=향정`.
+  - E-cart labels continue to use the E-cart management item lists, whose item names are corrected from the hospital common-name list by `약품코드`.
   - Label storage badges show only cold/frozen storage (`냉장`, `냉동`); light protection (`차광`) is shown as a caution flag.
 - `약제팀 라벨/원내보유의약품_라벨매칭_20260702.xlsx`
   - Source for pharmacy label matching and label source metadata.
@@ -54,7 +55,7 @@ This app previews a pharmacist ward inventory workflow with real Excel data. The
   - Retired E-cart twice-weekly management-log rows are excluded during import.
   - Split combined `2-1`/`2-2` rows and append 냉장약 item 6 for annual refrigerator thermometer verification.
   - Apply hospital common-name corrections for stock/E-cart labels, plus warning labels and storage grouping overrides.
-- `약제팀 라벨/data/hospitalDrugLabels.generated.json`: all hospital drug label candidates for the pharmacy label view.
+- `약제팀 라벨/data/hospitalDrugLabels.generated.json`: all hospital drug label candidates with storage/caution fields and `drugType` for label-button filtering.
 - `약제팀 라벨/data/pharmacyLabelMatches.generated.json`: matched pharmacy label text, match status, source file, source location, and caution/storage flags; runtime pharmacy-label rows are rebuilt from hospital drug rows while preserving match details by drug code.
 - `narcoticLabels.generated.json`: legacy narcotic/psychotropic label text, category, source file, and source cell retained for generated-data coverage.
 - `narcoticDrugCodeMap.generated.json`: narcotic drug-name/code conversion rows used before fuzzy LOT name matching.

@@ -36,8 +36,10 @@ describe("drug label selection UI", () => {
     expect(appSource).toContain("makeHospitalControlledDrugLabelId(row)");
   });
 
-  it("routes non E-cart label lists to hospital drug rows while keeping E-cart sources unchanged", () => {
+  it("routes hospital label buttons by workbook drug type while keeping E-cart on E-cart inventory", () => {
     expect(appSource).toContain("function usesHospitalDrugListForMode(mode: DrugLabelMode)");
+    expect(appSource).toContain('const hospitalFluidDrugRows = useMemo(() => hospitalDrugSelectableRows.filter((row) => isHospitalDrugType(row, "일반수액")),');
+    expect(appSource).toContain("isHospitalControlledDrugType(row)");
     expect(appSource).toContain('if (labelMode === "stock") return hospitalStockLabelRows;');
     expect(appSource).toContain('if (labelMode === "fluid") return hospitalFluidLabelRows;');
     expect(appSource).toContain('if (labelMode === "narcotic") return hospitalControlledLabelRows;');
