@@ -134,6 +134,7 @@ import {
 import { MASTER_EXPORT_MIME, buildMasterExportFileName, createMasterWorkbookXlsx } from "./masterExport";
 import { downloadElementAsPdf, type PdfDownloadResult } from "./reportPdf";
 import { effectiveRoomUpdatedAt, formatRoomUpdatedAt, markRoomsUpdated } from "./roomUpdateDate";
+import { getNarcoticFloorRows, narcoticGuideLabel } from "./narcoticGuide";
 import {
   buildInspectionCycleResetRoundSummaryDraft,
   buildNarcoticRoundSummaryDraft,
@@ -160,6 +161,7 @@ import {
   normalizeNarcoticDrugCode,
   narcoticCategoryOf,
 } from "./narcoticData";
+import { buildNarcoticStateChangeSummary } from "./narcoticStateDiff";
 import {
   buildNarcoticLotAssignments,
   isNarcoticLotWorkbookFileName,
@@ -374,11 +376,6 @@ const hiddenStockRooms = new Set(["체외순환실"]);
 const initialStockRooms = inventory.stock.rooms.filter((room) => !hiddenStockRooms.has(room.id));
 const initialStockAllocations = inventory.stock.allocations.filter((allocation) => !hiddenStockRooms.has(allocation.roomId));
 const firstStockRoom = initialStockRooms[0]?.id ?? "";
-const NARCOTIC_WARD_ROW_IDS = [
-  ["51", "52", "61", "62", "71", "72"],
-  ["81", "82", "91", "92"],
-  ["101", "102", "111", "112", "121"],
-];
 function getNarcoticChecklistDefaultState(checklistByRoom: Record<string, ChecklistState[]>, roomId: string) {
   const existing = checklistByRoom[roomId];
   if (existing) return normalizeChecklistRows(existing);
@@ -388,18 +385,6 @@ function getNarcoticChecklistDefaultState(checklistByRoom: Record<string, Checkl
     status: "good" as CheckStatus,
     note: "",
   }));
-}
-
-function getNarcoticFloorRows(floor: string, rooms: readonly StockRoom[]) {
-  if (floor !== "5층 ~ 12층") return [rooms];
-  const roomById = new Map(rooms.map((room) => [room.id, room]));
-  return NARCOTIC_WARD_ROW_IDS.map((row) => row.flatMap((id) => roomById.get(id) ?? [])).filter((row) => row.length > 0);
-}
-
-function narcoticGuideLabel(room: StockRoom) {
-  if (/^\d+$/.test(room.id) && room.id !== "42") return `${room.id}W`;
-  if (room.id === "42") return room.label;
-  return room.id;
 }
 
 function loadPersistedState(): Partial<PersistedAppState> {
@@ -1133,11 +1118,27 @@ export function App() {
       remoteShaRef.current = remote.sha;
       const normalizedRemote = normalizePersistedState(remote.envelope.state);
       const mergedState = mergeNarcoticInspectionFields(localState, normalizedRemote);
+      const changeSummary = buildNarcoticStateChangeSummary(localState, mergedState);
+      if (changeSummary.length === 0) {
+        window.alert("새로 반영할 비치마약류 뷰어 변경 내용이 없습니다.");
+        setSyncStatus({ mode: "idle", message: "새로 반영할 비치마약류 뷰어 변경 내용이 없습니다." });
+        return;
+      }
+      const confirmed = window.confirm(
+        `비치마약류 뷰어 반영 내용을 관리자 화면에 적용합니다.\n\n${changeSummary
+          .map((line) => `- ${line}`)
+          .join("\n")}\n\n이 내용을 반영할까요?`,
+      );
+      if (!confirmed) {
+        setSyncStatus({ mode: "idle", message: "비치마약류 뷰어 반영이 취소되었습니다." });
+        return;
+      }
       localUpdatedAtRef.current = remote.envelope.updatedAt;
       hasUnsavedLocalChangesRef.current = false;
       pendingPushRef.current = false;
       window.localStorage.setItem(LOCAL_UPDATED_AT_KEY, remote.envelope.updatedAt);
       applyPersistedAppState(mergedState);
+      window.alert("비치마약류 뷰어 반영 내용이 관리자 화면에 적용되었습니다.");
       setSyncStatus({ mode: "synced", message: "비치마약류 점검 내용 불러오기 완료", lastSyncedAt: new Date().toISOString() });
     } catch (error) {
       setSyncStatus({ mode: "error", message: error instanceof Error ? error.message : "비치마약류 점검 내용 불러오기 실패" });

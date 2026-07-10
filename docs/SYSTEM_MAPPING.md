@@ -72,6 +72,7 @@ This app previews a pharmacist ward inventory workflow with real Excel data. The
    - The server commits and pushes that file to GitHub with the local repository's existing Git credentials.
    - Admin mode polls for newer server updates and automatically saves local edits after changes settle.
    - The narcotic viewer keeps edits local until the user presses `관리자 PC로 반영`, then saves only narcotic-room state into the shared admin state.
+   - Admin `뷰어 반영 내용 받기` previews incoming narcotic-room changes in a confirmation popup before applying them to the admin screen.
    - Master drug, room, and allocation edits are queued for automatic save even while initial server checking is still in progress.
    - Saves include the last-read server state hash; the server rejects stale writes so old browser tabs cannot overwrite newer shared state.
    - The sync panel can force-upload the current device state to recover edits that only exist in that browser's local storage.
