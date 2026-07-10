@@ -35,15 +35,21 @@ describe("hospital brand palette", () => {
     expect(cssRule(".drug-label-item.label-size-15x95.label-kind-ecart .drug-label-code-stack")).toMatch(/padding:\s*0 4px;/);
   });
 
-  it("places narcotic cold storage text inside the right black code stack", () => {
+  it("places compact narcotic cold storage text inside the right black code stack", () => {
     expect(cssRule(".label-code-storage")).toMatch(/color:\s*#fff;/);
     expect(cssRule(".drug-label-item .label-code-storage")).toMatch(/color:\s*#fff;/);
 
-    for (const size of ["10x70", "15x95", "40x70"]) {
+    for (const size of ["10x70", "15x95"]) {
       const stackRule = cssRule(`.drug-label-item.label-size-${size}.label-kind-narcotic .drug-label-code-stack`);
       const storageRule = cssRule(`.drug-label-item.label-size-${size}.label-kind-narcotic .label-code-storage.cold`);
       expect(stackRule).toMatch(/background:\s*#101010;/);
       expect(storageRule).toMatch(/font-size:/);
     }
+  });
+
+  it("uses a full-width footer band for 40x70 narcotic labels", () => {
+    expect(cssRule(".drug-label-narcotic-footer")).toMatch(/background:\s*#6f1d1b;/);
+    expect(cssRule(".drug-label-narcotic-footer")).toMatch(/color:\s*#fff;/);
+    expect(cssRule(".drug-label-item.label-size-40x70.label-kind-narcotic .drug-label-code-stack")).toMatch(/display:\s*none;/);
   });
 });

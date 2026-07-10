@@ -6,6 +6,7 @@ type ServerSyncOptions = {
   retryDelayMs?: number;
   baseSha?: string;
   force?: boolean;
+  forceOnConflict?: boolean;
 };
 
 const DEFAULT_SERVER_TIMEOUT_MS = 12000;
@@ -118,6 +119,11 @@ function isTransientSaveError(error: unknown) {
   return status ? isTransientSaveStatus(Number(status)) : true;
 }
 
+function isConflictSaveError(error: unknown) {
+  if (!(error instanceof Error)) return false;
+  return error.message.includes("(409)");
+}
+
 export async function saveServerState<T>(
   envelope: RemoteStateEnvelope<T>,
   options: ServerSyncOptions = {},
@@ -129,6 +135,9 @@ export async function saveServerState<T>(
       return await saveServerStateOnce(envelope, options);
     } catch (error) {
       lastError = error;
+      if (options.forceOnConflict && !options.force && isConflictSaveError(error)) {
+        return await saveServerStateOnce(envelope, { ...options, baseSha: undefined, force: true, forceOnConflict: false });
+      }
       if (attempt === SAVE_RETRY_ATTEMPTS || !isTransientSaveError(error)) {
         throw error;
       }

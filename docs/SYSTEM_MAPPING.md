@@ -16,15 +16,16 @@ This app previews a pharmacist ward inventory workflow with real Excel data. The
   - `수령확인`: E-cart target departments.
 - `비품점검체크리스트.xlsx`
   - Checklist text grouped by visible section headers.
-- `원내보유의약품리스트.xlsx`
+- `약제팀 라벨/원내보유의약품리스트.xlsx`
   - Label-only source for pharmacy-wide drug labels.
   - Column B `상용약품명` overrides stock and E-cart display drug names by `약품코드`; leading `[마약]`/`[향정]` prefixes are stripped for inventory names.
-  - `약품조회` rows are generated into `src/data/hospitalDrugLabels.generated.json`.
+  - `약품조회` rows are generated into `약제팀 라벨/data/hospitalDrugLabels.generated.json`.
   - Label fields use workbook storage, light-protection, similar-look, similar-sound, and dose-caution columns.
-- `원내보유의약품_라벨매칭_20260702.xlsx`
+- `약제팀 라벨/원내보유의약품_라벨매칭_20260702.xlsx`
   - Source for pharmacy label matching and label source metadata.
-  - `라벨매칭` rows are generated into `src/data/pharmacyLabelMatches.generated.json`.
+  - `라벨매칭` rows are generated into `약제팀 라벨/data/pharmacyLabelMatches.generated.json`.
   - Match details are keyed by `약품코드`; score and original location stay in the pharmacy label detail panel.
+  - Runtime uploads accept only `원내보유의약품리스트.xlsx` or `.xlsm` and refresh the pharmacy label list while preserving existing match details by `약품코드`.
 - `마약/향정라벨.xlsx`, `마약/마약주사라벨.xlsx`, `마약/마약경구라벨.xlsx`
   - Source for 40*70mm narcotic/psychotropic label text.
   - Code-label pairs are generated into `src/data/narcoticLabels.generated.json`.
@@ -36,7 +37,8 @@ This app previews a pharmacist ward inventory workflow with real Excel data. The
 - `마약/비치향정,마약현황.xlsx`
   - Only the `점검` sheet is imported for placed narcotic/psychotropic master drugs, rooms, and room quantities.
   - `Sheet1` and `Sheet3` are ignored.
-  - Drug codes come from the `점검` sheet / hospital drug-list code, and display names prefer `원내보유의약품리스트.xlsx` column B with `[마약]`/`[향정]` removed.
+  - Drug codes come from the `점검` sheet / hospital drug-list code, and display names prefer `약제팀 라벨/원내보유의약품리스트.xlsx` column B with `[마약]`/`[향정]` removed.
+  - 40*70mm narcotic/psychotropic labels print from `hospitalDrugLabels.generated.json` column B common names with `[마약]`/`[향정]` stripped, excluding `PCA-`, `소화기검사용`, and `midazolam` `검사용` names, plus derived repeated-dose caution for the same drug name and same dosage form, not from the legacy narcotic label workbooks.
 
 ## Generated Shape
 - `stock.drugs`: one row per registered drug code from the stock workbook.
@@ -50,9 +52,9 @@ This app previews a pharmacist ward inventory workflow with real Excel data. The
   - Retired E-cart twice-weekly management-log rows are excluded during import.
   - Split combined `2-1`/`2-2` rows and append 냉장약 item 6 for annual refrigerator thermometer verification.
   - Apply hospital common-name corrections for stock/E-cart labels, plus warning labels and storage grouping overrides.
-- `hospitalDrugLabels.generated.json`: all hospital drug label candidates for the pharmacy label view.
-- `pharmacyLabelMatches.generated.json`: matched pharmacy label text, match status, source file, source location, and caution/storage flags.
-- `narcoticLabels.generated.json`: narcotic/psychotropic label text, category, source file, and source cell for 40*70mm label matching.
+- `약제팀 라벨/data/hospitalDrugLabels.generated.json`: all hospital drug label candidates for the pharmacy label view.
+- `약제팀 라벨/data/pharmacyLabelMatches.generated.json`: matched pharmacy label text, match status, source file, source location, and caution/storage flags.
+- `narcoticLabels.generated.json`: legacy narcotic/psychotropic label text, category, source file, and source cell retained for generated-data coverage.
 - `narcoticDrugCodeMap.generated.json`: narcotic drug-name/code conversion rows used before fuzzy LOT name matching.
 - `narcoticInventory.generated.json`: placed narcotic/psychotropic drugs, rooms, allocations, and categories generated only from `비치향정,마약현황.xlsx` `점검`.
 
@@ -75,4 +77,4 @@ This app previews a pharmacist ward inventory workflow with real Excel data. The
 8. Build the round-summary report from bad checklist statuses and manual note text, then print/PDF it through the shared preview flow.
 
 ## Update Rule
-When stock/checklist/narcotic inventory Excel files change, run `npm run generate:data` and `npm run validate:data`. When `원내보유의약품리스트.xlsx` changes, run both `npm run generate:data` and `npm run generate:labels`. When `원내보유의약품_라벨매칭_20260702.xlsx` changes, run `npm run generate:label-matches`. When narcotic label or conversion workbooks in `마약/` change, refresh their generated JSON. The UI should update from generated data without editing React components.
+When stock/checklist/narcotic inventory Excel files change, run `npm run generate:data` and `npm run validate:data`. When `약제팀 라벨/원내보유의약품리스트.xlsx` changes, run both `npm run generate:data` and `npm run generate:labels`. When `약제팀 라벨/원내보유의약품_라벨매칭_20260702.xlsx` changes, run `npm run generate:label-matches`. When narcotic label or conversion workbooks in `마약/` change, refresh their generated JSON. The UI should update from generated data without editing React components.

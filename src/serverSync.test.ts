@@ -101,6 +101,34 @@ describe("server sync client", () => {
     });
   });
 
+  it("can retry a stale manual save as a forced PC save", async () => {
+    globalThis.fetch = vi
+      .fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ error: "stale sha" }), { status: 409 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ sha: "forced-after-conflict" }), { status: 200 }));
+
+    await expect(
+      saveServerState(
+        {
+          version: 1,
+          updatedAt: "2026-06-23T07:00:00.000Z",
+          clientId: "phone",
+          state: { stockChecklistByRoom: { "42W": [] } },
+        },
+        { baseSha: "old-sha", forceOnConflict: true, retryDelayMs: 0 },
+      ),
+    ).resolves.toEqual({ sha: "forced-after-conflict" });
+
+    const retryRequest = vi.mocked(globalThis.fetch).mock.calls[1]?.[1] as RequestInit;
+    expect(JSON.parse(String(retryRequest.body))).toMatchObject({
+      force: true,
+      envelope: {
+        clientId: "phone",
+        state: { stockChecklistByRoom: { "42W": [] } },
+      },
+    });
+  });
+
   it("can force a device state upload for manual recovery", async () => {
     globalThis.fetch = vi.fn().mockResolvedValueOnce(new Response(JSON.stringify({ sha: "forced-sha" }), { status: 200 }));
 

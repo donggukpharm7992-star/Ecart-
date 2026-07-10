@@ -68,7 +68,7 @@ function setMetaContent(selector: string, content: string) {
 
 export function applyPwaMetadata() {
   if (typeof window === "undefined") return;
-  const version = "20260709a";
+  const version = "20260710b";
   const metadata = getPwaMetadata(window.location.pathname);
   const manifestHref = buildPwaAssetUrl(import.meta.env.BASE_URL, `${metadata.manifestPath}?v=${version}`);
   const iconHref = buildPwaAssetUrl(import.meta.env.BASE_URL, `${metadata.iconPath}?v=${version}`);

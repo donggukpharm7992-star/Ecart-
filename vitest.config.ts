@@ -10,7 +10,7 @@ export default defineConfig({
   test: {
     environment: "node",
     globals: false,
-    include: ["src/**/*.test.ts"],
+    include: ["src/**/*.test.ts", "약제팀 라벨/**/*.test.ts"],
     testTimeout: 10000,
   },
 });

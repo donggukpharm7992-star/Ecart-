@@ -35,7 +35,6 @@ import {
   DRUG_LABEL_SIZE_GROUPS,
   GENERAL_FLUID_LABELS,
   ROUND_SUMMARY_COMMON_GUIDANCE,
-  buildNarcoticFileLabelData,
   buildNarcoticMasterLabelData,
   buildReportFileName,
   buildStockLabelData,
@@ -55,6 +54,9 @@ import {
   getEcartLabelItemsForMode,
   getInitialAppMode,
   getInitialMasterKindFilter,
+  getDoseHighlightTextParts,
+  getNarcoticDoseCautionCodes,
+  getNarcoticFortyLabelNameLines,
   isMasterKindFilterDisabled,
   getLabelModeOptions,
   getStockChecklistDefaultState,
@@ -86,22 +88,30 @@ import {
   getStockSplitParts,
 } from "./appLogic";
 import {
+  getHospitalDrugControlledCategory,
   getHospitalDrugLabelWarnings,
   getHospitalDrugStorageLabel,
   loadHospitalDrugLabelRows,
+  makeHospitalControlledDrugLabelId,
   makeHospitalDrugLabelId,
   matchesHospitalDrugLabel,
+  shouldExcludeHospitalControlledDrugLabel,
+  stripHospitalDrugControlledPrefix,
   type HospitalDrugLabelRow,
-} from "./hospitalDrugLabels";
-import { PharmacyLabelWorkspace } from "./PharmacyLabelWorkspace";
-import { NARCOTIC_LABEL_ROWS, matchesNarcoticLabel } from "./narcoticLabels";
-import { loadPharmacyLabelMatchRows, type PharmacyLabelMatchRow } from "./pharmacyLabelMatches";
+} from "../약제팀 라벨/hospitalDrugLabels";
+import {
+  isHospitalDrugWorkbookFileName,
+  mergeHospitalDrugRowsIntoPharmacyLabelMatches,
+  parseHospitalDrugWorkbook,
+} from "../약제팀 라벨/hospitalDrugWorkbookUpload";
+import { PharmacyLabelWorkspace } from "../약제팀 라벨/PharmacyLabelWorkspace";
+import { loadPharmacyLabelMatchRows, type PharmacyLabelMatchRow } from "../약제팀 라벨/pharmacyLabelMatches";
 import {
   loadSavedPharmacyLabelsFromStorage,
   savePharmacyLabelToStorage,
   type PharmacyLabelDraft,
   type PharmacySavedLabel,
-} from "./pharmacyLabelStudio";
+} from "../약제팀 라벨/pharmacyLabelStudio";
 import {
   buildMasterRows,
   compareStockDrugsByName,
@@ -204,6 +214,7 @@ type DrugLabelData = {
   cautionLabels: string[];
   categoryLabel?: string;
   highRisk: boolean;
+  doseCaution?: boolean;
   fluidTone?: string;
 };
 
@@ -555,15 +566,58 @@ function drugRuleFieldsFromEcartItem(item: EcartItem): DrugRuleFields {
   };
 }
 
-function renderLabelName(row: DrugLabelData) {
+const FORTY_NARCOTIC_HIGH_RISK_LABEL = "\uace0\uc704\ud5d8\uc758\uc57d\ud488";
+const FORTY_NARCOTIC_DOSE_CONFIRM_LABEL = "\uc6a9\ub7c9\ud655\uc778";
+
+function renderDoseHighlightedText(text: string) {
+  return getDoseHighlightTextParts(text).map((part, index) =>
+    part.highlighted ? (
+      <span className="dose-number-highlight" key={`${part.text}-${index}`}>
+        {part.text}
+      </span>
+    ) : (
+      <Fragment key={`${part.text}-${index}`}>{part.text}</Fragment>
+    ),
+  );
+}
+
+function renderLabelName(row: DrugLabelData, highlightDose = false) {
   const parenthetical = row.name.match(/^(.+?)(\([^()]+\))$/);
-  if (!parenthetical) return row.name;
+  if (!parenthetical) return highlightDose ? renderDoseHighlightedText(row.name) : row.name;
   return (
     <>
-      {parenthetical[1]}
-      <span className="drug-name-parenthetical">{parenthetical[2]}</span>
+      {highlightDose ? renderDoseHighlightedText(parenthetical[1]) : parenthetical[1]}
+      <span className="drug-name-parenthetical">{highlightDose ? renderDoseHighlightedText(parenthetical[2]) : parenthetical[2]}</span>
     </>
   );
+}
+
+function renderNarcoticFortyLabelName(row: DrugLabelData) {
+  const lines = getNarcoticFortyLabelNameLines(row.name);
+  const lineCountClass = `drug-label-name-lines-${Math.min(lines.length, 4)}`;
+  return (
+    <span className={`drug-label-name-lines ${lineCountClass}`}>
+      {lines.map((line, index) => (
+        <span className="drug-label-name-line" key={`${line}-${index}`}>
+          {row.doseCaution ? renderDoseHighlightedText(line) : line}
+        </span>
+      ))}
+    </span>
+  );
+}
+
+function renderNarcoticFortyTopline(row: DrugLabelData) {
+  const label = [FORTY_NARCOTIC_HIGH_RISK_LABEL, row.doseCaution ? FORTY_NARCOTIC_DOSE_CONFIRM_LABEL : ""].filter(Boolean).join(" / ");
+  return (
+    <div className="drug-label-topline drug-label-narcotic-forty-topline">
+      <span className="drug-label-warning-flag">{label}</span>
+    </div>
+  );
+}
+
+function renderNarcoticFortyFooter(row: DrugLabelData) {
+  const category = row.categoryLabel ?? "";
+  return <div className="drug-label-narcotic-footer">{category}</div>;
 }
 
 function hospitalDrugRuleFields(row: HospitalDrugLabelRow): DrugRuleFields {
@@ -591,6 +645,25 @@ function buildHospitalDrugLabelData(row: HospitalDrugLabelRow): DrugLabelData {
     storage: row.storage,
     cautionLabels: getHospitalDrugLabelWarnings(row),
     highRisk,
+  };
+}
+
+function buildHospitalControlledDrugLabelData(row: HospitalDrugLabelRow, doseCaution = false): DrugLabelData {
+  const categoryLabel = getHospitalDrugControlledCategory(row);
+  const storageLabel = getHospitalDrugStorageLabel(row);
+  return {
+    id: makeHospitalControlledDrugLabelId(row),
+    kind: "narcotic",
+    code: row.code,
+    name: stripHospitalDrugControlledPrefix(row.name),
+    spec: formatStockLabelSpec([row.strength, row.spec, row.package].filter(Boolean).join(" ")),
+    storageLabel,
+    storageTone: labelStorageTone(storageLabel),
+    storage: row.storage,
+    cautionLabels: categoryLabel ? [categoryLabel] : [],
+    categoryLabel,
+    highRisk: false,
+    doseCaution,
   };
 }
 
@@ -1185,7 +1258,8 @@ export function App() {
   }, []);
 
   useEffect(() => {
-    if (appMode === "master-viewer" || !isDrugLabelPanelOpen || labelMode !== "pharmacy" || hospitalDrugLabelRows.length > 0) return;
+    const needsHospitalDrugLabels = labelMode === "pharmacy" || labelMode === "narcotic";
+    if (appMode === "master-viewer" || !isDrugLabelPanelOpen || !needsHospitalDrugLabels || hospitalDrugLabelRows.length > 0) return;
     setIsHospitalDrugLabelsLoading(true);
     void loadHospitalDrugLabelRows()
       .then((rows) => {
@@ -1463,26 +1537,33 @@ export function App() {
     if (!trimmed) return rows.slice(0, 80);
     return rows.filter((row) => matchesMaster(row, trimmed)).slice(0, 80);
   }, [labelQuery, stockedMasterRows]);
+  const allNarcoticMasterRowsForLabels = useMemo(
+    () => stockedMasterRows.filter((row) => row.masterKind === "psychotropic" || row.masterKind === "narcotic"),
+    [stockedMasterRows],
+  );
+  const narcoticDoseCautionCodes = useMemo(
+    () => getNarcoticDoseCautionCodes(allNarcoticMasterRowsForLabels),
+    [allNarcoticMasterRowsForLabels],
+  );
   const allNarcoticMasterLabelRows = useMemo(
     () =>
-      stockedMasterRows
-        .filter((row) => row.masterKind === "psychotropic" || row.masterKind === "narcotic")
-        .map((row) => buildNarcoticMasterLabelData(row, row.masterKind === "narcotic" ? "마약" : "향정")),
-    [stockedMasterRows],
+      allNarcoticMasterRowsForLabels.map((row) =>
+        buildNarcoticMasterLabelData(row, row.masterKind === "narcotic" ? "\ub9c8\uc57d" : "\ud5a5\uc815", undefined, narcoticDoseCautionCodes.has(row.code)),
+      ),
+    [allNarcoticMasterRowsForLabels, narcoticDoseCautionCodes],
   );
   const narcoticMasterLabelRows = useMemo(
     () =>
       narcoticMasterRowsForLabels.map((row) =>
-        buildNarcoticMasterLabelData(row, row.masterKind === "narcotic" ? "마약" : "향정", masterLabelRoomIdForRow(row)),
+        buildNarcoticMasterLabelData(
+          row,
+          row.masterKind === "narcotic" ? "\ub9c8\uc57d" : "\ud5a5\uc815",
+          masterLabelRoomIdForRow(row),
+          narcoticDoseCautionCodes.has(row.code),
+        ),
       ),
-    [activeMasterLabelRoomIds, narcoticMasterRowsForLabels],
+    [activeMasterLabelRoomIds, narcoticDoseCautionCodes, narcoticMasterRowsForLabels],
   );
-  const allNarcoticFileLabelRows = useMemo(() => NARCOTIC_LABEL_ROWS.map(buildNarcoticFileLabelData), []);
-  const filteredNarcoticFileLabelRows = useMemo(() => {
-    const trimmed = labelQuery.trim().toLowerCase();
-    const rows = trimmed ? NARCOTIC_LABEL_ROWS.filter((row) => matchesNarcoticLabel(row, trimmed)) : NARCOTIC_LABEL_ROWS;
-    return rows.slice(0, 80).map(buildNarcoticFileLabelData);
-  }, [labelQuery]);
   const stockLabelBaseRows = useMemo(
     () => labelSearchRows.map((row) => buildStockLabelData(row, "stock", masterLabelRoomIdForRow(row))),
     [activeMasterLabelRoomIds, labelSearchRows],
@@ -1498,6 +1579,36 @@ export function App() {
     const rows = trimmed ? hospitalDrugLabelRows.filter((row) => matchesHospitalDrugLabel(row, trimmed)) : hospitalDrugLabelRows;
     return rows.slice(0, 80).map(buildHospitalDrugLabelData);
   }, [hospitalDrugLabelRows, labelQuery]);
+  const hospitalControlledDrugRows = useMemo(
+    () => hospitalDrugLabelRows.filter((row) => getHospitalDrugControlledCategory(row) && !shouldExcludeHospitalControlledDrugLabel(row)),
+    [hospitalDrugLabelRows],
+  );
+  const hospitalControlledDoseCautionCodes = useMemo(
+    () =>
+      getNarcoticDoseCautionCodes(
+        hospitalControlledDrugRows.map((row) => ({
+          code: row.code,
+          genericName: stripHospitalDrugControlledPrefix(row.koreanName),
+          productName: stripHospitalDrugControlledPrefix(row.name),
+        })),
+      ),
+    [hospitalControlledDrugRows],
+  );
+  const allHospitalControlledLabelRows = useMemo(
+    () =>
+      hospitalControlledDrugRows.map((row) =>
+        buildHospitalControlledDrugLabelData(row, row.doseCaution || hospitalControlledDoseCautionCodes.has(row.code)),
+      ),
+    [hospitalControlledDoseCautionCodes, hospitalControlledDrugRows],
+  );
+  const hospitalControlledLabelRows = useMemo(() => {
+    if (hospitalControlledDrugRows.length === 0) return [];
+    const trimmed = labelQuery.trim().toLowerCase();
+    const rows = trimmed ? hospitalControlledDrugRows.filter((row) => matchesHospitalDrugLabel(row, trimmed)) : hospitalControlledDrugRows;
+    return rows
+      .slice(0, 80)
+      .map((row) => buildHospitalControlledDrugLabelData(row, row.doseCaution || hospitalControlledDoseCautionCodes.has(row.code)));
+  }, [hospitalControlledDoseCautionCodes, hospitalControlledDrugRows, labelQuery]);
   const ecartGeneralLabelRows = useMemo(() => {
     const allTargets = getAllEcartPrintTargets(ecartTargets);
     const generalTargets = allTargets.filter((entry) => entry.tab === "general");
@@ -1546,13 +1657,13 @@ export function App() {
   const currentLabelSourceRows = useMemo<DrugLabelData[]>(() => {
     if (isEcartLabelKind(labelMode)) return filteredEcartLabelRows;
     if (labelMode === "fluid") return fluidLabelBaseRows;
-    if (labelMode === "narcotic") return labelSize === "40x70" ? filteredNarcoticFileLabelRows : narcoticMasterLabelRows;
+    if (labelMode === "narcotic") return labelSize === "40x70" ? hospitalControlledLabelRows : narcoticMasterLabelRows;
     if (labelMode === "pharmacy") return pharmacyLabelBaseRows;
     return stockLabelBaseRows;
   }, [
     filteredEcartLabelRows,
-    filteredNarcoticFileLabelRows,
     fluidLabelBaseRows,
+    hospitalControlledLabelRows,
     labelMode,
     labelSize,
     narcoticMasterLabelRows,
@@ -1560,9 +1671,9 @@ export function App() {
     stockLabelBaseRows,
   ]);
   const labelRowsById = useMemo(() => {
-    const rows = [...allStockLabelRows, ...ecartLabelBaseRows, ...fluidLabelBaseRows, ...allNarcoticMasterLabelRows, ...allNarcoticFileLabelRows];
+    const rows = [...allStockLabelRows, ...ecartLabelBaseRows, ...fluidLabelBaseRows, ...allNarcoticMasterLabelRows, ...allHospitalControlledLabelRows];
     return new Map(rows.map((row) => [row.id, row]));
-  }, [allNarcoticFileLabelRows, allNarcoticMasterLabelRows, allStockLabelRows, ecartLabelBaseRows, fluidLabelBaseRows]);
+  }, [allHospitalControlledLabelRows, allNarcoticMasterLabelRows, allStockLabelRows, ecartLabelBaseRows, fluidLabelBaseRows]);
   const labelPrintRows = useMemo<PrintableDrugLabel[]>(
     () =>
       labelPrintSelections.flatMap((selection) => {
@@ -2415,6 +2526,21 @@ export function App() {
     setShowPrintPreview(true);
   }
 
+  async function importHospitalDrugWorkbook(file: File) {
+    if (!isHospitalDrugWorkbookFileName(file.name)) {
+      throw new Error("원내보유의약품리스트.xlsx 파일만 업로드할 수 있습니다.");
+    }
+
+    const hospitalRows = await parseHospitalDrugWorkbook(await file.arrayBuffer());
+    const currentMatches = pharmacyLabelMatchRows.length > 0 ? pharmacyLabelMatchRows : await loadPharmacyLabelMatchRows();
+    const nextMatches = mergeHospitalDrugRowsIntoPharmacyLabelMatches(hospitalRows, currentMatches);
+    setHospitalDrugLabelRows(hospitalRows);
+    setPharmacyLabelMatchRows(nextMatches);
+    setIsHospitalDrugLabelsLoading(false);
+    setIsPharmacyLabelMatchesLoading(false);
+    return `${hospitalRows.length.toLocaleString("ko-KR")}개 약품 리스트를 업데이트했습니다.`;
+  }
+
   function openPrintPreview(mode: PrintPreviewMode = "single") {
     setPrintPreviewMode(mode);
     setPdfStatus("idle");
@@ -2739,6 +2865,7 @@ export function App() {
     const flagLabels = labelFlagLabels(row);
     const renderedKind = isEcartLabelKind(row.kind) ? "ecart" : row.kind;
     const nameClass = getDrugLabelNameClass(row.name, renderedKind, sizeKey);
+    const isNarcoticFortyLabel = renderedKind === "narcotic" && sizeKey === "40x70";
     const className = [
       "drug-label-item",
       "print-label",
@@ -2749,15 +2876,18 @@ export function App() {
       row.fluidTone ? `fluid-tone-${row.fluidTone}` : "",
       row.highRisk ? "high-risk-label" : "",
       flagLabels.length > 0 ? "has-caution-label" : "",
+      row.doseCaution ? "has-dose-caution" : "",
     ]
       .filter(Boolean)
       .join(" ");
 
     return (
       <article className={className} style={labelSizeCssVars(sizeKey)} key={key}>
-        {renderLabelTopline(row)}
-        <h3 className={row.fluidTone ? `fluid-name ${row.fluidTone}` : undefined}>{renderLabelName(row)}</h3>
-        {renderLabelSpec(row)}
+        {isNarcoticFortyLabel ? renderNarcoticFortyTopline(row) : renderLabelTopline(row)}
+        <h3 className={row.fluidTone ? `fluid-name ${row.fluidTone}` : undefined}>
+          {isNarcoticFortyLabel ? renderNarcoticFortyLabelName(row) : renderLabelName(row, false)}
+        </h3>
+        {isNarcoticFortyLabel ? renderNarcoticFortyFooter(row) : renderLabelSpec(row)}
       </article>
     );
   }
@@ -2928,6 +3058,7 @@ export function App() {
         onBack={() => setIsPharmacyLabelWorkspaceOpen(false)}
         onSaveLabel={savePharmacyStudioLabel}
         onPrint={printPharmacyStudioLabels}
+        onHospitalDrugWorkbookUpload={importHospitalDrugWorkbook}
       />
     );
   }
@@ -3360,8 +3491,8 @@ export function App() {
 
                 <div className="drug-label-layout">
                   <div className="label-drug-list" aria-label="라벨 출력 약품 선택">
-                    {labelMode === "pharmacy" && isHospitalDrugLabelsLoading ? (
-                      <span className="empty">약제팀 라벨 데이터를 불러오는 중입니다.</span>
+                    {(labelMode === "pharmacy" || (labelMode === "narcotic" && labelSize === "40x70")) && isHospitalDrugLabelsLoading ? (
+                      <span className="empty">라벨 데이터를 불러오는 중입니다.</span>
                     ) : currentLabelSourceRows.length === 0 ? (
                       <span className="empty">검색 결과가 없습니다.</span>
                     ) : (

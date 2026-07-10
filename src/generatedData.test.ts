@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import rawInventory from "./data/inventory.generated.json";
-import rawHospitalDrugLabels from "./data/hospitalDrugLabels.generated.json";
+import rawHospitalDrugLabels from "../약제팀 라벨/data/hospitalDrugLabels.generated.json";
 import {
   NARCOTIC_ALLOCATIONS,
   NARCOTIC_DRUGS,

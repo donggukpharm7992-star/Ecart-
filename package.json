@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "generate:data": "node scripts/run_python.mjs scripts/extract_inventory.py",
-    "generate:labels": "node scripts/run_python.mjs scripts/extract_hospital_labels.py",
-    "generate:label-matches": "node scripts/run_python.mjs scripts/extract_pharmacy_label_matches.py",
+    "generate:labels": "node scripts/run_python.mjs \"약제팀 라벨/extract_hospital_labels.py\"",
+    "generate:label-matches": "node scripts/run_python.mjs \"약제팀 라벨/extract_pharmacy_label_matches.py\"",
     "generate:narcotic-labels": "node scripts/run_python.mjs scripts/extract_narcotic_labels.py",
     "validate:data": "node scripts/run_python.mjs scripts/validate_inventory.py",
     "test": "vitest run --no-watch --reporter=basic --testTimeout=10000 --config vitest.config.ts",
@@ -15,6 +15,7 @@
     "build": "tsc --noEmit && vite build && node scripts/create_pwa_routes.mjs",
     "publish": "node scripts/publish_gh_pages.mjs",
     "publish:login": "node scripts/publish_gh_pages.mjs --login",
+    "release": "node scripts/release_app.mjs",
     "preview": "vite preview --host 127.0.0.1"
   },
   "dependencies": {

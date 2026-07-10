@@ -32,6 +32,7 @@ export type DrugLabelData = {
   cautionLabels: string[];
   categoryLabel?: string;
   highRisk: boolean;
+  doseCaution?: boolean;
   fluidTone?: string;
 };
 
@@ -685,6 +686,129 @@ export function formatFluidLabelName(name: string) {
   return name.replace(/\s*(?:bag|btl)\b\.?/gi, "").replace(/\s{2,}/g, " ").trim();
 }
 
+export function stripControlledDrugLabelPrefix(name: string) {
+  return name.replace(/^\s*\[(?:\ub9c8\uc57d|\ud5a5\uc815)\]\s*/u, "").replace(/\s{2,}/g, " ").trim();
+}
+
+const NARCOTIC_FORTY_DOSE_PATTERN =
+  /\d+(?:\.\d+)?(?:\s*\/\s*\d+(?:\.\d+)?)*\s*(?:mcg|mg|g|iu|u|%)(?:\s*\/\s*\d*(?:\.\d+)?\s*(?:mcg|mg|g|ml|l|iu|u|%|hr|h))?\b/i;
+const NARCOTIC_FORTY_FORM_PATTERN = /\b(?:sublingual|tab|cap|patch|supp|spray|soln|solution)\b/i;
+const NARCOTIC_FORTY_KEEP_DOSE_WITH_NAME_PATTERN = /^\s*sublingual\b/i;
+const NARCOTIC_FORTY_RELEASE_MARKER_PATTERN = /^(.+\S)\s+(IR|PR|CR|SR|ER|XR|MR)$/i;
+const NARCOTIC_DOSE_CAUTION_FORM_PATTERN = /\b(?:inj|tab|cap|patch|supp|spray|soln|solution|vial|amp)\b/i;
+
+function formatNarcoticFortyDoseToken(token: string) {
+  return token.replace(/\s+/g, "").replace(/\/(ml|l)\b/i, "/1$1");
+}
+
+function stripNarcoticFortyInjectionSuffix(suffix: string) {
+  return suffix.replace(/^\s*inj\b(?:\s*\([^)]*\))?\.?\s*$/i, "").trim();
+}
+
+function splitNarcoticFortyNamePart(namePart: string) {
+  const normalized = namePart.replace(/\s{2,}/g, " ").trim();
+  const parenthetical = normalized.match(/^(.+?)\s*(\([^()]+\))$/);
+  if (parenthetical) {
+    return [parenthetical[1].trim(), parenthetical[2].trim()].filter(Boolean);
+  }
+
+  const releaseMarker = normalized.match(NARCOTIC_FORTY_RELEASE_MARKER_PATTERN);
+  if (releaseMarker && releaseMarker[1].replace(/\s+/g, "").length >= 8) {
+    return [releaseMarker[1].trim(), releaseMarker[2].trim()];
+  }
+
+  return [normalized];
+}
+
+export function getDoseHighlightTextParts(text: string) {
+  const parts: { text: string; highlighted: boolean }[] = [];
+  const pattern = /\d+(?:\.\d+)?/g;
+  let lastIndex = 0;
+  function pushPart(partText: string, highlighted: boolean) {
+    if (!partText) return;
+    const previous = parts[parts.length - 1];
+    if (previous && previous.highlighted === highlighted) {
+      previous.text += partText;
+      return;
+    }
+    parts.push({ text: partText, highlighted });
+  }
+
+  for (const match of text.matchAll(pattern)) {
+    const index = match.index ?? 0;
+    if (index > lastIndex) {
+      pushPart(text.slice(lastIndex, index), false);
+    }
+    const precededBySlash = text.slice(0, index).endsWith("/");
+    const followingText = text.slice(index + match[0].length);
+    const isSecondStrength = precededBySlash && /^\s*(?:mcg|mg|g|iu|u|%)\b/i.test(followingText);
+    const isVolumeOrRate = precededBySlash && /^\s*(?:ml|l|hr|h)\b/i.test(followingText);
+    pushPart(match[0], !precededBySlash || (isSecondStrength && !isVolumeOrRate));
+    lastIndex = index + match[0].length;
+  }
+  if (lastIndex < text.length) {
+    pushPart(text.slice(lastIndex), false);
+  }
+  return parts.length > 0 ? parts : [{ text, highlighted: false }];
+}
+
+export function getNarcoticFortyLabelNameLines(name: string) {
+  const cleaned = stripControlledDrugLabelPrefix(name).replace(/\s{2,}/g, " ").trim();
+  const doseMatch = cleaned.match(NARCOTIC_FORTY_DOSE_PATTERN);
+  if (doseMatch?.index == null || doseMatch.index <= 0) return [cleaned];
+
+  const doseStart = doseMatch.index;
+  const doseEnd = doseStart + doseMatch[0].length;
+  const namePart = cleaned.slice(0, doseStart).trim();
+  const doseToken = formatNarcoticFortyDoseToken(cleaned.slice(doseStart, doseEnd).trim());
+  const suffix = stripNarcoticFortyInjectionSuffix(cleaned.slice(doseEnd).trim());
+  if (!namePart || !doseToken) return [cleaned];
+
+  if (
+    suffix &&
+    NARCOTIC_FORTY_KEEP_DOSE_WITH_NAME_PATTERN.test(suffix) &&
+    NARCOTIC_FORTY_FORM_PATTERN.test(suffix) &&
+    namePart.length <= 14 &&
+    !namePart.includes(" ")
+  ) {
+    return [`${namePart} ${doseToken}`, suffix];
+  }
+
+  return [...splitNarcoticFortyNamePart(namePart), [doseToken, suffix].filter(Boolean).join(" ")];
+}
+
+function narcoticDoseCautionKey(name: string) {
+  const cleaned = stripControlledDrugLabelPrefix(name)
+    .replace(/\([^)]*\)/g, " ")
+    .replace(/\b(?:citrate|hydrochloride|hcl|sulfate|phosphate)\b/gi, " ");
+  const doseMatch = cleaned.match(/\d+(?:\.\d+)?(?:\/\d+(?:\.\d+)?)?\s*(?:mcg|mg|g|ml|iu|unit|meq|%)/i);
+  if (!doseMatch) return "";
+  const doseIndex = doseMatch.index ?? 0;
+  const baseName = cleaned
+    .slice(0, doseIndex)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "");
+  const form = cleaned.slice(doseIndex + doseMatch[0].length).match(NARCOTIC_DOSE_CAUTION_FORM_PATTERN)?.[0].toLowerCase() ?? "";
+  return [baseName, form].filter(Boolean).join(":");
+}
+
+export function getNarcoticDoseCautionCodes(rows: readonly Pick<MasterRow, "code" | "genericName" | "productName">[]) {
+  const groups = new Map<string, Set<string>>();
+  for (const row of rows) {
+    const key = narcoticDoseCautionKey(drugDisplayName(row));
+    if (!key) continue;
+    const codes = groups.get(key) ?? new Set<string>();
+    codes.add(row.code);
+    groups.set(key, codes);
+  }
+
+  return new Set(
+    [...groups.values()]
+      .filter((codes) => codes.size > 1)
+      .flatMap((codes) => [...codes]),
+  );
+}
+
 export function cleanDrugLabelName(name: string, highRisk: boolean) {
   if (!highRisk) return name.replace(/\s{2,}/g, " ").trim();
   return name
@@ -735,16 +859,18 @@ export function buildStockLabelData(row: MasterRow, mode: DrugLabelMode, roomId?
   };
 }
 
-export function buildNarcoticMasterLabelData(row: MasterRow, category: NarcoticCategory, roomId?: string): DrugLabelData {
+export function buildNarcoticMasterLabelData(row: MasterRow, category: NarcoticCategory, roomId?: string, doseCaution = false): DrugLabelData {
   const base = buildStockLabelData(row, "narcotic", roomId);
   return {
     ...base,
     id: `narcotic-${row.code}`,
     kind: "narcotic",
+    name: stripControlledDrugLabelPrefix(base.name),
     storageLabel: base.storageLabel,
     cautionLabels: [category],
     categoryLabel: category,
     highRisk: false,
+    doseCaution,
   };
 }
 

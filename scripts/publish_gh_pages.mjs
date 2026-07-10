@@ -104,7 +104,7 @@ function readToken() {
 
 function captureDistKeepFiles() {
   const keep = new Map();
-  for (const fileName of [".nojekyll"]) {
+  for (const fileName of [".nojekyll", "sync-config.json"]) {
     const filePath = join(distDir, fileName);
     if (existsSync(filePath)) {
       keep.set(fileName, readFileSync(filePath));

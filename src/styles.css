@@ -196,6 +196,55 @@ button {
   color: var(--red);
 }
 
+.viewer-links-panel {
+  padding: 12px clamp(10px, 2vw, 22px);
+  border-bottom: 1px solid #d7c7bc;
+  background: #fff;
+}
+
+.viewer-link-list {
+  width: min(1440px, 100%);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 auto;
+}
+
+.viewer-link-item {
+  flex: 1 1 320px;
+  display: grid;
+  gap: 6px;
+  padding: 10px;
+  border: 1px solid #eadfd8;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.viewer-link-list a {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  border: 1px solid var(--brand-brown);
+  border-radius: 6px;
+  color: #6f5a50;
+  background: var(--brand-brown-soft);
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.viewer-link-item code {
+  display: block;
+  padding: 7px 8px;
+  border-radius: 6px;
+  color: #334155;
+  background: #f8fafc;
+  font-size: 12px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
 .secondary-button.danger-light {
   border-color: #fecaca;
   color: #991b1b;
@@ -1038,9 +1087,14 @@ button {
   width: 92px;
 }
 
+.narcotic-inventory-table th:nth-child(3),
+.narcotic-inventory-table td:nth-child(3) {
+  width: 220px;
+}
+
 .narcotic-inventory-table th:nth-child(4),
 .narcotic-inventory-table td:nth-child(4) {
-  width: 64px;
+  width: 96px;
 }
 
 .narcotic-inventory-table th:nth-child(5),
@@ -1809,7 +1863,7 @@ button {
 
 .label-drug-list-row {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) minmax(96px, auto) auto;
+  grid-template-columns: auto auto minmax(0, 1fr) minmax(96px, auto) auto;
   gap: 8px;
   align-items: center;
   min-height: 42px;
@@ -1822,12 +1876,35 @@ button {
   cursor: pointer;
 }
 
+.label-drug-checkbox {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.label-drug-checkbox input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--brand-orange-deep);
+  cursor: pointer;
+}
+
+.label-drug-select-all {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  border-color: #d7c7bc;
+  background: #fbfaf9;
+  box-shadow: 0 2px 8px rgba(44, 34, 29, 0.08);
+}
+
 .label-drug-list-row strong {
   color: var(--brand-brown);
   font-size: 12px;
 }
 
-.label-drug-list-row > span:not(.badge):not(.label-list-cautions):not(.label-storage-badge) {
+.label-drug-list-row > span:not(.badge):not(.label-list-cautions):not(.label-storage-badge):not(.label-drug-checkbox) {
   min-width: 0;
   overflow: hidden;
   font-size: 13px;
@@ -2956,9 +3033,9 @@ button {
 }
 
 .drug-label-item.label-size-40x70.label-kind-narcotic {
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  grid-template-rows: 1fr;
-  gap: 2mm;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: 7mm minmax(0, 1fr) 7mm;
+  gap: 0;
   padding: 0;
   border: 1px solid #111;
   border-radius: 0;
@@ -2966,7 +3043,10 @@ button {
 }
 
 .drug-label-item.label-size-40x70.label-kind-narcotic .drug-label-topline {
-  display: contents;
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  min-height: 0;
 }
 
 .drug-label-item.label-size-40x70.label-kind-narcotic .drug-label-warning-spacer {
@@ -2974,68 +3054,104 @@ button {
 }
 
 .drug-label-item.label-size-40x70.label-kind-narcotic .drug-label-warning-flag {
-  grid-column: 1;
-  grid-row: 1;
-  align-self: stretch;
   box-sizing: border-box;
-  min-width: 16mm;
-  height: 100%;
-  padding: 0 1.2mm;
+  width: 100%;
+  min-height: 100%;
+  padding: 0 1mm;
   border-radius: 0;
   justify-content: center;
   font-size: 14px;
-  line-height: 1.08;
+  line-height: 1;
   overflow-wrap: anywhere;
   text-align: center;
   word-break: keep-all;
 }
 
 .drug-label-item.label-size-40x70.label-kind-narcotic h3 {
-  grid-column: 2;
-  grid-row: 1;
+  grid-column: 1;
+  grid-row: 2;
   align-self: center;
-  display: block;
-  overflow: visible;
-  font-size: 21px;
+  justify-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: 1mm 2.2mm;
+  overflow: hidden;
+  font-size: 20px;
   font-weight: 1000;
   line-height: 1.08;
-  white-space: pre-line;
+  white-space: nowrap;
 }
 
 .drug-label-item.label-size-40x70.label-kind-narcotic.name-long h3 {
-  font-size: 18px;
-  line-height: 1.07;
+  font-size: 18.5px;
+  line-height: 1.08;
 }
 
 .drug-label-item.label-size-40x70.label-kind-narcotic.name-extra-long h3 {
-  font-size: 15px;
-  line-height: 1.07;
+  font-size: 16.5px;
+  line-height: 1.08;
 }
 
 .drug-label-item.label-size-40x70.label-kind-narcotic .drug-name-parenthetical {
   white-space: normal;
 }
 
-.drug-label-item.label-size-40x70.label-kind-narcotic .drug-label-code-stack {
-  grid-column: 3;
-  grid-row: 1;
-  align-self: stretch;
+.drug-label-item.label-size-40x70.label-kind-narcotic .drug-label-name-lines {
+  display: grid;
   align-content: center;
   justify-items: center;
-  min-width: 15mm;
-  padding: 0.5mm 1.2mm;
-  gap: 0.3mm;
-  background: #101010;
+  width: 100%;
+  min-width: 0;
+  gap: 0.2mm;
+  color: #050505;
+  text-align: center;
 }
 
-.drug-label-item.label-size-40x70.label-kind-narcotic .drug-label-code-stack strong {
-  color: #d1d5db;
-  font-size: 10px;
+.drug-label-item.label-size-40x70.label-kind-narcotic .drug-label-name-lines-3,
+.drug-label-item.label-size-40x70.label-kind-narcotic .drug-label-name-lines-4 {
+  gap: 0.05mm;
 }
 
-.drug-label-item.label-size-40x70.label-kind-narcotic .label-code-storage.cold {
-  font-size: 10px;
-  line-height: 1.05;
+.drug-label-item.label-size-40x70.label-kind-narcotic .drug-label-name-line {
+  display: block;
+  max-width: 100%;
+  font-weight: 1000;
+  line-height: 1.02;
+  white-space: nowrap;
+  word-break: keep-all;
+  overflow-wrap: normal;
+  text-shadow:
+    0.25px 0 #050505,
+    -0.25px 0 #050505;
+}
+
+.drug-label-item.label-size-40x70.label-kind-narcotic .dose-number-highlight {
+  display: inline-block;
+  color: #ef1d19;
+  white-space: nowrap;
+}
+
+.drug-label-narcotic-footer {
+  grid-column: 1;
+  grid-row: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  color: #fff;
+  background: #6f1d1b;
+  font-family: Verdana, "Segoe UI", "Malgun Gothic", sans-serif;
+  font-size: 14px;
+  font-weight: 1000;
+  line-height: 1;
+  text-align: center;
+}
+
+.drug-label-item.label-size-40x70.label-kind-narcotic .drug-label-code-stack {
+  display: none;
 }
 
 .drug-label-item.label-size-55x95.label-kind-fluid h3,
@@ -3918,7 +4034,7 @@ button {
 
 .pharmacy-studio-topbar {
   display: grid;
-  grid-template-columns: minmax(220px, 0.65fr) minmax(320px, 1.1fr) auto;
+  grid-template-columns: minmax(180px, 0.55fr) minmax(220px, 1fr) minmax(260px, 0.9fr);
   gap: 12px;
   align-items: center;
   padding: 12px 14px;
@@ -3972,6 +4088,30 @@ button {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+.pharmacy-studio-actions {
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.pharmacy-upload-button {
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.pharmacy-upload-button[aria-disabled="true"] {
+  cursor: wait;
+  opacity: .76;
+}
+
+.pharmacy-upload-status {
+  flex-basis: 100%;
+  color: #f3ece7;
+  font-size: 12px;
+  font-weight: 800;
+  text-align: right;
 }
 
 .pharmacy-label-tabs {
@@ -4283,7 +4423,7 @@ button {
   text-align: left;
 }
 
-@media (max-width: 980px) {
+@media (max-width: 1120px) {
   .pharmacy-studio-topbar,
   .pharmacy-studio-workspace {
     grid-template-columns: 1fr;

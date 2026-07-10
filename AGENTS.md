@@ -9,6 +9,12 @@ Build a TypeScript app for pharmacist-led ward inventory checks using the Excel 
 - Test allocation logic: `npm test` (`vitest run --no-watch --reporter=basic --testTimeout=10000 --config vitest.config.ts`)
 - Build: `npm run build`
 - Local preview: `npm run dev`
+- Release app: `npm run release`
+
+## Release Rule
+- After any code, data, document, or asset change, run `npm run release` unless the user explicitly says not to.
+- `npm run release` must validate tests, deploy GitHub Pages, commit source changes, and push the current branch to origin and backup.
+- Do not report completion until release, deploy, and backup results are verified.
 
 ## Data Rules
 - `병동별비품현황 202606.xlsx` is the canonical source for registered stock drugs and room allocations.

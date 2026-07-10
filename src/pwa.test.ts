@@ -3,7 +3,7 @@ import { inflateSync } from "node:zlib";
 import { describe, expect, it } from "vitest";
 import { buildPwaAssetUrl, getPwaMetadata, shouldReloadAfterServiceWorkerUpdate } from "./pwa";
 
-const iconVersion = "20260709a";
+const iconVersion = "20260710b";
 
 function readPngSize(path: string) {
   const bytes = readFileSync(path);
@@ -126,8 +126,8 @@ describe("PWA install metadata", () => {
       '<link rel="stylesheet" crossorigin href="/Ecart-/assets/index-demo.css">',
     ].join("\n");
 
-    expect(versionAssetLinks(html, "20260709a")).toContain('/Ecart-/assets/index-demo.js?v=20260709a');
-    expect(versionAssetLinks(html, "20260709a")).toContain('/Ecart-/assets/index-demo.css?v=20260709a');
+    expect(versionAssetLinks(html, "20260710b")).toContain('/Ecart-/assets/index-demo.js?v=20260710b');
+    expect(versionAssetLinks(html, "20260710b")).toContain('/Ecart-/assets/index-demo.css?v=20260710b');
   });
 
   it("selects separate install metadata for the master viewer route", () => {
