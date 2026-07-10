@@ -4,6 +4,7 @@ import {
   getHospitalDrugLabelWarnings,
   getHospitalDrugStorageLabel,
   isHospitalControlledDrugType,
+  isHospitalGeneralDrugLabelType,
   isHospitalDrugType,
   isHospitalDrugLightProtected,
   isSelectableHospitalDrugLabelRow,
@@ -41,7 +42,7 @@ describe("hospital drug label source", () => {
       name: "Valid common name",
       koreanName: "테스트",
       strength: "",
-      drugType: "",
+      drugType: "바이알",
       spec: "",
       package: "",
       storage: "",
@@ -54,8 +55,28 @@ describe("hospital drug label source", () => {
 
     expect(isSelectableHospitalDrugLabelRow(base)).toBe(true);
     expect(isSelectableHospitalDrugLabelRow({ ...base, inHospital: false })).toBe(false);
+    expect(isSelectableHospitalDrugLabelRow({ ...base, drugType: "" })).toBe(false);
     expect(isSelectableHospitalDrugLabelRow({ ...base, name: "607" })).toBe(false);
     expect(isSelectableHospitalDrugLabelRow({ ...base, name: "" })).toBe(false);
+  });
+
+  it("keeps general drug labels to typed in-hospital drugs except fluids and controlled drugs", () => {
+    expect(isHospitalGeneralDrugLabelType({ drugType: "바이알" })).toBe(true);
+    expect(isHospitalGeneralDrugLabelType({ drugType: "냉장주사" })).toBe(true);
+    expect(isHospitalGeneralDrugLabelType({ drugType: "" })).toBe(false);
+    expect(isHospitalGeneralDrugLabelType({ drugType: "일반수액" })).toBe(false);
+    expect(isHospitalGeneralDrugLabelType({ drugType: "마약" })).toBe(false);
+    expect(isHospitalGeneralDrugLabelType({ drugType: "향정" })).toBe(false);
+  });
+
+  it("builds the general drug label source from all typed in-hospital non-fluid non-controlled rows", async () => {
+    const rows = await loadHospitalDrugLabelRows();
+    const generalRows = rows.filter((row) => isSelectableHospitalDrugLabelRow(row) && isHospitalGeneralDrugLabelType(row));
+
+    expect(generalRows.length).toBeGreaterThan(80);
+    expect(generalRows.every((row) => row.drugType.trim().length > 0)).toBe(true);
+    expect(generalRows.some((row) => row.drugType === "일반수액")).toBe(false);
+    expect(generalRows.some((row) => row.drugType === "마약" || row.drugType === "향정")).toBe(false);
   });
 
   it("uses workbook storage, light protection, and caution columns for labels", async () => {

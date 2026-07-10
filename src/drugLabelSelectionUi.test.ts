@@ -38,6 +38,9 @@ describe("drug label selection UI", () => {
 
   it("routes hospital label buttons by workbook drug type while keeping E-cart on E-cart inventory", () => {
     expect(appSource).toContain("function usesHospitalDrugListForMode(mode: DrugLabelMode)");
+    expect(appSource).toContain("const hospitalStockDrugRows = useMemo(() => hospitalDrugSelectableRows.filter(isHospitalGeneralDrugLabelType),");
+    expect(appSource).toContain("const hospitalStockSearchRows = useMemo(() => {");
+    expect(appSource).toMatch(/const hospitalStockSearchRows = useMemo\(\(\) => \{[\s\S]*?return rows;\n  \}, \[hospitalStockDrugRows, labelQuery\]\);/);
     expect(appSource).toContain('const hospitalFluidDrugRows = useMemo(() => hospitalDrugSelectableRows.filter((row) => isHospitalDrugType(row, "일반수액")),');
     expect(appSource).toContain("isHospitalControlledDrugType(row)");
     expect(appSource).toContain('if (labelMode === "stock") return hospitalStockLabelRows;');

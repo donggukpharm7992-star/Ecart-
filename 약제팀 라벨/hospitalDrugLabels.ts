@@ -56,9 +56,15 @@ export function isHospitalControlledDrugType(row: Partial<Pick<HospitalDrugLabel
   return isHospitalDrugType(row, "마약") || isHospitalDrugType(row, "향정");
 }
 
-export function isSelectableHospitalDrugLabelRow(row: Pick<HospitalDrugLabelRow, "name" | "inHospital">) {
+export function isHospitalGeneralDrugLabelType(row: Partial<Pick<HospitalDrugLabelRow, "drugType">>) {
+  return (row.drugType ?? "").trim().length > 0 && !isHospitalDrugType(row, "일반수액") && !isHospitalControlledDrugType(row);
+}
+
+export function isSelectableHospitalDrugLabelRow(
+  row: Pick<HospitalDrugLabelRow, "name" | "inHospital"> & Partial<Pick<HospitalDrugLabelRow, "drugType">>,
+) {
   const name = row.name.trim();
-  return row.inHospital && name.length > 0 && !NUMERIC_COMMON_NAME_PATTERN.test(name);
+  return row.inHospital && name.length > 0 && (row.drugType ?? "").trim().length > 0 && !NUMERIC_COMMON_NAME_PATTERN.test(name);
 }
 
 export function stripHospitalDrugControlledPrefix(name: string) {

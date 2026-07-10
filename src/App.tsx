@@ -92,6 +92,7 @@ import {
   getHospitalDrugLabelWarnings,
   getHospitalDrugStorageLabel,
   isHospitalControlledDrugType,
+  isHospitalGeneralDrugLabelType,
   isHospitalDrugType,
   isSelectableHospitalDrugLabelRow,
   loadHospitalDrugLabelRows,
@@ -1538,10 +1539,17 @@ export function App() {
     const rows = trimmed ? hospitalDrugSelectableRows.filter((row) => matchesHospitalDrugLabel(row, trimmed)) : hospitalDrugSelectableRows;
     return rows.slice(0, 80);
   }, [hospitalDrugSelectableRows, labelQuery]);
-  const hospitalStockLabelRows = useMemo(() => hospitalDrugSearchRows.map((row) => buildHospitalDrugLabelData(row, "stock")), [hospitalDrugSearchRows]);
+  const hospitalStockDrugRows = useMemo(() => hospitalDrugSelectableRows.filter(isHospitalGeneralDrugLabelType), [hospitalDrugSelectableRows]);
+  const hospitalStockSearchRows = useMemo(() => {
+    if (hospitalStockDrugRows.length === 0) return [];
+    const trimmed = labelQuery.trim().toLowerCase();
+    const rows = trimmed ? hospitalStockDrugRows.filter((row) => matchesHospitalDrugLabel(row, trimmed)) : hospitalStockDrugRows;
+    return rows;
+  }, [hospitalStockDrugRows, labelQuery]);
+  const hospitalStockLabelRows = useMemo(() => hospitalStockSearchRows.map((row) => buildHospitalDrugLabelData(row, "stock")), [hospitalStockSearchRows]);
   const allHospitalStockLabelRows = useMemo(
-    () => hospitalDrugSelectableRows.map((row) => buildHospitalDrugLabelData(row, "stock")),
-    [hospitalDrugSelectableRows],
+    () => hospitalStockDrugRows.map((row) => buildHospitalDrugLabelData(row, "stock")),
+    [hospitalStockDrugRows],
   );
   const hospitalFluidDrugRows = useMemo(() => hospitalDrugSelectableRows.filter((row) => isHospitalDrugType(row, "일반수액")), [hospitalDrugSelectableRows]);
   const hospitalFluidSearchRows = useMemo(() => {
