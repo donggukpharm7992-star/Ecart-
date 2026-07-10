@@ -30,10 +30,20 @@ describe("drug label selection UI", () => {
     expect(cssSource).toMatch(/\.label-drug-select-all\s*\{[\s\S]*background:\s*#fbfaf9;/);
   });
 
-  it("routes 40x70 narcotic labels to hospital controlled common names", () => {
-    expect(appSource).toContain('if (labelMode === "narcotic") return labelSize === "40x70" ? hospitalControlledLabelRows : narcoticMasterLabelRows;');
+  it("routes narcotic labels to hospital controlled common names", () => {
+    expect(appSource).toContain('if (labelMode === "narcotic") return hospitalControlledLabelRows;');
     expect(appSource).toContain("stripHospitalDrugControlledPrefix(row.name)");
     expect(appSource).toContain("makeHospitalControlledDrugLabelId(row)");
+  });
+
+  it("routes non E-cart label lists to hospital drug rows while keeping E-cart sources unchanged", () => {
+    expect(appSource).toContain("function usesHospitalDrugListForMode(mode: DrugLabelMode)");
+    expect(appSource).toContain('if (labelMode === "stock") return hospitalStockLabelRows;');
+    expect(appSource).toContain('if (labelMode === "fluid") return hospitalFluidLabelRows;');
+    expect(appSource).toContain('if (labelMode === "narcotic") return hospitalControlledLabelRows;');
+    expect(appSource).toContain("if (isEcartLabelKind(labelMode)) return filteredEcartLabelRows;");
+    expect(appSource).toContain('return getEcartLabelItemsForMode("ecart", inventory.ecart).map((item, index) => {');
+    expect(appSource).toContain('return getEcartLabelItemsForMode("ecart-nicu", inventory.ecart).map((item, index) => {');
   });
 
   it("uses dose confirmation wording on 40x70 narcotic labels", () => {

@@ -84,9 +84,16 @@ export const DEFAULT_PHARMACY_LABEL_STYLE: PharmacyLabelStyle = {
 export const PHARMACY_LABEL_REPOSITORY_KEY = "pharmacy-label-repository-v1";
 
 function warningText(row: PharmacyLabelMatchRow) {
-  if (row.lightProtected) return "차광\n필요";
-  if (row.refrigerated) return "냉장";
-  return "";
+  const storage = row.storage.replace(/\s+/g, "");
+  const warnings = [
+    row.lightProtected ? "차광" : "",
+    row.frozen || storage.includes("냉동") ? "냉동" : row.refrigerated ? "냉장" : "",
+    row.doseCaution ? "용량주의" : "",
+    row.similarSound ? "유사발음" : "",
+    row.similarLook ? "유사모양" : "",
+    row.highRisk ? "고위험의약품" : "",
+  ].filter(Boolean);
+  return [...new Set(warnings)].join("\n");
 }
 
 export function createMatchedPharmacyLabelDraft(row: PharmacyLabelMatchRow): PharmacyLabelDraft {

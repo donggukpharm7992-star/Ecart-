@@ -27,8 +27,31 @@ describe("hospital drug label source", () => {
     const albumin = rows.find((row) => row.code === "X20AL1S");
 
     expect(abilify && isHospitalDrugLightProtected(abilify)).toBe(true);
-    expect(abilify && getHospitalDrugStorageLabel(abilify)).toBe("차광");
+    expect(abilify && getHospitalDrugStorageLabel(abilify)).toBe("");
+    expect(abilify && getHospitalDrugLabelWarnings(abilify)).toContain("차광");
     expect(albumin && getHospitalDrugLabelWarnings(albumin)).toContain("용량주의");
+  });
+
+  it("shows light protection as a caution and only cold or frozen storage as storage labels", () => {
+    const row = {
+      code: "XLID1",
+      name: "1% Lidocaine HCI 20ml inj",
+      koreanName: "휴온스리도카인염산수화물주1% 20ml",
+      strength: "200 mg",
+      spec: "20 ml",
+      package: "1 via",
+      storage: "실온",
+      lightProtected: true,
+      inHospital: true,
+      similarLook: false,
+      similarSound: false,
+      doseCaution: false,
+    };
+
+    expect(getHospitalDrugStorageLabel(row)).toBe("");
+    expect(getHospitalDrugLabelWarnings(row)).toContain("차광");
+    expect(getHospitalDrugStorageLabel({ ...row, storage: "냉장" })).toBe("냉장");
+    expect(getHospitalDrugStorageLabel({ ...row, storage: "냉동" })).toBe("냉동");
   });
 
   it("matches hospital label rows by English name, Korean name, and code", async () => {
@@ -50,9 +73,11 @@ describe("hospital drug label source", () => {
     expect(stripHospitalDrugControlledPrefix(psychotropic.name)).toBe("Ativan 4mg/1ml inj");
   });
 
-  it("excludes PCA and endoscopy-use controlled drug labels from the 40x70 list", () => {
+  it("excludes PCA and test-use controlled drug names from the 40x70 list", () => {
     expect(shouldExcludeHospitalControlledDrugLabel({ name: "[마약] PCA-Fentanyl 500mcg/10ml Inj" })).toBe(true);
     expect(shouldExcludeHospitalControlledDrugLabel({ name: "[마약] Fentanyl 50mcg소화기검사용" })).toBe(true);
+    expect(shouldExcludeHospitalControlledDrugLabel({ name: "[마약] Morphine 5mg inj 검사용" })).toBe(true);
+    expect(shouldExcludeHospitalControlledDrugLabel({ name: "[향정] Midazolam 5mg/5ml inj 소화기병검사실" })).toBe(true);
     expect(shouldExcludeHospitalControlledDrugLabel({ name: "[마약] Fentanyl citrate 50mcg/ml inj" })).toBe(false);
     expect(shouldExcludeHospitalControlledDrugLabel({ name: "[향정]Midazolam 5mg/5ml inj (검사용)" })).toBe(true);
     expect(shouldExcludeHospitalControlledDrugLabel({ name: "[향정]Midazolam 5mg/5ml inj" })).toBe(false);

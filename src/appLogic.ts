@@ -609,7 +609,7 @@ export function fluidLabelTone(drug: Pick<StockDrug, "genericName" | "productNam
 }
 
 export function labelStorageTone(label: string): DrugLabelData["storageTone"] {
-  if (label === "냉장") return "cold";
+  if (label === "냉장" || label === "냉동") return "cold";
   if (label === "차광") return "light";
   if (label === "E-cart") return "ecart";
   return "room";

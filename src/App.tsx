@@ -33,9 +33,7 @@ import { getPolicyCautionLabels, isHighRiskDrug, normalizeDrugWarning, type Drug
 import { shouldApplyRemoteState, shouldMarkLocalChange, shouldPushLocalState, type RemoteStateEnvelope } from "./githubSync";
 import {
   DRUG_LABEL_SIZE_GROUPS,
-  GENERAL_FLUID_LABELS,
   ROUND_SUMMARY_COMMON_GUIDANCE,
-  buildNarcoticMasterLabelData,
   buildReportFileName,
   buildStockLabelData,
   cleanDrugLabelName,
@@ -69,7 +67,6 @@ import {
   makeInspectionCycleResetState,
   makeLabelPrintSelectionKey,
   matchesDrug,
-  matchesMaster,
   matchesMasterRoom,
   matchesMasterSearch,
   nicuTarget,
@@ -235,11 +232,6 @@ type LabelPrintSelection = {
 type PrintableDrugLabel = LabelPrintSelection & {
   row: DrugLabelData;
   copyIndex: number;
-};
-
-type FluidLabelSource = {
-  code: string;
-  name: string;
 };
 
 function labelSizeCssVars(sizeKey: DrugLabelSizeKey) {
@@ -630,21 +622,27 @@ function hospitalDrugRuleFields(row: HospitalDrugLabelRow): DrugRuleFields {
   };
 }
 
-function buildHospitalDrugLabelData(row: HospitalDrugLabelRow): DrugLabelData {
+function buildHospitalDrugLabelData(
+  row: HospitalDrugLabelRow,
+  mode: Extract<DrugLabelMode, "stock" | "fluid" | "pharmacy"> = "pharmacy",
+): DrugLabelData {
   const fields = hospitalDrugRuleFields(row);
   const storageLabel = getHospitalDrugStorageLabel(row);
-  const highRisk = isHighRiskDrug(fields);
+  const cautionLabels = getHospitalDrugLabelWarnings(row);
+  const highRisk = isHighRiskDrug(fields) || cautionLabels.some((label) => label.includes("고위험"));
+  const spec = [row.strength, row.spec, row.package].filter(Boolean).join(" ");
   return {
-    id: makeHospitalDrugLabelId(row),
-    kind: "pharmacy",
+    id: mode === "pharmacy" ? makeHospitalDrugLabelId(row) : `${mode}-hospital-${row.code}`,
+    kind: mode,
     code: row.code,
-    name: cleanDrugLabelName(row.name, highRisk),
-    spec: formatStockLabelSpec([row.strength, row.spec, row.package].filter(Boolean).join(" ")),
+    name: mode === "fluid" ? formatFluidLabelName(row.name) : cleanDrugLabelName(row.name, highRisk),
+    spec: formatStockLabelSpec(spec),
     storageLabel,
     storageTone: labelStorageTone(storageLabel),
     storage: row.storage,
-    cautionLabels: getHospitalDrugLabelWarnings(row),
+    cautionLabels,
     highRisk,
+    fluidTone: mode === "fluid" ? fluidLabelTone({ code: row.code, genericName: row.koreanName, productName: row.name, spec }) : undefined,
   };
 }
 
@@ -694,27 +692,8 @@ function isEcartLabelKind(kind: DrugLabelMode) {
   return kind === "ecart" || kind === "ecart-nicu";
 }
 
-function buildFluidLabelData(item: FluidLabelSource): DrugLabelData {
-  const fields: DrugRuleFields = {
-    code: item.code,
-    genericName: item.name,
-    productName: item.name,
-    spec: "",
-    warning: "",
-  };
-  return {
-    id: `fluid-${item.code}`,
-    kind: "fluid",
-    code: item.code,
-    name: formatFluidLabelName(item.name),
-    spec: "",
-    storageLabel: "실온",
-    storageTone: "room",
-    storage: "실온보관",
-    cautionLabels: getPolicyCautionLabels(fields),
-    highRisk: isHighRiskDrug(fields),
-    fluidTone: fluidLabelTone({ code: item.code, genericName: "", productName: item.name, spec: "" }),
-  };
+function usesHospitalDrugListForMode(mode: DrugLabelMode) {
+  return mode === "stock" || mode === "fluid" || mode === "narcotic" || mode === "pharmacy";
 }
 
 function getEcartLabelQuantity(state: EcartInspectionState, item: EcartItem) {
@@ -1258,8 +1237,8 @@ export function App() {
   }, []);
 
   useEffect(() => {
-    const needsHospitalDrugLabels = labelMode === "pharmacy" || labelMode === "narcotic";
-    if (appMode === "master-viewer" || !isDrugLabelPanelOpen || !needsHospitalDrugLabels || hospitalDrugLabelRows.length > 0) return;
+    const needsHospitalDrugLabels = usesHospitalDrugListForMode(labelMode);
+    if (!isDrugLabelPanelOpen || !needsHospitalDrugLabels || hospitalDrugLabelRows.length > 0) return;
     setIsHospitalDrugLabelsLoading(true);
     void loadHospitalDrugLabelRows()
       .then((rows) => {
@@ -1271,14 +1250,15 @@ export function App() {
       .finally(() => {
         setIsHospitalDrugLabelsLoading(false);
       });
-  }, [appMode, hospitalDrugLabelRows.length, isDrugLabelPanelOpen, labelMode]);
+  }, [hospitalDrugLabelRows.length, isDrugLabelPanelOpen, labelMode]);
 
   useEffect(() => {
     if (!isPharmacyLabelWorkspaceOpen || pharmacyLabelMatchRows.length > 0 || isPharmacyLabelMatchesLoading) return;
     setIsPharmacyLabelMatchesLoading(true);
-    void loadPharmacyLabelMatchRows()
-      .then((rows) => {
-        setPharmacyLabelMatchRows(rows);
+    void Promise.all([loadPharmacyLabelMatchRows(), loadHospitalDrugLabelRows()])
+      .then(([matchRows, hospitalRows]) => {
+        setHospitalDrugLabelRows((current) => (current.length > 0 ? current : hospitalRows));
+        setPharmacyLabelMatchRows(mergeHospitalDrugRowsIntoPharmacyLabelMatches(hospitalRows, matchRows));
       })
       .catch((error) => {
         console.error(error);
@@ -1522,63 +1502,33 @@ export function App() {
   const showMasterQuickView = masterQuery.trim().length > 0;
   const labelModeOptions = useMemo(() => getLabelModeOptions(appMode), [appMode]);
   const masterLabelRoomIdForRow = (row: MasterRow) => activeMasterLabelRoomIds.find((roomId) => matchesMasterRoom(row, roomId));
-  const labelSearchRows = useMemo(() => {
-    const trimmed = labelQuery.trim().toLowerCase();
-    const rows = trimmed ? visibleMasterRows.filter((row) => matchesMaster(row, trimmed)) : filteredMasterRows;
-    return rows.slice(0, 24);
-  }, [filteredMasterRows, labelQuery, visibleMasterRows]);
   const selectedLabelRows = useMemo(
     () => filteredMasterRows.filter((row) => labelSelectedCodes.includes(row.code)),
     [filteredMasterRows, labelSelectedCodes],
   );
-  const narcoticMasterRowsForLabels = useMemo(() => {
-    const rows = stockedMasterRows.filter((row) => row.masterKind === "psychotropic" || row.masterKind === "narcotic");
-    const trimmed = labelQuery.trim().toLowerCase();
-    if (!trimmed) return rows.slice(0, 80);
-    return rows.filter((row) => matchesMaster(row, trimmed)).slice(0, 80);
-  }, [labelQuery, stockedMasterRows]);
-  const allNarcoticMasterRowsForLabels = useMemo(
-    () => stockedMasterRows.filter((row) => row.masterKind === "psychotropic" || row.masterKind === "narcotic"),
-    [stockedMasterRows],
-  );
-  const narcoticDoseCautionCodes = useMemo(
-    () => getNarcoticDoseCautionCodes(allNarcoticMasterRowsForLabels),
-    [allNarcoticMasterRowsForLabels],
-  );
-  const allNarcoticMasterLabelRows = useMemo(
-    () =>
-      allNarcoticMasterRowsForLabels.map((row) =>
-        buildNarcoticMasterLabelData(row, row.masterKind === "narcotic" ? "\ub9c8\uc57d" : "\ud5a5\uc815", undefined, narcoticDoseCautionCodes.has(row.code)),
-      ),
-    [allNarcoticMasterRowsForLabels, narcoticDoseCautionCodes],
-  );
-  const narcoticMasterLabelRows = useMemo(
-    () =>
-      narcoticMasterRowsForLabels.map((row) =>
-        buildNarcoticMasterLabelData(
-          row,
-          row.masterKind === "narcotic" ? "\ub9c8\uc57d" : "\ud5a5\uc815",
-          masterLabelRoomIdForRow(row),
-          narcoticDoseCautionCodes.has(row.code),
-        ),
-      ),
-    [activeMasterLabelRoomIds, narcoticDoseCautionCodes, narcoticMasterRowsForLabels],
-  );
-  const stockLabelBaseRows = useMemo(
-    () => labelSearchRows.map((row) => buildStockLabelData(row, "stock", masterLabelRoomIdForRow(row))),
-    [activeMasterLabelRoomIds, labelSearchRows],
-  );
-  const allStockLabelRows = useMemo(() => visibleMasterRows.map((row) => buildStockLabelData(row, "stock")), [visibleMasterRows]);
   const hospitalDrugRowsByLabelId = useMemo(
     () => new Map(hospitalDrugLabelRows.map((row) => [makeHospitalDrugLabelId(row), row])),
     [hospitalDrugLabelRows],
   );
-  const pharmacyLabelBaseRows = useMemo(() => {
+  const hospitalDrugSearchRows = useMemo(() => {
     if (hospitalDrugLabelRows.length === 0) return [];
     const trimmed = labelQuery.trim().toLowerCase();
     const rows = trimmed ? hospitalDrugLabelRows.filter((row) => matchesHospitalDrugLabel(row, trimmed)) : hospitalDrugLabelRows;
-    return rows.slice(0, 80).map(buildHospitalDrugLabelData);
+    return rows.slice(0, 80);
   }, [hospitalDrugLabelRows, labelQuery]);
+  const hospitalStockLabelRows = useMemo(() => hospitalDrugSearchRows.map((row) => buildHospitalDrugLabelData(row, "stock")), [hospitalDrugSearchRows]);
+  const allHospitalStockLabelRows = useMemo(
+    () => hospitalDrugLabelRows.map((row) => buildHospitalDrugLabelData(row, "stock")),
+    [hospitalDrugLabelRows],
+  );
+  const hospitalFluidLabelRows = useMemo(() => hospitalDrugSearchRows.map((row) => buildHospitalDrugLabelData(row, "fluid")), [hospitalDrugSearchRows]);
+  const allHospitalFluidLabelRows = useMemo(
+    () => hospitalDrugLabelRows.map((row) => buildHospitalDrugLabelData(row, "fluid")),
+    [hospitalDrugLabelRows],
+  );
+  const pharmacyLabelBaseRows = useMemo(() => {
+    return hospitalDrugSearchRows.map((row) => buildHospitalDrugLabelData(row, "pharmacy"));
+  }, [hospitalDrugSearchRows]);
   const hospitalControlledDrugRows = useMemo(
     () => hospitalDrugLabelRows.filter((row) => getHospitalDrugControlledCategory(row) && !shouldExcludeHospitalControlledDrugLabel(row)),
     [hospitalDrugLabelRows],
@@ -1643,12 +1593,6 @@ export function App() {
   const activeEcartLabelRows = useMemo(() => {
     return labelMode === "ecart-nicu" ? ecartNicuLabelRows : ecartGeneralLabelRows;
   }, [ecartGeneralLabelRows, ecartNicuLabelRows, labelMode]);
-  const fluidLabelBaseRows = useMemo(() => {
-    const trimmed = labelQuery.trim().toLowerCase();
-    const rows = GENERAL_FLUID_LABELS.map(buildFluidLabelData);
-    if (!trimmed) return rows;
-    return rows.filter((row) => [row.code, row.name].join(" ").toLowerCase().includes(trimmed));
-  }, [labelQuery]);
   const filteredEcartLabelRows = useMemo(() => {
     const trimmed = labelQuery.trim().toLowerCase();
     if (!trimmed) return activeEcartLabelRows;
@@ -1656,24 +1600,23 @@ export function App() {
   }, [activeEcartLabelRows, labelQuery]);
   const currentLabelSourceRows = useMemo<DrugLabelData[]>(() => {
     if (isEcartLabelKind(labelMode)) return filteredEcartLabelRows;
-    if (labelMode === "fluid") return fluidLabelBaseRows;
-    if (labelMode === "narcotic") return labelSize === "40x70" ? hospitalControlledLabelRows : narcoticMasterLabelRows;
+    if (labelMode === "stock") return hospitalStockLabelRows;
+    if (labelMode === "fluid") return hospitalFluidLabelRows;
+    if (labelMode === "narcotic") return hospitalControlledLabelRows;
     if (labelMode === "pharmacy") return pharmacyLabelBaseRows;
-    return stockLabelBaseRows;
+    return [];
   }, [
     filteredEcartLabelRows,
-    fluidLabelBaseRows,
+    hospitalFluidLabelRows,
     hospitalControlledLabelRows,
+    hospitalStockLabelRows,
     labelMode,
-    labelSize,
-    narcoticMasterLabelRows,
     pharmacyLabelBaseRows,
-    stockLabelBaseRows,
   ]);
   const labelRowsById = useMemo(() => {
-    const rows = [...allStockLabelRows, ...ecartLabelBaseRows, ...fluidLabelBaseRows, ...allNarcoticMasterLabelRows, ...allHospitalControlledLabelRows];
+    const rows = [...allHospitalStockLabelRows, ...ecartLabelBaseRows, ...allHospitalFluidLabelRows, ...allHospitalControlledLabelRows];
     return new Map(rows.map((row) => [row.id, row]));
-  }, [allHospitalControlledLabelRows, allNarcoticMasterLabelRows, allStockLabelRows, ecartLabelBaseRows, fluidLabelBaseRows]);
+  }, [allHospitalControlledLabelRows, allHospitalFluidLabelRows, allHospitalStockLabelRows, ecartLabelBaseRows]);
   const labelPrintRows = useMemo<PrintableDrugLabel[]>(
     () =>
       labelPrintSelections.flatMap((selection) => {
@@ -3491,7 +3434,7 @@ export function App() {
 
                 <div className="drug-label-layout">
                   <div className="label-drug-list" aria-label="라벨 출력 약품 선택">
-                    {(labelMode === "pharmacy" || (labelMode === "narcotic" && labelSize === "40x70")) && isHospitalDrugLabelsLoading ? (
+                    {usesHospitalDrugListForMode(labelMode) && isHospitalDrugLabelsLoading ? (
                       <span className="empty">라벨 데이터를 불러오는 중입니다.</span>
                     ) : currentLabelSourceRows.length === 0 ? (
                       <span className="empty">검색 결과가 없습니다.</span>
@@ -3546,8 +3489,10 @@ export function App() {
                                 <span className="badge gray">수량 {row.totalQuantity}</span>
                               ) : row.kind === "fluid" ? (
                                 <span className={`fluid-list-tone ${row.fluidTone ?? "blue"}`}>수액</span>
-                              ) : (
+                              ) : row.storageLabel ? (
                                 <span className={`label-storage-badge ${row.storageTone}`}>{row.storageLabel}</span>
+                              ) : (
+                                <span className="empty">-</span>
                               )}
                             </label>
                           );

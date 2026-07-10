@@ -20,7 +20,9 @@ This app previews a pharmacist ward inventory workflow with real Excel data. The
   - Label-only source for pharmacy-wide drug labels.
   - Column B `상용약품명` overrides stock and E-cart display drug names by `약품코드`; leading `[마약]`/`[향정]` prefixes are stripped for inventory names.
   - `약품조회` rows are generated into `약제팀 라벨/data/hospitalDrugLabels.generated.json`.
-  - Label fields use workbook storage, light-protection, similar-look, similar-sound, and dose-caution columns.
+  - Label fields use workbook storage, light-protection, similar-look, similar-sound, dose-caution, and derived high-risk flags.
+  - Drug-label output lists for general drugs, fluids, narcotic/psychotropic labels, and the pharmacy label workspace use this hospital list as their selectable source; E-cart labels continue to use the E-cart workbook lists.
+  - Label storage badges show only cold/frozen storage (`냉장`, `냉동`); light protection (`차광`) is shown as a caution flag.
 - `약제팀 라벨/원내보유의약품_라벨매칭_20260702.xlsx`
   - Source for pharmacy label matching and label source metadata.
   - `라벨매칭` rows are generated into `약제팀 라벨/data/pharmacyLabelMatches.generated.json`.
@@ -38,7 +40,7 @@ This app previews a pharmacist ward inventory workflow with real Excel data. The
   - Only the `점검` sheet is imported for placed narcotic/psychotropic master drugs, rooms, and room quantities.
   - `Sheet1` and `Sheet3` are ignored.
   - Drug codes come from the `점검` sheet / hospital drug-list code, and display names prefer `약제팀 라벨/원내보유의약품리스트.xlsx` column B with `[마약]`/`[향정]` removed.
-  - 40*70mm narcotic/psychotropic labels print from `hospitalDrugLabels.generated.json` column B common names with `[마약]`/`[향정]` stripped, excluding `PCA-`, `소화기검사용`, and `midazolam` `검사용` names, plus derived repeated-dose caution for the same drug name and same dosage form, not from the legacy narcotic label workbooks.
+  - 40*70mm narcotic/psychotropic labels print from `hospitalDrugLabels.generated.json` column B common names with `[마약]`/`[향정]` stripped, excluding names starting with `PCA-` or containing `검사용` or `소화기병검사실`, plus derived repeated-dose caution for the same drug name and same dosage form.
 
 ## Generated Shape
 - `stock.drugs`: one row per registered drug code from the stock workbook.
@@ -53,7 +55,7 @@ This app previews a pharmacist ward inventory workflow with real Excel data. The
   - Split combined `2-1`/`2-2` rows and append 냉장약 item 6 for annual refrigerator thermometer verification.
   - Apply hospital common-name corrections for stock/E-cart labels, plus warning labels and storage grouping overrides.
 - `약제팀 라벨/data/hospitalDrugLabels.generated.json`: all hospital drug label candidates for the pharmacy label view.
-- `약제팀 라벨/data/pharmacyLabelMatches.generated.json`: matched pharmacy label text, match status, source file, source location, and caution/storage flags.
+- `약제팀 라벨/data/pharmacyLabelMatches.generated.json`: matched pharmacy label text, match status, source file, source location, and caution/storage flags; runtime pharmacy-label rows are rebuilt from hospital drug rows while preserving match details by drug code.
 - `narcoticLabels.generated.json`: legacy narcotic/psychotropic label text, category, source file, and source cell retained for generated-data coverage.
 - `narcoticDrugCodeMap.generated.json`: narcotic drug-name/code conversion rows used before fuzzy LOT name matching.
 - `narcoticInventory.generated.json`: placed narcotic/psychotropic drugs, rooms, allocations, and categories generated only from `비치향정,마약현황.xlsx` `점검`.

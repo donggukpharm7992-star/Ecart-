@@ -83,6 +83,26 @@ describe("pharmacy label studio", () => {
     expect(draft.style).toEqual(DEFAULT_PHARMACY_LABEL_STYLE);
   });
 
+  it("creates warning text from storage, light protection, and caution flags", () => {
+    const draft = createMatchedPharmacyLabelDraft({
+      ...row,
+      storage: "냉동",
+      lightProtected: true,
+      refrigerated: false,
+      doseCaution: true,
+      similarSound: true,
+      similarLook: true,
+      highRisk: true,
+    });
+
+    expect(draft.printable.warning).toContain("차광");
+    expect(draft.printable.warning).toContain("냉동");
+    expect(draft.printable.warning).toContain("용량주의");
+    expect(draft.printable.warning).toContain("유사발음");
+    expect(draft.printable.warning).toContain("유사모양");
+    expect(draft.printable.warning).toContain("고위험의약품");
+  });
+
   it("uses the latest saved label before workbook and new-label defaults", () => {
     const saved: PharmacySavedLabel = {
       id: "saved-1",

@@ -29,11 +29,21 @@ function matchBadgeClass(status: string) {
   return "red";
 }
 
+function storageMeta(row: PharmacyLabelMatchRow) {
+  const storage = row.storage.replace(/\s+/g, "");
+  if (row.frozen || storage.includes("냉동")) return "냉동";
+  if (row.refrigerated) return "냉장";
+  return "";
+}
+
 function labelMeta(row: PharmacyLabelMatchRow) {
   return [
     row.code,
     row.lightProtected ? "차광" : "",
-    row.refrigerated ? "냉장" : "",
+    storageMeta(row),
+    row.doseCaution ? "용량주의" : "",
+    row.similarSound ? "유사발음" : "",
+    row.similarLook ? "유사모양" : "",
     row.anticancer ? "항암제" : "",
     row.narcotic ? "마약" : "",
     row.psychotropic ? "향정" : "",

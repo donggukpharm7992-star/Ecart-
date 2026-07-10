@@ -1,3 +1,5 @@
+import { isHighRiskDrug } from "../src/drugRules";
+
 export type HospitalDrugLabelRow = {
   code: string;
   name: string;
@@ -48,7 +50,7 @@ export function stripHospitalDrugControlledPrefix(name: string) {
 
 export function shouldExcludeHospitalControlledDrugLabel(row: Pick<HospitalDrugLabelRow, "name">) {
   const name = stripHospitalDrugControlledPrefix(row.name);
-  return /^PCA-/i.test(name) || /\uc18c\ud654\uae30\s*\uac80\uc0ac\uc6a9/u.test(name) || (/midazolam/i.test(name) && /\uac80\uc0ac\uc6a9/u.test(name));
+  return /^PCA-/i.test(name) || /\uac80\uc0ac\uc6a9/u.test(name) || /\uc18c\ud654\uae30\s*\ubcd1?\s*\uac80\uc0ac\uc2e4/u.test(name);
 }
 
 export function loadHospitalDrugLabelRows() {
@@ -71,22 +73,39 @@ export function isHospitalDrugLightProtected(row: HospitalDrugLabelRow) {
   return row.lightProtected || compact(row.storage).includes("차광");
 }
 
+export function isHospitalDrugFrozen(row: HospitalDrugLabelRow) {
+  const storage = compact(row.storage);
+  return storage.includes("냉동");
+}
+
 export function isHospitalDrugRefrigerated(row: HospitalDrugLabelRow) {
   const storage = compact(row.storage);
   if (storage.includes("냉장보관하지")) return false;
   return storage.includes("냉장") || /2[-~∼～]8/.test(storage);
 }
 
+export function isHospitalDrugHighRisk(row: HospitalDrugLabelRow) {
+  return isHighRiskDrug({
+    code: row.code,
+    genericName: row.koreanName,
+    productName: row.name,
+    spec: [row.strength, row.spec, row.package].filter(Boolean).join(" "),
+    warning: "",
+  });
+}
+
 export function getHospitalDrugStorageLabel(row: HospitalDrugLabelRow) {
+  if (isHospitalDrugFrozen(row)) return "냉동";
   if (isHospitalDrugRefrigerated(row)) return "냉장";
-  if (isHospitalDrugLightProtected(row)) return "차광";
-  return "실온";
+  return "";
 }
 
 export function getHospitalDrugLabelWarnings(row: HospitalDrugLabelRow) {
   const warnings: string[] = [];
+  if (isHospitalDrugLightProtected(row)) warnings.push("차광");
   if (row.similarLook) warnings.push("유사모양");
   if (row.similarSound) warnings.push("유사발음");
   if (row.doseCaution) warnings.push("용량주의");
+  if (isHospitalDrugHighRisk(row)) warnings.push("고위험의약품");
   return warnings;
 }

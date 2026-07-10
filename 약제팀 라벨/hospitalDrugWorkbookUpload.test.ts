@@ -86,4 +86,36 @@ describe("hospital drug workbook upload", () => {
       lightProtected: true,
     });
   });
+
+  it("uses hospital drug names and policy warnings when rebuilding pharmacy label rows", () => {
+    const rows = mergeHospitalDrugRowsIntoPharmacyLabelMatches(
+      [
+        {
+          code: "XESME",
+          name: "Esmeron 50mg/5ml inj",
+          koreanName: "에스메론주 50mg/5ml",
+          strength: "50 mg",
+          spec: "5 ml",
+          package: "1 via",
+          storage: "냉장",
+          lightProtected: true,
+          inHospital: true,
+          similarLook: true,
+          similarSound: true,
+          doseCaution: true,
+        },
+      ],
+      [],
+    );
+
+    expect(rows[0]).toMatchObject({
+      englishName: "Esmeron 50mg/5ml inj",
+      refrigerated: true,
+      lightProtected: true,
+      similarLook: true,
+      similarSound: true,
+      doseCaution: true,
+      highRisk: true,
+    });
+  });
 });
