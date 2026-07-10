@@ -10,6 +10,7 @@
     <script>
       (() => {
         const version = "20260710b";
+        const assetBase = "/Ecart-/";
         const normalizedPath = window.location.pathname.replace(/\/+$/, "");
         const isNarcoticViewer = normalizedPath.endsWith("/narcotic-viewer");
         const isPharmacyViewer = normalizedPath.endsWith("/pharmacy-viewer");
@@ -48,18 +49,18 @@
 
         const manifest = document.createElement("link");
         manifest.rel = "manifest";
-        manifest.href = `${metadata.manifest}?v=${version}`;
+        manifest.href = `${assetBase}${metadata.manifest}?v=${version}`;
         document.head.appendChild(manifest);
 
         const icon = document.createElement("link");
         icon.rel = "icon";
         icon.type = "image/png";
-        icon.href = `${metadata.icon}?v=${version}`;
+        icon.href = `${assetBase}${metadata.icon}?v=${version}`;
         document.head.appendChild(icon);
 
         const appleIcon = document.createElement("link");
         appleIcon.rel = "apple-touch-icon";
-        appleIcon.href = `${metadata.icon}?v=${version}`;
+        appleIcon.href = `${assetBase}${metadata.icon}?v=${version}`;
         document.head.appendChild(appleIcon);
       })();
     </script>

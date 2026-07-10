@@ -280,16 +280,13 @@ describe("PWA install metadata", () => {
     expect(Object.values(readPngAlphaBounds("public/icons/narcotic-icon-desktop-512.png")).every((inset) => inset > 0)).toBe(true);
   });
 
-  it("uses relative desktop favicon and manifest links so Vite does not double-prefix the base path", () => {
+  it("uses base-prefixed desktop favicon and manifest links so viewer routes do not request nested assets", () => {
     const html = readFileSync("index.html", "utf8");
 
-    expect(html).toContain(`viewer.webmanifest`);
-    expect(html).toContain(`icons/viewer-icon-192.png`);
-    expect(html).toContain(`narcotic-viewer.webmanifest`);
-    expect(html).toContain(`icons/narcotic-icon-192.png`);
-    expect(html).toContain(`icons/app-icon-192.png`);
-    expect(html).toContain(`manifest.webmanifest`);
-    expect(html).toContain(`icons/app-icon-192.png`);
+    expect(html).toContain(`const assetBase = "/Ecart-/";`);
+    expect(html).toContain("manifest.href = `${assetBase}${metadata.manifest}?v=${version}`;");
+    expect(html).toContain("icon.href = `${assetBase}${metadata.icon}?v=${version}`;");
+    expect(html).toContain("appleIcon.href = `${assetBase}${metadata.icon}?v=${version}`;");
     expect(html).toContain(`document.title = metadata.title`);
     expect(html).not.toContain(`%BASE_URL%`);
     expect(html).not.toContain(`/Ecart-/Ecart-/`);
