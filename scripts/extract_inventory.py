@@ -82,6 +82,7 @@ NARCOTIC_ROOM_FLOORS = {
     "\ub09c\uc784": "4\uce35",
     "DRL": "4\uce35",
     "NICU": "4\uce35",
+    "42": "4\uce35",
 }
 
 ECART_FIELD_OVERRIDES = {

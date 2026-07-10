@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-10T14:18:46+09:00",
+  "generatedAt": "2026-07-10T16:39:10+09:00",
   "sourceFile": "비치향정,마약현황.xlsx",
   "sourceSheet": "점검",
   "sourceUpdatedAt": "26.06.18",
@@ -426,7 +426,7 @@
       "sourceColumn": "42",
       "sourceSheet": "점검",
       "sourceUpdatedAt": "26.06.18",
-      "floor": "5층 ~ 12층",
+      "floor": "4층",
       "allocationCount": 1,
       "totalQuantity": 1
     },
