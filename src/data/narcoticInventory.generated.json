@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-10T16:39:10+09:00",
+  "generatedAt": "2026-07-13T08:37:17+09:00",
   "sourceFile": "비치향정,마약현황.xlsx",
   "sourceSheet": "점검",
   "sourceUpdatedAt": "26.06.18",
@@ -357,8 +357,8 @@
       "sourceSheet": "점검",
       "sourceUpdatedAt": "26.06.18",
       "floor": "3층",
-      "allocationCount": 2,
-      "totalQuantity": 90716
+      "allocationCount": 1,
+      "totalQuantity": 1
     },
     {
       "id": "SICU",
@@ -596,11 +596,6 @@
       "roomId": "DREMM",
       "drugCode": "CHR5-S",
       "requiredQty": 10
-    },
-    {
-      "roomId": "OR",
-      "drugCode": "CHR5-S",
-      "requiredQty": 90715
     },
     {
       "roomId": "101",
@@ -1032,6 +1027,6 @@
   "summary": {
     "drugCount": 24,
     "roomCount": 32,
-    "allocationCount": 82
+    "allocationCount": 81
   }
 }

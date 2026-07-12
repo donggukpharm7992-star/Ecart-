@@ -49,8 +49,20 @@ function saveStoredRuntimeSyncConfig(config: RuntimeSyncConfig) {
   }
 }
 
+function shouldUsePublishedSyncConfig() {
+  const hostname = globalThis.location?.hostname;
+  return !hostname || hostname.endsWith(".github.io");
+}
+
 export async function loadRuntimeSyncConfig(baseUrl = import.meta.env.BASE_URL): Promise<RuntimeSyncConfig | null> {
-  const response = await fetch(buildPwaAssetUrl(baseUrl, `sync-config.json?v=${Date.now()}`), { cache: "no-store" });
+  if (!shouldUsePublishedSyncConfig()) return null;
+
+  let response: Response;
+  try {
+    response = await fetch(buildPwaAssetUrl(baseUrl, `sync-config.json?v=${Date.now()}`), { cache: "no-store" });
+  } catch {
+    return loadStoredRuntimeSyncConfig();
+  }
   if (response.status === 404) return loadStoredRuntimeSyncConfig();
   if (!response.ok) throw new Error(`Sync config load failed (${response.status})`);
 

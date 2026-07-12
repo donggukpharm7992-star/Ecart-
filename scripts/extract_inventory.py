@@ -134,6 +134,17 @@ def qty(value: Any) -> int:
     return int(float(match.group(0))) if match else 0
 
 
+def allocation_qty(value: Any) -> int:
+    if value is None:
+        return 0
+    if isinstance(value, (int, float)):
+        return int(value)
+    text = clean(value)
+    if not text:
+        return 0
+    return int(float(text)) if re.fullmatch(r"-?\d+(?:\.\d+)?", text) else 0
+
+
 def room_update_date(value: Any) -> str:
     text = clean(value).replace(" ", "")
     match = re.fullmatch(r"(\d{2,4})\.(\d{1,2})\.?(\d{1,2})", text)
@@ -266,7 +277,7 @@ def parse_narcotic_inventory(narcotic_path: Path, hospital_common_names: dict[st
         categories[code] = current_category
 
         for idx, room_id in room_columns:
-            required_qty = qty(row[idx] if idx < len(row) else None)
+            required_qty = allocation_qty(row[idx] if idx < len(row) else None)
             if required_qty > 0:
                 allocations.append({"roomId": room_id, "drugCode": code, "requiredQty": required_qty})
                 room_stats[room_id]["allocationCount"] += 1
