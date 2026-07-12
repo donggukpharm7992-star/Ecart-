@@ -3148,6 +3148,14 @@ export function App() {
               <code>https://donggukpharm7992-star.github.io/Ecart-/pharmacy-viewer/</code>
             </div>
           </div>
+          <div className="viewer-link-help">
+            <strong>외부 링크 반영 준비</strong>
+            <p>
+              외부 장소나 휴대폰에서 뷰어 수정 내용을 관리자 PC로 보내려면 관리자 PC 앱 폴더의 <code>start-dev-public.cmd</code>를 실행하거나,
+              명령창에서 <code>npm run dev:public</code>을 실행해 둡니다.
+            </p>
+            <p>실행 창을 닫으면 외부 링크 반영이 중단됩니다. 마약 뷰어에서 수정한 뒤에는 마약 뷰어의 관리자 PC로 반영, 관리자 모드의 뷰어 반영 내용 받기를 순서대로 누릅니다.</p>
+          </div>
         </section>
       )}
 

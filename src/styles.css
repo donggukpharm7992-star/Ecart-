@@ -245,6 +245,36 @@ button {
   overflow-wrap: anywhere;
 }
 
+.viewer-link-help {
+  width: min(1440px, 100%);
+  display: grid;
+  gap: 6px;
+  margin: 10px auto 0;
+  padding: 10px 12px;
+  border: 1px solid #d7c7bc;
+  border-radius: 6px;
+  background: #f8fafc;
+}
+
+.viewer-link-help strong {
+  color: #6f5a50;
+  font-weight: 900;
+}
+
+.viewer-link-help p {
+  margin: 0;
+  color: #475467;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.viewer-link-help code {
+  padding: 2px 5px;
+  border-radius: 4px;
+  color: #334155;
+  background: #fff;
+}
+
 .secondary-button.danger-light {
   border-color: #fecaca;
   color: #991b1b;
