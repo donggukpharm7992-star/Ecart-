@@ -6,6 +6,7 @@ const packageJson = JSON.parse(readFileSync(new URL("../package.json", import.me
 };
 const releaseScript = readFileSync(new URL("../scripts/release_app.mjs", import.meta.url), "utf8");
 const publishScript = readFileSync(new URL("../scripts/publish_gh_pages.mjs", import.meta.url), "utf8");
+const deployWorkflow = readFileSync(new URL("../.github/workflows/deploy.yml", import.meta.url), "utf8");
 const agents = readFileSync(new URL("../AGENTS.md", import.meta.url), "utf8");
 
 describe("release workflow", () => {
@@ -34,5 +35,7 @@ describe("release workflow", () => {
     expect(publishMain.indexOf("syncDistWithRemote(token);")).toBeLessThan(publishMain.indexOf("const remoteKeep = captureDistKeepFiles();"));
     expect(publishMain).toContain("const keep = new Map([...localKeep, ...remoteKeep])");
     expect(publishMain.indexOf("const keep = new Map([...localKeep, ...remoteKeep])")).toBeLessThan(publishMain.indexOf('npm.cmd run build'));
+    expect(deployWorkflow).toContain("Preserve sync server config");
+    expect(deployWorkflow).toContain("git show origin/gh-pages:sync-config.json > dist/sync-config.json");
   });
 });

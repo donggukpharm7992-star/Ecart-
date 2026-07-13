@@ -21,6 +21,11 @@ jobs:
           npm ci
           npm run build
 
+      - name: Preserve sync server config
+        run: |
+          git fetch origin gh-pages || true
+          git show origin/gh-pages:sync-config.json > dist/sync-config.json || true
+
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
