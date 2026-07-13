@@ -7,6 +7,8 @@ const isWindows = process.platform === "win32";
 const npmCommand = isWindows ? "npm.cmd" : "npm";
 const npxCommand = isWindows ? "npx.cmd" : "npx";
 const children = [];
+const deployDir = path.join(process.cwd(), ".deploy");
+const syncConfigFallbackPath = path.join(deployDir, "sync-config.json");
 const fixedAppUrl = "https://donggukpharm7992-star.github.io/Ecart-/";
 const repositoryUrl = "https://github.com/donggukpharm7992-star/Ecart-.git";
 let publishedTunnelUrl = "";
@@ -69,12 +71,15 @@ function publishFixedInstallSyncConfig(tunnelBaseUrl) {
     updatedAt: new Date().toISOString(),
     source: "cloudflare-quick-tunnel",
   };
+  const configText = `${JSON.stringify(config, null, 2)}\n`;
+  mkdirSync(deployDir, { recursive: true });
+  writeFileSync(syncConfigFallbackPath, configText, "utf8");
 
   try {
     runGit(["clone", "--depth", "1", "--branch", "gh-pages", repositoryUrl, tempDir], process.cwd());
     runGit(["config", "user.name", "Codex"], tempDir);
     runGit(["config", "user.email", "codex@openai.local"], tempDir);
-    writeFileSync(path.join(tempDir, "sync-config.json"), `${JSON.stringify(config, null, 2)}\n`, "utf8");
+    writeFileSync(path.join(tempDir, "sync-config.json"), configText, "utf8");
     runGit(["add", "--", "sync-config.json"], tempDir);
     const status = runGit(["status", "--porcelain", "--", "sync-config.json"], tempDir);
     if (status.trim()) {

@@ -9,6 +9,7 @@ const safeDistDir = distDir.replaceAll("\\", "/");
 const deployDir = join(root, ".deploy");
 const tokenPath = join(deployDir, "github-token");
 const askpassPath = join(deployDir, "git-askpass.cmd");
+const syncConfigFallbackPath = join(deployDir, "sync-config.json");
 const clientId = "178c6fc778ccc68e1d6a";
 const scope = "repo";
 
@@ -117,6 +118,9 @@ function captureDistKeepFiles() {
     if (tracked.status === 0) {
       keep.set(fileName, tracked.stdout);
     }
+    if (fileName === "sync-config.json" && !keep.has(fileName) && existsSync(syncConfigFallbackPath)) {
+      keep.set(fileName, readFileSync(syncConfigFallbackPath));
+    }
   }
   return keep;
 }
@@ -180,8 +184,10 @@ async function main() {
   }
 
   const token = readToken();
+  const localKeep = captureDistKeepFiles();
   syncDistWithRemote(token);
-  const keep = captureDistKeepFiles();
+  const remoteKeep = captureDistKeepFiles();
+  const keep = new Map([...localKeep, ...remoteKeep]);
   if (process.platform === "win32") {
     run("cmd.exe", ["/d", "/s", "/c", "npm.cmd run build"]);
   } else {
