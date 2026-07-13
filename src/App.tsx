@@ -973,6 +973,16 @@ export function App() {
     if (typeof normalized.narcoticLotFileName === "string") setNarcoticExcelFileName(normalized.narcoticLotFileName);
   }
 
+  async function refreshRuntimeSyncBaseUrl() {
+    try {
+      const config = await loadRuntimeSyncConfig();
+      configureServerSyncBaseUrl(config?.apiBaseUrl);
+    } catch (error) {
+      console.warn("Runtime sync config refresh failed", error);
+      configureServerSyncBaseUrl();
+    }
+  }
+
   async function pullRemoteState(forceApply = false, options: PullRemoteOptions = {}) {
     if (pullInFlightRef.current) {
       if (!options.silent) setSyncStatus({ mode: "idle", message: "이미 자동 저장 상태를 확인 중입니다." });
@@ -981,6 +991,7 @@ export function App() {
     pullInFlightRef.current = true;
     if (!options.silent) setSyncStatus({ mode: "syncing", message: "자동 저장 상태 확인 중..." });
     try {
+      if (!options.silent) await refreshRuntimeSyncBaseUrl();
       const remote = await loadServerState<PersistedAppState>();
       syncInitializedRef.current = true;
       if (!remote) {
@@ -1075,6 +1086,7 @@ export function App() {
 
     setSyncStatus({ mode: "syncing", message: "이 기기 내용으로 서버 반영 중..." });
     try {
+      await refreshRuntimeSyncBaseUrl();
       const result = await saveServerState(envelope, { force: true });
       remoteShaRef.current = result.sha;
       localUpdatedAtRef.current = updatedAt;
@@ -1110,6 +1122,7 @@ export function App() {
     const localState = persistedAppState;
     setSyncStatus({ mode: "syncing", message: "비치마약류 점검 내용 불러오는 중..." });
     try {
+      await refreshRuntimeSyncBaseUrl();
       const remote = await loadServerState<PersistedAppState>();
       if (!remote) {
         window.alert("불러올 비치마약류 점검 내용이 없습니다. (서버에 저장된 데이터가 없습니다)");
@@ -1161,6 +1174,7 @@ export function App() {
 
     setSyncStatus({ mode: "syncing", message: "관리자 PC로 반영 중..." });
     try {
+      await refreshRuntimeSyncBaseUrl();
       const remote = await loadServerState<PersistedAppState>();
       const baseState = remote ? ({ ...localState, ...normalizePersistedState(remote.envelope.state) } as PersistedAppState) : localNarcoticState;
       const mergedState = mergeNarcoticInspectionFields(baseState, localNarcoticState);
