@@ -2075,6 +2075,11 @@ button {
   line-height: 1.05;
 }
 
+.drug-label-item.has-dose-warning-label .drug-label-warning-flag {
+  color: #ef1d19;
+  background: #fff200;
+}
+
 .drug-label-warning-spacer {
   display: none;
 }
@@ -3323,17 +3328,31 @@ button {
   gap: 2mm;
 }
 
+.drug-label-item.label-size-55x95.label-kind-stock h3,
+.drug-label-item.label-size-35x100.label-kind-stock h3 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  max-width: 100%;
+  -webkit-line-clamp: unset;
+}
+
 .drug-label-item.label-size-35x100.label-kind-stock {
   padding: 2.5mm 4mm;
 }
 
-.drug-label-item.label-size-55x95.label-kind-stock .label-code-storage.cold,
-.drug-label-item.label-size-35x100.label-kind-stock .label-code-storage.cold {
+.drug-label-item.label-size-55x95.label-kind-stock .label-code-storage,
+.drug-label-item.label-size-35x100.label-kind-stock .label-code-storage {
   padding: 3px 7px;
   border-radius: 999px;
+  font-size: 11px;
+}
+
+.drug-label-item.label-size-55x95.label-kind-stock .label-code-storage.cold,
+.drug-label-item.label-size-35x100.label-kind-stock .label-code-storage.cold {
   color: #0b5c88;
   background: #dff3ff;
-  font-size: 11px;
 }
 
 .drug-label-item.label-size-55x95.label-kind-stock .drug-label-name-lines,
@@ -3359,43 +3378,43 @@ button {
 }
 
 .drug-label-item.label-size-55x95.label-kind-stock .drug-label-name-lines {
-  gap: 0.8mm;
-  font-size: 38px;
+  gap: 0.7mm;
+  font-size: 34px;
 }
 
 .drug-label-item.label-size-55x95.label-kind-stock .drug-label-name-lines-3 {
-  gap: 0.6mm;
-  font-size: 31px;
+  gap: 0.45mm;
+  font-size: 28px;
 }
 
 .drug-label-item.label-size-55x95.label-kind-stock .drug-label-name-lines-4 {
   gap: 0.35mm;
-  font-size: 26px;
+  font-size: 24px;
 }
 
 .drug-label-item.label-size-55x95.label-kind-stock .drug-label-name-lines-5 {
   gap: 0.2mm;
-  font-size: 22px;
+  font-size: 20px;
 }
 
 .drug-label-item.label-size-35x100.label-kind-stock .drug-label-name-lines {
   gap: 0.35mm;
-  font-size: 27px;
+  font-size: 23px;
 }
 
 .drug-label-item.label-size-35x100.label-kind-stock .drug-label-name-lines-3 {
   gap: 0.25mm;
-  font-size: 22px;
+  font-size: 19px;
 }
 
 .drug-label-item.label-size-35x100.label-kind-stock .drug-label-name-lines-4 {
   gap: 0.15mm;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .drug-label-item.label-size-35x100.label-kind-stock .drug-label-name-lines-5 {
   gap: 0;
-  font-size: 15px;
+  font-size: 13px;
 }
 
 .print-label dl {

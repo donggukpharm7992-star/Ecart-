@@ -602,7 +602,23 @@ function renderLabelName(row: DrugLabelData, highlightDose = false) {
 }
 
 function shouldHighlightDoseInLabel(row: DrugLabelData) {
-  return row.doseCaution || labelFlagLabels(row).some((label) => label.includes("용량주의") || label.includes("용량확인"));
+  return row.doseCaution || labelFlagLabels(row).some((label) => /용량\s*(?:주의|확인)/.test(label));
+}
+
+function labelCodeStorageBadges(row: DrugLabelData) {
+  if (isEcartLabelKind(row.kind) || row.kind === "fluid") return [];
+
+  const storageText = [row.storageLabel, row.storage].join(" ");
+  const badges: { label: string; tone: DrugLabelData["storageTone"] }[] = [];
+  if (/냉동/.test(storageText)) {
+    badges.push({ label: "냉동", tone: "cold" });
+  } else if (/냉장|2\s*[-~∼～]\s*8/.test(storageText)) {
+    badges.push({ label: "냉장", tone: "cold" });
+  } else if (row.storageTone !== "room" && row.storageLabel) {
+    badges.push({ label: row.storageLabel, tone: row.storageTone });
+  }
+
+  return badges;
 }
 
 function renderGeneralDrugLabelName(row: DrugLabelData, sizeKey: DrugLabelSizeKey, highlightDose: boolean) {
@@ -766,13 +782,17 @@ function labelCautionBadgeClass(label: string) {
 
 function renderLabelTopline(row: DrugLabelData) {
   const cautionText = labelFlagLabels(row).join(" / ");
-  const showCodeStorageLabel = !isEcartLabelKind(row.kind) && row.kind !== "fluid" && row.storageTone !== "room";
+  const codeStorageBadges = labelCodeStorageBadges(row);
   return (
     <div className="drug-label-topline">
       {cautionText ? <span className="drug-label-warning-flag">{cautionText}</span> : <span className="drug-label-warning-spacer" />}
       <div className="drug-label-code-stack">
         <div className="drug-label-code-line">
-          {showCodeStorageLabel ? <small className={`label-code-storage ${row.storageTone}`}>{row.storageLabel}</small> : null}
+          {codeStorageBadges.map((badge) => (
+            <small className={`label-code-storage ${badge.tone}`} key={`${badge.label}-${badge.tone}`}>
+              {badge.label}
+            </small>
+          ))}
           <strong>{row.code}</strong>
         </div>
         {isEcartLabelKind(row.kind) ? <span className="label-storage-badge ecart">E-cart</span> : null}
@@ -2922,6 +2942,7 @@ export function App() {
     const renderedKind = isEcartLabelKind(row.kind) ? "ecart" : row.kind;
     const nameClass = getDrugLabelNameClass(row.name, renderedKind, sizeKey);
     const isNarcoticFortyLabel = renderedKind === "narcotic" && sizeKey === "40x70";
+    const hasDoseWarningLabel = shouldHighlightDoseInLabel(row);
     const className = [
       "drug-label-item",
       "print-label",
@@ -2933,6 +2954,7 @@ export function App() {
       row.highRisk ? "high-risk-label" : "",
       flagLabels.length > 0 ? "has-caution-label" : "",
       row.doseCaution ? "has-dose-caution" : "",
+      hasDoseWarningLabel ? "has-dose-warning-label" : "",
     ]
       .filter(Boolean)
       .join(" ");
