@@ -689,6 +689,47 @@ export function formatFluidLabelName(name: string) {
   return name.replace(/\s*(?:bag|btl)\b\.?/gi, "").replace(/\s{2,}/g, " ").trim();
 }
 
+const GENERAL_DRUG_LABEL_DOSE_PATTERN =
+  /\d+(?:\.\d+)?(?:\s*\/\s*\d+(?:\.\d+)?)*\s*(?:mcg|mg|g|kg|ml|l|iu|u|unit|units|meq|mmol|%)(?:\s*\/\s*\d*(?:\.\d+)?\s*(?:mcg|mg|g|kg|ml|l|iu|u|unit|units|meq|mmol|hr|h|%))?/gi;
+
+function splitGeneralDrugLabelSegment(segment: string, maxLength: number) {
+  const tokens = segment.replace(/\s{2,}/g, " ").trim().split(/\s+/).filter(Boolean);
+  if (tokens.length <= 1) return segment ? [segment] : [];
+
+  const lines: string[] = [];
+  let current = "";
+  for (const token of tokens) {
+    const next = current ? `${current} ${token}` : token;
+    if (current && next.length > maxLength) {
+      lines.push(current);
+      current = token;
+    } else {
+      current = next;
+    }
+  }
+  if (current) lines.push(current);
+  return lines;
+}
+
+export function getGeneralDrugLabelNameLines(name: string, sizeKey: DrugLabelSizeKey) {
+  const cleaned = name.replace(/\s{2,}/g, " ").trim();
+  if (!cleaned) return [];
+
+  const maxLength = sizeKey === "35x100" ? 22 : 20;
+  const doseMatches = [...cleaned.matchAll(GENERAL_DRUG_LABEL_DOSE_PATTERN)];
+  const doseMatch = doseMatches.find((match) => (match.index ?? 0) > 0);
+  if (!doseMatch?.index) return splitGeneralDrugLabelSegment(cleaned, maxLength);
+
+  const namePart = cleaned.slice(0, doseMatch.index).trim();
+  const dosePart = cleaned.slice(doseMatch.index).trim();
+  const parenthetical = namePart.match(/^(.+?)\s*(\([^()]+\))$/);
+  const nameLines = parenthetical
+    ? [...splitGeneralDrugLabelSegment(parenthetical[1], maxLength), parenthetical[2]]
+    : splitGeneralDrugLabelSegment(namePart, maxLength);
+
+  return [...nameLines, ...splitGeneralDrugLabelSegment(dosePart, maxLength)].filter(Boolean);
+}
+
 export function stripControlledDrugLabelPrefix(name: string) {
   return name.replace(/^\s*\[(?:\ub9c8\uc57d|\ud5a5\uc815)\]\s*/u, "").replace(/\s{2,}/g, " ").trim();
 }

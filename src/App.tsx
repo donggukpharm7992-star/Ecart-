@@ -52,6 +52,7 @@ import {
   getDrugLabelFlagLabels,
   getEcartDefaultState,
   getEcartLabelItemsForMode,
+  getGeneralDrugLabelNameLines,
   getInitialAppMode,
   getInitialMasterKindFilter,
   getInspectedRoomIdsFromCheckedItems,
@@ -600,6 +601,33 @@ function renderLabelName(row: DrugLabelData, highlightDose = false) {
   );
 }
 
+function shouldHighlightDoseInLabel(row: DrugLabelData) {
+  return row.doseCaution || labelFlagLabels(row).some((label) => label.includes("용량주의") || label.includes("용량확인"));
+}
+
+function renderGeneralDrugLabelName(row: DrugLabelData, sizeKey: DrugLabelSizeKey, highlightDose: boolean) {
+  const lines = getGeneralDrugLabelNameLines(row.name, sizeKey);
+  if (lines.length <= 1) return renderLabelName(row, highlightDose);
+
+  return (
+    <span className={`drug-label-name-lines drug-label-name-lines-${Math.min(lines.length, 5)}`}>
+      {lines.map((line, index) => (
+        <span className="drug-label-name-line" key={`${line}-${index}`}>
+          {highlightDose ? renderDoseHighlightedText(line) : line}
+        </span>
+      ))}
+    </span>
+  );
+}
+
+function renderDrugLabelName(row: DrugLabelData, renderedKind: DrugLabelMode, sizeKey: DrugLabelSizeKey) {
+  const highlightDose = shouldHighlightDoseInLabel(row);
+  if (renderedKind === "stock" && (sizeKey === "55x95" || sizeKey === "35x100")) {
+    return renderGeneralDrugLabelName(row, sizeKey, highlightDose);
+  }
+  return renderLabelName(row, highlightDose);
+}
+
 function renderNarcoticFortyLabelName(row: DrugLabelData) {
   const lines = getNarcoticFortyLabelNameLines(row.name);
   const lineCountClass = `drug-label-name-lines-${Math.min(lines.length, 4)}`;
@@ -743,8 +771,10 @@ function renderLabelTopline(row: DrugLabelData) {
     <div className="drug-label-topline">
       {cautionText ? <span className="drug-label-warning-flag">{cautionText}</span> : <span className="drug-label-warning-spacer" />}
       <div className="drug-label-code-stack">
-        <strong>{row.code}</strong>
-        {showCodeStorageLabel ? <small className={`label-code-storage ${row.storageTone}`}>{row.storageLabel}</small> : null}
+        <div className="drug-label-code-line">
+          {showCodeStorageLabel ? <small className={`label-code-storage ${row.storageTone}`}>{row.storageLabel}</small> : null}
+          <strong>{row.code}</strong>
+        </div>
         {isEcartLabelKind(row.kind) ? <span className="label-storage-badge ecart">E-cart</span> : null}
         {row.totalQuantity !== undefined ? <small className="label-quantity-circle">{row.totalQuantity}</small> : null}
       </div>
@@ -2911,7 +2941,7 @@ export function App() {
       <article className={className} style={labelSizeCssVars(sizeKey)} key={key}>
         {isNarcoticFortyLabel ? renderNarcoticFortyTopline(row) : renderLabelTopline(row)}
         <h3 className={row.fluidTone ? `fluid-name ${row.fluidTone}` : undefined}>
-          {isNarcoticFortyLabel ? renderNarcoticFortyLabelName(row) : renderLabelName(row, false)}
+          {isNarcoticFortyLabel ? renderNarcoticFortyLabelName(row) : renderDrugLabelName(row, renderedKind, sizeKey)}
         </h3>
         {isNarcoticFortyLabel ? renderNarcoticFortyFooter(row) : renderLabelSpec(row)}
       </article>

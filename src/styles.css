@@ -2137,6 +2137,14 @@ button {
   text-align: right;
 }
 
+.drug-label-code-line {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  min-width: 0;
+}
+
 .drug-label-topline strong {
   color: var(--brand-brown);
   font-family: Verdana, "Segoe UI", "Malgun Gothic", sans-serif;
@@ -2161,6 +2169,14 @@ button {
   overflow-wrap: anywhere;
   word-break: keep-all;
   text-align: center;
+}
+
+.dose-number-highlight {
+  display: inline-block;
+  padding: 0 0.04em;
+  color: #ef1d19;
+  background: #fff200;
+  line-height: 1;
 }
 
 .drug-name-parenthetical {
@@ -3300,6 +3316,86 @@ button {
   align-self: center;
   font-size: 34px;
   line-height: 0.98;
+}
+
+.drug-label-item.label-size-55x95.label-kind-stock,
+.drug-label-item.label-size-35x100.label-kind-stock {
+  gap: 2mm;
+}
+
+.drug-label-item.label-size-35x100.label-kind-stock {
+  padding: 2.5mm 4mm;
+}
+
+.drug-label-item.label-size-55x95.label-kind-stock .label-code-storage.cold,
+.drug-label-item.label-size-35x100.label-kind-stock .label-code-storage.cold {
+  padding: 3px 7px;
+  border-radius: 999px;
+  color: #0b5c88;
+  background: #dff3ff;
+  font-size: 11px;
+}
+
+.drug-label-item.label-size-55x95.label-kind-stock .drug-label-name-lines,
+.drug-label-item.label-size-35x100.label-kind-stock .drug-label-name-lines {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  width: 100%;
+  max-width: 100%;
+  color: #111827;
+  text-align: center;
+}
+
+.drug-label-item.label-size-55x95.label-kind-stock .drug-label-name-line,
+.drug-label-item.label-size-35x100.label-kind-stock .drug-label-name-line {
+  display: block;
+  max-width: 100%;
+  font-weight: 1000;
+  line-height: 1.03;
+  white-space: normal;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.drug-label-item.label-size-55x95.label-kind-stock .drug-label-name-lines {
+  gap: 0.8mm;
+  font-size: 38px;
+}
+
+.drug-label-item.label-size-55x95.label-kind-stock .drug-label-name-lines-3 {
+  gap: 0.6mm;
+  font-size: 31px;
+}
+
+.drug-label-item.label-size-55x95.label-kind-stock .drug-label-name-lines-4 {
+  gap: 0.35mm;
+  font-size: 26px;
+}
+
+.drug-label-item.label-size-55x95.label-kind-stock .drug-label-name-lines-5 {
+  gap: 0.2mm;
+  font-size: 22px;
+}
+
+.drug-label-item.label-size-35x100.label-kind-stock .drug-label-name-lines {
+  gap: 0.35mm;
+  font-size: 27px;
+}
+
+.drug-label-item.label-size-35x100.label-kind-stock .drug-label-name-lines-3 {
+  gap: 0.25mm;
+  font-size: 22px;
+}
+
+.drug-label-item.label-size-35x100.label-kind-stock .drug-label-name-lines-4 {
+  gap: 0.15mm;
+  font-size: 18px;
+}
+
+.drug-label-item.label-size-35x100.label-kind-stock .drug-label-name-lines-5 {
+  gap: 0;
+  font-size: 15px;
 }
 
 .print-label dl {
