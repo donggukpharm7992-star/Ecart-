@@ -76,6 +76,26 @@ export function mergeGeneratedRooms(rooms: StockRoom[], generatedRooms: readonly
   return merged;
 }
 
+export function mergeGeneratedStockDrugs<T extends StockDrug>(
+  drugs: T[],
+  generatedDrugs: readonly T[],
+  normalizeCode: (code: string) => string = (code) => code,
+) {
+  const byCode = new Map<string, T>();
+
+  for (const drug of generatedDrugs) {
+    const code = normalizeCode(drug.code);
+    byCode.set(code, { ...drug, code });
+  }
+
+  for (const drug of drugs) {
+    const code = normalizeCode(drug.code);
+    byCode.set(code, { ...(byCode.get(code) ?? drug), ...drug, code });
+  }
+
+  return sortStockDrugsByName([...byCode.values()]);
+}
+
 function allocationKey(roomId: string, drugCode: string) {
   return `${roomId}::${drugCode}`;
 }

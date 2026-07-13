@@ -212,6 +212,18 @@ describe("generated inventory data corrections", () => {
     expect(staleQuantities).toEqual([]);
   });
 
+  it("keeps the deployed static app state narcotic master aligned with generated source drugs", () => {
+    const staticState = JSON.parse(readFileSync("app-state/shared-state.json", "utf8")) as {
+      state?: { narcoticDrugs?: typeof NARCOTIC_DRUGS };
+    };
+    const staticDrugCodes = new Set((staticState.state?.narcoticDrugs ?? []).map((drug) => drug.code));
+    const missingGeneratedDrugs = NARCOTIC_DRUGS.filter((drug) => !staticDrugCodes.has(drug.code)).map(
+      (drug) => `${drug.code}: ${drug.productName}`,
+    );
+
+    expect(missingGeneratedDrugs).toEqual([]);
+  });
+
   it("refreshes persisted NICU E-cart rows with generated hospital common names", () => {
     const state = normalizeEcartInspectionState({
       items: [{ id: "NICU-27", code: "", name: "Normal saline", dosage: "50ml - Bag", quantity: 1, checked: true, expiryDate: "2026-12-31" }],

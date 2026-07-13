@@ -8,6 +8,7 @@ import {
   filterMasterRowsByKind,
   filterMasterRowsWithStock,
   mergeGeneratedRooms,
+  mergeGeneratedStockDrugs,
   reconcileGeneratedAllocations,
   type MasterRow,
   sortStockDrugsByName,
@@ -183,6 +184,16 @@ describe("inventory allocation state", () => {
       ["DREMM", 10],
       ["DSR", 0],
     ]);
+  });
+
+  it("restores generated source drugs missing from saved master state", () => {
+    const generated = [
+      { ...drugs[0], code: "XREMIMA2", productName: "Byfavo 20mg inj" },
+      { ...drugs[1], code: "XSUFEN50", productName: "Sufental 50mcg/ml inj" },
+    ];
+    const saved = [{ ...drugs[0], code: "XCUSTOM", productName: "Custom controlled drug" }];
+
+    expect(mergeGeneratedStockDrugs(saved, generated).map((drug) => drug.code).sort()).toEqual(["XCUSTOM", "XREMIMA2", "XSUFEN50"]);
   });
 
   it("keeps generated source quantities ahead of stale saved allocation quantities", () => {
