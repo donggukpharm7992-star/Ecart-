@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { protectNarcoticLotAssignments } from "../vite.config";
+import { isGitLockError, protectNarcoticLotAssignments } from "../vite.config";
 import { buildAppStateApiUrl, configureServerSyncBaseUrl, loadServerState, saveServerState } from "./serverSync";
 
 const originalFetch = globalThis.fetch;
@@ -154,6 +154,17 @@ describe("server sync client", () => {
 });
 
 describe("app state sync protection", () => {
+  it("detects transient git index lock failures for retry", () => {
+    expect(
+      isGitLockError(
+        new Error(
+          "fatal: Unable to create 'H:/업무 앱/비품관리/.git/index.lock': File exists.\nAnother git process seems to be running",
+        ),
+      ),
+    ).toBe(true);
+    expect(isGitLockError(new Error("fatal: not a git repository"))).toBe(false);
+  });
+
   it("keeps richer narcotic LOT assignments when a stale browser saves the same upload file", () => {
     const current = {
       version: 1,

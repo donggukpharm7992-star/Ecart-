@@ -27,6 +27,29 @@ async function runGit(args: string[]) {
   return execFileAsync("git", args, { cwd: rootDir, windowsHide: true });
 }
 
+function wait(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+export function isGitLockError(error: unknown) {
+  if (!(error instanceof Error)) return false;
+  return error.message.includes("index.lock") || error.message.includes("Another git process seems to be running");
+}
+
+async function runGitWithRetry(args: string[], attempts = 6) {
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      return await runGit(args);
+    } catch (error) {
+      lastError = error;
+      if (!isGitLockError(error) || attempt === attempts) throw error;
+      await wait(700 * attempt);
+    }
+  }
+  throw lastError;
+}
+
 class StateConflictError extends Error {
   constructor(message: string) {
     super(message);
@@ -87,11 +110,11 @@ async function saveStateAndPush(body: string) {
     }
   }
   await fs.writeFile(appStatePath, `${JSON.stringify(envelopeToSave, null, 2)}\n`, "utf8");
-  await runGit(["add", "--", appStateRelativePath]);
-  const status = await runGit(["status", "--porcelain", "--", appStateRelativePath]);
+  await runGitWithRetry(["add", "--", appStateRelativePath]);
+  const status = await runGitWithRetry(["status", "--porcelain", "--", appStateRelativePath]);
   if (status.stdout.trim()) {
-    await runGit(["commit", "-m", "Sync app state", "--", appStateRelativePath]);
-    await runGit(["push", "origin", "main"]);
+    await runGitWithRetry(["commit", "-m", "Sync app state", "--", appStateRelativePath]);
+    await runGitWithRetry(["push", "origin", "main"]);
   }
   const saved = await fs.readFile(appStatePath, "utf8");
   return { sha: stateSha(saved) };
