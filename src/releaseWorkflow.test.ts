@@ -5,6 +5,7 @@ const packageJson = JSON.parse(readFileSync(new URL("../package.json", import.me
   scripts?: Record<string, string>;
 };
 const releaseScript = readFileSync(new URL("../scripts/release_app.mjs", import.meta.url), "utf8");
+const publishScript = readFileSync(new URL("../scripts/publish_gh_pages.mjs", import.meta.url), "utf8");
 const agents = readFileSync(new URL("../AGENTS.md", import.meta.url), "utf8");
 
 describe("release workflow", () => {
@@ -23,5 +24,12 @@ describe("release workflow", () => {
     expect(agents).toContain("After any code, data, document, or asset change");
     expect(agents).toContain("run `npm run release`");
     expect(agents).toContain("origin and backup");
+  });
+
+  it("preserves the deployed sync server config before rebuilding GitHub Pages", () => {
+    const publishMain = publishScript.slice(publishScript.indexOf("async function main()"));
+    expect(publishScript).toContain('for (const fileName of [".nojekyll", "sync-config.json"])');
+    expect(publishMain.indexOf("syncDistWithRemote(token);")).toBeLessThan(publishMain.indexOf("captureDistKeepFiles()"));
+    expect(publishMain.indexOf("captureDistKeepFiles()")).toBeLessThan(publishMain.indexOf('npm.cmd run build'));
   });
 });

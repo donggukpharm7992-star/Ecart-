@@ -151,16 +151,25 @@ function createAskpass() {
   );
 }
 
-function pushWithToken(token) {
+function gitAuthEnv(token) {
   createAskpass();
-  const env = {
+  return {
     ...process.env,
     GITHUB_TOKEN: token,
     GIT_ASKPASS: askpassPath,
     GIT_TERMINAL_PROMPT: "0",
   };
+}
+
+function syncDistWithRemote(token) {
+  const env = gitAuthEnv(token);
   run("git", distGitAuthArgs(["fetch", "origin", "gh-pages"]), { cwd: distDir, env });
   run("git", distGitAuthArgs(["pull", "--rebase", "origin", "gh-pages"]), { cwd: distDir, env });
+}
+
+function pushWithToken(token) {
+  const env = gitAuthEnv(token);
+  syncDistWithRemote(token);
   run("git", distGitAuthArgs(["push", "origin", "gh-pages"]), { cwd: distDir, env });
 }
 
@@ -171,6 +180,7 @@ async function main() {
   }
 
   const token = readToken();
+  syncDistWithRemote(token);
   const keep = captureDistKeepFiles();
   if (process.platform === "win32") {
     run("cmd.exe", ["/d", "/s", "/c", "npm.cmd run build"]);
