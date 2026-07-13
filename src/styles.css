@@ -3334,21 +3334,78 @@ button {
 
 .drug-label-item.label-size-55x95.label-kind-stock,
 .drug-label-item.label-size-35x100.label-kind-stock {
-  gap: 2mm;
+  gap: 0;
+  padding: 0;
+  border: 1px solid #111;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.drug-label-item.label-size-55x95.label-kind-stock .drug-label-topline,
+.drug-label-item.label-size-35x100.label-kind-stock .drug-label-topline {
+  align-items: center;
+  box-sizing: border-box;
+  min-height: 10mm;
+  padding: 1.6mm 3mm;
+  border-bottom: 1px solid #111;
+}
+
+.drug-label-item.label-size-35x100.label-kind-stock .drug-label-topline {
+  min-height: 8mm;
+  padding: 1mm 2.5mm;
 }
 
 .drug-label-item.label-size-55x95.label-kind-stock h3,
 .drug-label-item.label-size-35x100.label-kind-stock h3 {
   display: flex;
   align-items: center;
+  align-self: stretch;
   justify-content: center;
+  justify-self: stretch;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 2mm 4mm 3mm;
   overflow: visible;
   max-width: 100%;
   -webkit-line-clamp: unset;
 }
 
 .drug-label-item.label-size-35x100.label-kind-stock {
-  padding: 2.5mm 4mm;
+  padding: 0;
+}
+
+.drug-label-item.label-size-35x100.label-kind-stock h3 {
+  padding: 1.5mm 3mm 2mm;
+}
+
+.drug-label-item.label-size-55x95.label-kind-stock.high-risk-label .drug-label-topline,
+.drug-label-item.label-size-35x100.label-kind-stock.high-risk-label .drug-label-topline {
+  border-bottom-color: #991b1b;
+  background: #dc2626;
+}
+
+.drug-label-item.label-size-55x95.label-kind-stock.light-protected-label:not(.high-risk-label) .drug-label-topline,
+.drug-label-item.label-size-35x100.label-kind-stock.light-protected-label:not(.high-risk-label) .drug-label-topline {
+  border-bottom-color: #047857;
+  background: #0f8f52;
+}
+
+.drug-label-item.label-size-55x95.label-kind-stock.light-protected-label:not(.high-risk-label) h3,
+.drug-label-item.label-size-35x100.label-kind-stock.light-protected-label:not(.high-risk-label) h3 {
+  background: #e0f7e8;
+}
+
+.drug-label-item.label-size-55x95.label-kind-stock:is(.high-risk-label, .light-protected-label) .drug-label-warning-flag,
+.drug-label-item.label-size-35x100.label-kind-stock:is(.high-risk-label, .light-protected-label) .drug-label-warning-flag {
+  padding: 0;
+  border-radius: 0;
+  color: #fff;
+  background: transparent;
+}
+
+.drug-label-item.label-size-55x95.label-kind-stock:is(.high-risk-label, .light-protected-label) .drug-label-topline strong,
+.drug-label-item.label-size-35x100.label-kind-stock:is(.high-risk-label, .light-protected-label) .drug-label-topline strong {
+  color: #d1d5db;
 }
 
 .drug-label-item.label-size-55x95.label-kind-stock .label-code-storage,
@@ -3362,6 +3419,12 @@ button {
 .drug-label-item.label-size-35x100.label-kind-stock .label-code-storage.cold {
   color: #0b5c88;
   background: #dff3ff;
+}
+
+.drug-label-item.label-size-55x95.label-kind-stock .label-code-storage.light,
+.drug-label-item.label-size-35x100.label-kind-stock .label-code-storage.light {
+  color: #047857;
+  background: #d8f7df;
 }
 
 .drug-label-item.label-size-55x95.label-kind-stock .drug-label-name-lines,

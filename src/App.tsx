@@ -621,6 +621,10 @@ function labelCodeStorageBadges(row: DrugLabelData) {
     badges.push({ label: row.storageLabel, tone: row.storageTone });
   }
 
+  if (row.highRisk && isLightProtectedLabel(row)) {
+    badges.push({ label: "차광", tone: "light" });
+  }
+
   return badges;
 }
 
@@ -778,6 +782,16 @@ function labelFlagLabels(row: DrugLabelData) {
   return getDrugLabelFlagLabels(row);
 }
 
+function isLightProtectedLabel(row: DrugLabelData) {
+  return labelFlagLabels(row).some((label) => label.includes("차광"));
+}
+
+function labelToplineFlagLabels(row: DrugLabelData) {
+  const labels = labelFlagLabels(row);
+  if (!row.highRisk) return labels;
+  return labels.filter((label) => !label.includes("차광"));
+}
+
 function labelCautionBadgeClass(label: string) {
   if (label === "마약") return "narcotic-group";
   if (label === "향정") return "psychotropic";
@@ -786,7 +800,7 @@ function labelCautionBadgeClass(label: string) {
 }
 
 function renderLabelTopline(row: DrugLabelData) {
-  const cautionText = labelFlagLabels(row).join(" / ");
+  const cautionText = labelToplineFlagLabels(row).join(" / ");
   const codeStorageBadges = labelCodeStorageBadges(row);
   return (
     <div className="drug-label-topline">
@@ -2944,6 +2958,7 @@ export function App() {
   function renderDrugLabelArticle(entry: PrintableDrugLabel, key: string) {
     const { row, sizeKey } = entry;
     const flagLabels = labelFlagLabels(row);
+    const isLightProtected = isLightProtectedLabel(row);
     const renderedKind = isEcartLabelKind(row.kind) ? "ecart" : row.kind;
     const nameClass = getDrugLabelNameClass(row.name, renderedKind, sizeKey);
     const isNarcoticFortyLabel = renderedKind === "narcotic" && sizeKey === "40x70";
@@ -2957,6 +2972,7 @@ export function App() {
       row.fluidTone ? "fluid-label" : "",
       row.fluidTone ? `fluid-tone-${row.fluidTone}` : "",
       row.highRisk ? "high-risk-label" : "",
+      isLightProtected ? "light-protected-label" : "",
       flagLabels.length > 0 ? "has-caution-label" : "",
       row.doseCaution ? "has-dose-caution" : "",
       hasDoseWarningLabel ? "has-dose-warning-label" : "",
