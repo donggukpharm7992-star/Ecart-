@@ -6076,8 +6076,8 @@
         "id": "INJ",
         "label": "INJ",
         "sourceColumn": "INJ",
-        "sourceSheet": "비치향정,마약현황",
-        "sourceUpdatedAt": "",
+        "sourceSheet": "점검",
+        "sourceUpdatedAt": "26.06.18",
         "floor": "1층",
         "allocationCount": 0,
         "totalQuantity": 0
@@ -6086,18 +6086,18 @@
         "id": "DREMM",
         "label": "DREMM",
         "sourceColumn": "DREMM",
-        "sourceSheet": "비치향정,마약현황",
-        "sourceUpdatedAt": "",
+        "sourceSheet": "점검",
+        "sourceUpdatedAt": "26.06.18",
         "floor": "1층",
         "allocationCount": 4,
-        "totalQuantity": 45
+        "totalQuantity": 30
       },
       {
         "id": "ER",
         "label": "ER (응급실)",
         "sourceColumn": "ER",
-        "sourceSheet": "비치향정,마약현황",
-        "sourceUpdatedAt": "",
+        "sourceSheet": "점검",
+        "sourceUpdatedAt": "26.06.18",
         "floor": "1층",
         "allocationCount": 3,
         "totalQuantity": 11
@@ -6106,271 +6106,31 @@
         "id": "GICLA",
         "label": "GICLA",
         "sourceColumn": "GICLA",
-        "sourceSheet": "비치향정,마약현황",
-        "sourceUpdatedAt": "",
+        "sourceSheet": "점검",
+        "sourceUpdatedAt": "26.06.18",
         "floor": "2층",
-        "allocationCount": 6,
-        "totalQuantity": 142
+        "allocationCount": 5,
+        "totalQuantity": 150
       },
       {
         "id": "HBEF",
         "label": "HBEF",
         "sourceColumn": "HBEF",
-        "sourceSheet": "비치향정,마약현황",
-        "sourceUpdatedAt": "",
+        "sourceSheet": "점검",
+        "sourceUpdatedAt": "26.06.18",
         "floor": "2층",
-        "allocationCount": 8,
-        "totalQuantity": 23
+        "allocationCount": 9,
+        "totalQuantity": 25
       },
       {
         "id": "MICU",
         "label": "MICU (내과중환자실)",
         "sourceColumn": "MICU",
-        "sourceSheet": "비치향정,마약현황",
-        "sourceUpdatedAt": "",
+        "sourceSheet": "점검",
+        "sourceUpdatedAt": "26.06.18",
         "floor": "2층",
-        "allocationCount": 4,
-        "totalQuantity": 10
-      },
-      {
-        "id": "AN",
-        "label": "AN (마취통증의학과)",
-        "sourceColumn": "AN",
-        "sourceSheet": "비치향정,마약현황",
-        "sourceUpdatedAt": "",
-        "floor": "3층",
-        "allocationCount": 15,
-        "totalQuantity": 271
-      },
-      {
-        "id": "OR",
-        "label": "OR (수술실)",
-        "sourceColumn": "OR",
-        "sourceSheet": "비치향정,마약현황",
-        "sourceUpdatedAt": "",
-        "floor": "3층",
-        "allocationCount": 1,
-        "totalQuantity": 1
-      },
-      {
-        "id": "SICU",
-        "label": "SICU (외과중환자실)",
-        "sourceColumn": "SICU",
-        "sourceSheet": "비치향정,마약현황",
-        "sourceUpdatedAt": "",
-        "floor": "3층",
-        "allocationCount": 3,
-        "totalQuantity": 15
-      },
-      {
-        "id": "ADR",
-        "label": "ADR",
-        "sourceColumn": "ADR",
-        "sourceSheet": "비치향정,마약현황",
-        "sourceUpdatedAt": "",
-        "floor": "4층",
-        "allocationCount": 1,
-        "totalQuantity": 2
-      },
-      {
-        "id": "HPC",
-        "label": "HPC",
-        "sourceColumn": "HPC",
-        "sourceSheet": "비치향정,마약현황",
-        "sourceUpdatedAt": "",
-        "floor": "4층",
-        "allocationCount": 2,
-        "totalQuantity": 95
-      },
-      {
-        "id": "난임",
-        "label": "난임",
-        "sourceColumn": "난임",
-        "sourceSheet": "비치향정,마약현황",
-        "sourceUpdatedAt": "",
-        "floor": "4층",
-        "allocationCount": 0,
-        "totalQuantity": 0
-      },
-      {
-        "id": "DRL",
-        "label": "DRL",
-        "sourceColumn": "DRL",
-        "sourceSheet": "비치향정,마약현황",
-        "sourceUpdatedAt": "",
-        "floor": "4층",
-        "allocationCount": 3,
-        "totalQuantity": 9
-      },
-      {
-        "id": "NICU",
-        "label": "NICU (신생아중환자실)",
-        "sourceColumn": "NICU",
-        "sourceSheet": "비치향정,마약현황",
-        "sourceUpdatedAt": "",
-        "floor": "4층",
-        "allocationCount": 2,
-        "totalQuantity": 5
-      },
-      {
-        "id": "42",
-        "label": "42병동",
-        "sourceColumn": "42",
-        "sourceSheet": "비치향정,마약현황",
-        "sourceUpdatedAt": "",
-        "floor": "4층",
-        "allocationCount": 1,
-        "totalQuantity": 1
-      },
-      {
-        "id": "51",
-        "label": "51병동",
-        "sourceColumn": "51",
-        "sourceSheet": "비치향정,마약현황",
-        "sourceUpdatedAt": "",
-        "floor": "5층 ~ 12층",
-        "allocationCount": 0,
-        "totalQuantity": 0
-      },
-      {
-        "id": "52",
-        "label": "52병동",
-        "sourceColumn": "52",
-        "sourceSheet": "비치향정,마약현황",
-        "sourceUpdatedAt": "",
-        "floor": "5층 ~ 12층",
-        "allocationCount": 0,
-        "totalQuantity": 0
-      },
-      {
-        "id": "61",
-        "label": "61병동",
-        "sourceColumn": "61",
-        "sourceSheet": "비치향정,마약현황",
-        "sourceUpdatedAt": "",
-        "floor": "5층 ~ 12층",
-        "allocationCount": 1,
-        "totalQuantity": 1
-      },
-      {
-        "id": "62",
-        "label": "62병동",
-        "sourceColumn": "62",
-        "sourceSheet": "비치향정,마약현황",
-        "sourceUpdatedAt": "",
-        "floor": "5층 ~ 12층",
-        "allocationCount": 1,
-        "totalQuantity": 1
-      },
-      {
-        "id": "71",
-        "label": "71병동",
-        "sourceColumn": "71",
-        "sourceSheet": "비치향정,마약현황",
-        "sourceUpdatedAt": "",
-        "floor": "5층 ~ 12층",
-        "allocationCount": 2,
-        "totalQuantity": 2
-      },
-      {
-        "id": "72",
-        "label": "72병동",
-        "sourceColumn": "72",
-        "sourceSheet": "비치향정,마약현황",
-        "sourceUpdatedAt": "",
-        "floor": "5층 ~ 12층",
-        "allocationCount": 3,
-        "totalQuantity": 4
-      },
-      {
-        "id": "81",
-        "label": "81병동",
-        "sourceColumn": "81",
-        "sourceSheet": "비치향정,마약현황",
-        "sourceUpdatedAt": "",
-        "floor": "5층 ~ 12층",
-        "allocationCount": 2,
-        "totalQuantity": 3
-      },
-      {
-        "id": "82",
-        "label": "82병동",
-        "sourceColumn": "82",
-        "sourceSheet": "비치향정,마약현황",
-        "sourceUpdatedAt": "",
-        "floor": "5층 ~ 12층",
-        "allocationCount": 2,
-        "totalQuantity": 4
-      },
-      {
-        "id": "91",
-        "label": "91병동",
-        "sourceColumn": "91",
-        "sourceSheet": "비치향정,마약현황",
-        "sourceUpdatedAt": "",
-        "floor": "5층 ~ 12층",
-        "allocationCount": 3,
-        "totalQuantity": 6
-      },
-      {
-        "id": "92",
-        "label": "92병동",
-        "sourceColumn": "92",
-        "sourceSheet": "비치향정,마약현황",
-        "sourceUpdatedAt": "",
-        "floor": "5층 ~ 12층",
-        "allocationCount": 2,
-        "totalQuantity": 3
-      },
-      {
-        "id": "101",
-        "label": "101병동",
-        "sourceColumn": "101",
-        "sourceSheet": "비치향정,마약현황",
-        "sourceUpdatedAt": "",
-        "floor": "5층 ~ 12층",
-        "allocationCount": 3,
-        "totalQuantity": 8
-      },
-      {
-        "id": "102",
-        "label": "102병동",
-        "sourceColumn": "102",
-        "sourceSheet": "비치향정,마약현황",
-        "sourceUpdatedAt": "",
-        "floor": "5층 ~ 12층",
-        "allocationCount": 2,
-        "totalQuantity": 2
-      },
-      {
-        "id": "111",
-        "label": "111병동",
-        "sourceColumn": "111",
-        "sourceSheet": "비치향정,마약현황",
-        "sourceUpdatedAt": "",
-        "floor": "5층 ~ 12층",
-        "allocationCount": 2,
-        "totalQuantity": 4
-      },
-      {
-        "id": "112",
-        "label": "112병동",
-        "sourceColumn": "112",
-        "sourceSheet": "비치향정,마약현황",
-        "sourceUpdatedAt": "",
-        "floor": "5층 ~ 12층",
-        "allocationCount": 4,
-        "totalQuantity": 15
-      },
-      {
-        "id": "121",
-        "label": "121병동",
-        "sourceColumn": "121",
-        "sourceSheet": "비치향정,마약현황",
-        "sourceUpdatedAt": "",
-        "floor": "5층 ~ 12층",
-        "allocationCount": 3,
-        "totalQuantity": 9
+        "allocationCount": 5,
+        "totalQuantity": 11
       },
       {
         "id": "DSR",
@@ -6383,6 +6143,216 @@
         "totalQuantity": 0
       },
       {
+        "id": "AN",
+        "label": "AN (마취통증의학과)",
+        "sourceColumn": "AN",
+        "sourceSheet": "점검",
+        "sourceUpdatedAt": "26.06.18",
+        "floor": "3층",
+        "allocationCount": 18,
+        "totalQuantity": 302
+      },
+      {
+        "id": "OR",
+        "label": "OR (수술실)",
+        "sourceColumn": "OR",
+        "sourceSheet": "점검",
+        "sourceUpdatedAt": "26.06.18",
+        "floor": "3층",
+        "allocationCount": 1,
+        "totalQuantity": 1
+      },
+      {
+        "id": "SICU",
+        "label": "SICU (외과중환자실)",
+        "sourceColumn": "SICU",
+        "sourceSheet": "점검",
+        "sourceUpdatedAt": "26.06.18",
+        "floor": "3층",
+        "allocationCount": 3,
+        "totalQuantity": 15
+      },
+      {
+        "id": "ADR",
+        "label": "ADR",
+        "sourceColumn": "ADR",
+        "sourceSheet": "점검",
+        "sourceUpdatedAt": "26.06.18",
+        "floor": "4층",
+        "allocationCount": 1,
+        "totalQuantity": 1
+      },
+      {
+        "id": "HPC",
+        "label": "HPC",
+        "sourceColumn": "HPC",
+        "sourceSheet": "점검",
+        "sourceUpdatedAt": "26.06.18",
+        "floor": "4층",
+        "allocationCount": 3,
+        "totalQuantity": 135
+      },
+      {
+        "id": "난임",
+        "label": "난임",
+        "sourceColumn": "난임",
+        "sourceSheet": "점검",
+        "sourceUpdatedAt": "26.06.18",
+        "floor": "4층",
+        "allocationCount": 0,
+        "totalQuantity": 0
+      },
+      {
+        "id": "DRL",
+        "label": "DRL",
+        "sourceColumn": "DRL",
+        "sourceSheet": "점검",
+        "sourceUpdatedAt": "26.06.18",
+        "floor": "4층",
+        "allocationCount": 2,
+        "totalQuantity": 6
+      },
+      {
+        "id": "NICU",
+        "label": "NICU (신생아중환자실)",
+        "sourceColumn": "NICU",
+        "sourceSheet": "점검",
+        "sourceUpdatedAt": "26.06.18",
+        "floor": "4층",
+        "allocationCount": 2,
+        "totalQuantity": 5
+      },
+      {
+        "id": "42",
+        "label": "42병동",
+        "sourceColumn": "42",
+        "sourceSheet": "점검",
+        "sourceUpdatedAt": "26.06.18",
+        "floor": "4층",
+        "allocationCount": 1,
+        "totalQuantity": 1
+      },
+      {
+        "id": "51",
+        "label": "51병동",
+        "sourceColumn": "51",
+        "sourceSheet": "점검",
+        "sourceUpdatedAt": "26.06.18",
+        "floor": "5층 ~ 12층",
+        "allocationCount": 0,
+        "totalQuantity": 0
+      },
+      {
+        "id": "52",
+        "label": "52병동",
+        "sourceColumn": "52",
+        "sourceSheet": "점검",
+        "sourceUpdatedAt": "26.06.18",
+        "floor": "5층 ~ 12층",
+        "allocationCount": 0,
+        "totalQuantity": 0
+      },
+      {
+        "id": "61",
+        "label": "61병동",
+        "sourceColumn": "61",
+        "sourceSheet": "점검",
+        "sourceUpdatedAt": "26.06.18",
+        "floor": "5층 ~ 12층",
+        "allocationCount": 0,
+        "totalQuantity": 0
+      },
+      {
+        "id": "62",
+        "label": "62병동",
+        "sourceColumn": "62",
+        "sourceSheet": "점검",
+        "sourceUpdatedAt": "26.06.18",
+        "floor": "5층 ~ 12층",
+        "allocationCount": 0,
+        "totalQuantity": 0
+      },
+      {
+        "id": "71",
+        "label": "71병동",
+        "sourceColumn": "71",
+        "sourceSheet": "점검",
+        "sourceUpdatedAt": "26.06.18",
+        "floor": "5층 ~ 12층",
+        "allocationCount": 2,
+        "totalQuantity": 2
+      },
+      {
+        "id": "72",
+        "label": "72병동",
+        "sourceColumn": "72",
+        "sourceSheet": "점검",
+        "sourceUpdatedAt": "26.06.18",
+        "floor": "5층 ~ 12층",
+        "allocationCount": 3,
+        "totalQuantity": 4
+      },
+      {
+        "id": "81",
+        "label": "81병동",
+        "sourceColumn": "81",
+        "sourceSheet": "점검",
+        "sourceUpdatedAt": "26.06.18",
+        "floor": "5층 ~ 12층",
+        "allocationCount": 2,
+        "totalQuantity": 4
+      },
+      {
+        "id": "82",
+        "label": "82병동",
+        "sourceColumn": "82",
+        "sourceSheet": "점검",
+        "sourceUpdatedAt": "26.06.18",
+        "floor": "5층 ~ 12층",
+        "allocationCount": 1,
+        "totalQuantity": 2
+      },
+      {
+        "id": "91",
+        "label": "91병동",
+        "sourceColumn": "91",
+        "sourceSheet": "점검",
+        "sourceUpdatedAt": "26.06.18",
+        "floor": "5층 ~ 12층",
+        "allocationCount": 0,
+        "totalQuantity": 0
+      },
+      {
+        "id": "92",
+        "label": "92병동",
+        "sourceColumn": "92",
+        "sourceSheet": "점검",
+        "sourceUpdatedAt": "26.06.18",
+        "floor": "5층 ~ 12층",
+        "allocationCount": 1,
+        "totalQuantity": 2
+      },
+      {
+        "id": "101",
+        "label": "101병동",
+        "sourceColumn": "101",
+        "sourceSheet": "점검",
+        "sourceUpdatedAt": "26.06.18",
+        "floor": "5층 ~ 12층",
+        "allocationCount": 3,
+        "totalQuantity": 6
+      },
+      {
+        "id": "102",
+        "label": "102병동",
+        "sourceColumn": "102",
+        "sourceSheet": "점검",
+        "sourceUpdatedAt": "26.06.18",
+        "floor": "5층 ~ 12층",
+        "allocationCount": 2,
+        "totalQuantity": 2
+      },
+      {
         "id": "RRT",
         "label": "RRT",
         "sourceColumn": "RRT",
@@ -6391,6 +6361,36 @@
         "floor": "5층 ~ 12층",
         "allocationCount": 1,
         "totalQuantity": 2
+      },
+      {
+        "id": "111",
+        "label": "111병동",
+        "sourceColumn": "111",
+        "sourceSheet": "점검",
+        "sourceUpdatedAt": "26.06.18",
+        "floor": "5층 ~ 12층",
+        "allocationCount": 2,
+        "totalQuantity": 4
+      },
+      {
+        "id": "112",
+        "label": "112병동",
+        "sourceColumn": "112",
+        "sourceSheet": "점검",
+        "sourceUpdatedAt": "26.06.18",
+        "floor": "5층 ~ 12층",
+        "allocationCount": 4,
+        "totalQuantity": 15
+      },
+      {
+        "id": "121",
+        "label": "121병동",
+        "sourceColumn": "121",
+        "sourceSheet": "점검",
+        "sourceUpdatedAt": "26.06.18",
+        "floor": "5층 ~ 12층",
+        "allocationCount": 3,
+        "totalQuantity": 7
       }
     ],
     "narcoticDrugs": [
@@ -6633,14 +6633,54 @@
         "requiredQty": 10
       },
       {
-        "roomId": "AN",
-        "drugCode": "XLZPAM4",
-        "requiredQty": 2
+        "roomId": "101",
+        "drugCode": "XDDP",
+        "requiredQty": 1
       },
       {
         "roomId": "121",
-        "drugCode": "XLZPAM4",
+        "drugCode": "XDDP",
         "requiredQty": 2
+      },
+      {
+        "roomId": "ER",
+        "drugCode": "XETOM",
+        "requiredQty": 2
+      },
+      {
+        "roomId": "HBEF",
+        "drugCode": "XETOM",
+        "requiredQty": 2
+      },
+      {
+        "roomId": "MICU",
+        "drugCode": "XETOM",
+        "requiredQty": 1
+      },
+      {
+        "roomId": "AN",
+        "drugCode": "XETOM",
+        "requiredQty": 10
+      },
+      {
+        "roomId": "RRT",
+        "drugCode": "XETOM",
+        "requiredQty": 2
+      },
+      {
+        "roomId": "MICU",
+        "drugCode": "XKETA5",
+        "requiredQty": 1
+      },
+      {
+        "roomId": "AN",
+        "drugCode": "XKETA5",
+        "requiredQty": 2
+      },
+      {
+        "roomId": "72",
+        "drugCode": "XKETA5",
+        "requiredQty": 1
       },
       {
         "roomId": "ER",
@@ -6660,7 +6700,7 @@
       {
         "roomId": "ADR",
         "drugCode": "XLZPAM2",
-        "requiredQty": 2
+        "requiredQty": 1
       },
       {
         "roomId": "NICU",
@@ -6693,11 +6733,6 @@
         "requiredQty": 2
       },
       {
-        "roomId": "91",
-        "drugCode": "XLZPAM2",
-        "requiredQty": 2
-      },
-      {
         "roomId": "92",
         "drugCode": "XLZPAM2",
         "requiredQty": 2
@@ -6705,7 +6740,7 @@
       {
         "roomId": "101",
         "drugCode": "XLZPAM2",
-        "requiredQty": 5
+        "requiredQty": 3
       },
       {
         "roomId": "102",
@@ -6725,46 +6760,16 @@
       {
         "roomId": "121",
         "drugCode": "XLZPAM2",
-        "requiredQty": 5
-      },
-      {
-        "roomId": "ER",
-        "drugCode": "XKETA5",
-        "requiredQty": 2
-      },
-      {
-        "roomId": "MICU",
-        "drugCode": "XKETA5",
-        "requiredQty": 1
-      },
-      {
-        "roomId": "AN",
-        "drugCode": "XKETA5",
-        "requiredQty": 2
-      },
-      {
-        "roomId": "72",
-        "drugCode": "XKETA5",
-        "requiredQty": 1
-      },
-      {
-        "roomId": "DRL",
-        "drugCode": "XDDP",
         "requiredQty": 3
       },
       {
-        "roomId": "91",
-        "drugCode": "XDDP",
-        "requiredQty": 1
-      },
-      {
-        "roomId": "101",
-        "drugCode": "XDDP",
-        "requiredQty": 1
+        "roomId": "AN",
+        "drugCode": "XLZPAM4",
+        "requiredQty": 2
       },
       {
         "roomId": "121",
-        "drugCode": "XDDP",
+        "drugCode": "XLZPAM4",
         "requiredQty": 2
       },
       {
@@ -6790,7 +6795,7 @@
       {
         "roomId": "DREMM",
         "drugCode": "XMIDA5",
-        "requiredQty": 10
+        "requiredQty": 5
       },
       {
         "roomId": "ER",
@@ -6843,16 +6848,6 @@
         "requiredQty": 3
       },
       {
-        "roomId": "61",
-        "drugCode": "XMIDA5",
-        "requiredQty": 1
-      },
-      {
-        "roomId": "62",
-        "drugCode": "XMIDA5",
-        "requiredQty": 1
-      },
-      {
         "roomId": "71",
         "drugCode": "XMIDA5",
         "requiredQty": 1
@@ -6865,22 +6860,7 @@
       {
         "roomId": "81",
         "drugCode": "XMIDA5",
-        "requiredQty": 1
-      },
-      {
-        "roomId": "82",
-        "drugCode": "XMIDA5",
         "requiredQty": 2
-      },
-      {
-        "roomId": "91",
-        "drugCode": "XMIDA5",
-        "requiredQty": 3
-      },
-      {
-        "roomId": "92",
-        "drugCode": "XMIDA5",
-        "requiredQty": 1
       },
       {
         "roomId": "101",
@@ -6910,7 +6890,7 @@
       {
         "roomId": "GICLA",
         "drugCode": "XPROPO115W",
-        "requiredQty": 5
+        "requiredQty": 20
       },
       {
         "roomId": "HBEF",
@@ -6920,7 +6900,12 @@
       {
         "roomId": "AN",
         "drugCode": "XPROPO115W",
-        "requiredQty": 30
+        "requiredQty": 50
+      },
+      {
+        "roomId": "HPC",
+        "drugCode": "XPROPO115W",
+        "requiredQty": 40
       },
       {
         "roomId": "AN",
@@ -6940,22 +6925,37 @@
       {
         "roomId": "AN",
         "drugCode": "XPTS500W",
-        "requiredQty": 40
+        "requiredQty": 20
+      },
+      {
+        "roomId": "GICLA",
+        "drugCode": "XREMIMA2",
+        "requiredQty": 5
       },
       {
         "roomId": "AN",
-        "drugCode": "XAFEN1",
-        "requiredQty": 10
+        "drugCode": "XREMIMA2",
+        "requiredQty": 5
+      },
+      {
+        "roomId": "AN",
+        "drugCode": "XREMIMA",
+        "requiredQty": 5
+      },
+      {
+        "roomId": "AN",
+        "drugCode": "XSUFEN50",
+        "requiredQty": 20
       },
       {
         "roomId": "DREMM",
         "drugCode": "XFEN50",
-        "requiredQty": 15
+        "requiredQty": 10
       },
       {
         "roomId": "GICLA",
         "drugCode": "XFEN50",
-        "requiredQty": 10
+        "requiredQty": 40
       },
       {
         "roomId": "HBEF",
@@ -7000,12 +7000,12 @@
       {
         "roomId": "DREMM",
         "drugCode": "XPETH50W",
-        "requiredQty": 10
+        "requiredQty": 5
       },
       {
         "roomId": "GICLA",
         "drugCode": "XPETH50W",
-        "requiredQty": 40
+        "requiredQty": 5
       },
       {
         "roomId": "HBEF",
@@ -7030,7 +7030,7 @@
       {
         "roomId": "AN",
         "drugCode": "XREMIF1W",
-        "requiredQty": 39
+        "requiredQty": 40
       }
     ],
     "narcoticDrugCategories": {
@@ -7057,8 +7057,7 @@
       "XMORPS5W": "마약",
       "XOXCON1W": "마약",
       "XPETH50W": "마약",
-      "XREMIF1W": "마약",
-      "XAFEN1": "마약"
+      "XREMIF1W": "마약"
     },
     "narcoticCheckedItems": {
       "DREMM::XMIDA5": false

@@ -8,6 +8,7 @@ import {
   filterMasterRowsByKind,
   filterMasterRowsWithStock,
   mergeGeneratedRooms,
+  reconcileGeneratedAllocations,
   type MasterRow,
   sortStockDrugsByName,
   updateAllocationQuantity,
@@ -181,6 +182,28 @@ describe("inventory allocation state", () => {
     expect(mergeGeneratedRooms(savedRooms, generatedRooms).map((room) => [room.id, room.allocationCount])).toEqual([
       ["DREMM", 10],
       ["DSR", 0],
+    ]);
+  });
+
+  it("keeps generated source quantities ahead of stale saved allocation quantities", () => {
+    const generatedRooms = [{ id: "DREMM" }, { id: "ER" }];
+    const generatedDrugs = [{ code: "XMIDA5" }, { code: "XFEN50" }];
+    const savedAllocations = [
+      { roomId: "DREMM", drugCode: "XMIDA5", requiredQty: 10 },
+      { roomId: "DREMM", drugCode: "XFEN50", requiredQty: 15 },
+      { roomId: "CUSTOM", drugCode: "XMIDA5", requiredQty: 2 },
+      { roomId: "DREMM", drugCode: "XCUSTOM", requiredQty: 3 },
+    ];
+    const generatedAllocations = [
+      { roomId: "DREMM", drugCode: "XMIDA5", requiredQty: 5 },
+      { roomId: "DREMM", drugCode: "XFEN50", requiredQty: 10 },
+    ];
+
+    expect(reconcileGeneratedAllocations(savedAllocations, generatedAllocations, generatedRooms, generatedDrugs)).toEqual([
+      { roomId: "CUSTOM", drugCode: "XMIDA5", requiredQty: 2 },
+      { roomId: "DREMM", drugCode: "XCUSTOM", requiredQty: 3 },
+      { roomId: "DREMM", drugCode: "XMIDA5", requiredQty: 5 },
+      { roomId: "DREMM", drugCode: "XFEN50", requiredQty: 10 },
     ]);
   });
 });

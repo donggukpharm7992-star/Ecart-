@@ -126,6 +126,7 @@ import {
   filterMasterRowsWithStock,
   applyCanonicalDrugNames,
   mergeGeneratedRooms,
+  reconcileGeneratedAllocations,
   type MasterRow,
   type MasterRowKind,
   sortStockDrugsByName,
@@ -462,6 +463,10 @@ function normalizeStockAllocations(allocations: StockAllocation[], normalizeCode
   return [...byKey.values()];
 }
 
+function normalizeNarcoticAllocations(allocations: StockAllocation[]) {
+  return reconcileGeneratedAllocations(allocations, NARCOTIC_ALLOCATIONS, NARCOTIC_ROOMS, NARCOTIC_DRUGS, normalizeNarcoticDrugCode);
+}
+
 function normalizeRooms(rooms: StockRoom[], generatedRooms: readonly StockRoom[]) {
   return mergeGeneratedRooms(rooms, generatedRooms);
 }
@@ -516,9 +521,7 @@ function normalizePersistedState(state: Partial<PersistedAppState>): Partial<Per
     stockAllocations: state.stockAllocations ? normalizeStockAllocations(state.stockAllocations) : undefined,
     narcoticRooms: state.narcoticRooms ? normalizeNarcoticRooms(state.narcoticRooms) : undefined,
     narcoticDrugs: state.narcoticDrugs ? dedupeStockDrugs(state.narcoticDrugs, NARCOTIC_DRUGS, normalizeNarcoticDrugCode) : undefined,
-    narcoticAllocations: state.narcoticAllocations
-      ? normalizeStockAllocations(state.narcoticAllocations, normalizeNarcoticDrugCode)
-      : undefined,
+    narcoticAllocations: state.narcoticAllocations ? normalizeNarcoticAllocations(state.narcoticAllocations) : undefined,
     narcoticDrugCategories: normalizeNarcoticCategories(state.narcoticDrugCategories),
     narcoticCheckedItems: remapStockKeyRecord(state.narcoticCheckedItems, normalizeNarcoticDrugCode),
     narcoticExpiry: remapStockKeyRecord(state.narcoticExpiry, normalizeNarcoticDrugCode),
@@ -797,7 +800,7 @@ export function App() {
     dedupeStockDrugs(persistedState.narcoticDrugs ?? [...NARCOTIC_DRUGS], NARCOTIC_DRUGS, normalizeNarcoticDrugCode),
   );
   const [narcoticAllocations, setNarcoticAllocations] = useState<StockAllocation[]>(() =>
-    normalizeStockAllocations(persistedState.narcoticAllocations ?? [...NARCOTIC_ALLOCATIONS], normalizeNarcoticDrugCode),
+    normalizeNarcoticAllocations(persistedState.narcoticAllocations ?? [...NARCOTIC_ALLOCATIONS]),
   );
   const [narcoticRooms, setNarcoticRooms] = useState<StockRoom[]>(() =>
     normalizeNarcoticRooms(persistedState.narcoticRooms ?? [...NARCOTIC_ROOMS]),
@@ -954,7 +957,7 @@ export function App() {
     if (normalized.narcoticRooms) setNarcoticRooms(normalizeNarcoticRooms(normalized.narcoticRooms));
     if (normalized.narcoticDrugs) setNarcoticDrugs(dedupeStockDrugs(normalized.narcoticDrugs, NARCOTIC_DRUGS, normalizeNarcoticDrugCode));
     if (normalized.narcoticAllocations) {
-      setNarcoticAllocations(normalizeStockAllocations(normalized.narcoticAllocations, normalizeNarcoticDrugCode));
+      setNarcoticAllocations(normalizeNarcoticAllocations(normalized.narcoticAllocations));
     }
     if (normalized.narcoticDrugCategories) setNarcoticDrugCategories(normalized.narcoticDrugCategories);
     if (normalized.narcoticCheckedItems) setNarcoticCheckedItems(normalized.narcoticCheckedItems);

@@ -76,6 +76,45 @@ export function mergeGeneratedRooms(rooms: StockRoom[], generatedRooms: readonly
   return merged;
 }
 
+function allocationKey(roomId: string, drugCode: string) {
+  return `${roomId}::${drugCode}`;
+}
+
+function normalizeAllocation(allocation: StockAllocation, normalizeCode: (code: string) => string): StockAllocation {
+  return {
+    roomId: allocation.roomId,
+    drugCode: normalizeCode(allocation.drugCode),
+    requiredQty: Number.isFinite(allocation.requiredQty) ? Math.max(0, Math.trunc(allocation.requiredQty)) : 0,
+  };
+}
+
+export function reconcileGeneratedAllocations(
+  allocations: StockAllocation[],
+  generatedAllocations: readonly StockAllocation[],
+  generatedRooms: readonly Pick<StockRoom, "id">[],
+  generatedDrugs: readonly Pick<StockDrug, "code">[],
+  normalizeCode: (code: string) => string = (code) => code,
+) {
+  const generatedRoomIds = new Set(generatedRooms.map((room) => room.id));
+  const generatedDrugCodes = new Set(generatedDrugs.map((drug) => normalizeCode(drug.code)));
+  const byKey = new Map<string, StockAllocation>();
+
+  for (const allocation of allocations) {
+    const normalized = normalizeAllocation(allocation, normalizeCode);
+    if (normalized.requiredQty <= 0) continue;
+    if (generatedRoomIds.has(normalized.roomId) && generatedDrugCodes.has(normalized.drugCode)) continue;
+    byKey.set(allocationKey(normalized.roomId, normalized.drugCode), normalized);
+  }
+
+  for (const allocation of generatedAllocations) {
+    const normalized = normalizeAllocation(allocation, normalizeCode);
+    if (normalized.requiredQty <= 0) continue;
+    byKey.set(allocationKey(normalized.roomId, normalized.drugCode), normalized);
+  }
+
+  return [...byKey.values()];
+}
+
 export function buildMasterRows(
   drugs: StockDrug[],
   allocations: StockAllocation[],

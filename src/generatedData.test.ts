@@ -197,6 +197,21 @@ describe("generated inventory data corrections", () => {
     expect(staleNames).toEqual([]);
   });
 
+  it("keeps the deployed static app state narcotic quantities aligned with generated source quantities", () => {
+    const staticState = JSON.parse(readFileSync("app-state/shared-state.json", "utf8")) as {
+      state?: { narcoticAllocations?: typeof NARCOTIC_ALLOCATIONS };
+    };
+    const generatedByKey = new Map(NARCOTIC_ALLOCATIONS.map((allocation) => [`${allocation.roomId}::${allocation.drugCode}`, allocation.requiredQty]));
+    const staleQuantities = (staticState.state?.narcoticAllocations ?? [])
+      .filter((allocation) => {
+        const generatedQty = generatedByKey.get(`${allocation.roomId}::${allocation.drugCode}`);
+        return generatedQty !== undefined && allocation.requiredQty !== generatedQty;
+      })
+      .map((allocation) => `${allocation.roomId}::${allocation.drugCode}: ${allocation.requiredQty}`);
+
+    expect(staleQuantities).toEqual([]);
+  });
+
   it("refreshes persisted NICU E-cart rows with generated hospital common names", () => {
     const state = normalizeEcartInspectionState({
       items: [{ id: "NICU-27", code: "", name: "Normal saline", dosage: "50ml - Bag", quantity: 1, checked: true, expiryDate: "2026-12-31" }],
