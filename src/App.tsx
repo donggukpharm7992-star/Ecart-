@@ -792,6 +792,20 @@ function labelToplineFlagLabels(row: DrugLabelData) {
   return labels.filter((label) => !label.includes("차광"));
 }
 
+function isRoundToplineCaution(label: string) {
+  return label.includes("용량주의") || label.includes("유사모양") || label.includes("유사발음");
+}
+
+function splitLabelToplineFlags(row: DrugLabelData, sizeKey?: DrugLabelSizeKey) {
+  const labels = labelToplineFlagLabels(row);
+  const splitRoundCautions = !row.highRisk && isLightProtectedLabel(row) && (sizeKey === "55x95" || sizeKey === "35x100");
+  if (!splitRoundCautions) return { textLabels: labels, roundLabels: [] };
+  return {
+    textLabels: labels.filter((label) => !isRoundToplineCaution(label)),
+    roundLabels: labels.filter(isRoundToplineCaution),
+  };
+}
+
 function labelCautionBadgeClass(label: string) {
   if (label === "마약") return "narcotic-group";
   if (label === "향정") return "psychotropic";
@@ -799,12 +813,27 @@ function labelCautionBadgeClass(label: string) {
   return "amber";
 }
 
-function renderLabelTopline(row: DrugLabelData) {
-  const cautionText = labelToplineFlagLabels(row).join(" / ");
+function renderToplineCaution(row: DrugLabelData, sizeKey?: DrugLabelSizeKey) {
+  const { textLabels, roundLabels } = splitLabelToplineFlags(row, sizeKey);
+  if (textLabels.length === 0 && roundLabels.length === 0) return <span className="drug-label-warning-spacer" />;
+  if (roundLabels.length === 0) return <span className="drug-label-warning-flag">{textLabels.join(" / ")}</span>;
+  return (
+    <span className="drug-label-warning-group">
+      {textLabels.length > 0 ? <span className="drug-label-warning-flag">{textLabels.join(" / ")}</span> : null}
+      {roundLabels.map((label) => (
+        <span className="drug-label-warning-chip" key={label}>
+          {label}
+        </span>
+      ))}
+    </span>
+  );
+}
+
+function renderLabelTopline(row: DrugLabelData, sizeKey?: DrugLabelSizeKey) {
   const codeStorageBadges = labelCodeStorageBadges(row);
   return (
     <div className="drug-label-topline">
-      {cautionText ? <span className="drug-label-warning-flag">{cautionText}</span> : <span className="drug-label-warning-spacer" />}
+      {renderToplineCaution(row, sizeKey)}
       <div className="drug-label-code-stack">
         <div className="drug-label-code-line">
           {codeStorageBadges.map((badge) => (
@@ -2982,7 +3011,7 @@ export function App() {
 
     return (
       <article className={className} style={labelSizeCssVars(sizeKey)} key={key}>
-        {isNarcoticFortyLabel ? renderNarcoticFortyTopline(row) : renderLabelTopline(row)}
+        {isNarcoticFortyLabel ? renderNarcoticFortyTopline(row) : renderLabelTopline(row, sizeKey)}
         <h3 className={row.fluidTone ? `fluid-name ${row.fluidTone}` : undefined}>
           {isNarcoticFortyLabel ? renderNarcoticFortyLabelName(row) : renderDrugLabelName(row, renderedKind, sizeKey)}
         </h3>
