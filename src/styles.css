@@ -2839,6 +2839,11 @@ button {
   line-height: 1;
 }
 
+.drug-label-item.label-size-10x70.label-kind-stock .drug-label-code-stack .label-code-storage.cold {
+  color: #0b5c88;
+  background: #dff3ff;
+}
+
 .drug-label-item.label-size-10x70.label-kind-stock:not(.has-caution-label) h3,
 .drug-label-item.label-size-10x70.label-kind-pharmacy:not(.has-caution-label) h3 {
   grid-column: 1 / 3;
@@ -2923,6 +2928,11 @@ button {
   line-height: 1;
 }
 
+.drug-label-item.label-size-15x95.label-kind-stock .drug-label-code-stack .label-code-storage.cold {
+  color: #0b5c88;
+  background: #dff3ff;
+}
+
 .drug-label-item.label-size-15x95.label-kind-stock:not(.has-caution-label) h3,
 .drug-label-item.label-size-15x95.label-kind-pharmacy:not(.has-caution-label) h3 {
   grid-column: 1 / 3;
@@ -2988,6 +2998,8 @@ button {
 }
 
 .drug-label-item.label-size-10x70.label-kind-narcotic .label-code-storage.cold {
+  color: #0b5c88;
+  background: #dff3ff;
   font-size: 6px;
 }
 
@@ -3051,6 +3063,8 @@ button {
 }
 
 .drug-label-item.label-size-15x95.label-kind-narcotic .label-code-storage.cold {
+  color: #0b5c88;
+  background: #dff3ff;
   font-size: 7.5px;
 }
 

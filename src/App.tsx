@@ -669,7 +669,9 @@ function renderNarcoticFortyTopline(row: DrugLabelData) {
 
 function renderNarcoticFortyFooter(row: DrugLabelData) {
   const category = row.categoryLabel ?? "";
-  return <div className="drug-label-narcotic-footer">{category}</div>;
+  const storageLabel = labelCodeStorageBadges(row).find((badge) => badge.tone === "cold")?.label ?? "";
+  const label = [category, storageLabel].filter(Boolean).join(" / ");
+  return <div className="drug-label-narcotic-footer">{label}</div>;
 }
 
 function hospitalDrugRuleFields(row: HospitalDrugLabelRow): DrugRuleFields {
