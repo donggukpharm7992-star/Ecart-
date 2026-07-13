@@ -26,7 +26,6 @@ const HOSPITAL_DRUG_HEADERS = [
   "함량",
   "규격",
   "포장",
-  "보관법",
   "차광필요",
   "원내보유",
   "유사모양",
@@ -34,6 +33,8 @@ const HOSPITAL_DRUG_HEADERS = [
   "용량주의",
 ] as const;
 const HOSPITAL_DRUG_TYPE_HEADERS = ["약품유형", "약품 유형"] as const;
+const HOSPITAL_DRUG_STORAGE_HEADERS = ["보관법", "보관조건"] as const;
+const HOSPITAL_DRUG_HIGH_RISK_HEADERS = ["고위험의약품", "고위험약품"] as const;
 
 const textDecoder = new TextDecoder("utf-8");
 
@@ -178,6 +179,12 @@ function requireHeaders(headers: string[]) {
   if (!HOSPITAL_DRUG_TYPE_HEADERS.some((header) => headers.includes(header))) {
     missing.push("약품유형");
   }
+  if (!HOSPITAL_DRUG_STORAGE_HEADERS.some((header) => headers.includes(header))) {
+    missing.push("보관법");
+  }
+  if (!HOSPITAL_DRUG_HIGH_RISK_HEADERS.some((header) => headers.includes(header))) {
+    missing.push("고위험의약품");
+  }
   if (missing.length > 0) {
     throw new Error(`원내보유의약품리스트 양식이 아닙니다. 누락 열: ${missing.join(", ")}`);
   }
@@ -207,8 +214,9 @@ function rowsToHospitalDrugLabels(rows: string[][]): HospitalDrugLabelRow[] {
         drugType: readAny(row, HOSPITAL_DRUG_TYPE_HEADERS),
         spec: read(row, "규격"),
         package: read(row, "포장"),
-        storage: read(row, "보관법"),
+        storage: readAny(row, HOSPITAL_DRUG_STORAGE_HEADERS),
         lightProtected: read(row, "차광필요") === "차광",
+        highRisk: isYes(readAny(row, HOSPITAL_DRUG_HIGH_RISK_HEADERS)),
         inHospital: isYes(read(row, "원내보유")),
         similarLook: isYes(read(row, "유사모양")),
         similarSound: isYes(read(row, "유사발음")),
@@ -269,7 +277,7 @@ export function mergeHospitalDrugRowsIntoPharmacyLabelMatches(
         doseCaution: row.doseCaution,
         similarSound: row.similarSound,
         similarLook: row.similarLook,
-        highRisk: current?.highRisk || isHospitalDrugHighRisk(row),
+        highRisk: isHospitalDrugHighRisk(row),
         highCaution: current?.highCaution ?? false,
         anticancer: current?.anticancer ?? false,
         narcotic: current?.narcotic ?? false,

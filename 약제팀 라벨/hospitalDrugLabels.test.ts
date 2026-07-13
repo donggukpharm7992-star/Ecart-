@@ -47,6 +47,7 @@ describe("hospital drug label source", () => {
       package: "",
       storage: "",
       lightProtected: false,
+      highRisk: false,
       inHospital: true,
       similarLook: false,
       similarSound: false,
@@ -83,11 +84,15 @@ describe("hospital drug label source", () => {
     const rows = await loadHospitalDrugLabelRows();
     const abilify = rows.find((row) => row.code === "XXARPIP72");
     const albumin = rows.find((row) => row.code === "X20AL1S");
+    const lantusVial = rows.find((row) => row.code === "XIGLY10");
 
     expect(abilify && isHospitalDrugLightProtected(abilify)).toBe(true);
     expect(abilify && getHospitalDrugStorageLabel(abilify)).toBe("");
     expect(abilify && getHospitalDrugLabelWarnings(abilify)).toContain("차광");
     expect(albumin && getHospitalDrugLabelWarnings(albumin)).toContain("용량주의");
+    expect(lantusVial?.highRisk).toBe(true);
+    expect(lantusVial && getHospitalDrugStorageLabel(lantusVial)).toBe("냉장");
+    expect(lantusVial && getHospitalDrugLabelWarnings(lantusVial)).toContain("고위험의약품");
   });
 
   it("shows light protection as a caution and only cold or frozen storage as storage labels", () => {
@@ -101,6 +106,7 @@ describe("hospital drug label source", () => {
       package: "1 via",
       storage: "실온",
       lightProtected: true,
+      highRisk: false,
       inHospital: true,
       similarLook: false,
       similarSound: false,

@@ -18,11 +18,14 @@ describe("hospital drug workbook upload", () => {
     const workbook = readFileSync(new URL("./원내보유의약품리스트.xlsx", import.meta.url));
     const rows = await parseHospitalDrugWorkbook(workbook.buffer.slice(workbook.byteOffset, workbook.byteOffset + workbook.byteLength));
     const abilify = rows.find((row) => row.code === "XXARPIP72");
+    const lantusVial = rows.find((row) => row.code === "XIGLY10");
 
     expect(rows.length).toBeGreaterThan(2700);
     expect(abilify?.name).toBe("Abilify asimtufii 720mg inj");
     expect(abilify?.koreanName).toContain("아빌리파이");
     expect(abilify?.lightProtected).toBe(true);
+    expect(lantusVial?.highRisk).toBe(true);
+    expect(lantusVial?.storage).toBe("냉장");
     expect(rows.find((row) => row.code === "XAQD")?.drugType).toBe("일반수액");
   });
 
@@ -39,6 +42,7 @@ describe("hospital drug workbook upload", () => {
           package: "",
           storage: "차광",
           lightProtected: true,
+          highRisk: false,
           inHospital: true,
           similarLook: false,
           similarSound: false,
@@ -102,6 +106,7 @@ describe("hospital drug workbook upload", () => {
           package: "1 via",
           storage: "냉장",
           lightProtected: true,
+          highRisk: false,
           inHospital: true,
           similarLook: true,
           similarSound: true,

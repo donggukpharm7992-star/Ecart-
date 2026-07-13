@@ -10,6 +10,7 @@ export type HospitalDrugLabelRow = {
   package: string;
   storage: string;
   lightProtected: boolean;
+  highRisk: boolean;
   inHospital: boolean;
   similarLook: boolean;
   similarSound: boolean;
@@ -108,7 +109,7 @@ export function isHospitalDrugRefrigerated(row: HospitalDrugLabelRow) {
 }
 
 export function isHospitalDrugHighRisk(row: HospitalDrugLabelRow) {
-  return isHighRiskDrug({
+  return row.highRisk || isHighRiskDrug({
     code: row.code,
     genericName: row.koreanName,
     productName: row.name,
