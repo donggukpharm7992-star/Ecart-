@@ -621,7 +621,7 @@ function labelCodeStorageBadges(row: DrugLabelData) {
     badges.push({ label: row.storageLabel, tone: row.storageTone });
   }
 
-  if (row.highRisk && isLightProtectedLabel(row)) {
+  if (row.highRisk && isLightProtectedLabel(row) && !badges.some((badge) => badge.label === "차광")) {
     badges.push({ label: "차광", tone: "light" });
   }
 
