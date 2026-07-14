@@ -57,4 +57,17 @@ describe("drug label selection UI", () => {
     expect(appSource).toContain("row.doseCaution || row.doseCheck ? FORTY_NARCOTIC_DOSE_CONFIRM_LABEL");
     expect(appSource).toContain('labelCodeStorageBadges(row).find((badge) => badge.tone === "cold")');
   });
+
+  it("keeps compact general light-protected labels green unless red-priority warnings take over", () => {
+    expect(appSource).toContain("function shouldMoveLightProtectionToCodeBadge(row: DrugLabelData, sizeKey?: DrugLabelSizeKey)");
+    expect(appSource).toContain('return (sizeKey === "10x70" || sizeKey === "15x95") && hasRedPriorityLabel(row);');
+    expect(appSource).toContain('hasRedPriority ? "has-red-priority-label" : ""');
+    expect(cssSource).toContain(
+      ".drug-label-item.label-size-10x70:is(.label-kind-stock, .label-kind-pharmacy).light-protected-label:not(.has-red-priority-label) .drug-label-warning-flag",
+    );
+    expect(cssSource).toContain(
+      ".drug-label-item.label-size-15x95:is(.label-kind-stock, .label-kind-pharmacy).light-protected-label:not(.has-red-priority-label) .drug-label-warning-flag",
+    );
+    expect(cssSource).toContain(".drug-label-code-stack .label-code-storage.light");
+  });
 });

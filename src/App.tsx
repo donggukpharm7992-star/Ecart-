@@ -609,7 +609,7 @@ function shouldHighlightDoseInLabel(row: DrugLabelData) {
   return row.doseCaution || row.doseCheck || labelFlagLabels(row).some((label) => /용량\s*(?:주의|확인)/.test(label));
 }
 
-function labelCodeStorageBadges(row: DrugLabelData) {
+function labelCodeStorageBadges(row: DrugLabelData, sizeKey?: DrugLabelSizeKey) {
   if (isEcartLabelKind(row.kind) || row.kind === "fluid") return [];
 
   const storageText = [row.storageLabel, row.storage].join(" ");
@@ -622,7 +622,7 @@ function labelCodeStorageBadges(row: DrugLabelData) {
     badges.push({ label: row.storageLabel, tone: row.storageTone });
   }
 
-  if (row.highRisk && isLightProtectedLabel(row) && !badges.some((badge) => badge.label === "차광")) {
+  if (shouldMoveLightProtectionToCodeBadge(row, sizeKey) && !badges.some((badge) => badge.label === "차광")) {
     badges.push({ label: "차광", tone: "light" });
   }
 
@@ -782,9 +782,9 @@ function isLightProtectedLabel(row: DrugLabelData) {
   return labelFlagLabels(row).some((label) => label.includes("차광"));
 }
 
-function labelToplineFlagLabels(row: DrugLabelData) {
+function labelToplineFlagLabels(row: DrugLabelData, sizeKey?: DrugLabelSizeKey) {
   const labels = labelFlagLabels(row);
-  if (!row.highRisk) return labels;
+  if (!shouldMoveLightProtectionToCodeBadge(row, sizeKey)) return labels;
   return labels.filter((label) => !label.includes("차광"));
 }
 
@@ -792,8 +792,22 @@ function isRoundToplineCaution(label: string) {
   return label.includes("용량주의") || label.includes("유사모양") || label.includes("유사발음");
 }
 
+function isRedPriorityCaution(label: string) {
+  return label.includes("고위험") || isRoundToplineCaution(label);
+}
+
+function hasRedPriorityLabel(row: DrugLabelData) {
+  return labelFlagLabels(row).some(isRedPriorityCaution);
+}
+
+function shouldMoveLightProtectionToCodeBadge(row: DrugLabelData, sizeKey?: DrugLabelSizeKey) {
+  if (!isLightProtectedLabel(row)) return false;
+  if (row.highRisk) return true;
+  return (sizeKey === "10x70" || sizeKey === "15x95") && hasRedPriorityLabel(row);
+}
+
 function splitLabelToplineFlags(row: DrugLabelData, sizeKey?: DrugLabelSizeKey) {
-  const labels = labelToplineFlagLabels(row);
+  const labels = labelToplineFlagLabels(row, sizeKey);
   const splitRoundCautions = !row.highRisk && isLightProtectedLabel(row) && (sizeKey === "55x95" || sizeKey === "35x100");
   if (!splitRoundCautions) return { textLabels: labels, roundLabels: [] };
   return {
@@ -826,7 +840,7 @@ function renderToplineCaution(row: DrugLabelData, sizeKey?: DrugLabelSizeKey) {
 }
 
 function renderLabelTopline(row: DrugLabelData, sizeKey?: DrugLabelSizeKey) {
-  const codeStorageBadges = labelCodeStorageBadges(row);
+  const codeStorageBadges = labelCodeStorageBadges(row, sizeKey);
   return (
     <div className="drug-label-topline">
       {renderToplineCaution(row, sizeKey)}
@@ -2984,6 +2998,7 @@ export function App() {
     const { row, sizeKey } = entry;
     const flagLabels = labelFlagLabels(row);
     const isLightProtected = isLightProtectedLabel(row);
+    const hasRedPriority = hasRedPriorityLabel(row);
     const renderedKind = isEcartLabelKind(row.kind) ? "ecart" : row.kind;
     const nameClass = getDrugLabelNameClass(row.name, renderedKind, sizeKey);
     const isNarcoticFortyLabel = renderedKind === "narcotic" && sizeKey === "40x70";
@@ -2998,6 +3013,7 @@ export function App() {
       row.fluidTone ? `fluid-tone-${row.fluidTone}` : "",
       row.highRisk ? "high-risk-label" : "",
       isLightProtected ? "light-protected-label" : "",
+      hasRedPriority ? "has-red-priority-label" : "",
       flagLabels.length > 0 ? "has-caution-label" : "",
       row.doseCaution ? "has-dose-caution" : "",
       hasDoseWarningLabel ? "has-dose-warning-label" : "",
