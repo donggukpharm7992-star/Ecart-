@@ -86,12 +86,26 @@ describe("app label logic", () => {
       productName: "[\ub9c8\uc57d] Remiva 5mg inj",
       masterKind: "narcotic",
     };
+    const byfavo20: MasterRow = {
+      ...baseRow,
+      code: "XREMIMA2",
+      genericName: "Byfavo 20mg/4.05ml",
+      productName: "[\ud5a5\uc815]Byfavo 20mg inj",
+      masterKind: "psychotropic",
+    };
+    const byfavo50: MasterRow = {
+      ...baseRow,
+      code: "XREMIMA",
+      genericName: "Byfavo 50mg/10ml",
+      productName: "[\ud5a5\uc815]BYFAVO 50MG inj",
+      masterKind: "psychotropic",
+    };
 
-    const doseCautionCodes = getNarcoticDoseCautionCodes([fentanyl50, fentanyl500, remiva]);
+    const doseCautionCodes = getNarcoticDoseCautionCodes([fentanyl50, fentanyl500, remiva, byfavo20, byfavo50]);
     const label = buildNarcoticMasterLabelData(fentanyl50, narcotic, undefined, doseCautionCodes.has(fentanyl50.code));
 
     expect(stripControlledDrugLabelPrefix("[\ud5a5\uc815] Ativan 2mg/0.5ml inj")).toBe("Ativan 2mg/0.5ml inj");
-    expect([...doseCautionCodes].sort()).toEqual(["XFEN50", "XFEN500"]);
+    expect([...doseCautionCodes].sort()).toEqual(["XFEN50", "XFEN500", "XREMIMA", "XREMIMA2"]);
     expect(label.name).toBe("Fentanyl citrate 50mcg/ml inj");
     expect(label.cautionLabels).toEqual([narcotic]);
     expect(label.categoryLabel).toBe(narcotic);

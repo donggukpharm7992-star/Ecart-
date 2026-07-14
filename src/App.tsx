@@ -647,8 +647,8 @@ function renderGeneralDrugLabelName(row: DrugLabelData, sizeKey: DrugLabelSizeKe
 function renderDrugLabelName(row: DrugLabelData, renderedKind: DrugLabelMode, sizeKey: DrugLabelSizeKey) {
   const highlightDose = shouldHighlightDoseInLabel(row);
   if (
-    (renderedKind === "stock" && (sizeKey === "10x70" || sizeKey === "55x95" || sizeKey === "35x100")) ||
-    (renderedKind === "pharmacy" && sizeKey === "10x70")
+    (renderedKind === "stock" && (sizeKey === "10x70" || sizeKey === "15x95" || sizeKey === "55x95" || sizeKey === "35x100")) ||
+    (renderedKind === "pharmacy" && (sizeKey === "10x70" || sizeKey === "15x95"))
   ) {
     return renderGeneralDrugLabelName(row, sizeKey, highlightDose);
   }
@@ -1798,6 +1798,7 @@ export function App() {
     if (!hospitalRow) return masterLabel;
 
     const hospitalLabel = buildHospitalDrugLabelData(hospitalRow, masterLabel.kind === "pharmacy" ? "pharmacy" : "stock");
+    const doseCheck = masterLabel.doseCheck || hospitalLabel.doseCheck || hospitalControlledDoseCautionCodes.has(hospitalRow.code);
     const highRisk = masterLabel.highRisk || hospitalLabel.highRisk;
     return {
       ...masterLabel,
@@ -1809,7 +1810,7 @@ export function App() {
       cautionLabels: [...new Set([...hospitalLabel.cautionLabels, ...masterLabel.cautionLabels])],
       highRisk,
       doseCaution: masterLabel.doseCaution || hospitalLabel.doseCaution,
-      doseCheck: masterLabel.doseCheck || hospitalLabel.doseCheck,
+      doseCheck,
     };
   }
   const labelPrintRows = useMemo<PrintableDrugLabel[]>(

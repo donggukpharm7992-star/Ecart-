@@ -2991,6 +2991,44 @@ button {
   background: #d8f7df;
 }
 
+.drug-label-item.label-size-15x95:is(.label-kind-stock, .label-kind-pharmacy) h3 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  white-space: normal;
+  -webkit-line-clamp: unset;
+}
+
+.drug-label-item.label-size-15x95:is(.label-kind-stock, .label-kind-pharmacy) .drug-label-name-lines {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  width: 100%;
+  max-width: 100%;
+  gap: 0;
+  color: #111827;
+  text-align: center;
+  font-size: 17px;
+  line-height: 1;
+}
+
+.drug-label-item.label-size-15x95:is(.label-kind-stock, .label-kind-pharmacy) .drug-label-name-lines-3,
+.drug-label-item.label-size-15x95:is(.label-kind-stock, .label-kind-pharmacy) .drug-label-name-lines-4,
+.drug-label-item.label-size-15x95:is(.label-kind-stock, .label-kind-pharmacy) .drug-label-name-lines-5 {
+  font-size: 13.4px;
+}
+
+.drug-label-item.label-size-15x95:is(.label-kind-stock, .label-kind-pharmacy) .drug-label-name-line {
+  display: block;
+  max-width: 100%;
+  font-weight: 1000;
+  line-height: 1.02;
+  white-space: normal;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
 .drug-label-item.label-size-15x95.label-kind-stock:not(.has-caution-label) h3,
 .drug-label-item.label-size-15x95.label-kind-pharmacy:not(.has-caution-label) h3 {
   grid-column: 1 / 3;
