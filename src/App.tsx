@@ -646,7 +646,10 @@ function renderGeneralDrugLabelName(row: DrugLabelData, sizeKey: DrugLabelSizeKe
 
 function renderDrugLabelName(row: DrugLabelData, renderedKind: DrugLabelMode, sizeKey: DrugLabelSizeKey) {
   const highlightDose = shouldHighlightDoseInLabel(row);
-  if (renderedKind === "stock" && (sizeKey === "55x95" || sizeKey === "35x100")) {
+  if (
+    (renderedKind === "stock" && (sizeKey === "10x70" || sizeKey === "55x95" || sizeKey === "35x100")) ||
+    (renderedKind === "pharmacy" && sizeKey === "10x70")
+  ) {
     return renderGeneralDrugLabelName(row, sizeKey, highlightDose);
   }
   return renderLabelName(row, highlightDose);
@@ -1664,6 +1667,10 @@ export function App() {
     () => new Map(hospitalDrugSelectableRows.map((row) => [makeHospitalDrugLabelId(row), row])),
     [hospitalDrugSelectableRows],
   );
+  const hospitalDrugRowsByCode = useMemo(
+    () => new Map(hospitalDrugSelectableRows.map((row) => [row.code.toUpperCase(), row])),
+    [hospitalDrugSelectableRows],
+  );
   const hospitalDrugSearchRows = useMemo(() => {
     if (hospitalDrugSelectableRows.length === 0) return [];
     const trimmed = labelQuery.trim().toLowerCase();
@@ -1785,6 +1792,26 @@ export function App() {
     const rows = [...allHospitalStockLabelRows, ...ecartLabelBaseRows, ...allHospitalFluidLabelRows, ...allHospitalControlledLabelRows];
     return new Map(rows.map((row) => [row.id, row]));
   }, [allHospitalControlledLabelRows, allHospitalFluidLabelRows, allHospitalStockLabelRows, ecartLabelBaseRows]);
+  function buildMasterDrugLabelData(row: MasterRow, mode: DrugLabelMode, roomId?: string) {
+    const masterLabel = buildStockLabelData(row, mode, roomId);
+    const hospitalRow = hospitalDrugRowsByCode.get(row.code.toUpperCase());
+    if (!hospitalRow) return masterLabel;
+
+    const hospitalLabel = buildHospitalDrugLabelData(hospitalRow, masterLabel.kind === "pharmacy" ? "pharmacy" : "stock");
+    const highRisk = masterLabel.highRisk || hospitalLabel.highRisk;
+    return {
+      ...masterLabel,
+      name: cleanDrugLabelName(masterLabel.name, highRisk),
+      spec: hospitalLabel.spec || masterLabel.spec,
+      storageLabel: hospitalLabel.storageLabel || masterLabel.storageLabel,
+      storageTone: hospitalLabel.storageLabel ? hospitalLabel.storageTone : masterLabel.storageTone,
+      storage: hospitalLabel.storage || masterLabel.storage,
+      cautionLabels: [...new Set([...hospitalLabel.cautionLabels, ...masterLabel.cautionLabels])],
+      highRisk,
+      doseCaution: masterLabel.doseCaution || hospitalLabel.doseCaution,
+      doseCheck: masterLabel.doseCheck || hospitalLabel.doseCheck,
+    };
+  }
   const labelPrintRows = useMemo<PrintableDrugLabel[]>(
     () =>
       labelPrintSelections.flatMap((selection) => {
@@ -2604,7 +2631,7 @@ export function App() {
     setLabelMode(mode);
     setLabelPrintSelections(
       selectedLabelRows.map((row) => {
-        const labelRow = buildStockLabelData(row, mode, masterLabelRoomIdForRow(row));
+        const labelRow = buildMasterDrugLabelData(row, mode, masterLabelRoomIdForRow(row));
         return {
           id: labelRow.id,
           mode: labelRow.kind,

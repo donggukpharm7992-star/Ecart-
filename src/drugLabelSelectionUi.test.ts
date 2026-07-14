@@ -70,4 +70,15 @@ describe("drug label selection UI", () => {
     );
     expect(cssSource).toContain(".drug-label-code-stack .label-code-storage.light");
   });
+
+  it("applies hospital label rules and readable 10x70 names to checked master labels", () => {
+    expect(appSource).toContain("const hospitalDrugRowsByCode = useMemo(");
+    expect(appSource).toContain("function buildMasterDrugLabelData(row: MasterRow, mode: DrugLabelMode, roomId?: string)");
+    expect(appSource).toContain("hospitalDrugRowsByCode.get(row.code.toUpperCase())");
+    expect(appSource).toContain("const labelRow = buildMasterDrugLabelData(row, mode, masterLabelRoomIdForRow(row));");
+    expect(appSource).toContain('renderedKind === "stock" && (sizeKey === "10x70"');
+    expect(cssSource).toContain(
+      ".drug-label-item.label-size-10x70:is(.label-kind-stock, .label-kind-pharmacy) .drug-label-name-lines",
+    );
+  });
 });

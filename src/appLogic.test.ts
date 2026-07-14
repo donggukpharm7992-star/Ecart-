@@ -5,6 +5,8 @@ import {
   displayRoomName,
   getDoseHighlightTextParts,
   getDrugLabelFlagLabels,
+  getDrugLabelNameClass,
+  getGeneralDrugLabelNameLines,
   getInitialAppMode,
   getInitialMasterKindFilter,
   getInspectedRoomIdsFromCheckedItems,
@@ -173,6 +175,20 @@ describe("app label logic", () => {
       { text: "69", highlighted: true },
       { text: "mg cap", highlighted: false },
     ]);
+  });
+
+  it("splits 10x70 general label names into readable name and dose units", () => {
+    expect(getGeneralDrugLabelNameLines("1% Lidocaine HCl 20ml inj", "10x70")).toEqual([
+      "1% Lidocaine",
+      "HCl",
+      "20ml inj",
+    ]);
+    expect(getGeneralDrugLabelNameLines("Norepinephrine bitartrate 4mg/4ml inj", "10x70")).toEqual([
+      "Norepinephrine",
+      "bitartrate",
+      "4mg/4ml inj",
+    ]);
+    expect(getDrugLabelNameClass("1% Lidocaine HCl 20ml inj", "stock", "10x70")).toBe("name-extra-long");
   });
 
   it("keeps room quantity and narcotic category from the selected master label row", () => {

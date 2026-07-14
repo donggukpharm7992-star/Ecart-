@@ -681,6 +681,12 @@ export function getDrugLabelNameClass(name: string, kind: DrugLabelMode = "stock
     }
   }
 
+  if (sizeKey === "10x70") {
+    if (meaningfulLength >= 22 || tokenCount >= 5) return "name-extra-long";
+    if (meaningfulLength >= 13 || tokenCount >= 3) return "name-long";
+    return "";
+  }
+
   if (meaningfulLength >= 34 || tokenCount >= 6) return "name-extra-long";
   if (meaningfulLength >= 20 || tokenCount >= 4) return "name-long";
   return "";
@@ -716,7 +722,7 @@ export function getGeneralDrugLabelNameLines(name: string, sizeKey: DrugLabelSiz
   const cleaned = name.replace(/\s{2,}/g, " ").trim();
   if (!cleaned) return [];
 
-  const maxLength = sizeKey === "35x100" ? 22 : 20;
+  const maxLength = sizeKey === "10x70" ? 13 : sizeKey === "15x95" ? 18 : sizeKey === "35x100" ? 22 : 20;
   const doseMatches = [...cleaned.matchAll(GENERAL_DRUG_LABEL_DOSE_PATTERN)];
   const doseMatch = doseMatches.find((match) => (match.index ?? 0) > 0);
   if (!doseMatch?.index) return splitGeneralDrugLabelSegment(cleaned, maxLength);
