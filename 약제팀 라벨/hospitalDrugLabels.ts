@@ -1,5 +1,3 @@
-import { isHighRiskDrug } from "../src/drugRules";
-
 export type HospitalDrugLabelRow = {
   code: string;
   name: string;
@@ -15,6 +13,7 @@ export type HospitalDrugLabelRow = {
   similarLook: boolean;
   similarSound: boolean;
   doseCaution: boolean;
+  doseCheck: boolean;
 };
 
 type HospitalDrugLabelsModule = {
@@ -109,13 +108,7 @@ export function isHospitalDrugRefrigerated(row: HospitalDrugLabelRow) {
 }
 
 export function isHospitalDrugHighRisk(row: HospitalDrugLabelRow) {
-  return row.highRisk || isHighRiskDrug({
-    code: row.code,
-    genericName: row.koreanName,
-    productName: row.name,
-    spec: [row.strength, row.spec, row.package].filter(Boolean).join(" "),
-    warning: "",
-  });
+  return row.highRisk;
 }
 
 export function getHospitalDrugStorageLabel(row: HospitalDrugLabelRow) {

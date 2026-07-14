@@ -33,6 +33,7 @@ export type DrugLabelData = {
   categoryLabel?: string;
   highRisk: boolean;
   doseCaution?: boolean;
+  doseCheck?: boolean;
   fluidTone?: string;
 };
 

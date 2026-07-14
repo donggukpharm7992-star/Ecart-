@@ -19,6 +19,7 @@ describe("hospital drug workbook upload", () => {
     const rows = await parseHospitalDrugWorkbook(workbook.buffer.slice(workbook.byteOffset, workbook.byteOffset + workbook.byteLength));
     const abilify = rows.find((row) => row.code === "XXARPIP72");
     const lantusVial = rows.find((row) => row.code === "XIGLY10");
+    const doseCheckRow = rows.find((row) => row.doseCheck && !row.doseCaution);
 
     expect(rows.length).toBeGreaterThan(2700);
     expect(abilify?.name).toBe("Abilify asimtufii 720mg inj");
@@ -26,6 +27,7 @@ describe("hospital drug workbook upload", () => {
     expect(abilify?.lightProtected).toBe(true);
     expect(lantusVial?.highRisk).toBe(true);
     expect(lantusVial?.storage).toBe("냉장");
+    expect(doseCheckRow?.doseCheck).toBe(true);
     expect(rows.find((row) => row.code === "XAQD")?.drugType).toBe("일반수액");
   });
 
@@ -47,6 +49,7 @@ describe("hospital drug workbook upload", () => {
           similarLook: false,
           similarSound: false,
           doseCaution: false,
+          doseCheck: false,
         },
       ],
       [
@@ -61,6 +64,7 @@ describe("hospital drug workbook upload", () => {
           lightProtected: false,
           refrigerated: false,
           doseCaution: false,
+          doseCheck: false,
           similarSound: false,
           similarLook: false,
           highRisk: false,
@@ -93,7 +97,7 @@ describe("hospital drug workbook upload", () => {
     });
   });
 
-  it("uses hospital drug names and policy warnings when rebuilding pharmacy label rows", () => {
+  it("uses hospital drug names and workbook warning columns when rebuilding pharmacy label rows", () => {
     const rows = mergeHospitalDrugRowsIntoPharmacyLabelMatches(
       [
         {
@@ -106,11 +110,12 @@ describe("hospital drug workbook upload", () => {
           package: "1 via",
           storage: "냉장",
           lightProtected: true,
-          highRisk: false,
+          highRisk: true,
           inHospital: true,
           similarLook: true,
           similarSound: true,
           doseCaution: true,
+          doseCheck: true,
         },
       ],
       [],
@@ -123,6 +128,7 @@ describe("hospital drug workbook upload", () => {
       similarLook: true,
       similarSound: true,
       doseCaution: true,
+      doseCheck: true,
       highRisk: true,
     });
   });

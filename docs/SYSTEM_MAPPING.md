@@ -20,7 +20,7 @@ This app previews a pharmacist ward inventory workflow with real Excel data. The
   - Label-only source for pharmacy-wide drug labels.
   - Column B `상용약품명` overrides stock and E-cart display drug names by `약품코드`; leading `[마약]`/`[향정]` prefixes are stripped for inventory names.
   - `약품조회` rows are generated into `약제팀 라벨/data/hospitalDrugLabels.generated.json`, including `약품유형` as `drugType`.
-  - Label fields use workbook storage, light-protection, similar-look, similar-sound, dose-caution, workbook high-risk `Y`, and derived high-risk flags.
+  - Label fields use workbook storage, light-protection, similar-look, similar-sound, dose-caution, dose-check, and workbook high-risk `Y` flags.
   - General drug labels show all in-hospital rows whose `drugType` is filled, excluding `일반수액`, `마약`, and `향정`; fluid labels show only `drugType=일반수액`, and narcotic/psychotropic labels show only `drugType=마약` or `drugType=향정`.
   - E-cart labels continue to use the E-cart management item lists, whose item names are corrected from the hospital common-name list by `약품코드`.
   - Label storage badges show only cold/frozen storage (`냉장`, `냉동`); light protection (`차광`) is shown as a caution flag.

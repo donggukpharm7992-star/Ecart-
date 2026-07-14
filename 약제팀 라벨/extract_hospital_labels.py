@@ -60,6 +60,7 @@ def main() -> None:
                 "similarLook": is_yes(raw[index["유사모양"]]),
                 "similarSound": is_yes(raw[index["유사발음"]]),
                 "doseCaution": is_yes(raw[index["용량주의"]]),
+                "doseCheck": is_yes(raw[column_index(index, "용량확인")]),
             }
         )
 

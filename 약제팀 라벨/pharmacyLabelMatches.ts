@@ -18,6 +18,7 @@ export type PharmacyLabelMatchRow = PharmacyLabelMatchSearchRow & {
   refrigerated: boolean;
   frozen?: boolean;
   doseCaution: boolean;
+  doseCheck?: boolean;
   similarSound: boolean;
   similarLook: boolean;
   highRisk: boolean;

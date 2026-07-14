@@ -225,6 +225,7 @@ type DrugLabelData = {
   categoryLabel?: string;
   highRisk: boolean;
   doseCaution?: boolean;
+  doseCheck?: boolean;
   fluidTone?: string;
 };
 
@@ -605,7 +606,7 @@ function renderLabelName(row: DrugLabelData, highlightDose = false) {
 }
 
 function shouldHighlightDoseInLabel(row: DrugLabelData) {
-  return row.doseCaution || labelFlagLabels(row).some((label) => /용량\s*(?:주의|확인)/.test(label));
+  return row.doseCaution || row.doseCheck || labelFlagLabels(row).some((label) => /용량\s*(?:주의|확인)/.test(label));
 }
 
 function labelCodeStorageBadges(row: DrugLabelData) {
@@ -654,11 +655,12 @@ function renderDrugLabelName(row: DrugLabelData, renderedKind: DrugLabelMode, si
 function renderNarcoticFortyLabelName(row: DrugLabelData) {
   const lines = getNarcoticFortyLabelNameLines(row.name);
   const lineCountClass = `drug-label-name-lines-${Math.min(lines.length, 4)}`;
+  const highlightDose = shouldHighlightDoseInLabel(row);
   return (
     <span className={`drug-label-name-lines ${lineCountClass}`}>
       {lines.map((line, index) => (
         <span className="drug-label-name-line" key={`${line}-${index}`}>
-          {row.doseCaution ? renderDoseHighlightedText(line) : line}
+          {highlightDose ? renderDoseHighlightedText(line) : line}
         </span>
       ))}
     </span>
@@ -681,24 +683,13 @@ function renderNarcoticFortyFooter(row: DrugLabelData) {
   return <div className="drug-label-narcotic-footer">{label}</div>;
 }
 
-function hospitalDrugRuleFields(row: HospitalDrugLabelRow): DrugRuleFields {
-  return {
-    code: row.code,
-    genericName: row.koreanName,
-    productName: row.name,
-    spec: [row.strength, row.spec, row.package].filter(Boolean).join(" "),
-    warning: getHospitalDrugLabelWarnings(row).join(", "),
-  };
-}
-
 function buildHospitalDrugLabelData(
   row: HospitalDrugLabelRow,
   mode: Extract<DrugLabelMode, "stock" | "fluid" | "pharmacy"> = "pharmacy",
 ): DrugLabelData {
-  const fields = hospitalDrugRuleFields(row);
   const storageLabel = getHospitalDrugStorageLabel(row);
   const cautionLabels = getHospitalDrugLabelWarnings(row);
-  const highRisk = isHighRiskDrug(fields) || cautionLabels.some((label) => label.includes("고위험"));
+  const highRisk = cautionLabels.some((label) => label.includes("고위험"));
   const spec = [row.strength, row.spec, row.package].filter(Boolean).join(" ");
   return {
     id: mode === "pharmacy" ? makeHospitalDrugLabelId(row) : `${mode}-hospital-${row.code}`,
@@ -711,6 +702,8 @@ function buildHospitalDrugLabelData(
     storage: row.storage,
     cautionLabels,
     highRisk,
+    doseCaution: row.doseCaution,
+    doseCheck: row.doseCheck,
     fluidTone: mode === "fluid" ? fluidLabelTone({ code: row.code, genericName: row.koreanName, productName: row.name, spec }) : undefined,
   };
 }
@@ -731,6 +724,7 @@ function buildHospitalControlledDrugLabelData(row: HospitalDrugLabelRow, doseCau
     categoryLabel,
     highRisk: false,
     doseCaution,
+    doseCheck: row.doseCheck,
   };
 }
 

@@ -3,6 +3,7 @@ import {
   getHospitalDrugControlledCategory,
   getHospitalDrugLabelWarnings,
   getHospitalDrugStorageLabel,
+  isHospitalDrugHighRisk,
   isHospitalControlledDrugType,
   isHospitalGeneralDrugLabelType,
   isHospitalDrugType,
@@ -52,6 +53,7 @@ describe("hospital drug label source", () => {
       similarLook: false,
       similarSound: false,
       doseCaution: false,
+      doseCheck: false,
     };
 
     expect(isSelectableHospitalDrugLabelRow(base)).toBe(true);
@@ -85,14 +87,18 @@ describe("hospital drug label source", () => {
     const abilify = rows.find((row) => row.code === "XXARPIP72");
     const albumin = rows.find((row) => row.code === "X20AL1S");
     const lantusVial = rows.find((row) => row.code === "XIGLY10");
+    const doseCheckRow = rows.find((row) => row.doseCheck && !row.doseCaution);
 
     expect(abilify && isHospitalDrugLightProtected(abilify)).toBe(true);
     expect(abilify && getHospitalDrugStorageLabel(abilify)).toBe("");
     expect(abilify && getHospitalDrugLabelWarnings(abilify)).toContain("차광");
     expect(albumin && getHospitalDrugLabelWarnings(albumin)).toContain("용량주의");
     expect(lantusVial?.highRisk).toBe(true);
+    expect(lantusVial && isHospitalDrugHighRisk(lantusVial)).toBe(true);
     expect(lantusVial && getHospitalDrugStorageLabel(lantusVial)).toBe("냉장");
     expect(lantusVial && getHospitalDrugLabelWarnings(lantusVial)).toContain("고위험의약품");
+    expect(doseCheckRow?.doseCheck).toBe(true);
+    expect(doseCheckRow && getHospitalDrugLabelWarnings(doseCheckRow)).not.toContain("용량주의");
   });
 
   it("shows light protection as a caution and only cold or frozen storage as storage labels", () => {
@@ -111,6 +117,7 @@ describe("hospital drug label source", () => {
       similarLook: false,
       similarSound: false,
       doseCaution: false,
+      doseCheck: false,
     };
 
     expect(getHospitalDrugStorageLabel(row)).toBe("");

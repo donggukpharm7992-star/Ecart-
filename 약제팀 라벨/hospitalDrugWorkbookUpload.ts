@@ -31,6 +31,7 @@ const HOSPITAL_DRUG_HEADERS = [
   "유사모양",
   "유사발음",
   "용량주의",
+  "용량확인",
 ] as const;
 const HOSPITAL_DRUG_TYPE_HEADERS = ["약품유형", "약품 유형"] as const;
 const HOSPITAL_DRUG_STORAGE_HEADERS = ["보관법", "보관조건"] as const;
@@ -221,6 +222,7 @@ function rowsToHospitalDrugLabels(rows: string[][]): HospitalDrugLabelRow[] {
         similarLook: isYes(read(row, "유사모양")),
         similarSound: isYes(read(row, "유사발음")),
         doseCaution: isYes(read(row, "용량주의")),
+        doseCheck: isYes(read(row, "용량확인")),
       };
     })
     .filter((row): row is HospitalDrugLabelRow => row != null)
@@ -275,6 +277,7 @@ export function mergeHospitalDrugRowsIntoPharmacyLabelMatches(
         refrigerated: isHospitalDrugRefrigerated(row),
         frozen: isHospitalDrugFrozen(row),
         doseCaution: row.doseCaution,
+        doseCheck: row.doseCheck,
         similarSound: row.similarSound,
         similarLook: row.similarLook,
         highRisk: isHospitalDrugHighRisk(row),
