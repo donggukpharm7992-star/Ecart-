@@ -668,7 +668,9 @@ function renderNarcoticFortyLabelName(row: DrugLabelData) {
 }
 
 function renderNarcoticFortyTopline(row: DrugLabelData) {
-  const label = [FORTY_NARCOTIC_HIGH_RISK_LABEL, row.doseCaution ? FORTY_NARCOTIC_DOSE_CONFIRM_LABEL : ""].filter(Boolean).join(" / ");
+  const label = [FORTY_NARCOTIC_HIGH_RISK_LABEL, row.doseCaution || row.doseCheck ? FORTY_NARCOTIC_DOSE_CONFIRM_LABEL : ""]
+    .filter(Boolean)
+    .join(" / ");
   return (
     <div className="drug-label-topline drug-label-narcotic-forty-topline">
       <span className="drug-label-warning-flag">{label}</span>

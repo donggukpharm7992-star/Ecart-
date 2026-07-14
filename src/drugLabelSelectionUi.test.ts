@@ -54,5 +54,7 @@ describe("drug label selection UI", () => {
   it("uses dose confirmation wording on 40x70 narcotic labels", () => {
     expect(appSource).toContain('const FORTY_NARCOTIC_DOSE_CONFIRM_LABEL = "\\uc6a9\\ub7c9\\ud655\\uc778";');
     expect(appSource).toContain("FORTY_NARCOTIC_DOSE_CONFIRM_LABEL");
+    expect(appSource).toContain("row.doseCaution || row.doseCheck ? FORTY_NARCOTIC_DOSE_CONFIRM_LABEL");
+    expect(appSource).toContain('labelCodeStorageBadges(row).find((badge) => badge.tone === "cold")');
   });
 });
