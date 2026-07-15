@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-15T04:50:09.938Z",
-  "clientId": "8fca6235-56b2-4861-8140-d0d51f2a8239",
+  "updatedAt": "2026-07-15T05:40:10.636Z",
+  "clientId": "dd51fd45-c3d2-44fc-be97-870b18725507",
   "state": {
     "stockDrugs": [
       {
@@ -3513,7 +3513,7 @@
       {
         "roomId": "외래주사실",
         "drugCode": "XXPCV21",
-        "requiredQty": 2
+        "requiredQty": 6
       },
       {
         "roomId": "71W",
@@ -7863,7 +7863,8 @@
       "AN": "26.06.24",
       "안과": "26.06.25",
       "42W": "26.06.29",
-      "OR": "26.06.29"
+      "OR": "26.06.29",
+      "외래주사실": "26.07.15"
     },
     "uninspectedRoomIds": [],
     "narcoticLotAssignments": {
