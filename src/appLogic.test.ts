@@ -193,14 +193,25 @@ describe("app label logic", () => {
 
   it("splits 10x70 general label names into readable name and dose units", () => {
     expect(getGeneralDrugLabelNameLines("1% Lidocaine HCl 20ml inj", "10x70")).toEqual([
-      "1% Lidocaine",
-      "HCl",
+      "1% Lidocaine HCl",
       "20ml inj",
     ]);
     expect(getGeneralDrugLabelNameLines("Norepinephrine bitartrate 4mg/4ml inj", "10x70")).toEqual([
       "Norepinephrine",
       "bitartrate",
       "4mg/4ml inj",
+    ]);
+    expect(getGeneralDrugLabelNameLines("Sodium bicarbonate 8.4% 1.68g/20ml inj.", "10x70")).toEqual([
+      "Sodium bicarbonate",
+      "8.4% 1.68g/20ml inj.",
+    ]);
+    expect(getGeneralDrugLabelNameLines("Sugammadex sodium (2ml)/200mg inj", "10x70")).toEqual([
+      "Sugammadex sodium",
+      "(2ml)/200mg inj",
+    ]);
+    expect(getGeneralDrugLabelNameLines("Ulistin 100,000 iu/2ml Inj", "10x70")).toEqual([
+      "Ulistin",
+      "100,000 iu/2ml Inj",
     ]);
     expect(getDrugLabelNameClass("1% Lidocaine HCl 20ml inj", "stock", "10x70")).toBe("name-extra-long");
   });

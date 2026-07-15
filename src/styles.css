@@ -3206,6 +3206,14 @@ button {
   line-height: 1;
 }
 
+.drug-label-item.label-size-10x70:is(.label-kind-stock, .label-kind-pharmacy).name-long .drug-label-name-lines {
+  font-size: 9.4px;
+}
+
+.drug-label-item.label-size-10x70:is(.label-kind-stock, .label-kind-pharmacy).name-extra-long .drug-label-name-lines {
+  font-size: 8.2px;
+}
+
 .drug-label-item.label-size-10x70:is(.label-kind-stock, .label-kind-pharmacy) .drug-label-name-lines-3,
 .drug-label-item.label-size-10x70:is(.label-kind-stock, .label-kind-pharmacy) .drug-label-name-lines-4,
 .drug-label-item.label-size-10x70:is(.label-kind-stock, .label-kind-pharmacy) .drug-label-name-lines-5 {

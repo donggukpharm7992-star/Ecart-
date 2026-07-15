@@ -696,8 +696,12 @@ export function formatFluidLabelName(name: string) {
   return name.replace(/\s*(?:bag|btl)\b\.?/gi, "").replace(/\s{2,}/g, " ").trim();
 }
 
-const GENERAL_DRUG_LABEL_DOSE_PATTERN =
-  /\d+(?:\.\d+)?(?:\s*\/\s*\d+(?:\.\d+)?)*\s*(?:mcg|mg|g|kg|ml|l|iu|u|unit|units|meq|mmol|%)(?:\s*\/\s*\d*(?:\.\d+)?\s*(?:mcg|mg|g|kg|ml|l|iu|u|unit|units|meq|mmol|hr|h|%))?/gi;
+const GENERAL_DRUG_LABEL_DOSE_NUMBER = String.raw`(?:\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)`;
+const GENERAL_DRUG_LABEL_DOSE_UNIT = String.raw`(?:mcg|mg|g|kg|ml|l|iu|u|unit|units|meq|mmol|hr|h|%)`;
+const GENERAL_DRUG_LABEL_DOSE_PATTERN = new RegExp(
+  String.raw`(?:\(?${GENERAL_DRUG_LABEL_DOSE_NUMBER}\s*${GENERAL_DRUG_LABEL_DOSE_UNIT}\)?\s*\/\s*)*${GENERAL_DRUG_LABEL_DOSE_NUMBER}\s*${GENERAL_DRUG_LABEL_DOSE_UNIT}(?:\s*\/\s*${GENERAL_DRUG_LABEL_DOSE_NUMBER}?\s*${GENERAL_DRUG_LABEL_DOSE_UNIT})?`,
+  "gi",
+);
 
 function splitGeneralDrugLabelSegment(segment: string, maxLength: number) {
   const tokens = segment.replace(/\s{2,}/g, " ").trim().split(/\s+/).filter(Boolean);
@@ -722,19 +726,20 @@ export function getGeneralDrugLabelNameLines(name: string, sizeKey: DrugLabelSiz
   const cleaned = name.replace(/\s{2,}/g, " ").trim();
   if (!cleaned) return [];
 
-  const maxLength = sizeKey === "10x70" ? 13 : sizeKey === "15x95" ? 18 : sizeKey === "35x100" ? 22 : 20;
+  const nameMaxLength = sizeKey === "10x70" ? 20 : sizeKey === "15x95" ? 22 : sizeKey === "35x100" ? 22 : 20;
+  const doseMaxLength = sizeKey === "10x70" ? 20 : sizeKey === "15x95" ? 24 : nameMaxLength;
   const doseMatches = [...cleaned.matchAll(GENERAL_DRUG_LABEL_DOSE_PATTERN)];
   const doseMatch = doseMatches.find((match) => (match.index ?? 0) > 0);
-  if (!doseMatch?.index) return splitGeneralDrugLabelSegment(cleaned, maxLength);
+  if (!doseMatch?.index) return splitGeneralDrugLabelSegment(cleaned, nameMaxLength);
 
   const namePart = cleaned.slice(0, doseMatch.index).trim();
   const dosePart = cleaned.slice(doseMatch.index).trim();
   const parenthetical = namePart.match(/^(.+?)\s*(\([^()]+\))$/);
   const nameLines = parenthetical
-    ? [...splitGeneralDrugLabelSegment(parenthetical[1], maxLength), parenthetical[2]]
-    : splitGeneralDrugLabelSegment(namePart, maxLength);
+    ? [...splitGeneralDrugLabelSegment(parenthetical[1], nameMaxLength), parenthetical[2]]
+    : splitGeneralDrugLabelSegment(namePart, nameMaxLength);
 
-  return [...nameLines, ...splitGeneralDrugLabelSegment(dosePart, maxLength)].filter(Boolean);
+  return [...nameLines, ...splitGeneralDrugLabelSegment(dosePart, doseMaxLength)].filter(Boolean);
 }
 
 export function stripControlledDrugLabelPrefix(name: string) {

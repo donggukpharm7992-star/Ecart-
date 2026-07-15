@@ -1248,17 +1248,21 @@ export function App() {
       const mergedState = mergeNarcoticInspectionFields(localState, normalizedRemote);
       const changeSummary = buildNarcoticStateChangeSummary(localState, mergedState);
       if (changeSummary.length === 0) {
-        window.alert("새로 반영할 비치마약류 뷰어 변경 내용이 없습니다.");
-        setSyncStatus({ mode: "idle", message: "새로 반영할 비치마약류 뷰어 변경 내용이 없습니다." });
+        const noChangesMessage = isNarcoticViewer
+          ? "PC에서 새로 반영된 비치마약류 엑셀 내용이 없습니다."
+          : "새로 반영할 비치마약류 뷰어 변경 내용이 없습니다.";
+        window.alert(noChangesMessage);
+        setSyncStatus({ mode: "idle", message: noChangesMessage });
         return;
       }
+      const applyTarget = isNarcoticViewer ? "PC에서 업로드한 비치마약류 엑셀 내용을 모바일 화면에" : "비치마약류 뷰어 반영 내용을 관리자 화면에";
       const confirmed = window.confirm(
-        `비치마약류 뷰어 반영 내용을 관리자 화면에 적용합니다.\n\n${changeSummary
+        `${applyTarget} 적용합니다.\n\n${changeSummary
           .map((line) => `- ${line}`)
           .join("\n")}\n\n이 내용을 반영할까요?`,
       );
       if (!confirmed) {
-        setSyncStatus({ mode: "idle", message: "비치마약류 뷰어 반영이 취소되었습니다." });
+        setSyncStatus({ mode: "idle", message: "비치마약류 내용 불러오기가 취소되었습니다." });
         return;
       }
       localUpdatedAtRef.current = remote.envelope.updatedAt;
@@ -1266,7 +1270,11 @@ export function App() {
       pendingPushRef.current = false;
       window.localStorage.setItem(LOCAL_UPDATED_AT_KEY, remote.envelope.updatedAt);
       applyPersistedAppState(mergedState);
-      window.alert("비치마약류 뷰어 반영 내용이 관리자 화면에 적용되었습니다.");
+      window.alert(
+        isNarcoticViewer
+          ? "PC에서 업로드한 비치마약류 엑셀 내용이 모바일 화면에 적용되었습니다."
+          : "비치마약류 뷰어 반영 내용이 관리자 화면에 적용되었습니다.",
+      );
       setSyncStatus({ mode: "synced", message: "비치마약류 점검 내용 불러오기 완료", lastSyncedAt: new Date().toISOString() });
     } catch (error) {
       const msg = error instanceof Error ? error.message : "비치마약류 점검 내용 불러오기 실패";
@@ -1350,7 +1358,7 @@ export function App() {
       if (appMode === "admin") {
         scheduleRemotePush();
       } else {
-        setSyncStatus({ mode: "idle", message: "수정 내용은 관리자 PC로 반영 버튼을 눌러 저장하세요." });
+        setSyncStatus({ mode: "idle", message: "수정 내용은 모바일 점검 내용 PC로 올리기 버튼을 눌러 저장하세요." });
       }
     } else if (applyingRemoteRef.current) {
       applyingRemoteRef.current = false;
@@ -3973,10 +3981,19 @@ export function App() {
                       <FileText size={16} />
                       비치마약류 순회점검표
                     </button>
-                    {!isNarcoticViewer && (
-                      <button type="button" className="secondary-button narcotic-sync-button" onClick={() => void pullNarcoticInspectionStateFromServer()}>
-                        <Download size={16} />
-                        뷰어 반영 내용 받기
+                    <button type="button" className="secondary-button narcotic-sync-button" onClick={() => void pullNarcoticInspectionStateFromServer()}>
+                      <Download size={16} />
+                      {isNarcoticViewer ? "PC 엑셀 내용 불러오기" : "뷰어 반영 내용 받기"}
+                    </button>
+                    {isNarcoticViewer && (
+                      <button
+                        type="button"
+                        className="secondary-button narcotic-sync-button"
+                        onClick={() => void saveNarcoticInspectionStateToServer()}
+                        title="모바일에서 점검한 비치마약류 내용을 관리자 PC로 반영"
+                      >
+                        <Upload size={16} />
+                        모바일 점검 내용 PC로 올리기
                       </button>
                     )}
                     <button type="button" className="secondary-button narcotic-upload-button" onClick={() => narcoticExcelInputRef.current?.click()}>
@@ -3992,19 +4009,6 @@ export function App() {
                   </div>
                 </div>
                 {narcoticExcelFileName && <p className="narcotic-upload-name">선택 파일: {narcoticExcelFileName}</p>}
-                {isNarcoticViewer && (
-                  <div className="narcotic-apply-panel">
-                    <button
-                      type="button"
-                      className="secondary-button narcotic-sync-button"
-                      onClick={() => void saveNarcoticInspectionStateToServer()}
-                      title="비치마약류 뷰어 수정 내용을 관리자 PC로 반영"
-                    >
-                      <RefreshCw size={16} />
-                      관리자 PC로 반영
-                    </button>
-                  </div>
-                )}
                 <div className="narcotic-guide-list">
                   {currentNarcoticFloors.map((floorGroup) => (
                     <div className="narcotic-guide-floor" key={floorGroup.floor}>
