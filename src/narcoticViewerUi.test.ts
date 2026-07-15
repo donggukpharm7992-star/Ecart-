@@ -14,4 +14,9 @@ describe("narcotic viewer sync UI", () => {
     expect(appSource).toContain("PC 엑셀 내용 불러오기");
     expect(appSource).toContain("pullNarcoticInspectionStateFromServer()");
   });
+
+  it("shows explicit mobile-to-PC and PC-to-mobile actions in the admin screen", () => {
+    expect(appSource).toContain("모바일 점검 내용 PC로 불러오기");
+    expect(appSource).toContain("PC 엑셀 내용 모바일로 보내기");
+  });
 });

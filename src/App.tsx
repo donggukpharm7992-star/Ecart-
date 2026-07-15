@@ -1290,7 +1290,9 @@ export function App() {
       narcoticRoundSummaryDraft: refreshRoundSummaryDraftFromGenerated(localState.narcoticRoundSummaryDraft, generatedNarcoticRoundSummaryDraft),
     };
     const confirmed = window.confirm(
-      "현재 비치마약류 뷰어에서 수정한 보유실, 약품, 체크, 3개월 미만 날짜, 체크리스트 메모, LOT, 순회점검표 내용을 관리자 PC 공유 상태로 반영합니다.",
+      isNarcoticViewer
+        ? "모바일에서 점검한 보유실, 약품, 체크, 3개월 미만 날짜, 체크리스트 메모, LOT, 순회점검표 내용을 관리자 PC로 올립니다."
+        : "PC에서 엑셀 업로드한 비치마약류 보유실, 약품, 수량, LOT 내용을 모바일 뷰어로 보냅니다.",
     );
     if (!confirmed) return;
 
@@ -3983,7 +3985,7 @@ export function App() {
                     </button>
                     <button type="button" className="secondary-button narcotic-sync-button" onClick={() => void pullNarcoticInspectionStateFromServer()}>
                       <Download size={16} />
-                      {isNarcoticViewer ? "PC 엑셀 내용 불러오기" : "뷰어 반영 내용 받기"}
+                      {isNarcoticViewer ? "PC 엑셀 내용 불러오기" : "모바일 점검 내용 PC로 불러오기"}
                     </button>
                     {isNarcoticViewer && (
                       <button
@@ -3994,6 +3996,17 @@ export function App() {
                       >
                         <Upload size={16} />
                         모바일 점검 내용 PC로 올리기
+                      </button>
+                    )}
+                    {!isNarcoticViewer && (
+                      <button
+                        type="button"
+                        className="secondary-button narcotic-sync-button"
+                        onClick={() => void saveNarcoticInspectionStateToServer()}
+                        title="PC에서 엑셀 업로드한 비치마약류 내용을 모바일 뷰어로 전송"
+                      >
+                        <Upload size={16} />
+                        PC 엑셀 내용 모바일로 보내기
                       </button>
                     )}
                     <button type="button" className="secondary-button narcotic-upload-button" onClick={() => narcoticExcelInputRef.current?.click()}>
