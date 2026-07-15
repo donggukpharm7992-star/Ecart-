@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-15T04:49:30.655Z",
+  "updatedAt": "2026-07-15T04:49:46.064Z",
   "clientId": "8fca6235-56b2-4861-8140-d0d51f2a8239",
   "state": {
     "stockDrugs": [
@@ -7108,7 +7108,66 @@
       "INJ::__NO_NARCOTIC_STOCK__": true
     },
     "narcoticExpiry": {},
-    "narcoticChecklistByRoom": {},
+    "narcoticChecklistByRoom": {
+      "INJ": [
+        {
+          "section": "마약류 관리",
+          "text": "마약류 저장 시설의 개폐와 시건 장치에 이상이 없다.",
+          "id": "narcotic-INJ-0",
+          "status": "good",
+          "note": ""
+        },
+        {
+          "section": "마약류 관리",
+          "text": "보유 중인 비치 마약류는 약품 라벨링을 하여 다른 약품과 분리 보관되어 있다.",
+          "id": "narcotic-INJ-1",
+          "status": "bad",
+          "note": "이상."
+        },
+        {
+          "section": "마약류 관리",
+          "text": "보유 중인 비치 마약류의 종류와 수량에 이상이 없다.",
+          "id": "narcotic-INJ-2",
+          "status": "good",
+          "note": ""
+        },
+        {
+          "section": "마약류 관리",
+          "text": "보유 중인 비치 마약류의 유효기간을 날짜로 월 1회 관리하고 있다.",
+          "id": "narcotic-INJ-3",
+          "status": "good",
+          "note": ""
+        },
+        {
+          "section": "마약류 관리",
+          "text": "마약 저장 시설의 시건 장치 열쇠를 핸드투핸드로 관리하고 있다.",
+          "id": "narcotic-INJ-4",
+          "status": "good",
+          "note": ""
+        },
+        {
+          "section": "마약류 관리",
+          "text": "잔여 마약류 및 폐기 대상 마약류도 마약류 저장 시설에 보관한다.",
+          "id": "narcotic-INJ-5",
+          "status": "good",
+          "note": ""
+        },
+        {
+          "section": "마약류 관리",
+          "text": "마약 관련 폐기물(알루미늄 호일 혹은 앰플 깍지 등)을 지침에 따라 분리 폐기 하고 있다.",
+          "id": "narcotic-INJ-6",
+          "status": "good",
+          "note": ""
+        },
+        {
+          "section": "마약류 관리",
+          "text": "관리자가 마약류저장시설을 주 1회 점검 후 점검부를 매주 작성하고 있다.",
+          "id": "narcotic-INJ-7",
+          "status": "good",
+          "note": ""
+        }
+      ]
+    },
     "narcoticRoundSummaryDraft": {
       "title": "비치마약류 순회점검표",
       "inspectionPeriod": "2026년 7월 14일",
@@ -7116,8 +7175,8 @@
         {
           "id": "narcotic:INJ",
           "roomName": "INJ",
-          "result": "적합",
-          "details": "적합"
+          "result": "확인 필요",
+          "details": "점검 사항: 이상."
         },
         {
           "id": "narcotic:DREMM",
