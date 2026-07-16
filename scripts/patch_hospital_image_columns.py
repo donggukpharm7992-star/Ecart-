@@ -15,7 +15,10 @@ SOURCE = ROOT / "약제팀 라벨" / "원내보유의약품리스트.xlsx"
 DATA = ROOT / "약제팀 라벨" / "data" / "hospitalDrugLabels.generated.json"
 SHEET_XML = "xl/worksheets/sheet1.xml"
 NS = "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
+MC_NS = "http://schemas.openxmlformats.org/markup-compatibility/2006"
+X14AC_NS = "http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac"
 ET.register_namespace("", NS)
+ET.register_namespace("mc", MC_NS)
 
 
 def inline_cell(reference: str, value: str) -> ET.Element:
@@ -58,6 +61,7 @@ def main() -> None:
             row_number = int(row_element.attrib["r"])
             if row_number not in row_values:
                 continue
+            row_element.set("spans", "1:41")
             for cell in list(row_element):
                 if cell.attrib.get("r", "").startswith(("AN", "AO")):
                     row_element.remove(cell)
@@ -66,6 +70,12 @@ def main() -> None:
             row_element.append(inline_cell(f"AO{row_number}", source_url))
 
         patched_xml = ET.tostring(root, encoding="utf-8", xml_declaration=True)
+        if b'Ignorable="x14ac"' in patched_xml and b"xmlns:x14ac=" not in patched_xml:
+            patched_xml = patched_xml.replace(
+                b"<worksheet ",
+                f'<worksheet xmlns:x14ac="{X14AC_NS}" '.encode("utf-8"),
+                1,
+            )
         with tempfile.NamedTemporaryFile(delete=False, suffix=".xlsx", dir=SOURCE.parent) as temporary:
             temporary_path = Path(temporary.name)
         try:
