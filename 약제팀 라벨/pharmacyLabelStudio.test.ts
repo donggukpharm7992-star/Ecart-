@@ -10,6 +10,7 @@ import {
   splitDoseText,
   splitNutritionDoseParts,
   splitNutritionDoseText,
+  splitStyledPharmacyTitle,
 } from "./pharmacyLabelStudio";
 import type { HospitalDrugLabelRow } from "./hospitalDrugLabels";
 
@@ -63,6 +64,13 @@ describe("pharmacy label studio rules", () => {
 
   it("provides both syrup label dimensions", () => {
     expect(sizesForCategory("시럽", row).map((size) => size.presetKey)).toEqual(["48x94", "15x90"]);
+  });
+
+  it("splits selected common-name text into independently styled segments", () => {
+    expect(splitStyledPharmacyTitle("Propess vaginal", [{ start: 0, end: 7, color: "#ff0000", textTransform: "uppercase" }])).toEqual([
+      { text: "PROPESS", style: expect.objectContaining({ color: "#ff0000", textTransform: "uppercase" }) },
+      { text: " vaginal", style: undefined },
+    ]);
   });
 
   it("highlights only the numeric dose inside the common name", () => {

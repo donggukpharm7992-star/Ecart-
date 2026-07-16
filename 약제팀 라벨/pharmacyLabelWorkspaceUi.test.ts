@@ -31,7 +31,8 @@ describe("pharmacy label workspace UI", () => {
     expect(workspaceSource).toContain("storageOnlyClass");
     expect(workspaceSource).toContain("no-top-banner");
     expect(workspaceSource).toContain('!showTopBanner ? "no-top-banner no-warning"');
-    expect(workspaceSource).toContain('"냉장보관"');
+    expect(workspaceSource).toContain('`${coldWarningText}보관`');
+    expect(workspaceSource).toContain('warnings.includes("냉동")');
   });
 
   it("removes non-drug status values from the drug type selector", () => {
@@ -61,7 +62,7 @@ describe("pharmacy label workspace UI", () => {
 
   it("applies the compact external shelf rule and preserves colored side color on bottle caps", () => {
     expect(workspaceSource).toContain('isExternalShelfLabel ? "external-shelf-label"');
-    expect(workspaceSource).toContain('!isExternalShelfLabel && <span>{draft.printable.koreanName}</span>');
+    expect(workspaceSource).toContain("!isCompactSyrupLabel && !isGeneralFluidLabel");
     expect(workspaceSource).toContain('value === "유색 병뚜껑"');
     expect(workspaceSource).toContain('"--pharmacy-external-tone": externalTone');
     expect(workspaceSource).toContain("pharmacy-external-strip");
@@ -69,6 +70,14 @@ describe("pharmacy label workspace UI", () => {
     expect(workspaceSource).toContain("externalHasFlags");
     expect(workspaceSource).toContain('"name-only"');
     expect(workspaceSource).toContain("confusion-name");
+  });
+
+  it("supports clearing selections and partial common-name styling", () => {
+    expect(workspaceSource).toContain("선택 해제");
+    expect(workspaceSource).toContain("pharmacy-title-style-dashboard");
+    expect(workspaceSource).toContain("splitStyledPharmacyTitle");
+    expect(workspaceSource).toContain("textTransform: \"uppercase\"");
+    expect(workspaceSource).toContain("textTransform: \"lowercase\"");
   });
 
   it("filters side and cap labels and places paper controls next to output", () => {

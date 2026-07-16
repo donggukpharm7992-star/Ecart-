@@ -127,6 +127,7 @@ export function getHospitalDrugLabelWarnings(row: HospitalDrugLabelRow) {
     row.highRisk ? "고위험의약품" : "",
     row.nameCaution ? "이름주의" : "",
     row.doseCheck ? "용량확인" : "",
+    isHospitalDrugFrozen(row) ? "냉동" : "",
     isHospitalDrugRefrigerated(row) ? "냉장" : "",
     isHospitalDrugLightProtected(row) ? "차광" : "",
   ].filter(Boolean);

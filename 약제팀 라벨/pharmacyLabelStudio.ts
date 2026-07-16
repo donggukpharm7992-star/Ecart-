@@ -34,6 +34,13 @@ export type PharmacyPrintableText = {
   footer: { enabled: boolean; text: string };
   reconstitution: string;
 };
+export type PharmacyTitleStyle = {
+  start: number;
+  end: number;
+  fontSizePt?: number;
+  color?: string;
+  textTransform?: "none" | "uppercase" | "lowercase";
+};
 export type PharmacyLabelDraft = {
   id: string;
   code: string;
@@ -50,6 +57,7 @@ export type PharmacyLabelDraft = {
   backgroundColor: string;
   size: PharmacyLabelSize;
   printable: PharmacyPrintableText;
+  titleStyles?: PharmacyTitleStyle[];
   warnings: string[];
   drugTypes: string[];
   style: PharmacyLabelStyle;
@@ -62,7 +70,7 @@ export const A4_PAPER: PharmacyLabelPaper = { key: "A4", widthMm: 210, heightMm:
 export const A3_PAPER: PharmacyLabelPaper = { key: "A3", widthMm: 297, heightMm: 420, marginMm: 10 };
 export const DEFAULT_PHARMACY_LABEL_SIZE: PharmacyLabelSize = { presetKey: "33x100", widthMm: 100, heightMm: 33 };
 export const PHARMACY_LABEL_REPOSITORY_KEY = "pharmacy-label-repository-v2";
-export const WARNING_OPTIONS = ["용량주의", "유사발음", "유사모양", "고위험의약품", "이름주의", "용량확인", "냉장", "차광"] as const;
+export const WARNING_OPTIONS = ["용량주의", "유사발음", "유사모양", "고위험의약품", "이름주의", "용량확인", "냉장", "냉동", "차광"] as const;
 export const DRUG_CATEGORIES: PharmacyLabelCategory[][] = [
   ["원병", "PTP", "ATC", "입원산제"],
   ["외용제", "외용점안제", "팩제", "시럽"],
@@ -243,6 +251,27 @@ export function splitNutritionDoseParts(title: string) {
   }
   if (cursor < title.length) parts.push({ text: title.slice(cursor), highlighted: false });
   return parts;
+}
+
+export function splitStyledPharmacyTitle(title: string, styles: PharmacyTitleStyle[] = []) {
+  const valid = styles
+    .map((style) => ({ ...style, start: Math.max(0, style.start), end: Math.min(title.length, style.end) }))
+    .filter((style) => style.end > style.start)
+    .sort((a, b) => a.start - b.start);
+  if (valid.length === 0) return [{ text: title, style: undefined }];
+  const points = [...new Set([0, title.length, ...valid.flatMap((style) => [style.start, style.end])])].sort((a, b) => a - b);
+  return points.slice(0, -1).map((start, index) => {
+    const end = points[index + 1];
+    const applied = valid.filter((style) => style.start <= start && style.end >= end);
+    const merged = applied.reduce<PharmacyTitleStyle | undefined>((result, style) => ({ ...result, ...style }), undefined);
+    const rawText = title.slice(start, end);
+    const text = merged?.textTransform === "uppercase"
+      ? rawText.toUpperCase()
+      : merged?.textTransform === "lowercase"
+        ? rawText.toLowerCase()
+        : rawText;
+    return { text, style: merged };
+  });
 }
 
 function getPharmacyLabelWarnings(row: HospitalDrugLabelRow) {

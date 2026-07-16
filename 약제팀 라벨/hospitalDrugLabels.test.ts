@@ -124,6 +124,7 @@ describe("hospital drug label source", () => {
     expect(getHospitalDrugLabelWarnings(row)).toContain("차광");
     expect(getHospitalDrugStorageLabel({ ...row, storage: "냉장" })).toBe("냉장");
     expect(getHospitalDrugStorageLabel({ ...row, storage: "냉동" })).toBe("냉동");
+    expect(getHospitalDrugLabelWarnings({ ...row, storage: "냉동" })).toContain("냉동");
   });
 
   it("matches hospital label rows by English name, Korean name, and code", async () => {
