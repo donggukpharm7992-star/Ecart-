@@ -111,7 +111,7 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
   const labelStyle = draft ? ({
     "--pharmacy-label-width-mm": draft.size.widthMm,
     "--pharmacy-label-height-mm": draft.size.heightMm,
-    "--pharmacy-label-border": `${draft.style.outerBorderPx >= 5 ? `${draft.style.outerBorderPx}mm` : `${draft.style.outerBorderPx}px`} solid ${draft.style.outerBorderColor}`,
+    "--pharmacy-label-border": `${activeRow?.border || draft.style.outerBorderPx >= 5 ? "5mm" : `${draft.style.outerBorderPx}px`} solid ${activeRow?.border ? extractHex(activeRow.borderColor) || draft.style.outerBorderColor : draft.style.outerBorderColor}`,
     "--pharmacy-label-font-size": `${draft.style.fontSizePt}pt`,
     "--pharmacy-label-color": draft.style.fontColor,
     "--pharmacy-label-warning": draft.style.warningColor,
@@ -205,7 +205,6 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
             {hasDoseHighlight && titleParts.dose ? <>{titleParts.before}<mark className="dose-highlight">{titleParts.dose}</mark>{titleParts.after}</> : displayTitle}
           </strong>
             {!isCapLabel && <span>{draft.printable.koreanName}</span>}
-            {!isCapLabel && category === "항암제" && <b className={hasDoseHighlight ? "dose-highlight" : ""}>{draft.printable.strength}</b>}
             {isCapLabel && draft.doseUnit && draft.doseUnit !== "1T" && <b>{draft.doseUnit}</b>}
             {!isCapLabel && draft.atc && <small className="pharmacy-label-atc">ATC {draft.atc}</small>}
             {!isCapLabel && draft.location && <small className="pharmacy-label-location">{draft.location}</small>}

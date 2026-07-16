@@ -3105,7 +3105,6 @@ export function App() {
             ? <>{titleParts.before}<mark className="dose-highlight">{titleParts.dose}</mark>{titleParts.after}</>
             : displayTitle}</strong>
           {draft.accessory !== "병뚜껑" ? <span>{draft.printable.koreanName}</span> : null}
-          {draft.accessory !== "병뚜껑" && draft.category === "항암제" ? <b className={hasDoseHighlight ? "dose-highlight" : ""}>{draft.printable.strength}</b> : null}
           {draft.accessory === "병뚜껑" && draft.doseUnit && draft.doseUnit !== "1T" ? <b>{draft.doseUnit}</b> : null}
           {draft.accessory !== "병뚜껑" && draft.atc ? <small className="pharmacy-label-atc">ATC {draft.atc}</small> : null}
           {draft.accessory !== "병뚜껑" && draft.location ? <small className="pharmacy-label-location">{draft.location}</small> : null}

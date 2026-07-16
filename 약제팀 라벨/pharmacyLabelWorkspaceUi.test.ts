@@ -39,7 +39,7 @@ describe("pharmacy label workspace UI", () => {
 
   it("renders designated thick borders in millimeters", () => {
     expect(workspaceSource).toContain('draft.style.outerBorderPx >= 5');
-    expect(workspaceSource).toContain('`${draft.style.outerBorderPx}mm`');
+    expect(workspaceSource).toContain('"5mm"');
   });
 
   it("filters side and cap labels and places paper controls next to output", () => {

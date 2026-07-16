@@ -199,7 +199,7 @@ export function extractHex(value?: string) {
 }
 
 export function splitDoseText(title: string) {
-  const match = /\d+(?:\.\d+)?\s*(?:mcg|mg|g|ml|mL|%|IU|unit)(?:\/\d+(?:\.\d+)?\s*(?:ml|mL))?/i.exec(title);
+  const match = /\d+(?:\.\d+)?(?=\s*(?:mcg|mg|g|ml|mL|%|IU|unit))/i.exec(title);
   if (!match || match.index == null) return { before: title, dose: "", after: "" };
   return {
     before: title.slice(0, match.index),

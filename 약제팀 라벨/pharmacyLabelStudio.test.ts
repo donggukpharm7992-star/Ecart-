@@ -5,6 +5,7 @@ import {
   groupPharmacyLabelsForPaper,
   rowMatchesCategory,
   sizesForCategory,
+  splitDoseText,
 } from "./pharmacyLabelStudio";
 import type { HospitalDrugLabelRow } from "./hospitalDrugLabels";
 
@@ -54,6 +55,14 @@ describe("pharmacy label studio rules", () => {
     expect(sizesForCategory("원병", row).map((size) => size.presetKey)).toEqual(
       expect.arrayContaining(["102x220", "10x27", "15x30"]),
     );
+  });
+
+  it("highlights only the numeric dose inside the common name", () => {
+    expect(splitDoseText("Synagis 100mg/ml inj")).toEqual({
+      before: "Synagis ",
+      dose: "100",
+      after: "mg/ml inj",
+    });
   });
 
   it("creates high-risk warning and footer content", () => {
