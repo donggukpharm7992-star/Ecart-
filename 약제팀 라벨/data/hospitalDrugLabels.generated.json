@@ -2190,7 +2190,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "ARIPIP15",
@@ -2207,7 +2207,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "ARIPIP1",
@@ -2224,7 +2224,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "ARIPIP2",
@@ -2241,7 +2241,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "ARIPIP5",
@@ -2258,7 +2258,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "XXARPIP72",
@@ -2270,7 +2270,7 @@
     "package": "1 srg",
     "storage": "실온",
     "lightProtected": true,
-    "highRisk": false,
+    "highRisk": true,
     "inHospital": true,
     "similarLook": false,
     "similarSound": false,
@@ -2292,7 +2292,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "XXARIPIP3",
@@ -2309,7 +2309,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "XXARIPIP4",
@@ -2326,7 +2326,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "ABIRA5W",
@@ -7749,7 +7749,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "CABOZA4",
@@ -7766,7 +7766,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "CABOZA6",
@@ -7783,7 +7783,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "XCACL",
@@ -8072,7 +8072,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "XCASPO50",
@@ -12679,7 +12679,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "DIQUA54-T",
@@ -14549,7 +14549,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "ELTROM5W",
@@ -14566,7 +14566,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "ISMN20",
@@ -17235,7 +17235,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "FL-T",
@@ -17252,7 +17252,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "XFLUMA3",
@@ -17269,7 +17269,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "XFLUMA",
@@ -17286,7 +17286,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "X5FU1",
@@ -17711,7 +17711,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "XXDALT25",
@@ -17728,7 +17728,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "XXDALT75",
@@ -17830,7 +17830,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "XCLM",
@@ -17847,7 +17847,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "XCLM6",
@@ -17864,7 +17864,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "XXFULVE2W",
@@ -18765,7 +18765,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "AFAT3",
@@ -18782,7 +18782,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "AFAT4",
@@ -18799,7 +18799,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "IBUP-CR",
@@ -19479,7 +19479,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "HARMO5W-B",
@@ -19496,7 +19496,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "TAMSUD",
@@ -20159,7 +20159,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "XXHUMA253",
@@ -20176,7 +20176,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "XXHUMA553",
@@ -20193,7 +20193,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "XHUMA10",
@@ -20278,7 +20278,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "XHN10",
@@ -20295,7 +20295,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "XHR10",
@@ -20312,7 +20312,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "XIDURS",
@@ -20516,7 +20516,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "PALBOC12T",
@@ -20533,7 +20533,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "PALBOC7T",
@@ -20550,7 +20550,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "EPA3SC",
@@ -21468,7 +21468,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "RUXOL15",
@@ -21485,7 +21485,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "RUXOL20",
@@ -21502,7 +21502,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "RUXOL5",
@@ -21519,7 +21519,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "SIT50M1W",
@@ -23593,7 +23593,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "LENVAT4",
@@ -23610,7 +23610,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "XLECANE2",
@@ -24936,7 +24936,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "TFLUR2T",
@@ -24953,7 +24953,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "LOPER2W",
@@ -24987,7 +24987,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "LORLAT2",
@@ -25004,7 +25004,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "DIENOG2W",
@@ -25191,7 +25191,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "OLAPAR15",
@@ -25208,7 +25208,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "XSUXAM",
@@ -26211,7 +26211,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "XXMTX15X",
@@ -26228,7 +26228,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "XMETR500",
@@ -27520,7 +27520,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "XACYST6",
@@ -27537,7 +27537,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "MIROD50F",
@@ -28013,7 +28013,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "NARATR",
@@ -29067,7 +29067,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "IXAZM4",
@@ -29084,7 +29084,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "NITROFU",
@@ -29883,7 +29883,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "NINTEDA15",
@@ -29900,7 +29900,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "BARN10",
@@ -32501,7 +32501,7 @@
     "similarLook": true,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "X1PHY5",
@@ -32535,7 +32535,7 @@
     "similarLook": true,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "X2PHY5",
@@ -32569,7 +32569,7 @@
     "similarLook": true,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "X4PHY5",
@@ -32977,7 +32977,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "POMAL2W",
@@ -32994,7 +32994,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "POMAL3X",
@@ -33011,7 +33011,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "POMAL4X",
@@ -33028,7 +33028,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "DABIG110",
@@ -35136,7 +35136,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "LENAL15W",
@@ -35153,7 +35153,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "LENAL25W",
@@ -35170,7 +35170,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "LENAL5W",
@@ -35187,7 +35187,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "LASMID1",
@@ -37669,7 +37669,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "XSMOFKP19",
@@ -37686,7 +37686,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "X20SMOF50",
@@ -38077,7 +38077,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "DASAT20",
@@ -38094,7 +38094,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "DASAT50",
@@ -38111,7 +38111,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "DASAT80",
@@ -38128,7 +38128,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "ACEBR100",
@@ -38689,7 +38689,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "SUNIT25",
@@ -38706,7 +38706,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "ROSUV10Y",
@@ -39488,7 +39488,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "OSIMER8",
@@ -39505,7 +39505,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "XETOH99",
@@ -39964,7 +39964,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "ERLOT150W",
@@ -39981,7 +39981,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "OFLO-T",
@@ -40015,7 +40015,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "NILOT2",
@@ -40032,7 +40032,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "X2TAUR2",
@@ -40627,7 +40627,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "TEMOZO20",
@@ -40644,7 +40644,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "TEMOZ250C",
@@ -40661,7 +40661,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "TENELI20",
@@ -41987,7 +41987,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "TRAM50",
@@ -42021,7 +42021,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "TRAM100",
@@ -42990,7 +42990,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "XULIST5",
@@ -43007,7 +43007,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "UMCKAP-K",
@@ -43976,7 +43976,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "ABEMA15",
@@ -43993,7 +43993,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "ABEMA5",
@@ -44010,7 +44010,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "TRETIN10W",
@@ -45064,7 +45064,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "CRIZOL25",
@@ -45081,7 +45081,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "LATAN2X-T",
@@ -45234,7 +45234,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "CAPECI5W",
@@ -45251,7 +45251,7 @@
     "similarLook": false,
     "similarSound": false,
     "doseCaution": false,
-    "doseCheck": false
+    "doseCheck": true
   },
   {
     "code": "TBENA25",
