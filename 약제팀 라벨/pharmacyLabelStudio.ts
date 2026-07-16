@@ -158,6 +158,8 @@ export function createPharmacyLabelDraft(
   const size = cabinetSize ?? sizesForCategory(category, row)[0] ?? DEFAULT_PHARMACY_LABEL_SIZE;
   const anticancer = category === "항암제";
   const cabinetNameOnly = labelFamily === "cabinet" && category === "영양수액";
+  const workbookBorderColor = extractHex(row.borderColor);
+  const hasWorkbookBorder = row.border || Boolean(workbookBorderColor);
   return {
     id: `pharmacy-label-${row.code}-${labelFamily}-${category}`,
     code: row.code,
@@ -189,8 +191,8 @@ export function createPharmacyLabelDraft(
     drugTypes: row.drugType ? [row.drugType] : [],
     accessory: labelFamily === "cabinet" && ["원병", "PTP"].includes(category) ? "선반라벨" : undefined,
     style: {
-      outerBorderPx: row.border || category === "고가약" ? 5 : 0.5,
-      outerBorderColor: extractHex(row.borderColor) || "#111827",
+      outerBorderPx: hasWorkbookBorder || category === "고가약" ? 5 : 0.5,
+      outerBorderColor: workbookBorderColor || "#111827",
       textOutlinePx: 0,
       textOutlineColor: "#ffffff",
       fontFamily: "Malgun Gothic, Segoe UI, sans-serif",
@@ -251,6 +253,8 @@ export function resolvePharmacyLabelDraft(
   if (!saved) return createPharmacyLabelDraft(row, category, family);
   const workbookWarnings = getPharmacyLabelWarnings(row);
   const warnings = [...new Set([...saved.warnings, ...workbookWarnings])];
+  const workbookBorderColor = extractHex(row.borderColor);
+  const hasWorkbookBorder = row.border || Boolean(workbookBorderColor);
   return {
     ...saved,
     itemCode: row.itemCode ?? saved.itemCode,
@@ -264,8 +268,8 @@ export function resolvePharmacyLabelDraft(
       : saved.backgroundColor,
     warnings,
     printable: { ...saved.printable, warning: warnings.join(" · ") },
-    style: row.border || category === "고가약"
-      ? { ...saved.style, outerBorderPx: 5, outerBorderColor: extractHex(row.borderColor) || saved.style.outerBorderColor }
+    style: hasWorkbookBorder || category === "고가약"
+      ? { ...saved.style, outerBorderPx: 5, outerBorderColor: workbookBorderColor || saved.style.outerBorderColor }
       : { ...saved.style, outerBorderPx: saved.style.outerBorderPx === 5 ? 5 : 0.5 },
   };
 }

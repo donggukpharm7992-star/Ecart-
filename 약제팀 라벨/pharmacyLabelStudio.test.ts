@@ -114,9 +114,12 @@ describe("pharmacy label studio rules", () => {
   });
 
   it("uses a 0.5mm default border while preserving designated and high-cost 5mm borders", () => {
-    expect(createPharmacyLabelDraft({ ...row, border: false }, "원병", "drug").style.outerBorderPx).toBe(0.5);
+    expect(createPharmacyLabelDraft({ ...row, border: false, borderColor: "" }, "원병", "drug").style.outerBorderPx).toBe(0.5);
     expect(createPharmacyLabelDraft(row, "바이알", "drug").style.outerBorderPx).toBe(5);
     expect(createPharmacyLabelDraft({ ...row, border: false, highCost: true }, "고가약", "drug").style.outerBorderPx).toBe(5);
+    const colorDesignated = createPharmacyLabelDraft({ ...row, border: false, borderColor: "기호 #15A7E6" }, "바이알", "drug");
+    expect(colorDesignated.style.outerBorderPx).toBe(5);
+    expect(colorDesignated.style.outerBorderColor).toBe("#15A7E6");
   });
 
   it("groups labels for batch print", () => {

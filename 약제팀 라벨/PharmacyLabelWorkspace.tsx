@@ -84,11 +84,17 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
     setDraft((current) => {
       if (!current || current.category !== category || current.labelFamily !== family) return next;
       const preserveAccessory = !accessoryFilter || current.accessory === next.accessory;
+      const workbookBorderColor = extractHex(activeRow.borderColor);
+      const mergedStyle = { ...next.style, ...current.style };
+      if (activeRow.border || workbookBorderColor || category === "고가약") {
+        mergedStyle.outerBorderPx = 5;
+        mergedStyle.outerBorderColor = workbookBorderColor || next.style.outerBorderColor;
+      }
       return {
         ...next,
         size: preserveAccessory ? current.size : next.size,
         accessory: preserveAccessory ? current.accessory : next.accessory,
-        style: { ...next.style, ...current.style },
+        style: mergedStyle,
       };
     });
   }, [accessoryFilter, activeRow?.code, category, doseUnitFilter, family, savedLabels]);
@@ -102,6 +108,11 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
       next.accessory = draft.accessory;
       next.doseUnit = draft.doseUnit;
       next.style = { ...next.style, ...draft.style };
+      const workbookBorderColor = extractHex(row.borderColor);
+      if (row.border || workbookBorderColor || category === "고가약") {
+        next.style.outerBorderPx = 5;
+        next.style.outerBorderColor = workbookBorderColor || next.style.outerBorderColor;
+      }
       if (draft.accessory === "유색 측면라벨") {
         next.backgroundColor = extractHex(row.coloredSideBackground) || draft.backgroundColor;
       } else if (accessoryFilter === "유색 병뚜껑") {

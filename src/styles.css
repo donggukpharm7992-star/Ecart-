@@ -5462,11 +5462,11 @@ button {
 }
 
 .pharmacy-print-label.anticancer.storage-tone-light .pharmacy-label-main {
-  background: #ecfdf3;
+  background: #ecfdf3 !important;
 }
 
-.pharmacy-print-label.anticancer.storage-tone-cold .pharmacy-label-main {
-  background: #eff8ff;
+.pharmacy-print-label.anticancer.storage-tone-cold:not(.storage-tone-light) .pharmacy-label-main {
+  background: #eff8ff !important;
 }
 
 .pharmacy-print-label.anticancer .pharmacy-label-main em {
