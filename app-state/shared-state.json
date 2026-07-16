@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-16T05:20:05.689Z",
+  "updatedAt": "2026-07-16T05:26:12.179Z",
   "clientId": "8fca6235-56b2-4861-8140-d0d51f2a8239",
   "state": {
     "stockDrugs": [
@@ -7135,6 +7135,64 @@
     },
     "narcoticExpiry": {},
     "narcoticChecklistByRoom": {
+      "71": [
+        {
+          "section": "마약류 관리",
+          "text": "마약류 저장 시설의 개폐와 시건 장치에 이상이 없다.",
+          "id": "narcotic-71-0",
+          "status": "good",
+          "note": ""
+        },
+        {
+          "section": "마약류 관리",
+          "text": "보유 중인 비치 마약류는 약품 라벨링을 하여 다른 약품과 분리 보관되어 있다.",
+          "id": "narcotic-71-1",
+          "status": "good",
+          "note": ""
+        },
+        {
+          "section": "마약류 관리",
+          "text": "보유 중인 비치 마약류의 종류와 수량에 이상이 없다.",
+          "id": "narcotic-71-2",
+          "status": "good",
+          "note": ""
+        },
+        {
+          "section": "마약류 관리",
+          "text": "보유 중인 비치 마약류의 유효기간을 날짜로 월 1회 관리하고 있다.",
+          "id": "narcotic-71-3",
+          "status": "good",
+          "note": "유효기간 관리×"
+        },
+        {
+          "section": "마약류 관리",
+          "text": "마약 저장 시설의 시건 장치 열쇠를 핸드투핸드로 관리하고 있다.",
+          "id": "narcotic-71-4",
+          "status": "good",
+          "note": ""
+        },
+        {
+          "section": "마약류 관리",
+          "text": "잔여 마약류 및 폐기 대상 마약류도 마약류 저장 시설에 보관한다.",
+          "id": "narcotic-71-5",
+          "status": "good",
+          "note": ""
+        },
+        {
+          "section": "마약류 관리",
+          "text": "마약 관련 폐기물(알루미늄 호일 혹은 앰플 깍지 등)을 지침에 따라 분리 폐기 하고 있다.",
+          "id": "narcotic-71-6",
+          "status": "good",
+          "note": ""
+        },
+        {
+          "section": "마약류 관리",
+          "text": "관리자가 마약류저장시설을 주 1회 점검 후 점검부를 매주 작성하고 있다.",
+          "id": "narcotic-71-7",
+          "status": "good",
+          "note": ""
+        }
+      ],
       "72": [
         {
           "section": "마약류 관리",
