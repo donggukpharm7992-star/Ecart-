@@ -2861,6 +2861,16 @@ button {
   line-height: 1;
 }
 
+.drug-label-sheet.pharmacy-paper-a4 {
+  width: 210mm;
+  min-height: 297mm;
+}
+
+.drug-label-sheet.pharmacy-paper-a3 {
+  width: 297mm;
+  min-height: 420mm;
+}
+
 .drug-label-item.label-size-10x70.label-kind-stock .drug-label-code-stack .label-code-storage.cold {
   color: #0b5c88;
   background: #dff3ff;
@@ -4524,6 +4534,7 @@ button {
 
 .pharmacy-category-row,
 .pharmacy-high-cost-routes,
+.pharmacy-accessory-filters,
 .pharmacy-warning-editor,
 .pharmacy-type-editor,
 .pharmacy-choice-grid {
@@ -4534,6 +4545,7 @@ button {
 
 .pharmacy-category-row button,
 .pharmacy-high-cost-routes button,
+.pharmacy-accessory-filters button,
 .pharmacy-choice-grid button {
   min-height: 32px;
   padding: 0 11px;
@@ -4546,6 +4558,7 @@ button {
 
 .pharmacy-category-row button.active,
 .pharmacy-high-cost-routes button.active,
+.pharmacy-accessory-filters button.active,
 .pharmacy-choice-grid button.active {
   color: #fff;
   border-color: var(--brand-orange);
@@ -4555,6 +4568,16 @@ button {
 .pharmacy-high-cost-routes {
   align-items: center;
   padding-top: 3px;
+}
+
+.pharmacy-accessory-filters {
+  align-items: center;
+  padding-top: 3px;
+}
+
+.pharmacy-accessory-filters strong {
+  margin-right: 3px;
+  font-size: 12px;
 }
 
 .pharmacy-high-cost-routes strong {
@@ -4716,6 +4739,7 @@ button {
 
 .pharmacy-print-label {
   display: grid;
+  box-sizing: border-box;
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto minmax(0, 1fr) auto;
   width: calc(var(--pharmacy-label-width-mm, 100) * 1mm);
@@ -4946,6 +4970,48 @@ button {
   border: 1px solid var(--line-soft);
   border-radius: 7px;
   background: #fbfaf9;
+}
+
+.pharmacy-condition-dashboard {
+  display: grid;
+  grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+  gap: 10px;
+  margin: 0 14px 12px;
+}
+
+.pharmacy-condition-dashboard > div {
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--line-soft);
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.pharmacy-condition-dashboard h3 {
+  margin: 0 0 8px;
+  font-size: 12px;
+}
+
+.pharmacy-condition-dashboard .pharmacy-warning-editor,
+.pharmacy-condition-dashboard .pharmacy-type-editor {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.pharmacy-condition-dashboard label {
+  min-height: 30px;
+  padding: 5px 8px;
+  border: 1px solid #d7dee8;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.pharmacy-condition-dashboard label.checked {
+  color: #fff;
+  border-color: var(--brand-header);
+  background: var(--brand-header);
 }
 
 .pharmacy-warning-editor label,

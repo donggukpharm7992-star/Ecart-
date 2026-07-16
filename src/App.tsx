@@ -956,6 +956,7 @@ export function App() {
     typeof window === "undefined" ? [] : loadSavedPharmacyLabelsFromStorage(window.localStorage),
   );
   const [pharmacyPrintDrafts, setPharmacyPrintDrafts] = useState<PharmacyLabelDraft[]>([]);
+  const [pharmacyPrintPaper, setPharmacyPrintPaper] = useState<"A4" | "A3">("A4");
   const [targetRooms, setTargetRooms] = useState<string[]>([]);
   const [newAssignment, setNewAssignment] = useState({ drugCode: "", count: 1 });
   const [assignmentDrugQuery, setAssignmentDrugQuery] = useState("");
@@ -2665,9 +2666,10 @@ export function App() {
     setSavedPharmacyLabels((previous) => [...previous.filter((label) => label.id !== saved.id), saved]);
   }
 
-  function printPharmacyStudioLabels(labels: PharmacyLabelDraft[]) {
+  function printPharmacyStudioLabels(labels: PharmacyLabelDraft[], paperKey: "A4" | "A3") {
     if (labels.length === 0) return;
     setPharmacyPrintDrafts(labels);
+    setPharmacyPrintPaper(paperKey);
     setPrintPreviewMode("drug-labels");
     setPdfStatus("idle");
     setPdfDownload(null);
@@ -3067,7 +3069,10 @@ export function App() {
     );
     const hasColdWarning = draft.warnings.includes("냉장");
     const hasLightWarning = draft.warnings.includes("차광");
-    const titleParts = splitDoseText(draft.printable.title);
+    const displayTitle = draft.accessory === "병뚜껑"
+      ? draft.printable.title.replace(/\btab(?:let)?\b/gi, "").replace(/\s{2,}/g, " ").trim()
+      : draft.printable.title;
+    const titleParts = splitDoseText(displayTitle);
     const storageOnlyClass = !hasCautionWarning && hasColdWarning && hasLightWarning
       ? "storage-both"
       : !hasCautionWarning && hasColdWarning
@@ -3078,7 +3083,7 @@ export function App() {
     const style = {
       "--pharmacy-label-width-mm": draft.size.widthMm,
       "--pharmacy-label-height-mm": draft.size.heightMm,
-      "--pharmacy-label-border": `${draft.style.outerBorderPx}px solid ${draft.style.outerBorderColor}`,
+      "--pharmacy-label-border": `${draft.style.outerBorderPx >= 5 ? `${draft.style.outerBorderPx}mm` : `${draft.style.outerBorderPx}px`} solid ${draft.style.outerBorderColor}`,
       "--pharmacy-label-font-size": `${draft.style.fontSizePt}pt`,
       "--pharmacy-label-color": draft.style.fontColor,
       "--pharmacy-label-warning": draft.style.warningColor,
@@ -3096,11 +3101,11 @@ export function App() {
           {hasColdWarning ? <b className="pharmacy-storage-badge cold">냉장</b> : null}
         </div> : null}
         <div className="pharmacy-label-main">
-          <strong>{draft.accessory === "병뚜껑" && hasDoseHighlight && titleParts.dose
+          <strong>{hasDoseHighlight && titleParts.dose
             ? <>{titleParts.before}<mark className="dose-highlight">{titleParts.dose}</mark>{titleParts.after}</>
-            : draft.printable.title}</strong>
+            : displayTitle}</strong>
           {draft.accessory !== "병뚜껑" ? <span>{draft.printable.koreanName}</span> : null}
-          {draft.accessory !== "병뚜껑" ? <b className={hasDoseHighlight ? "dose-highlight" : ""}>{draft.printable.strength}</b> : null}
+          {draft.accessory !== "병뚜껑" && draft.category === "항암제" ? <b className={hasDoseHighlight ? "dose-highlight" : ""}>{draft.printable.strength}</b> : null}
           {draft.accessory === "병뚜껑" && draft.doseUnit && draft.doseUnit !== "1T" ? <b>{draft.doseUnit}</b> : null}
           {draft.accessory !== "병뚜껑" && draft.atc ? <small className="pharmacy-label-atc">ATC {draft.atc}</small> : null}
           {draft.accessory !== "병뚜껑" && draft.location ? <small className="pharmacy-label-location">{draft.location}</small> : null}
@@ -3112,7 +3117,7 @@ export function App() {
 
   function renderDrugLabelSheet(targetRef?: RefObject<HTMLDivElement | null>, className = "drug-label-sheet") {
     return (
-      <section ref={targetRef} className={`${className} mixed-label-sheet`}>
+      <section ref={targetRef} className={`${className} mixed-label-sheet ${pharmacyPrintDrafts.length > 0 ? `pharmacy-paper-${pharmacyPrintPaper.toLowerCase()}` : ""}`}>
         <div className="drug-label-sheet-head">
           <div>
             <h2>약품 라벨 출력</h2>

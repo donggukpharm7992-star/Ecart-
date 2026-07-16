@@ -36,4 +36,17 @@ describe("pharmacy label workspace UI", () => {
     expect(workspaceSource).toContain("약품 위치");
     expect(workspaceSource).toContain("ATC 번호");
   });
+
+  it("renders designated thick borders in millimeters", () => {
+    expect(workspaceSource).toContain('draft.style.outerBorderPx >= 5');
+    expect(workspaceSource).toContain('`${draft.style.outerBorderPx}mm`');
+  });
+
+  it("filters side and cap labels and places paper controls next to output", () => {
+    expect(workspaceSource).toContain("표시 약품 먼저 보기");
+    expect(workspaceSource).toContain("sideLabelHalfT");
+    expect(workspaceSource).toContain("coloredSideLabel");
+    expect(workspaceSource).toContain("capLabel");
+    expect(workspaceSource).toContain("pharmacy-condition-dashboard");
+  });
 });

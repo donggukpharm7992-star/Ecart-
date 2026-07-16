@@ -83,7 +83,7 @@ const SIZE_MAP: Record<string, PharmacyLabelSize[]> = {
   "마약/향정": sizes(["40*70"]),
   고가약: sizes(["40*80", "55*80"]),
   항암제: sizes(["46*80"]),
-  원병: sizes(["33*100", "220*102", "10*27", "15*30"]),
+  원병: sizes(["33*100", "102*220", "10*27", "15*30"]),
 };
 
 function sizes(values: string[]) {
@@ -214,9 +214,20 @@ export function resolvePharmacyLabelDraft(
   category: PharmacyLabelCategory,
   family: PharmacyLabelFamily,
 ) {
-  return savedLabels
+  const saved = savedLabels
     .filter((label) => label.code === row.code && label.category === category && label.labelFamily === family)
-    .sort((a, b) => b.savedAt.localeCompare(a.savedAt))[0] ?? createPharmacyLabelDraft(row, category, family);
+    .sort((a, b) => b.savedAt.localeCompare(a.savedAt))[0];
+  if (!saved) return createPharmacyLabelDraft(row, category, family);
+  const workbookWarnings = getHospitalDrugLabelWarnings(row);
+  const warnings = [...new Set([...saved.warnings, ...workbookWarnings])];
+  return {
+    ...saved,
+    warnings,
+    printable: { ...saved.printable, warning: warnings.join(" · ") },
+    style: row.border
+      ? { ...saved.style, outerBorderPx: 5, outerBorderColor: extractHex(row.borderColor) || saved.style.outerBorderColor }
+      : saved.style,
+  };
 }
 
 export function savePharmacyLabelDraft(draft: PharmacyLabelDraft, now = new Date()): PharmacySavedLabel {

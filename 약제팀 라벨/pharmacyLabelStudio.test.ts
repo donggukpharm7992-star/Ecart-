@@ -52,7 +52,7 @@ describe("pharmacy label studio rules", () => {
 
   it("uses corrected side and cap dimensions", () => {
     expect(sizesForCategory("원병", row).map((size) => size.presetKey)).toEqual(
-      expect.arrayContaining(["220x102", "10x27", "15x30"]),
+      expect.arrayContaining(["102x220", "10x27", "15x30"]),
     );
   });
 
