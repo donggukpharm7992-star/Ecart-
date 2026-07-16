@@ -229,6 +229,22 @@ export function splitNutritionDoseText(title: string) {
   };
 }
 
+export function splitNutritionDoseParts(title: string) {
+  const pattern = /\d+(?:\.\d+)?(?=\s*(?:\/|mcg|mg|g|ml|mL|IU|unit))/gi;
+  const matches = [...title.matchAll(pattern)];
+  if (matches.length === 0) return [{ text: title, highlighted: false }];
+  const parts: { text: string; highlighted: boolean }[] = [];
+  let cursor = 0;
+  for (const match of matches) {
+    const index = match.index ?? cursor;
+    if (index > cursor) parts.push({ text: title.slice(cursor, index), highlighted: false });
+    parts.push({ text: match[0], highlighted: true });
+    cursor = index + match[0].length;
+  }
+  if (cursor < title.length) parts.push({ text: title.slice(cursor), highlighted: false });
+  return parts;
+}
+
 function getPharmacyLabelWarnings(row: HospitalDrugLabelRow) {
   const warnings = getHospitalDrugLabelWarnings(row);
   if (/^Ntense\s+(?:central\s+1518|EF\s+506)\s*mL/i.test(row.name) && !warnings.includes("용량확인")) {

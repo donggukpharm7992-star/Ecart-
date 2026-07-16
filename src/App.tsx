@@ -114,6 +114,7 @@ import {
   savePharmacyLabelToStorage,
   formatPharmacyExpiry,
   splitDoseText,
+  splitNutritionDoseParts,
   splitNutritionDoseText,
   type PharmacyLabelDraft,
   type PharmacySavedLabel,
@@ -2677,6 +2678,7 @@ export function App() {
     setPrintPreviewMode("drug-labels");
     setPdfStatus("idle");
     setPdfDownload(null);
+    setIsPharmacyLabelWorkspaceOpen(false);
     setShowPrintPreview(true);
   }
 
@@ -3089,6 +3091,7 @@ export function App() {
       ? draft.printable.title.replace(/\btab(?:let)?\b/gi, "").replace(/\s{2,}/g, " ").trim()
       : draft.printable.title;
     const titleParts = draft.category === "영양수액" ? splitNutritionDoseText(displayTitle) : splitDoseText(displayTitle);
+    const nutritionDoseParts = splitNutritionDoseParts(displayTitle);
     const koreanTitleParts = splitDoseText(draft.printable.koreanName);
     const controlledCategory = draft.drugTypes.includes("마약")
       ? "마약"
@@ -3161,10 +3164,12 @@ export function App() {
           <div className="pharmacy-controlled-label-footer">{controlledCategory}{hasColdWarning ? " / 냉장" : ""}</div>
         </div> : draft.category === "영양수액" ? <div className={`pharmacy-nutrition-label ${hasCautionWarning || hasLightWarning ? "with-flags" : "name-only"} ${hasLightWarning ? "with-light" : ""}`}>
           {(hasCautionWarning || hasLightWarning) ? <aside className={hasLightWarning ? "light-condition" : ""}>{hasLightWarning ? "차광" : cautionWarnings[0] ?? ""}</aside> : null}
-          <strong className={titleSizeClass}>{hasDoseHighlight && titleParts.dose ? <>{titleParts.before}<mark className="dose-highlight">{titleParts.dose}</mark>{titleParts.after}</> : draft.printable.title}</strong>
-          {(hasLightWarning ? cautionWarnings.length > 0 : cautionWarnings.length > 1) ? <aside>{hasLightWarning ? cautionWarnings.join(" · ") : cautionWarnings.slice(1).join(" · ")}</aside> : null}
+          <strong className={titleSizeClass}>{hasDoseHighlight
+            ? nutritionDoseParts.map((part, index) => part.highlighted ? <mark className="dose-highlight" key={index}>{part.text}</mark> : part.text)
+            : draft.printable.title}</strong>
+          {(hasLightWarning ? cautionWarnings.length > 0 : cautionWarnings.length > 1) ? <aside>{(hasLightWarning ? cautionWarnings : cautionWarnings.slice(1)).join("\n")}</aside> : null}
         </div> : isExternalShelfLabel ? <div className={`pharmacy-external-strip ${externalHasFlags ? "" : "name-only"} ${externalCautionWarnings.length > 0 && externalStorageText ? "with-two-flags" : ""} ${hasLightWarning ? "light-storage" : hasColdWarning ? "cold-storage" : ""}`}>
-          {externalHasFlags ? <aside className={externalCautionWarnings.length > 0 ? "caution" : hasLightWarning ? "light" : hasColdWarning ? "cold" : ""}>{externalCautionWarnings.length > 0 ? externalCautionWarnings.join(" · ") : externalStorageText}</aside> : null}
+          {externalHasFlags ? <aside className={externalCautionWarnings.length > 0 ? "caution" : hasLightWarning ? "light" : hasColdWarning ? "cold" : ""}>{externalCautionWarnings.length > 0 ? externalCautionWarnings.join("\n") : externalStorageText}</aside> : null}
           <strong className={`${titleSizeClass} ${hasNameConfusion ? "confusion-name" : ""}`}>{hasDoseHighlight && titleParts.dose ? <>{titleParts.before}<mark className="dose-highlight">{titleParts.dose}</mark>{titleParts.after}</> : displayTitle}</strong>
           {externalCautionWarnings.length > 0 && externalStorageText ? <aside className={hasLightWarning ? "light" : "cold"}>{externalStorageText}</aside> : null}
         </div> : <>

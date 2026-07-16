@@ -94,6 +94,8 @@ describe("pharmacy label workspace UI", () => {
     expect(workspaceSource).toContain("workbookBorderColor");
     expect(workspaceSource).toContain("next.style.outerBorderColor = workbookBorderColor");
     expect(workspaceSource).toContain("nutrition-fluid-label");
+    expect(workspaceSource).toContain("splitNutritionDoseParts");
+    expect(workspaceSource).toContain('join("\\n")');
     expect(workspaceSource).toContain('setAccessoryFilter("유색 측면라벨")');
     expect(workspaceSource).toContain("activeRow?.imagePath || draft?.imagePath");
     expect(workspaceSource).toContain("사진 미등록");

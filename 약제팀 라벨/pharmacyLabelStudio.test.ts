@@ -8,6 +8,7 @@ import {
   savePharmacyLabelDraft,
   sizesForCategory,
   splitDoseText,
+  splitNutritionDoseParts,
   splitNutritionDoseText,
 } from "./pharmacyLabelStudio";
 import type { HospitalDrugLabelRow } from "./hospitalDrugLabels";
@@ -86,6 +87,11 @@ describe("pharmacy label studio rules", () => {
       doseCheck: false,
     }, "영양수액", "drug");
     expect(ntense.warnings).toContain("용량확인");
+  });
+
+  it("highlights every concentration and volume number in Citopcin nutrition labels", () => {
+    expect(splitNutritionDoseParts("CITOPCIN 400mg/200ml inj").filter((part) => part.highlighted).map((part) => part.text)).toEqual(["400", "200"]);
+    expect(splitNutritionDoseParts("Citopcin 200mg/100ml inj").filter((part) => part.highlighted).map((part) => part.text)).toEqual(["200", "100"]);
   });
 
   it("refreshes image, ATC, and expiry values from the workbook over saved labels", () => {

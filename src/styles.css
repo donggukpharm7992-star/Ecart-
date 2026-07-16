@@ -5300,11 +5300,12 @@ button {
 
 .pharmacy-external-strip aside {
   color: #fff;
-  font-size: 6.5pt;
+  font-size: 8pt;
   font-style: normal;
   font-weight: 1000;
   line-height: 1.05;
   word-break: keep-all;
+  white-space: pre-line;
 }
 
 .pharmacy-external-strip aside.caution {
@@ -5573,11 +5574,12 @@ button {
   position: relative;
   color: #fff;
   background: #d92d20;
-  font-size: 6.5pt;
+  font-size: 8pt;
   font-style: normal;
   font-weight: 1000;
   line-height: 1.05;
   word-break: keep-all;
+  white-space: pre-line;
 }
 
 .pharmacy-nutrition-label aside:last-child {
@@ -5592,7 +5594,7 @@ button {
 .pharmacy-nutrition-label strong {
   overflow: hidden;
   color: #050505;
-  font-size: 15pt;
+  font-size: 18pt;
   font-weight: 1000;
   line-height: 1;
   text-wrap: balance;
@@ -5600,15 +5602,15 @@ button {
 }
 
 .pharmacy-nutrition-label strong.medium-name {
-  font-size: 10pt;
+  font-size: 15pt;
 }
 
 .pharmacy-nutrition-label strong.long-name {
-  font-size: 8pt;
+  font-size: 12pt;
 }
 
 .pharmacy-nutrition-label strong.very-long-name {
-  font-size: 6.5pt;
+  font-size: 10pt;
 }
 
 .pharmacy-print-label.storage-tone-light .pharmacy-nutrition-label {

@@ -10,7 +10,7 @@ import {
   A3_PAPER, A4_PAPER, CABINET_CATEGORIES, DRUG_CATEGORIES, WARNING_OPTIONS,
   groupPharmacyLabelsForPaper, resolvePharmacyLabelDraft, rowMatchesCategory, sizesForCategory,
   extractHex, formatPharmacyExpiry,
-  splitDoseText, splitNutritionDoseText,
+  splitDoseText, splitNutritionDoseParts, splitNutritionDoseText,
   type PharmacyLabelCategory, type PharmacyLabelDraft, type PharmacyLabelFamily, type PharmacySavedLabel,
   type PharmacyHighCostRoute,
 } from "./pharmacyLabelStudio";
@@ -188,6 +188,7 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
   const displayTitle = isCapLabel ? draft?.printable.title.replace(/\btab(?:let)?\b/gi, "").replace(/\s{2,}/g, " ").trim() ?? "" : draft?.printable.title ?? "";
   const titleSizeClass = displayTitle.length > 34 ? "very-long-name" : displayTitle.length > 25 ? "long-name" : displayTitle.length > 16 ? "medium-name" : "";
   const titleParts = category === "영양수액" ? splitNutritionDoseText(displayTitle) : splitDoseText(displayTitle);
+  const nutritionDoseParts = splitNutritionDoseParts(displayTitle);
   const koreanTitleParts = splitDoseText(draft?.printable.koreanName ?? "");
   const controlledCategory = activeRow ? getHospitalDrugControlledCategory(activeRow) : undefined;
   const controlledTitle = stripHospitalDrugControlledPrefix(displayTitle);
@@ -315,10 +316,12 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
             <div className="pharmacy-controlled-label-footer">{controlledCategory ?? "마약/향정"}{hasColdWarning ? " / 냉장" : ""}</div>
           </div> : category === "영양수액" ? <div className={`pharmacy-nutrition-label ${nutritionHasFlags ? "with-flags" : "name-only"} ${hasLightWarning ? "with-light" : ""}`}>
             {nutritionHasFlags && <aside className={hasLightWarning ? "light-condition" : ""}>{hasLightWarning ? "차광" : cautionWarnings[0] ?? ""}</aside>}
-            <strong className={titleSizeClass}>{hasDoseHighlight && titleParts.dose ? <>{titleParts.before}<mark className="dose-highlight">{titleParts.dose}</mark>{titleParts.after}</> : draft.printable.title}</strong>
-            {nutritionHasFlags && (hasLightWarning ? cautionWarnings.length > 0 : cautionWarnings.length > 1) && <aside>{hasLightWarning ? cautionWarnings.join(" · ") : cautionWarnings.slice(1).join(" · ")}</aside>}
+            <strong className={titleSizeClass}>{hasDoseHighlight
+              ? nutritionDoseParts.map((part, index) => part.highlighted ? <mark className="dose-highlight" key={index}>{part.text}</mark> : part.text)
+              : draft.printable.title}</strong>
+            {nutritionHasFlags && (hasLightWarning ? cautionWarnings.length > 0 : cautionWarnings.length > 1) && <aside>{(hasLightWarning ? cautionWarnings : cautionWarnings.slice(1)).join("\n")}</aside>}
           </div> : isExternalShelfLabel ? <div className={`pharmacy-external-strip ${externalHasFlags ? "" : "name-only"} ${externalCautionWarnings.length > 0 && externalStorageText ? "with-two-flags" : ""} ${hasLightWarning ? "light-storage" : hasColdWarning ? "cold-storage" : ""}`}>
-            {externalHasFlags && <aside className={externalCautionWarnings.length > 0 ? "caution" : hasLightWarning ? "light" : hasColdWarning ? "cold" : ""}>{externalCautionWarnings.length > 0 ? externalCautionWarnings.join(" · ") : externalStorageText}</aside>}
+            {externalHasFlags && <aside className={externalCautionWarnings.length > 0 ? "caution" : hasLightWarning ? "light" : hasColdWarning ? "cold" : ""}>{externalCautionWarnings.length > 0 ? externalCautionWarnings.join("\n") : externalStorageText}</aside>}
             <strong className={`${titleSizeClass} ${hasNameConfusion ? "confusion-name" : ""}`}>{hasDoseHighlight && titleParts.dose ? <>{titleParts.before}<mark className="dose-highlight">{titleParts.dose}</mark>{titleParts.after}</> : displayTitle}</strong>
             {externalCautionWarnings.length > 0 && externalStorageText && <aside className={hasLightWarning ? "light" : "cold"}>{externalStorageText}</aside>}
           </div> : <>

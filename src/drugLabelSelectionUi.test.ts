@@ -5,6 +5,12 @@ const appSource = readFileSync(new URL("./App.tsx", import.meta.url), "utf8");
 const cssSource = readFileSync(new URL("./styles.css", import.meta.url), "utf8");
 
 describe("drug label selection UI", () => {
+  it("closes the pharmacy workspace before opening the shared PDF preview modal", () => {
+    expect(appSource).toContain("function printPharmacyStudioLabels");
+    expect(appSource).toContain("setIsPharmacyLabelWorkspaceOpen(false)");
+    expect(appSource).toContain("setShowPrintPreview(true)");
+  });
+
   it("uses a real checkbox tied to each drug label row selection state", () => {
     expect(appSource).toContain('className="label-drug-checkbox"');
     expect(appSource).toContain('type="checkbox"');
