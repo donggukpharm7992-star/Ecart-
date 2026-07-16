@@ -4738,9 +4738,15 @@ button {
   justify-content: center;
   color: #fff;
   background: #d92d20;
-  font-size: 13px;
+  font-size: 17px;
   font-weight: 1000;
+  letter-spacing: -.02em;
   text-align: center;
+}
+
+.pharmacy-label-top-banner > span {
+  font-weight: 1000;
+  text-shadow: 0 0 .01px currentColor;
 }
 
 .pharmacy-label-top-banner {

@@ -26,4 +26,8 @@ describe("pharmacy label workspace UI", () => {
     expect(workspaceSource).toContain("pharmacy-storage-badge cold");
     expect(workspaceSource).toContain("storageOnlyClass");
   });
+
+  it("removes non-drug status values from the drug type selector", () => {
+    expect(workspaceSource).toContain('!["36", "99", "종료예정"].includes(type.trim())');
+  });
 });
