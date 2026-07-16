@@ -5,6 +5,7 @@ import {
   A3_PAPER, A4_PAPER, CABINET_CATEGORIES, DRUG_CATEGORIES, WARNING_OPTIONS,
   groupPharmacyLabelsForPaper, resolvePharmacyLabelDraft, rowMatchesCategory, sizesForCategory,
   type PharmacyLabelCategory, type PharmacyLabelDraft, type PharmacyLabelFamily, type PharmacySavedLabel,
+  type PharmacyHighCostRoute,
 } from "./pharmacyLabelStudio";
 
 type Props = {
@@ -28,10 +29,11 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
   const [draft, setDraft] = useState<PharmacyLabelDraft>();
   const [uploadStatus, setUploadStatus] = useState("");
   const [editMode, setEditMode] = useState<"edit" | "new">("edit");
+  const [highCostRoute, setHighCostRoute] = useState<PharmacyHighCostRoute>("주사");
 
   const categoryRows = useMemo(
-    () => rows.filter((row) => rowMatchesCategory(row, category) && matchesHospitalDrugLabel(row, query)),
-    [category, query, rows],
+    () => rows.filter((row) => rowMatchesCategory(row, category, highCostRoute) && matchesHospitalDrugLabel(row, query)),
+    [category, highCostRoute, query, rows],
   );
   const activeRow = categoryRows.find((row) => row.code === activeCode) ?? categoryRows[0];
   useEffect(() => {
@@ -97,7 +99,12 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
         <div className="pharmacy-category-row" key={index}>{group.map((item) =>
           <button key={item} className={category === item ? "active" : ""} onClick={() => setCategoryAndReset(item)}>{item}</button>)}
           {family === "cabinet" && index === 0 && ["원병", "PTP"].includes(category) && <button onClick={() => draft && patch({ accessory: "선반라벨" })}>선반라벨</button>}
-        </div>)}</div>}
+        </div>)}
+        {category === "고가약" && <div className="pharmacy-high-cost-routes" aria-label="고가약 투여 경로">
+          <strong>고가약 구분</strong>
+          {(["주사", "경구"] as const).map((route) => <button key={route} className={highCostRoute === route ? "active" : ""} onClick={() => { setHighCostRoute(route); setSelectedCodes([]); setActiveCode(""); }}>{route}</button>)}
+        </div>}
+      </div>}
     </section>
 
     <section className="pharmacy-studio-workspace">
@@ -122,9 +129,10 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
           <input placeholder="한글약품명" value={draft.printable.koreanName} onChange={(e) => patch({ printable: {...draft.printable, koreanName: e.target.value} })}/>
           <input placeholder="약품코드" value={draft.code} onChange={(e) => patch({ code: e.target.value })}/><input placeholder="물품코드" value={draft.itemCode} onChange={(e) => patch({ itemCode: e.target.value })}/>
         </div>}
-        <div className="pharmacy-label-canvas">{draft ? <article className={`pharmacy-print-label ${category === "항암제" ? "anticancer" : ""}`} style={labelStyle}>
-          {draft.printable.topBanner && <div className="pharmacy-label-top-banner">{draft.printable.topBanner}</div>}
-          {draft.printable.warning && category !== "항암제" && <div className="pharmacy-label-warning">{draft.printable.warning}</div>}
+        <div className="pharmacy-label-canvas">{draft ? <article className={`pharmacy-print-label ${category === "항암제" ? "anticancer" : ""} ${category === "고가약" ? "high-cost" : ""}`} style={labelStyle}>
+          {(draft.printable.topBanner || (draft.printable.warning && category !== "항암제")) && <div className="pharmacy-label-top-banner">
+            {[draft.printable.topBanner, category !== "항암제" ? draft.printable.warning : ""].filter(Boolean).join(" · ")}
+          </div>}
           <div className="pharmacy-label-main"><strong>{draft.printable.title}</strong><span>{draft.printable.koreanName}</span><b>{draft.printable.strength}</b>
             {draft.printable.reconstitution && <em>{draft.printable.reconstitution}</em>}</div>
           {draft.printable.footer.enabled && <footer>{draft.printable.footer.text}</footer>}

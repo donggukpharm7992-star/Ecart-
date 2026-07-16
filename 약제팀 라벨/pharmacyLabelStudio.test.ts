@@ -40,6 +40,12 @@ describe("pharmacy label studio rules", () => {
     expect(rowMatchesCategory(row, "PTP")).toBe(false);
   });
 
+  it("splits high-cost drugs into injection and oral choices", () => {
+    expect(rowMatchesCategory({ ...row, highCost: true }, "고가약", "주사")).toBe(true);
+    expect(rowMatchesCategory({ ...row, highCost: true }, "고가약", "경구")).toBe(false);
+    expect(rowMatchesCategory({ ...row, highCost: true, drugType: "원병" }, "고가약", "경구")).toBe(true);
+  });
+
   it("limits bordered vial labels to bordered sizes", () => {
     expect(sizesForCategory("바이알", row).every((size) => size.heightMm > 40)).toBe(true);
   });

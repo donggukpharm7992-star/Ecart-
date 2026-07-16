@@ -4523,6 +4523,7 @@ button {
 }
 
 .pharmacy-category-row,
+.pharmacy-high-cost-routes,
 .pharmacy-warning-editor,
 .pharmacy-type-editor,
 .pharmacy-choice-grid {
@@ -4532,6 +4533,7 @@ button {
 }
 
 .pharmacy-category-row button,
+.pharmacy-high-cost-routes button,
 .pharmacy-choice-grid button {
   min-height: 32px;
   padding: 0 11px;
@@ -4543,10 +4545,21 @@ button {
 }
 
 .pharmacy-category-row button.active,
+.pharmacy-high-cost-routes button.active,
 .pharmacy-choice-grid button.active {
   color: #fff;
   border-color: var(--brand-orange);
   background: var(--brand-orange);
+}
+
+.pharmacy-high-cost-routes {
+  align-items: center;
+  padding-top: 3px;
+}
+
+.pharmacy-high-cost-routes strong {
+  margin-right: 3px;
+  font-size: 12px;
 }
 
 .pharmacy-label-tabs button,
@@ -4703,7 +4716,7 @@ button {
 
 .pharmacy-print-label {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto minmax(0, 1fr) auto;
   width: calc(var(--pharmacy-label-width-mm, 100) * 1mm);
   height: calc(var(--pharmacy-label-height-mm, 35) * 1mm);
@@ -4717,8 +4730,12 @@ button {
 }
 
 .pharmacy-label-top-banner {
-  grid-column: 1 / -1;
-  padding: 1.5mm 2mm;
+  grid-column: 1;
+  min-height: 8mm;
+  padding: 1mm 2mm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: #fff;
   background: #d92d20;
   font-size: 13px;
@@ -4726,19 +4743,12 @@ button {
   text-align: center;
 }
 
+.pharmacy-print-label.high-cost .pharmacy-label-top-banner {
+  background: #155eef;
+}
+
 .pharmacy-label-warning {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 17mm;
-  padding: 0 1mm;
-  border-right: 2px solid #111827;
-  color: var(--pharmacy-label-warning, #d92d20);
-  font-size: 16px;
-  font-weight: 1000;
-  line-height: 1.12;
-  text-align: center;
-  white-space: pre-line;
+  display: none;
 }
 
 .pharmacy-label-main {

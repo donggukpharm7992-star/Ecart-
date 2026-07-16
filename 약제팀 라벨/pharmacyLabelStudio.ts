@@ -10,7 +10,8 @@ export type PharmacyLabelCategory =
   | "원병" | "PTP" | "ATC" | "입원산제"
   | "외용제" | "외용점안제" | "팩제" | "시럽"
   | "앰플" | "바이알" | "냉장주사" | "영양수액" | "일반수액"
-  | "마약/향정" | "항암제";
+  | "마약/향정" | "고가약" | "항암제";
+export type PharmacyHighCostRoute = "주사" | "경구";
 export type PharmacyLabelSizePresetKey = string;
 export type PharmacyLabelPaper = { key: "A4" | "A3"; widthMm: number; heightMm: number; marginMm: number };
 export type PharmacyLabelSize = { presetKey: PharmacyLabelSizePresetKey; widthMm: number; heightMm: number };
@@ -61,6 +62,7 @@ export const DRUG_CATEGORIES: PharmacyLabelCategory[][] = [
   ["외용제", "외용점안제", "팩제", "시럽"],
   ["앰플", "바이알", "냉장주사", "영양수액", "일반수액"],
   ["마약/향정"],
+  ["고가약"],
   ["항암제"],
 ];
 export const CABINET_CATEGORIES: PharmacyLabelCategory[][] = DRUG_CATEGORIES.slice(0, 3);
@@ -76,6 +78,7 @@ const SIZE_MAP: Record<string, PharmacyLabelSize[]> = {
   영양수액: sizes(["15*110", "15*140"]),
   일반수액: sizes(["50*93", "55*93", "50*160"]),
   "마약/향정": sizes(["40*70"]),
+  고가약: sizes(["40*80", "55*80"]),
   항암제: sizes(["46*80"]),
   원병: sizes(["33*100", "220*1020", "27*10", "30*15"]),
 };
@@ -94,9 +97,14 @@ export function sizesForCategory(category: PharmacyLabelCategory, row?: Hospital
   return available;
 }
 
-export function rowMatchesCategory(row: HospitalDrugLabelRow, category: PharmacyLabelCategory) {
+export function rowMatchesCategory(row: HospitalDrugLabelRow, category: PharmacyLabelCategory, highCostRoute: PharmacyHighCostRoute = "주사") {
   const type = row.drugType.replace(/\s+/g, "");
   if (!row.inHospital) return false;
+  if (category === "고가약") {
+    if (!row.highCost) return false;
+    const isInjection = ["앰플", "바이알", "냉장주사", "주사", "영양수액", "일반수액", "항암제"].some((value) => type.includes(value));
+    return highCostRoute === "주사" ? isInjection : !isInjection;
+  }
   if (category === "항암제") return type === "항암제" || (row.highRiskCategory ?? "").includes("주사용항암제");
   if (category === "마약/향정") return type === "마약" || type === "향정";
   if (category === "냉장주사") return isHospitalDrugRefrigerated(row) && ["앰플", "바이알", "주사"].some((value) => type.includes(value));
@@ -129,7 +137,7 @@ export function createPharmacyLabelDraft(
       koreanName: row.koreanName,
       strength: row.strength,
       warning: warnings.join(" · "),
-      topBanner: anticancer ? "고위험의약품" : row.oralAnticancer ? "경구항암제" : row.highCost ? "고가약" : "",
+      topBanner: anticancer ? "고위험의약품" : category === "고가약" ? "고가통계약" : row.oralAnticancer ? "경구항암제" : "",
       footer: {
         enabled: anticancer || row.highRisk,
         text: anticancer
