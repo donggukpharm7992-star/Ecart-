@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-16T06:20:33.610Z",
-  "clientId": "8fca6235-56b2-4861-8140-d0d51f2a8239",
+  "updatedAt": "2026-07-16T07:31:00.192Z",
+  "clientId": "4da351b3-c962-4eda-92d1-f34f718fb166",
   "state": {
     "stockDrugs": [
       {
@@ -7251,7 +7251,7 @@
           "text": "보유 중인 비치 마약류의 유효기간을 날짜로 월 1회 관리하고 있다.",
           "id": "narcotic-71-3",
           "status": "good",
-          "note": "유효기간 관리×"
+          "note": "유"
         },
         {
           "section": "마약류 관리",
