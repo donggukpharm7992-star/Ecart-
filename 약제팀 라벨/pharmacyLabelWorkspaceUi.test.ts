@@ -25,6 +25,7 @@ describe("pharmacy label workspace UI", () => {
     expect(workspaceSource).toContain("pharmacy-storage-badge light");
     expect(workspaceSource).toContain("pharmacy-storage-badge cold");
     expect(workspaceSource).toContain("storageOnlyClass");
+    expect(workspaceSource).toContain("no-top-banner");
   });
 
   it("removes non-drug status values from the drug type selector", () => {
