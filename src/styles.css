@@ -5111,6 +5111,18 @@ button {
   gap: 6px;
 }
 
+.pharmacy-title-style-dashboard .pharmacy-title-style-control {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 7px;
+}
+
+.pharmacy-title-style-dashboard .pharmacy-title-style-control label {
+  display: grid;
+  gap: 4px;
+}
+
 .pharmacy-title-style-dashboard button {
   padding: 6px 8px;
   border: 1px solid #cbd5e1;
@@ -5573,6 +5585,27 @@ button {
 .pharmacy-canvas-status,
 .pharmacy-save-row {
   padding: 0 14px 12px;
+}
+
+.pharmacy-print-label.heparin-label .pharmacy-label-main {
+  padding-bottom: 1mm;
+}
+
+.pharmacy-print-label.heparin-label .pharmacy-label-main > span {
+  max-width: 100%;
+  font-size: .42em;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+}
+
+.pharmacy-print-label footer.heparin-footer {
+  min-height: 7mm;
+  padding: 1mm 2mm;
+  border-top-color: #b91c1c;
+  color: #fff;
+  background: #d92d20;
+  font-size: 13pt;
+  line-height: 1;
 }
 
 .pharmacy-cabinet-list-row {

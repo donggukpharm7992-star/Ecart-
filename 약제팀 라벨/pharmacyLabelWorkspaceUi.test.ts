@@ -79,6 +79,15 @@ describe("pharmacy label workspace UI", () => {
     expect(workspaceSource).toContain("splitStyledPharmacyTitle");
     expect(workspaceSource).toContain("textTransform: \"uppercase\"");
     expect(workspaceSource).toContain("textTransform: \"lowercase\"");
+    expect(workspaceSource).toContain("크기 적용");
+    expect(workspaceSource).toContain("색상 적용");
+    expect(workspaceSource).toContain("fontWeight: 1000");
+    expect(workspaceSource).toContain("if (end > start) setTitleSelection");
+  });
+
+  it("uses a dedicated non-overlapping Heparin footer", () => {
+    expect(workspaceSource).toContain('isHeparinLabel ? "heparin-label"');
+    expect(workspaceSource).toContain('isHeparinLabel ? "heparin-footer"');
   });
 
   it("filters side and cap labels and places paper controls next to output", () => {

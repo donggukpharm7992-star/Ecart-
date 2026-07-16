@@ -3151,10 +3151,12 @@ export function App() {
     const generalFluidTone = isGeneralFluidLabel
       ? fluidLabelTone({ code: draft.code, genericName: draft.printable.koreanName, productName: draft.printable.title, spec: draft.printable.strength })
       : undefined;
+    const isHeparinLabel = draft.printable.footer.text.trim() === "헤파린";
     const styledTitle = draft.titleStyles?.length
       ? splitStyledPharmacyTitle(renderedDisplayTitle, draft.titleStyles).map((part, index) => <span key={`${index}-${part.text}`} style={{
           color: part.style?.color,
           fontSize: part.style?.fontSizePt ? `${part.style.fontSizePt}pt` : undefined,
+          fontWeight: part.style?.fontWeight,
         }}>{part.text}</span>)
       : null;
     const style = {
@@ -3177,7 +3179,7 @@ export function App() {
     } as CSSProperties;
 
     return (
-      <article className={`pharmacy-print-label print-label label-size-${draft.size.presetKey} ${draft.category === "항암제" ? "anticancer" : ""} ${draft.category === "고가약" ? "high-cost" : ""} ${draft.category === "마약/향정" ? "controlled-drug-label" : ""} ${storageOnlyClass} ${storageToneClass} ${isCapLabel ? "cap-label" : ""} ${isSideLabel ? "side-label" : ""} ${isExternalShelfLabel ? "external-shelf-label" : ""} ${draft.category === "시럽" ? "syrup-label" : ""} ${draft.category === "영양수액" ? "nutrition-fluid-label" : ""} ${isGeneralFluidLabel ? `general-fluid-label fluid-tone-${generalFluidTone}` : ""} ${isInjectionLabel ? "injection-label" : ""} ${!showTopBanner ? "no-top-banner no-warning" : ""}`} style={style} key={key}>
+      <article className={`pharmacy-print-label print-label label-size-${draft.size.presetKey} ${draft.category === "항암제" ? "anticancer" : ""} ${draft.category === "고가약" ? "high-cost" : ""} ${draft.category === "마약/향정" ? "controlled-drug-label" : ""} ${storageOnlyClass} ${storageToneClass} ${isCapLabel ? "cap-label" : ""} ${isSideLabel ? "side-label" : ""} ${isExternalShelfLabel ? "external-shelf-label" : ""} ${draft.category === "시럽" ? "syrup-label" : ""} ${draft.category === "영양수액" ? "nutrition-fluid-label" : ""} ${isGeneralFluidLabel ? `general-fluid-label fluid-tone-${generalFluidTone}` : ""} ${isInjectionLabel ? "injection-label" : ""} ${isHeparinLabel ? "heparin-label" : ""} ${!showTopBanner ? "no-top-banner no-warning" : ""}`} style={style} key={key}>
         {isSideLabel ? <div className="pharmacy-side-label-form">
           <div className="pharmacy-side-label-photo">{imageUrl
             ? <img src={imageUrl} alt={`${draft.printable.koreanName} 식별사진`}/>
@@ -3232,7 +3234,7 @@ export function App() {
           {!isCapLabel && !isExternalShelfLabel && draft.atc ? <small className="pharmacy-label-atc">ATC {draft.atc}</small> : null}
           {!isCapLabel && !isExternalShelfLabel && draft.location ? <small className="pharmacy-label-location">{draft.location}</small> : null}
         </div>
-        {!isExternalShelfLabel && draft.printable.footer.enabled ? <footer className={draft.category === "항암제" ? "anticancer-footer" : ""}>{draft.category === "항암제" ? "항암제" : draft.printable.footer.text}</footer> : null}
+        {!isExternalShelfLabel && draft.printable.footer.enabled ? <footer className={draft.category === "항암제" ? "anticancer-footer" : isHeparinLabel ? "heparin-footer" : ""}>{draft.category === "항암제" ? "항암제" : draft.printable.footer.text}</footer> : null}
         </>}
       </article>
     );

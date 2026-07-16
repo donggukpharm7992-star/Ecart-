@@ -67,8 +67,8 @@ describe("pharmacy label studio rules", () => {
   });
 
   it("splits selected common-name text into independently styled segments", () => {
-    expect(splitStyledPharmacyTitle("Propess vaginal", [{ start: 0, end: 7, color: "#ff0000", textTransform: "uppercase" }])).toEqual([
-      { text: "PROPESS", style: expect.objectContaining({ color: "#ff0000", textTransform: "uppercase" }) },
+    expect(splitStyledPharmacyTitle("Propess vaginal", [{ start: 0, end: 7, color: "#ff0000", fontWeight: 1000, textTransform: "uppercase" }])).toEqual([
+      { text: "PROPESS", style: expect.objectContaining({ color: "#ff0000", fontWeight: 1000, textTransform: "uppercase" }) },
       { text: " vaginal", style: undefined },
     ]);
   });

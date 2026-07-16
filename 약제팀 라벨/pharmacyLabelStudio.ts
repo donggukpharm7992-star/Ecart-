@@ -39,6 +39,7 @@ export type PharmacyTitleStyle = {
   end: number;
   fontSizePt?: number;
   color?: string;
+  fontWeight?: number;
   textTransform?: "none" | "uppercase" | "lowercase";
 };
 export type PharmacyLabelDraft = {
