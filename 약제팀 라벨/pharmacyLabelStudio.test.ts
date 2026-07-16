@@ -59,6 +59,10 @@ describe("pharmacy label studio rules", () => {
     );
   });
 
+  it("provides both syrup label dimensions", () => {
+    expect(sizesForCategory("시럽", row).map((size) => size.presetKey)).toEqual(["48x94", "15x90"]);
+  });
+
   it("highlights only the numeric dose inside the common name", () => {
     expect(splitDoseText("Synagis 100mg/ml inj")).toEqual({
       before: "Synagis ",

@@ -103,6 +103,7 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
         ? "storage-light"
         : "";
   const externalTone = hasCautionWarning ? "#d92d20" : hasColdWarning ? "#155eef" : hasLightWarning ? "#16803c" : draft?.style.outerBorderColor ?? "#111827";
+  const storageToneClass = hasLightWarning ? "storage-tone-light" : hasColdWarning ? "storage-tone-cold" : "";
 
   function patch(patchValue: Partial<PharmacyLabelDraft>) {
     setDraft((current) => current ? { ...current, ...patchValue } : current);
@@ -132,6 +133,7 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
     "--pharmacy-external-tone": externalTone,
   } as CSSProperties) : undefined;
   const displayTitle = isCapLabel ? draft?.printable.title.replace(/\btab(?:let)?\b/gi, "").replace(/\s{2,}/g, " ").trim() ?? "" : draft?.printable.title ?? "";
+  const titleSizeClass = displayTitle.length > 34 ? "very-long-name" : displayTitle.length > 25 ? "long-name" : displayTitle.length > 16 ? "medium-name" : "";
   const titleParts = splitDoseText(displayTitle);
   const imageUrl = draft?.imagePath
     ? `${import.meta.env.BASE_URL}${draft.imagePath.replace(/^\.?\//, "")}`
@@ -146,6 +148,7 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
         ? extractHex(activeRow?.coloredSideBackground) || draft.backgroundColor
         : extractHex(activeRow?.capBackground) || "#ffffff";
     } else if (value === "유색 측면라벨") {
+      setAccessoryFilter("유색 측면라벨");
       next.size = sizesForCategory("원병", activeRow).find((size) => size.presetKey === "23x102") ?? draft.size;
       next.backgroundColor = extractHex(activeRow?.coloredSideBackground) || "#ffffff";
     } else if (value === "측면라벨") {
@@ -214,15 +217,15 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
           <input placeholder="약품 위치" value={draft.location} onChange={(e) => patch({ location: e.target.value })}/>
           <input placeholder="ATC 번호" value={draft.atc} onChange={(e) => patch({ atc: e.target.value })}/>
         </div>}
-        <div className="pharmacy-label-canvas">{draft ? <article className={`pharmacy-print-label ${category === "항암제" ? "anticancer" : ""} ${category === "고가약" ? "high-cost" : ""} ${storageOnlyClass} ${isCapLabel ? "cap-label" : ""} ${isSideLabel ? "side-label" : ""} ${isExternalShelfLabel ? "external-shelf-label" : ""} ${!draft.printable.topBanner && !hasCautionWarning ? "no-top-banner" : ""} ${!draft.printable.warning && !draft.printable.topBanner ? "no-warning" : ""}`} style={labelStyle}>
+        <div className="pharmacy-label-canvas">{draft ? <article className={`pharmacy-print-label label-size-${draft.size.presetKey} ${category === "항암제" ? "anticancer" : ""} ${category === "고가약" ? "high-cost" : ""} ${storageOnlyClass} ${storageToneClass} ${isCapLabel ? "cap-label" : ""} ${isSideLabel ? "side-label" : ""} ${isExternalShelfLabel ? "external-shelf-label" : ""} ${category === "시럽" ? "syrup-label" : ""} ${category === "영양수액" ? "nutrition-fluid-label" : ""} ${!draft.printable.topBanner && !hasCautionWarning ? "no-top-banner" : ""} ${!draft.printable.warning && !draft.printable.topBanner ? "no-warning" : ""}`} style={labelStyle}>
           {isSideLabel ? <div className="pharmacy-side-label-form">
             <div className="pharmacy-side-label-photo">{imageUrl
               ? <a href={draft.imageSourceUrl} target="_blank" rel="noreferrer" title="약학정보원 식별사진 검색"><img src={imageUrl} alt={`${draft.printable.koreanName} 식별사진`}/></a>
               : <a href={draft.imageSourceUrl} target="_blank" rel="noreferrer">사진 확인</a>}</div>
             <div className="pharmacy-side-label-name">
-              <strong>{draft.printable.title}</strong>
+              <div className="pharmacy-side-label-name-core"><strong>{draft.printable.title}</strong>
               <span>({draft.printable.koreanName})</span>
-              {draft.doseUnit && draft.doseUnit !== "1T" && <b>{draft.doseUnit}</b>}
+              {draft.doseUnit && draft.doseUnit !== "1T" && <b>{draft.doseUnit}</b>}</div>
               {draft.warnings.length > 0 && <small>{draft.warnings.join(" · ")}</small>}
             </div>
             <div className="pharmacy-side-label-meta">
@@ -235,9 +238,9 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
             <b>{draft.warnings.filter((warning) => !["냉장", "차광"].includes(warning)).join(" · ") || "-"}</b>
             {category === "냉장주사" && <em>{draft.location || "-"}</em>}
           </div> : category === "영양수액" ? <div className="pharmacy-nutrition-label">
-            <aside>{draft.warnings.filter((warning) => ["용량주의", "유사발음", "유사모양", "고위험의약품"].includes(warning)).join(" · ")}</aside>
-            <strong>{draft.printable.title}</strong>
-            <aside>{draft.warnings.filter((warning) => ["차광", "용량확인", "이름주의"].includes(warning)).join(" · ")}</aside>
+            <aside>{draft.warnings.filter((warning) => !["냉장", "차광"].includes(warning)).join(" · ")}{hasLightWarning && <b className="nutrition-storage-dot light">차광</b>}{!hasLightWarning && hasColdWarning && <b className="nutrition-storage-dot cold">냉장</b>}</aside>
+            <strong className={titleSizeClass}>{hasDoseHighlight && titleParts.dose ? <>{titleParts.before}<mark className="dose-highlight">{titleParts.dose}</mark>{titleParts.after}</> : draft.printable.title}</strong>
+            <aside>{draft.warnings.filter((warning) => !["냉장", "차광"].includes(warning)).join(" · ")}</aside>
           </div> : <>
           {!isCapLabel && !isExternalShelfLabel && (draft.printable.topBanner || (hasCautionWarning && category !== "항암제")) && <div className="pharmacy-label-top-banner">
             <span>{[draft.printable.topBanner, category !== "항암제" ? draft.warnings.filter((warning) => !["냉장", "차광"].includes(warning)).join(" · ") : ""].filter(Boolean).join(" · ")}</span>
@@ -245,7 +248,7 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
             {hasColdWarning && <b className="pharmacy-storage-badge cold">냉장</b>}
           </div>}
           {!hasCautionWarning && hasColdWarning && hasLightWarning && <b className="pharmacy-storage-circle cold">냉장</b>}
-          <div className="pharmacy-label-main"><strong className={displayTitle.length > 28 ? "long-name" : displayTitle.length > 18 ? "medium-name" : ""}>
+          <div className="pharmacy-label-main"><strong className={titleSizeClass}>
             {hasDoseHighlight && titleParts.dose ? <>{titleParts.before}<mark className="dose-highlight">{titleParts.dose}</mark>{titleParts.after}</> : displayTitle}
           </strong>
             {!isCapLabel && !isExternalShelfLabel && <span>{draft.printable.koreanName}</span>}

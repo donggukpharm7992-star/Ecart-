@@ -4872,9 +4872,11 @@ button {
 }
 
 .pharmacy-label-main strong {
+  display: block;
   max-width: 100%;
   text-wrap: balance;
   word-break: keep-all;
+  overflow-wrap: normal;
 }
 
 .pharmacy-label-main strong.medium-name {
@@ -4883,6 +4885,24 @@ button {
 
 .pharmacy-label-main strong.long-name {
   font-size: .68em;
+}
+
+.pharmacy-label-main strong.very-long-name {
+  font-size: .54em;
+  line-height: 1.12;
+}
+
+.pharmacy-print-label[class*="label-size-15x"] .pharmacy-label-main strong,
+.pharmacy-print-label[class*="label-size-13.5x"] .pharmacy-label-main strong {
+  line-height: 1;
+}
+
+.pharmacy-print-label.label-size-15x90 .pharmacy-label-main strong {
+  font-size: .62em;
+}
+
+.pharmacy-print-label.label-size-48x94 .pharmacy-label-main strong {
+  font-size: 1em;
 }
 
 .pharmacy-print-label.no-top-banner .pharmacy-label-main {
@@ -4977,11 +4997,19 @@ button {
   background: var(--pharmacy-label-background, #fff);
 }
 
-.pharmacy-side-label-name strong {
+.pharmacy-side-label-name-core {
   display: flex;
+  width: 100%;
   min-height: 0;
+  flex: 1;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+.pharmacy-side-label-name strong {
+  display: block;
+  min-height: 0;
   font-size: 11pt;
   font-weight: 1000;
   line-height: 1.05;
@@ -5110,6 +5138,35 @@ button {
   grid-column: 1;
 }
 
+.pharmacy-print-label.anticancer .pharmacy-label-top-banner,
+.pharmacy-print-label.anticancer footer.anticancer-footer {
+  box-sizing: border-box;
+  min-height: 8mm;
+  height: 8mm;
+  padding: 1mm 2mm;
+  font-size: 15pt;
+  line-height: 1;
+}
+
+.pharmacy-print-label.anticancer .pharmacy-storage-badge {
+  display: flex;
+  width: 8mm;
+  height: 8mm;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 6.5pt;
+}
+
+.pharmacy-print-label.anticancer.storage-tone-light .pharmacy-label-main {
+  background: #ecfdf3;
+}
+
+.pharmacy-print-label.anticancer.storage-tone-cold .pharmacy-label-main {
+  background: #eff8ff;
+}
+
 .pharmacy-print-label.anticancer .pharmacy-label-main em {
   color: #16803c;
 }
@@ -5117,7 +5174,7 @@ button {
 .pharmacy-print-label footer.anticancer-footer {
   padding: 1.5mm 2mm;
   color: #fff;
-  background: #7030a0;
+  background: #800020;
   font-size: 16pt;
   font-weight: 1000;
 }
@@ -5184,7 +5241,12 @@ button {
   grid-template-columns: 12mm minmax(0, 1fr) 12mm;
   width: 100%;
   height: 100%;
+  border: 1.2mm solid #d92d20;
   background: #fff;
+}
+
+.pharmacy-print-label.nutrition-fluid-label {
+  display: block;
 }
 
 .pharmacy-nutrition-label > * {
@@ -5197,17 +5259,18 @@ button {
 }
 
 .pharmacy-nutrition-label aside {
+  position: relative;
   color: #fff;
   background: #d92d20;
-  font-size: 6pt;
+  font-size: 6.5pt;
   font-style: normal;
   font-weight: 1000;
-  line-height: 1;
-  writing-mode: vertical-rl;
+  line-height: 1.05;
+  word-break: keep-all;
 }
 
 .pharmacy-nutrition-label aside:last-child {
-  background: #155eef;
+  background: #d92d20;
 }
 
 .pharmacy-nutrition-label strong {
@@ -5215,7 +5278,72 @@ button {
   font-size: 12pt;
   font-weight: 1000;
   line-height: 1;
-  white-space: nowrap;
+  text-wrap: balance;
+  word-break: keep-all;
+}
+
+.pharmacy-nutrition-label strong.medium-name {
+  font-size: 10pt;
+}
+
+.pharmacy-nutrition-label strong.long-name {
+  font-size: 8pt;
+}
+
+.pharmacy-nutrition-label strong.very-long-name {
+  font-size: 6.5pt;
+}
+
+.pharmacy-print-label.storage-tone-light .pharmacy-nutrition-label {
+  border-color: #16803c;
+}
+
+.pharmacy-print-label.storage-tone-light .pharmacy-nutrition-label > strong {
+  background: #ecfdf3;
+}
+
+.pharmacy-print-label.storage-tone-cold:not(.storage-tone-light) .pharmacy-nutrition-label > strong {
+  background: #eff8ff;
+}
+
+.nutrition-storage-dot {
+  position: absolute;
+  top: 50%;
+  right: -5mm;
+  z-index: 2;
+  display: flex;
+  width: 8mm;
+  height: 8mm;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  font-size: 5.5pt;
+  font-weight: 1000;
+}
+
+.nutrition-storage-dot.light {
+  color: #16803c;
+  background: #d9f99d;
+}
+
+.nutrition-storage-dot.cold {
+  color: #155eef;
+  background: #bae6fd;
+}
+
+.pharmacy-nutrition-label mark.dose-highlight {
+  padding: 0 .35mm;
+  color: #d92d20;
+  background: #fff200;
+}
+
+.pharmacy-print-label.syrup-label.label-size-15x90 {
+  border: 1.2mm solid #d92d20 !important;
+}
+
+.pharmacy-print-label.syrup-label.label-size-48x94 {
+  border: 1.2mm solid #111827 !important;
 }
 
 .pharmacy-inline-border-choice {
