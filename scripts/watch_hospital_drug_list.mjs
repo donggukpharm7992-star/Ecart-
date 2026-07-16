@@ -104,9 +104,18 @@ function install() {
     ["/Create", "/F", "/SC", "ONLOGON", "/RL", "LIMITED", "/TN", taskName, "/TR", taskCommand],
     { encoding: "utf8", windowsHide: true },
   );
-  if (result.status !== 0) throw new Error(result.stderr || result.stdout || "자동 시작 작업 등록에 실패했습니다.");
+  let installMethod = "Windows 작업 스케줄러";
+  if (result.status !== 0) {
+    const startupDir = join(process.env.APPDATA ?? "", "Microsoft", "Windows", "Start Menu", "Programs", "Startup");
+    if (!process.env.APPDATA || !existsSync(startupDir)) {
+      throw new Error(result.stderr || result.stdout || "자동 시작 작업 등록에 실패했습니다.");
+    }
+    const startupPath = join(startupDir, `${taskName}.cmd`);
+    writeFileSync(startupPath, `@echo off\r\nstart "" /min "${nodePath}" "${scriptPath}"\r\n`, "utf8");
+    installMethod = "Windows 사용자 시작프로그램";
+  }
   spawn(nodePath, [scriptPath], { cwd: root, detached: true, stdio: "ignore", windowsHide: true }).unref();
-  console.log(`자동 연동 작업을 등록하고 시작했습니다: ${taskName}`);
+  console.log(`자동 연동 작업을 등록하고 시작했습니다: ${taskName} (${installMethod})`);
 }
 
 if (process.argv.includes("--install")) {
