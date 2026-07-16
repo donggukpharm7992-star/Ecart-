@@ -4941,6 +4941,7 @@ button {
 }
 
 .pharmacy-side-label-name {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -4965,11 +4966,41 @@ button {
 }
 
 .pharmacy-side-label-name small {
-  margin-top: auto;
+  position: absolute;
+  right: .5mm;
+  bottom: .5mm;
+  left: .5mm;
   color: #d92d20;
   font-size: 6pt;
   font-weight: 1000;
   line-height: 1;
+}
+
+.pharmacy-print-label.external-shelf-label {
+  grid-template-rows: 1fr;
+  border: 1.2mm solid var(--pharmacy-external-tone, #111827);
+  background: color-mix(in srgb, var(--pharmacy-external-tone, #111827) 12%, white);
+}
+
+.pharmacy-print-label.external-shelf-label .pharmacy-label-main {
+  grid-row: 1;
+  padding: 1mm 1.5mm;
+}
+
+.pharmacy-print-label.external-shelf-label .pharmacy-label-main strong {
+  width: 100%;
+  font-size: 16pt;
+  line-height: 1;
+  white-space: nowrap;
+  word-break: normal;
+}
+
+.pharmacy-print-label.external-shelf-label .pharmacy-label-main strong.medium-name {
+  font-size: 13pt;
+}
+
+.pharmacy-print-label.external-shelf-label .pharmacy-label-main strong.long-name {
+  font-size: 10pt;
 }
 
 .pharmacy-side-label-meta {

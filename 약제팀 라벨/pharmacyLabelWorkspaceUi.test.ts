@@ -49,6 +49,13 @@ describe("pharmacy label workspace UI", () => {
     expect(workspaceSource).toContain("23x102");
   });
 
+  it("applies the compact external shelf rule and preserves colored side color on bottle caps", () => {
+    expect(workspaceSource).toContain('isExternalShelfLabel ? "external-shelf-label"');
+    expect(workspaceSource).toContain('!isExternalShelfLabel && <span>{draft.printable.koreanName}</span>');
+    expect(workspaceSource).toContain('isColoredSideLabel || accessoryFilter === "유색 측면라벨"');
+    expect(workspaceSource).toContain('"--pharmacy-external-tone": externalTone');
+  });
+
   it("filters side and cap labels and places paper controls next to output", () => {
     expect(workspaceSource).toContain("표시 약품 먼저 보기");
     expect(workspaceSource).toContain("sideLabelHalfT");

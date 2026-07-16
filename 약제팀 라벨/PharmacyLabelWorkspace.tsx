@@ -75,6 +75,7 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
   const isCapLabel = draft?.accessory === "병뚜껑";
   const isColoredSideLabel = draft?.accessory === "유색 측면라벨";
   const isSideLabel = draft?.accessory === "측면라벨" || isColoredSideLabel;
+  const isExternalShelfLabel = ["외용제", "외용점안제", "팩제", "시럽"].includes(category) && draft?.size.presetKey === "13.5x105";
   const sizeOptions = family === "cabinet" && draft
     ? [draft.size]
     : sizesForCategory(category, activeRow).filter((size) =>
@@ -91,6 +92,7 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
       : !hasCautionWarning && hasLightWarning
         ? "storage-light"
         : "";
+  const externalTone = hasCautionWarning ? "#d92d20" : hasColdWarning ? "#155eef" : hasLightWarning ? "#16803c" : draft?.style.outerBorderColor ?? "#111827";
 
   function patch(patchValue: Partial<PharmacyLabelDraft>) {
     setDraft((current) => current ? { ...current, ...patchValue } : current);
@@ -116,7 +118,8 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
     "--pharmacy-label-font-size": `${draft.style.fontSizePt}pt`,
     "--pharmacy-label-color": draft.style.fontColor,
     "--pharmacy-label-warning": draft.style.warningColor,
-    "--pharmacy-label-background": isColoredSideLabel ? draft.backgroundColor : "#ffffff",
+    "--pharmacy-label-background": isColoredSideLabel || isCapLabel ? draft.backgroundColor : "#ffffff",
+    "--pharmacy-external-tone": externalTone,
   } as CSSProperties) : undefined;
   const displayTitle = isCapLabel ? draft?.printable.title.replace(/\btab(?:let)?\b/gi, "").replace(/\s{2,}/g, " ").trim() ?? "" : draft?.printable.title ?? "";
   const titleParts = splitDoseText(displayTitle);
@@ -129,7 +132,9 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
     const next: Partial<PharmacyLabelDraft> = { accessory: value };
     if (value === "병뚜껑") {
       next.size = sizesForCategory("원병", activeRow).find((size) => size.presetKey === "10x27") ?? draft.size;
-      next.backgroundColor = extractHex(activeRow?.capBackground) || "#ffffff";
+      next.backgroundColor = isColoredSideLabel || accessoryFilter === "유색 측면라벨"
+        ? extractHex(activeRow?.coloredSideBackground) || draft.backgroundColor
+        : extractHex(activeRow?.capBackground) || "#ffffff";
     } else if (value === "유색 측면라벨") {
       next.size = sizesForCategory("원병", activeRow).find((size) => size.presetKey === "23x102") ?? draft.size;
       next.backgroundColor = extractHex(activeRow?.coloredSideBackground) || "#ffffff";
@@ -199,7 +204,7 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
           <input placeholder="약품 위치" value={draft.location} onChange={(e) => patch({ location: e.target.value })}/>
           <input placeholder="ATC 번호" value={draft.atc} onChange={(e) => patch({ atc: e.target.value })}/>
         </div>}
-        <div className="pharmacy-label-canvas">{draft ? <article className={`pharmacy-print-label ${category === "항암제" ? "anticancer" : ""} ${category === "고가약" ? "high-cost" : ""} ${storageOnlyClass} ${isCapLabel ? "cap-label" : ""} ${isSideLabel ? "side-label" : ""} ${!draft.printable.warning && !draft.printable.topBanner ? "no-warning" : ""}`} style={labelStyle}>
+        <div className="pharmacy-label-canvas">{draft ? <article className={`pharmacy-print-label ${category === "항암제" ? "anticancer" : ""} ${category === "고가약" ? "high-cost" : ""} ${storageOnlyClass} ${isCapLabel ? "cap-label" : ""} ${isSideLabel ? "side-label" : ""} ${isExternalShelfLabel ? "external-shelf-label" : ""} ${!draft.printable.warning && !draft.printable.topBanner ? "no-warning" : ""}`} style={labelStyle}>
           {isSideLabel ? <div className="pharmacy-side-label-form">
             <div className="pharmacy-side-label-photo">{imageUrl
               ? <a href={draft.imageSourceUrl} target="_blank" rel="noreferrer" title="약학정보원 식별사진 검색"><img src={imageUrl} alt={`${draft.printable.koreanName} 식별사진`}/></a>
@@ -216,7 +221,7 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
               <b>{activeRow?.expiry || draft.printable.footer.text || "/    /"}</b>
             </div>
           </div> : <>
-          {!isCapLabel && (draft.printable.topBanner || (draft.printable.warning && category !== "항암제")) && <div className="pharmacy-label-top-banner">
+          {!isCapLabel && !isExternalShelfLabel && (draft.printable.topBanner || (draft.printable.warning && category !== "항암제")) && <div className="pharmacy-label-top-banner">
             <span>{[draft.printable.topBanner, category !== "항암제" ? draft.warnings.filter((warning) => !["냉장", "차광"].includes(warning)).join(" · ") : ""].filter(Boolean).join(" · ")}</span>
             {hasLightWarning && <b className="pharmacy-storage-badge light">차광</b>}
             {hasColdWarning && <b className="pharmacy-storage-badge cold">냉장</b>}
@@ -224,12 +229,12 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
           <div className="pharmacy-label-main"><strong className={displayTitle.length > 28 ? "long-name" : displayTitle.length > 18 ? "medium-name" : ""}>
             {hasDoseHighlight && titleParts.dose ? <>{titleParts.before}<mark className="dose-highlight">{titleParts.dose}</mark>{titleParts.after}</> : displayTitle}
           </strong>
-            {!isCapLabel && <span>{draft.printable.koreanName}</span>}
+            {!isCapLabel && !isExternalShelfLabel && <span>{draft.printable.koreanName}</span>}
             {isCapLabel && draft.doseUnit && draft.doseUnit !== "1T" && <b>{draft.doseUnit}</b>}
-            {!isCapLabel && draft.atc && <small className="pharmacy-label-atc">ATC {draft.atc}</small>}
-            {!isCapLabel && draft.location && <small className="pharmacy-label-location">{draft.location}</small>}
-            {draft.printable.reconstitution && <em>{draft.printable.reconstitution}</em>}</div>
-          {draft.printable.footer.enabled && <footer>{draft.printable.footer.text}</footer>}
+            {!isCapLabel && !isExternalShelfLabel && draft.atc && <small className="pharmacy-label-atc">ATC {draft.atc}</small>}
+            {!isCapLabel && !isExternalShelfLabel && draft.location && <small className="pharmacy-label-location">{draft.location}</small>}
+            {!isExternalShelfLabel && draft.printable.reconstitution && <em>{draft.printable.reconstitution}</em>}</div>
+          {!isExternalShelfLabel && draft.printable.footer.enabled && <footer>{draft.printable.footer.text}</footer>}
           </>}
         </article> : <span className="empty">표시할 라벨이 없습니다.</span>}</div>
         <section className="pharmacy-condition-dashboard">
