@@ -44,6 +44,7 @@ export type PharmacyLabelDraft = {
   accessory?: "측면라벨" | "유색 측면라벨" | "병뚜껑" | "선반라벨";
   location: string;
   atc: string;
+  expiry: string;
   backgroundColor: string;
   size: PharmacyLabelSize;
   printable: PharmacyPrintableText;
@@ -83,7 +84,7 @@ const SIZE_MAP: Record<string, PharmacyLabelSize[]> = {
   "마약/향정": sizes(["40*70"]),
   고가약: sizes(["40*80", "55*80"]),
   항암제: sizes(["46*80"]),
-  원병: sizes(["33*100", "102*220", "10*27", "15*30"]),
+  원병: sizes(["33*100", "23*102", "10*27", "15*30"]),
 };
 
 function sizes(values: string[]) {
@@ -161,6 +162,7 @@ export function createPharmacyLabelDraft(
     category,
     location: row.location ?? "",
     atc: row.atc ?? "",
+    expiry: row.expiry ?? "",
     backgroundColor: extractHex(row.coloredSideBackground) || "#ffffff",
     size,
     printable: {

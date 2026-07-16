@@ -3063,6 +3063,7 @@ export function App() {
   }
 
   function renderPharmacyPrintDraftArticle(draft: PharmacyLabelDraft, key: string) {
+    const isSideLabel = draft.accessory === "측면라벨" || draft.accessory === "유색 측면라벨";
     const hasDoseHighlight = draft.warnings.some((warning) => warning === "용량주의" || warning === "용량확인");
     const hasCautionWarning = draft.warnings.some((warning) =>
       ["용량주의", "용량확인", "유사발음", "유사모양", "이름주의", "고위험의약품"].includes(warning),
@@ -3083,7 +3084,9 @@ export function App() {
     const style = {
       "--pharmacy-label-width-mm": draft.size.widthMm,
       "--pharmacy-label-height-mm": draft.size.heightMm,
-      "--pharmacy-label-border": `${draft.style.outerBorderPx >= 5 ? `${draft.style.outerBorderPx}mm` : `${draft.style.outerBorderPx}px`} solid ${draft.style.outerBorderColor}`,
+      "--pharmacy-label-border": isSideLabel
+        ? "1px solid #111827"
+        : `${draft.style.outerBorderPx >= 5 ? `${draft.style.outerBorderPx}mm` : `${draft.style.outerBorderPx}px`} solid ${draft.style.outerBorderColor}`,
       "--pharmacy-label-font-size": `${draft.style.fontSizePt}pt`,
       "--pharmacy-label-color": draft.style.fontColor,
       "--pharmacy-label-warning": draft.style.warningColor,
@@ -3094,7 +3097,21 @@ export function App() {
     } as CSSProperties;
 
     return (
-      <article className={`pharmacy-print-label print-label ${draft.category === "고가약" ? "high-cost" : ""} ${storageOnlyClass} ${draft.accessory === "병뚜껑" ? "cap-label" : ""} ${!draft.printable.warning && !draft.printable.topBanner ? "no-warning" : ""}`} style={style} key={key}>
+      <article className={`pharmacy-print-label print-label ${draft.category === "고가약" ? "high-cost" : ""} ${storageOnlyClass} ${draft.accessory === "병뚜껑" ? "cap-label" : ""} ${isSideLabel ? "side-label" : ""} ${!draft.printable.warning && !draft.printable.topBanner ? "no-warning" : ""}`} style={style} key={key}>
+        {isSideLabel ? <div className="pharmacy-side-label-form">
+          <div className="pharmacy-side-label-photo">식별사진</div>
+          <div className="pharmacy-side-label-name">
+            <strong>{draft.printable.title}</strong>
+            <span>({draft.printable.koreanName})</span>
+            {draft.doseUnit && draft.doseUnit !== "1T" ? <b>{draft.doseUnit}</b> : null}
+            {draft.warnings.length > 0 ? <small>{draft.warnings.join(" · ")}</small> : null}
+          </div>
+          <div className="pharmacy-side-label-meta">
+            <strong>{draft.atc ? `${draft.atc}번` : "-"}</strong>
+            <span>유효기간</span>
+            <b>{draft.expiry || "/    /"}</b>
+          </div>
+        </div> : <>
         {draft.accessory !== "병뚜껑" && (draft.printable.topBanner || draft.printable.warning) ? <div className="pharmacy-label-top-banner">
           <span>{[draft.printable.topBanner, draft.warnings.filter((warning) => !["냉장", "차광"].includes(warning)).join(" · ")].filter(Boolean).join(" · ")}</span>
           {hasLightWarning ? <b className="pharmacy-storage-badge light">차광</b> : null}
@@ -3110,6 +3127,7 @@ export function App() {
           {draft.accessory !== "병뚜껑" && draft.location ? <small className="pharmacy-label-location">{draft.location}</small> : null}
         </div>
         {draft.printable.footer.enabled ? <footer>{draft.printable.footer.text}</footer> : null}
+        </>}
       </article>
     );
   }

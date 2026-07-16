@@ -4890,6 +4890,93 @@ button {
   font-size: .48em;
 }
 
+.pharmacy-print-label.side-label {
+  display: block;
+  border-radius: 0;
+  background: var(--pharmacy-label-background, #fff);
+}
+
+.pharmacy-side-label-form {
+  display: grid;
+  grid-template-columns: 45% 39% 16%;
+  width: 100%;
+  height: 100%;
+  color: #111827;
+  text-shadow: none;
+}
+
+.pharmacy-side-label-photo,
+.pharmacy-side-label-name,
+.pharmacy-side-label-meta {
+  min-width: 0;
+  min-height: 0;
+  border-right: 1px solid #111827;
+}
+
+.pharmacy-side-label-photo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #98a2b3;
+  background: rgba(255, 255, 255, .72);
+  font-size: 8px;
+  font-weight: 900;
+}
+
+.pharmacy-side-label-name {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: .7mm 1mm;
+  text-align: center;
+}
+
+.pharmacy-side-label-name strong {
+  font-size: 9pt;
+  font-weight: 1000;
+  line-height: 1.05;
+}
+
+.pharmacy-side-label-name span,
+.pharmacy-side-label-name b {
+  margin-top: .4mm;
+  font-size: 7.5pt;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.pharmacy-side-label-name small {
+  margin-top: auto;
+  color: #d92d20;
+  font-size: 6pt;
+  font-weight: 1000;
+  line-height: 1;
+}
+
+.pharmacy-side-label-meta {
+  display: grid;
+  grid-template-rows: 1fr 1fr 1fr;
+  border-right: 0;
+  text-align: center;
+}
+
+.pharmacy-side-label-meta > * {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: .3mm;
+  border-bottom: 1px solid #111827;
+  font-size: 6.5pt;
+  font-weight: 1000;
+  line-height: 1;
+}
+
+.pharmacy-side-label-meta > :last-child {
+  border-bottom: 0;
+}
+
 .pharmacy-label-main span {
   margin-top: 1mm;
   font-size: .48em;

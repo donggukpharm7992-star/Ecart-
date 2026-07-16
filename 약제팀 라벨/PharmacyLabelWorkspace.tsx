@@ -55,11 +55,11 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
       next.backgroundColor = extractHex(activeRow.capBackground) || "#ffffff";
     } else if (accessoryFilter === "유색 측면라벨") {
       next.accessory = "유색 측면라벨";
-      next.size = sizesForCategory("원병", activeRow).find((size) => size.presetKey === "102x220") ?? next.size;
+      next.size = sizesForCategory("원병", activeRow).find((size) => size.presetKey === "23x102") ?? next.size;
       next.backgroundColor = extractHex(activeRow.coloredSideBackground) || "#ffffff";
     } else if (accessoryFilter === "측면라벨") {
       next.accessory = "측면라벨";
-      next.size = sizesForCategory("원병", activeRow).find((size) => size.presetKey === "102x220") ?? next.size;
+      next.size = sizesForCategory("원병", activeRow).find((size) => size.presetKey === "23x102") ?? next.size;
     }
     setDraft(next);
   }, [accessoryFilter, activeRow?.code, category, family, savedLabels]);
@@ -74,6 +74,7 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
   const categoryGroups = family === "drug" ? DRUG_CATEGORIES : CABINET_CATEGORIES;
   const isCapLabel = draft?.accessory === "병뚜껑";
   const isColoredSideLabel = draft?.accessory === "유색 측면라벨";
+  const isSideLabel = draft?.accessory === "측면라벨" || isColoredSideLabel;
   const sizeOptions = family === "cabinet" && draft
     ? [draft.size]
     : sizesForCategory(category, activeRow).filter((size) =>
@@ -111,7 +112,7 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
   const labelStyle = draft ? ({
     "--pharmacy-label-width-mm": draft.size.widthMm,
     "--pharmacy-label-height-mm": draft.size.heightMm,
-    "--pharmacy-label-border": `${activeRow?.border || draft.style.outerBorderPx >= 5 ? "5mm" : `${draft.style.outerBorderPx}px`} solid ${activeRow?.border ? extractHex(activeRow.borderColor) || draft.style.outerBorderColor : draft.style.outerBorderColor}`,
+    "--pharmacy-label-border": `${draft.accessory === "측면라벨" || draft.accessory === "유색 측면라벨" ? "1px solid #111827" : `${activeRow?.border || draft.style.outerBorderPx >= 5 ? "5mm" : `${draft.style.outerBorderPx}px`} solid ${activeRow?.border ? extractHex(activeRow.borderColor) || draft.style.outerBorderColor : draft.style.outerBorderColor}`}`,
     "--pharmacy-label-font-size": `${draft.style.fontSizePt}pt`,
     "--pharmacy-label-color": draft.style.fontColor,
     "--pharmacy-label-warning": draft.style.warningColor,
@@ -127,10 +128,10 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
       next.size = sizesForCategory("원병", activeRow).find((size) => size.presetKey === "10x27") ?? draft.size;
       next.backgroundColor = extractHex(activeRow?.capBackground) || "#ffffff";
     } else if (value === "유색 측면라벨") {
-      next.size = sizesForCategory("원병", activeRow).find((size) => size.presetKey === "102x220") ?? draft.size;
+      next.size = sizesForCategory("원병", activeRow).find((size) => size.presetKey === "23x102") ?? draft.size;
       next.backgroundColor = extractHex(activeRow?.coloredSideBackground) || "#ffffff";
     } else if (value === "측면라벨") {
-      next.size = sizesForCategory("원병", activeRow).find((size) => size.presetKey === "102x220") ?? draft.size;
+      next.size = sizesForCategory("원병", activeRow).find((size) => size.presetKey === "23x102") ?? draft.size;
       next.backgroundColor = "#ffffff";
     } else {
       next.backgroundColor = "#ffffff";
@@ -195,7 +196,21 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
           <input placeholder="약품 위치" value={draft.location} onChange={(e) => patch({ location: e.target.value })}/>
           <input placeholder="ATC 번호" value={draft.atc} onChange={(e) => patch({ atc: e.target.value })}/>
         </div>}
-        <div className="pharmacy-label-canvas">{draft ? <article className={`pharmacy-print-label ${category === "항암제" ? "anticancer" : ""} ${category === "고가약" ? "high-cost" : ""} ${storageOnlyClass} ${isCapLabel ? "cap-label" : ""} ${!draft.printable.warning && !draft.printable.topBanner ? "no-warning" : ""}`} style={labelStyle}>
+        <div className="pharmacy-label-canvas">{draft ? <article className={`pharmacy-print-label ${category === "항암제" ? "anticancer" : ""} ${category === "고가약" ? "high-cost" : ""} ${storageOnlyClass} ${isCapLabel ? "cap-label" : ""} ${isSideLabel ? "side-label" : ""} ${!draft.printable.warning && !draft.printable.topBanner ? "no-warning" : ""}`} style={labelStyle}>
+          {isSideLabel ? <div className="pharmacy-side-label-form">
+            <div className="pharmacy-side-label-photo">식별사진</div>
+            <div className="pharmacy-side-label-name">
+              <strong>{draft.printable.title}</strong>
+              <span>({draft.printable.koreanName})</span>
+              {draft.doseUnit && draft.doseUnit !== "1T" && <b>{draft.doseUnit}</b>}
+              {draft.warnings.length > 0 && <small>{draft.warnings.join(" · ")}</small>}
+            </div>
+            <div className="pharmacy-side-label-meta">
+              <strong>{draft.atc ? `${draft.atc}번` : "-"}</strong>
+              <span>유효기간</span>
+              <b>{activeRow?.expiry || draft.printable.footer.text || "/    /"}</b>
+            </div>
+          </div> : <>
           {!isCapLabel && (draft.printable.topBanner || (draft.printable.warning && category !== "항암제")) && <div className="pharmacy-label-top-banner">
             <span>{[draft.printable.topBanner, category !== "항암제" ? draft.warnings.filter((warning) => !["냉장", "차광"].includes(warning)).join(" · ") : ""].filter(Boolean).join(" · ")}</span>
             {hasLightWarning && <b className="pharmacy-storage-badge light">차광</b>}
@@ -210,6 +225,7 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
             {!isCapLabel && draft.location && <small className="pharmacy-label-location">{draft.location}</small>}
             {draft.printable.reconstitution && <em>{draft.printable.reconstitution}</em>}</div>
           {draft.printable.footer.enabled && <footer>{draft.printable.footer.text}</footer>}
+          </>}
         </article> : <span className="empty">표시할 라벨이 없습니다.</span>}</div>
         <section className="pharmacy-condition-dashboard">
           <div><h3>주의·보관 조건</h3><div className="pharmacy-warning-editor">{WARNING_OPTIONS.map((warning) => <label className={draft?.warnings.includes(warning) ? "checked" : ""} key={warning}><input type="checkbox" checked={draft?.warnings.includes(warning) ?? false} onChange={() => toggleWarning(warning)}/><span>{warning}</span></label>)}</div></div>
