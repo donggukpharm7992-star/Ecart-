@@ -59,8 +59,20 @@ function runNpm(args) {
   if (result.status !== 0) throw new Error(`${command} ${commandArgs.join(" ")} failed`);
 }
 
+function runPython(scriptPath) {
+  const result = spawnSync(process.execPath, [join(root, "scripts", "run_python.mjs"), scriptPath], {
+    cwd: root,
+    encoding: "utf8",
+    stdio: "pipe",
+  });
+  if (result.stdout) log(result.stdout.trim());
+  if (result.stderr) log(result.stderr.trim());
+  if (result.status !== 0) throw new Error(`${scriptPath} failed`);
+}
+
 function syncAndRelease() {
   log("원내보유의약품리스트 변경을 반영합니다.");
+  runPython("scripts/backup_hospital_drug_list.py");
   runNpm(["run", "generate:data"]);
   runNpm(["run", "generate:labels"]);
   runNpm(["run", "validate:data"]);

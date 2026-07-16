@@ -23,6 +23,7 @@ This app previews a pharmacist ward inventory workflow with real Excel data. The
   - Label data includes item code, drug type, high-cost/oral-anticancer flags, caution flags, high-risk category, ATC, opened-PTP/powder/three-tier fields, expiry/location, side/cap label values, name caution, and border settings.
   - Cabinet membership is derived from `경구 주사 리스트`, `영양수액리스트`, `외용제리스트`, and `시럽리스트`.
   - `동국대학교일산병원_매출_날짜*` uploads match item codes, choose the earliest expiry per item, and save an updated `원내보유의약품리스트.xlsx`.
+  - A validated atomic backup is maintained at `H:/CHOI/라벨앱/원내보유의약품리스트_백업.xlsx`; invalid ZIP/XML or unexpected sheet structures never overwrite the last valid backup.
   - `식별사진경로` and `식별사진출처` columns store the local image asset and the health.kr verification link; missing paths also fall back to dose/form-stripped name matching against the side-label template. Runtime labels always refresh image, ATC, expiry, and colored-side background from the workbook.
   - Cabinet labels render the four cabinet-list sheets as name/caution list rows, while nutrition-fluid labels use the `라벨 생성규칙` left/right 12mm caution layout.
   - The label studio derives its drug list and label defaults only from this generated source and the `라벨 생성규칙` sheet dimensions.
