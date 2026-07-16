@@ -113,6 +113,12 @@ describe("pharmacy label studio rules", () => {
     expect(draft.printable.footer.text).toBe("고농도 전해질");
   });
 
+  it("uses a 1mm default border while preserving designated and high-cost 5mm borders", () => {
+    expect(createPharmacyLabelDraft({ ...row, border: false }, "원병", "drug").style.outerBorderPx).toBe(1);
+    expect(createPharmacyLabelDraft(row, "바이알", "drug").style.outerBorderPx).toBe(5);
+    expect(createPharmacyLabelDraft({ ...row, border: false, highCost: true }, "고가약", "drug").style.outerBorderPx).toBe(5);
+  });
+
   it("groups labels for batch print", () => {
     const draft = createPharmacyLabelDraft(row, "바이알", "drug");
     expect(groupPharmacyLabelsForPaper(Array.from({ length: 30 }, () => draft), A4_PAPER).length).toBeGreaterThan(1);

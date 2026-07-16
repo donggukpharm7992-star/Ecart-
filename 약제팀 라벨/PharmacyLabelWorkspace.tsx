@@ -132,6 +132,7 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
   const externalCautionWarnings = draft?.warnings.filter((warning) => ["용량주의", "용량확인", "유사발음", "유사모양", "이름주의"].includes(warning)) ?? [];
   const hasNameConfusion = draft?.warnings.some((warning) => ["유사발음", "이름주의"].includes(warning)) ?? false;
   const externalStorageText = hasLightWarning ? "차광" : hasColdWarning ? "냉장" : "";
+  const externalHasFlags = externalCautionWarnings.length > 0 || Boolean(externalStorageText);
   const isInjectionLabel = ["앰플", "바이알", "냉장주사"].includes(category);
   const showStorageBanner = isInjectionLabel && (hasLightWarning || hasColdWarning);
   const showTopBanner = Boolean(draft?.printable.topBanner) || hasCautionWarning || showStorageBanner;
@@ -299,8 +300,8 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
             {nutritionHasFlags && <aside className={hasLightWarning ? "light-condition" : ""}>{hasLightWarning ? "차광" : cautionWarnings[0] ?? ""}</aside>}
             <strong className={titleSizeClass}>{hasDoseHighlight && titleParts.dose ? <>{titleParts.before}<mark className="dose-highlight">{titleParts.dose}</mark>{titleParts.after}</> : draft.printable.title}</strong>
             {nutritionHasFlags && (hasLightWarning ? cautionWarnings.length > 0 : cautionWarnings.length > 1) && <aside>{hasLightWarning ? cautionWarnings.join(" · ") : cautionWarnings.slice(1).join(" · ")}</aside>}
-          </div> : isExternalShelfLabel ? <div className={`pharmacy-external-strip ${externalCautionWarnings.length > 0 && externalStorageText ? "with-two-flags" : ""} ${hasLightWarning ? "light-storage" : hasColdWarning ? "cold-storage" : ""}`}>
-            <aside className={externalCautionWarnings.length > 0 ? "caution" : hasLightWarning ? "light" : hasColdWarning ? "cold" : ""}>{externalCautionWarnings.length > 0 ? externalCautionWarnings.join(" · ") : externalStorageText}</aside>
+          </div> : isExternalShelfLabel ? <div className={`pharmacy-external-strip ${externalHasFlags ? "" : "name-only"} ${externalCautionWarnings.length > 0 && externalStorageText ? "with-two-flags" : ""} ${hasLightWarning ? "light-storage" : hasColdWarning ? "cold-storage" : ""}`}>
+            {externalHasFlags && <aside className={externalCautionWarnings.length > 0 ? "caution" : hasLightWarning ? "light" : hasColdWarning ? "cold" : ""}>{externalCautionWarnings.length > 0 ? externalCautionWarnings.join(" · ") : externalStorageText}</aside>}
             <strong className={`${titleSizeClass} ${hasNameConfusion ? "confusion-name" : ""}`}>{hasDoseHighlight && titleParts.dose ? <>{titleParts.before}<mark className="dose-highlight">{titleParts.dose}</mark>{titleParts.after}</> : displayTitle}</strong>
             {externalCautionWarnings.length > 0 && externalStorageText && <aside className={hasLightWarning ? "light" : "cold"}>{externalStorageText}</aside>}
           </div> : <>

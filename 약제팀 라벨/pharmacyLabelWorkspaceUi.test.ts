@@ -60,6 +60,8 @@ describe("pharmacy label workspace UI", () => {
     expect(workspaceSource).toContain('"--pharmacy-external-tone": externalTone');
     expect(workspaceSource).toContain("pharmacy-external-strip");
     expect(workspaceSource).toContain("externalCautionWarnings");
+    expect(workspaceSource).toContain("externalHasFlags");
+    expect(workspaceSource).toContain('"name-only"');
     expect(workspaceSource).toContain("confusion-name");
   });
 

@@ -145,6 +145,13 @@ describe("hospital drug label source", () => {
     expect(stripHospitalDrugControlledPrefix(psychotropic.name)).toBe("Ativan 4mg/1ml inj");
   });
 
+  it("loads dose confirmation for same-form controlled drugs with multiple strengths", async () => {
+    const rows = await loadHospitalDrugLabelRows();
+    const alpram = rows.filter((row) => row.name.startsWith("[향정]Alpram"));
+    expect(alpram).toHaveLength(2);
+    expect(alpram.every((row) => row.doseCheck)).toBe(true);
+  });
+
   it("excludes PCA and test-use controlled drug names from the 40x70 list", () => {
     expect(shouldExcludeHospitalControlledDrugLabel({ name: "[마약] PCA-Fentanyl 500mcg/10ml Inj" })).toBe(true);
     expect(shouldExcludeHospitalControlledDrugLabel({ name: "[마약] Fentanyl 50mcg소화기검사용" })).toBe(true);

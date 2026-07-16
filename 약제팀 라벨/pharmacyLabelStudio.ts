@@ -189,7 +189,7 @@ export function createPharmacyLabelDraft(
     drugTypes: row.drugType ? [row.drugType] : [],
     accessory: labelFamily === "cabinet" && ["원병", "PTP"].includes(category) ? "선반라벨" : undefined,
     style: {
-      outerBorderPx: row.border ? 5 : 2,
+      outerBorderPx: row.border || category === "고가약" ? 5 : 1,
       outerBorderColor: extractHex(row.borderColor) || "#111827",
       textOutlinePx: 0,
       textOutlineColor: "#ffffff",
@@ -264,9 +264,9 @@ export function resolvePharmacyLabelDraft(
       : saved.backgroundColor,
     warnings,
     printable: { ...saved.printable, warning: warnings.join(" · ") },
-    style: row.border
+    style: row.border || category === "고가약"
       ? { ...saved.style, outerBorderPx: 5, outerBorderColor: extractHex(row.borderColor) || saved.style.outerBorderColor }
-      : saved.style,
+      : { ...saved.style, outerBorderPx: saved.style.outerBorderPx === 5 ? 5 : 1 },
   };
 }
 

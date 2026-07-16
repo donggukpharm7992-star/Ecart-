@@ -20,13 +20,24 @@ def clean(value: object) -> str:
 
 def core_name(value: object) -> str:
     text = clean(value).lower()
+    text = re.sub(r"^\s*\[(?:마약|향정)\]\s*", "", text)
+    form = next(
+        (label for pattern, label in (
+            (r"\b(?:tab(?:let)?|정)\b", "tab"),
+            (r"\b(?:cap(?:sule)?|캡슐)\b", "cap"),
+            (r"\b(?:inj(?:ection)?|주)\b", "inj"),
+            (r"\bpatch\b", "patch"),
+        ) if re.search(pattern, text)),
+        "",
+    )
     text = re.sub(
         r"\d+(?:\.\d+)?\s*(?:mcg|μg|mg|g|ml|iu|%)(?:/\d+(?:\.\d+)?\s*(?:ml|g))?",
         "",
         text,
     )
     text = re.sub(r"\b(?:tab(?:let)?|cap(?:sule)?)\b", "", text)
-    return re.sub(r"[^0-9a-z가-힣]", "", text)
+    normalized = re.sub(r"[^0-9a-z가-힣]", "", text)
+    return f"{normalized}|{form}"
 
 
 def main() -> None:
@@ -40,7 +51,7 @@ def main() -> None:
         drug_type = clean(worksheet.cell(row_number, index["약품유형"]).value).replace(" ", "")
         in_hospital = clean(worksheet.cell(row_number, index["원내보유"]).value).upper()
         name = worksheet.cell(row_number, index["상용약품명"]).value
-        if drug_type not in {"원병", "PTP"} or in_hospital != "Y" or not clean(name):
+        if drug_type not in {"원병", "PTP", "마약", "향정"} or in_hospital != "Y" or not clean(name):
             continue
         groups[core_name(name)].append(row_number)
 
