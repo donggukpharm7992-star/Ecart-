@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-16T05:39:05.602Z",
+  "updatedAt": "2026-07-16T05:39:09.116Z",
   "clientId": "8fca6235-56b2-4861-8140-d0d51f2a8239",
   "state": {
     "stockDrugs": [
@@ -7106,7 +7106,7 @@
     "narcoticCheckedItems": {
       "DREMM::XMIDA5": false,
       "INJ::__NO_NARCOTIC_STOCK__": true,
-      "DRL::XMIDA5": false,
+      "DRL::XMIDA5": true,
       "121::XLZPAM4": true,
       "121::XLZPAM2": true,
       "121::XDDP": true,
@@ -7137,7 +7137,8 @@
       "52::__NO_NARCOTIC_STOCK__": true,
       "51::__NO_NARCOTIC_STOCK__": true,
       "42::XLZPAM2": true,
-      "NICU::XLZPAM2": false
+      "NICU::XLZPAM2": false,
+      "DRL::XNALBUP10W": true
     },
     "narcoticExpiry": {},
     "narcoticChecklistByRoom": {
