@@ -112,6 +112,7 @@ import { loadPharmacyLabelMatchRows, type PharmacyLabelMatchRow } from "../약�
 import {
   loadSavedPharmacyLabelsFromStorage,
   savePharmacyLabelToStorage,
+  formatPharmacyExpiry,
   splitDoseText,
   type PharmacyLabelDraft,
   type PharmacySavedLabel,
@@ -3079,7 +3080,7 @@ export function App() {
       ? `${import.meta.env.BASE_URL}${draft.imagePath.replace(/^\.?\//, "")}`
       : "";
     const storageOnlyClass = !hasCautionWarning && hasColdWarning && hasLightWarning
-      ? "storage-both"
+      ? "storage-light-cold"
       : !hasCautionWarning && hasColdWarning
         ? "storage-cold"
         : !hasCautionWarning && hasLightWarning
@@ -3091,7 +3092,9 @@ export function App() {
       "--pharmacy-label-height-mm": draft.size.heightMm,
       "--pharmacy-label-border": isSideLabel
         ? "1px solid #111827"
-        : `${draft.style.outerBorderPx >= 5 ? `${draft.style.outerBorderPx}mm` : `${draft.style.outerBorderPx}px`} solid ${draft.style.outerBorderColor}`,
+        : draft.style.outerBorderPx <= 0
+          ? "none"
+          : `${draft.style.outerBorderPx >= 5 ? `${draft.style.outerBorderPx}mm` : `${draft.style.outerBorderPx}px`} solid ${draft.style.outerBorderColor}`,
       "--pharmacy-label-font-size": `${draft.style.fontSizePt}pt`,
       "--pharmacy-label-color": draft.style.fontColor,
       "--pharmacy-label-warning": draft.style.warningColor,
@@ -3117,14 +3120,23 @@ export function App() {
           <div className="pharmacy-side-label-meta">
             <strong>{draft.atc ? `${draft.atc}번` : "-"}</strong>
             <span>유효기간</span>
-            <b>{draft.expiry || "/    /"}</b>
+            <b>{formatPharmacyExpiry(draft.expiry) || "/    /"}</b>
           </div>
+        </div> : draft.labelFamily === "cabinet" ? <div className={`pharmacy-cabinet-list-row ${draft.category === "냉장주사" ? "with-storage-column" : ""}`}>
+          <div><strong>{draft.printable.title}</strong>{draft.printable.koreanName ? <span>{draft.printable.koreanName}</span> : null}</div>
+          <b>{draft.warnings.filter((warning) => !["냉장", "차광"].includes(warning)).join(" · ") || "-"}</b>
+          {draft.category === "냉장주사" ? <em>{draft.location || "-"}</em> : null}
+        </div> : draft.category === "영양수액" ? <div className="pharmacy-nutrition-label">
+          <aside>{draft.warnings.filter((warning) => ["용량주의", "유사발음", "유사모양", "고위험의약품"].includes(warning)).join(" · ")}</aside>
+          <strong>{draft.printable.title}</strong>
+          <aside>{draft.warnings.filter((warning) => ["차광", "용량확인", "이름주의"].includes(warning)).join(" · ")}</aside>
         </div> : <>
-        {draft.accessory !== "병뚜껑" && !isExternalShelfLabel && (draft.printable.topBanner || draft.printable.warning) ? <div className="pharmacy-label-top-banner">
+        {draft.accessory !== "병뚜껑" && !isExternalShelfLabel && (draft.printable.topBanner || hasCautionWarning) ? <div className="pharmacy-label-top-banner">
           <span>{[draft.printable.topBanner, draft.warnings.filter((warning) => !["냉장", "차광"].includes(warning)).join(" · ")].filter(Boolean).join(" · ")}</span>
           {hasLightWarning ? <b className="pharmacy-storage-badge light">차광</b> : null}
           {hasColdWarning ? <b className="pharmacy-storage-badge cold">냉장</b> : null}
         </div> : null}
+        {!hasCautionWarning && hasColdWarning && hasLightWarning ? <b className="pharmacy-storage-circle cold">냉장</b> : null}
         <div className="pharmacy-label-main">
           <strong>{hasDoseHighlight && titleParts.dose
             ? <>{titleParts.before}<mark className="dose-highlight">{titleParts.dose}</mark>{titleParts.after}</>
@@ -3134,7 +3146,7 @@ export function App() {
           {draft.accessory !== "병뚜껑" && !isExternalShelfLabel && draft.atc ? <small className="pharmacy-label-atc">ATC {draft.atc}</small> : null}
           {draft.accessory !== "병뚜껑" && !isExternalShelfLabel && draft.location ? <small className="pharmacy-label-location">{draft.location}</small> : null}
         </div>
-        {!isExternalShelfLabel && draft.printable.footer.enabled ? <footer>{draft.printable.footer.text}</footer> : null}
+        {!isExternalShelfLabel && draft.printable.footer.enabled ? <footer className={draft.category === "항암제" ? "anticancer-footer" : ""}>{draft.category === "항암제" ? "항암제" : draft.printable.footer.text}</footer> : null}
         </>}
       </article>
     );

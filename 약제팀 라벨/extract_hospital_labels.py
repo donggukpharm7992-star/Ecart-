@@ -30,6 +30,13 @@ def normalized_name(value: object) -> str:
     return re.sub(r"[^0-9a-z가-힣]", "", clean(value).lower())
 
 
+def normalized_core_name(value: object) -> str:
+    text = clean(value).lower()
+    text = re.sub(r"\d+(?:\.\d+)?\s*(?:mcg|μg|mg|g|ml|iu|%)(?:/\d+(?:\.\d+)?\s*(?:ml|g))?", "", text)
+    text = re.sub(r"\b(?:tab(?:let)?|cap(?:sule)?|inj(?:ection)?|syr(?:up)?|solution|soln|정|캡슐|주|시럽|액)\b", "", text)
+    return re.sub(r"[^0-9a-z가-힣]", "", text)
+
+
 def extract_side_label_images() -> dict[str, str]:
     if not SIDE_LABEL_TEMPLATE.exists():
         return {}
@@ -61,11 +68,15 @@ def extract_side_label_images() -> dict[str, str]:
             public_path = f"/pharmacy-drug-images/{file_name}"
             for name in names:
                 image_by_name[normalized_name(name)] = public_path
+                core_name = normalized_core_name(name)
+                if len(core_name) >= 4:
+                    image_by_name.setdefault(core_name, public_path)
     return image_by_name
 
 
 def match_image(image_by_name: dict[str, str], *names: str) -> str:
     normalized = [normalized_name(name) for name in names if clean(name)]
+    normalized += [normalized_core_name(name) for name in names if len(normalized_core_name(name)) >= 4]
     for name in normalized:
         if name in image_by_name:
             return image_by_name[name]

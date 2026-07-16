@@ -155,7 +155,7 @@ export function createPharmacyLabelDraft(
     : undefined;
   const size = cabinetSize ?? sizesForCategory(category, row)[0] ?? DEFAULT_PHARMACY_LABEL_SIZE;
   const anticancer = category === "항암제";
-  const cabinetNameOnly = labelFamily === "cabinet" && ["원병", "PTP", "영양수액"].includes(category);
+  const cabinetNameOnly = labelFamily === "cabinet" && category === "영양수액";
   return {
     id: `pharmacy-label-${row.code}-${labelFamily}-${category}`,
     code: row.code,
@@ -212,6 +212,10 @@ export function splitDoseText(title: string) {
     dose: match[0],
     after: title.slice(match.index + match[0].length),
   };
+}
+
+export function formatPharmacyExpiry(value: string) {
+  return value.replace(/\s+00:00:00$/, "").trim();
 }
 
 export function resolvePharmacyLabelDraft(

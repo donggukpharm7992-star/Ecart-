@@ -4,7 +4,7 @@ import { matchesHospitalDrugLabel, type HospitalDrugLabelRow } from "./hospitalD
 import {
   A3_PAPER, A4_PAPER, CABINET_CATEGORIES, DRUG_CATEGORIES, WARNING_OPTIONS,
   groupPharmacyLabelsForPaper, resolvePharmacyLabelDraft, rowMatchesCategory, sizesForCategory,
-  extractHex,
+  extractHex, formatPharmacyExpiry,
   splitDoseText,
   type PharmacyLabelCategory, type PharmacyLabelDraft, type PharmacyLabelFamily, type PharmacySavedLabel,
   type PharmacyHighCostRoute,
@@ -65,8 +65,18 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
   }, [accessoryFilter, activeRow?.code, category, family, savedLabels]);
 
   const selectedDrafts = useMemo(
-    () => categoryRows.filter((row) => selectedCodes.includes(row.code)).map((row) =>
-      draft?.code === row.code ? draft : resolvePharmacyLabelDraft(row, savedLabels, category, family)),
+    () => categoryRows.filter((row) => selectedCodes.includes(row.code)).map((row) => {
+      if (draft?.code === row.code) return draft;
+      const next = resolvePharmacyLabelDraft(row, savedLabels, category, family);
+      if (!draft) return next;
+      next.size = draft.size;
+      next.accessory = draft.accessory;
+      next.style = { ...next.style, ...draft.style };
+      if (draft.accessory === "유색 측면라벨") {
+        next.backgroundColor = extractHex(row.coloredSideBackground) || draft.backgroundColor;
+      }
+      return next;
+    }),
     [categoryRows, selectedCodes, draft, savedLabels, category, family],
   );
   const pages = groupPharmacyLabelsForPaper(selectedDrafts, paper === "A4" ? A4_PAPER : A3_PAPER);
@@ -86,7 +96,7 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
   const hasColdWarning = draft?.warnings.includes("냉장") ?? false;
   const hasLightWarning = draft?.warnings.includes("차광") ?? false;
   const storageOnlyClass = !hasCautionWarning && hasColdWarning && hasLightWarning
-    ? "storage-both"
+    ? "storage-light-cold"
     : !hasCautionWarning && hasColdWarning
       ? "storage-cold"
       : !hasCautionWarning && hasLightWarning
@@ -114,7 +124,7 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
   const labelStyle = draft ? ({
     "--pharmacy-label-width-mm": draft.size.widthMm,
     "--pharmacy-label-height-mm": draft.size.heightMm,
-    "--pharmacy-label-border": `${draft.accessory === "측면라벨" || draft.accessory === "유색 측면라벨" ? "1px solid #111827" : `${activeRow?.border || draft.style.outerBorderPx >= 5 ? "5mm" : `${draft.style.outerBorderPx}px`} solid ${activeRow?.border ? extractHex(activeRow.borderColor) || draft.style.outerBorderColor : draft.style.outerBorderColor}`}`,
+    "--pharmacy-label-border": `${draft.accessory === "측면라벨" || draft.accessory === "유색 측면라벨" ? "1px solid #111827" : draft.style.outerBorderPx <= 0 ? "none" : `${draft.style.outerBorderPx >= 5 ? "5mm" : `${draft.style.outerBorderPx}px`} solid ${draft.style.outerBorderColor}`}`,
     "--pharmacy-label-font-size": `${draft.style.fontSizePt}pt`,
     "--pharmacy-label-color": draft.style.fontColor,
     "--pharmacy-label-warning": draft.style.warningColor,
@@ -196,7 +206,7 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
 
       <section className="pharmacy-label-canvas-panel">
         <div className="pharmacy-panel-head"><div><h2>라벨 편집 캔버스</h2><p>선택한 라벨을 편집한 뒤 최종본으로 저장합니다.</p></div></div>
-        <div className="pharmacy-edit-modes"><button className={editMode === "edit" ? "active" : ""} onClick={() => setEditMode("edit")}>선택 라벨 수정</button><button className={editMode === "new" ? "active" : ""} onClick={() => setEditMode("new")}>새 라벨 만들기</button></div>
+        <div className="pharmacy-edit-modes"><button className={editMode === "edit" ? "active" : ""} onClick={() => setEditMode("edit")}>선택 라벨 수정</button><button className={editMode === "new" ? "active" : ""} onClick={() => setEditMode("new")}>새 라벨 만들기</button>{draft && <div className="pharmacy-inline-border-choice"><span>테두리</span><button className={draft.style.outerBorderPx > 0 ? "active" : ""} onClick={() => patch({ style: {...draft.style, outerBorderPx: 5} })}>있음</button><button className={draft.style.outerBorderPx <= 0 ? "active" : ""} onClick={() => patch({ style: {...draft.style, outerBorderPx: 0} })}>없음</button></div>}</div>
         {editMode === "new" && draft && <div className="pharmacy-new-label-fields">
           <input placeholder="상용약품명" value={draft.printable.title} onChange={(e) => patch({ printable: {...draft.printable, title: e.target.value} })}/>
           <input placeholder="한글약품명" value={draft.printable.koreanName} onChange={(e) => patch({ printable: {...draft.printable, koreanName: e.target.value} })}/>
@@ -218,14 +228,23 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
             <div className="pharmacy-side-label-meta">
               <strong>{draft.atc ? `${draft.atc}번` : "-"}</strong>
               <span>유효기간</span>
-              <b>{activeRow?.expiry || draft.printable.footer.text || "/    /"}</b>
+              <b>{formatPharmacyExpiry(activeRow?.expiry || draft.expiry || draft.printable.footer.text) || "/    /"}</b>
             </div>
+          </div> : family === "cabinet" ? <div className={`pharmacy-cabinet-list-row ${category === "냉장주사" ? "with-storage-column" : ""}`}>
+            <div><strong>{draft.printable.title}</strong>{draft.printable.koreanName && <span>{draft.printable.koreanName}</span>}</div>
+            <b>{draft.warnings.filter((warning) => !["냉장", "차광"].includes(warning)).join(" · ") || "-"}</b>
+            {category === "냉장주사" && <em>{draft.location || "-"}</em>}
+          </div> : category === "영양수액" ? <div className="pharmacy-nutrition-label">
+            <aside>{draft.warnings.filter((warning) => ["용량주의", "유사발음", "유사모양", "고위험의약품"].includes(warning)).join(" · ")}</aside>
+            <strong>{draft.printable.title}</strong>
+            <aside>{draft.warnings.filter((warning) => ["차광", "용량확인", "이름주의"].includes(warning)).join(" · ")}</aside>
           </div> : <>
-          {!isCapLabel && !isExternalShelfLabel && (draft.printable.topBanner || (draft.printable.warning && category !== "항암제")) && <div className="pharmacy-label-top-banner">
+          {!isCapLabel && !isExternalShelfLabel && (draft.printable.topBanner || (hasCautionWarning && category !== "항암제")) && <div className="pharmacy-label-top-banner">
             <span>{[draft.printable.topBanner, category !== "항암제" ? draft.warnings.filter((warning) => !["냉장", "차광"].includes(warning)).join(" · ") : ""].filter(Boolean).join(" · ")}</span>
             {hasLightWarning && <b className="pharmacy-storage-badge light">차광</b>}
             {hasColdWarning && <b className="pharmacy-storage-badge cold">냉장</b>}
           </div>}
+          {!hasCautionWarning && hasColdWarning && hasLightWarning && <b className="pharmacy-storage-circle cold">냉장</b>}
           <div className="pharmacy-label-main"><strong className={displayTitle.length > 28 ? "long-name" : displayTitle.length > 18 ? "medium-name" : ""}>
             {hasDoseHighlight && titleParts.dose ? <>{titleParts.before}<mark className="dose-highlight">{titleParts.dose}</mark>{titleParts.after}</> : displayTitle}
           </strong>
@@ -234,7 +253,7 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
             {!isCapLabel && !isExternalShelfLabel && draft.atc && <small className="pharmacy-label-atc">ATC {draft.atc}</small>}
             {!isCapLabel && !isExternalShelfLabel && draft.location && <small className="pharmacy-label-location">{draft.location}</small>}
             {!isExternalShelfLabel && draft.printable.reconstitution && <em>{draft.printable.reconstitution}</em>}</div>
-          {!isExternalShelfLabel && draft.printable.footer.enabled && <footer>{draft.printable.footer.text}</footer>}
+          {!isExternalShelfLabel && draft.printable.footer.enabled && <footer className={category === "항암제" ? "anticancer-footer" : ""}>{category === "항암제" ? "항암제" : draft.printable.footer.text}</footer>}
           </>}
         </article> : <span className="empty">표시할 라벨이 없습니다.</span>}</div>
         <section className="pharmacy-condition-dashboard">
@@ -247,7 +266,7 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
       <aside className="pharmacy-tool-panel">
         <details open><summary>크기 설정</summary><div className="pharmacy-tool-body pharmacy-size-grid">{sizeOptions.map((size) => <button key={size.presetKey} className={`pharmacy-size-preset ${draft?.size.presetKey === size.presetKey ? "active" : ""}`} onClick={() => patch({ size })}>{size.heightMm} × {size.widthMm} mm</button>)}</div></details>
         {["원병", "PTP"].includes(category) && <details open><summary>정제·부착 위치</summary><div className="pharmacy-tool-body pharmacy-choice-grid">{["0.25T", "0.5T", "1T"].map((value) => <button key={value} className={draft?.doseUnit === value ? "active" : ""} onClick={() => patch({ doseUnit: value as PharmacyLabelDraft["doseUnit"] })}>{value}</button>)}{["측면라벨", ...(activeRow?.coloredSideLabel ? ["유색 측면라벨"] : []), "병뚜껑", ...(family === "cabinet" ? ["선반라벨"] : [])].map((value) => <button key={value} className={draft?.accessory === value ? "active" : ""} onClick={() => chooseAccessory(value as PharmacyLabelDraft["accessory"])}>{value}</button>)}</div></details>}
-        <details open><summary>테두리 설정</summary><div className="pharmacy-tool-body"><label><input type="checkbox" checked={(draft?.style.outerBorderPx ?? 0) > 2} onChange={(e) => draft && patch({ style: {...draft.style, outerBorderPx: e.target.checked ? 5 : 2} })}/>테두리 있음</label><input type="color" value={draft?.style.outerBorderColor ?? "#111827"} onChange={(e) => draft && patch({style: {...draft.style, outerBorderColor: e.target.value}})}/></div></details>
+        <details open><summary>테두리 설정</summary><div className="pharmacy-tool-body"><label><input type="checkbox" checked={(draft?.style.outerBorderPx ?? 0) > 0} onChange={(e) => draft && patch({ style: {...draft.style, outerBorderPx: e.target.checked ? 5 : 0} })}/>테두리 있음</label><input type="color" value={draft?.style.outerBorderColor ?? "#111827"} onChange={(e) => draft && patch({style: {...draft.style, outerBorderColor: e.target.value}})}/></div></details>
         <details open><summary>표시 내용</summary><div className="pharmacy-tool-body"><label>상용약품명<textarea value={draft?.printable.title ?? ""} onChange={(e) => draft && patch({printable:{...draft.printable,title:e.target.value}})}/></label><label>한글약품명<input value={draft?.printable.koreanName ?? ""} onChange={(e) => draft && patch({printable:{...draft.printable,koreanName:e.target.value}})}/></label><label>용량<input value={draft?.printable.strength ?? ""} onChange={(e) => draft && patch({printable:{...draft.printable,strength:e.target.value}})}/></label><label>약품 위치<input value={draft?.location ?? ""} onChange={(e) => patch({location:e.target.value})}/></label><label>ATC 번호<input value={draft?.atc ?? ""} onChange={(e) => patch({atc:e.target.value})}/></label>{category === "항암제" && <label>재구성·용해액(WI/NS)<input value={draft?.printable.reconstitution ?? ""} onChange={(e) => draft && patch({printable:{...draft.printable,reconstitution:e.target.value}})}/></label>}</div></details>
       </aside>
     </section>

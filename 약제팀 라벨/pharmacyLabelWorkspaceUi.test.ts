@@ -63,4 +63,13 @@ describe("pharmacy label workspace UI", () => {
     expect(workspaceSource).toContain("capLabel");
     expect(workspaceSource).toContain("pharmacy-condition-dashboard");
   });
+
+  it("supports list, nutrition, multi-selection, expiry, and border editing rules", () => {
+    expect(workspaceSource).toContain("pharmacy-cabinet-list-row");
+    expect(workspaceSource).toContain("pharmacy-nutrition-label");
+    expect(workspaceSource).toContain("next.size = draft.size");
+    expect(workspaceSource).toContain("formatPharmacyExpiry");
+    expect(workspaceSource).toContain("pharmacy-inline-border-choice");
+    expect(workspaceSource).toContain("outerBorderPx: 0");
+  });
 });
