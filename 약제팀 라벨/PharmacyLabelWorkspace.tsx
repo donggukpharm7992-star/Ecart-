@@ -61,7 +61,16 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
       next.accessory = "측면라벨";
       next.size = sizesForCategory("원병", activeRow).find((size) => size.presetKey === "23x102") ?? next.size;
     }
-    setDraft(next);
+    setDraft((current) => {
+      if (!current || current.category !== category || current.labelFamily !== family) return next;
+      const preserveAccessory = !accessoryFilter || current.accessory === next.accessory;
+      return {
+        ...next,
+        size: preserveAccessory ? current.size : next.size,
+        accessory: preserveAccessory ? current.accessory : next.accessory,
+        style: { ...next.style, ...current.style },
+      };
+    });
   }, [accessoryFilter, activeRow?.code, category, family, savedLabels]);
 
   const selectedDrafts = useMemo(
@@ -211,7 +220,7 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
           {!isLoading && categoryRows.length === 0 && <span className="empty">해당 분류의 원내보유약품이 없습니다.</span>}
           {categoryRows.map((row) => <label key={row.code} className={`pharmacy-drug-row ${row.code === activeRow?.code ? "selected" : ""}`}>
             <input type="checkbox" checked={selectedCodes.includes(row.code)} onChange={() => setSelectedCodes((prev) => prev.includes(row.code) ? prev.filter((code) => code !== row.code) : [...prev, row.code])}/>
-            <button type="button" onClick={() => { setActiveCode(row.code); setSelectedCodes((previous) => previous.includes(row.code) ? previous : [...previous, row.code]); }}><strong>{row.name}</strong><small>{row.koreanName} · {row.code} · {row.strength}</small></button>
+            <button type="button" onClick={() => { setActiveCode(row.code); setSelectedCodes((previous) => previous.includes(row.code) ? previous : [...previous, row.code]); }}><strong>{row.name}</strong><small>{row.koreanName} · {row.code} · {row.strength}</small>{category === "입원산제" && (row.doseCaution || row.doseCheck) && <em className="pharmacy-list-dose-warning">{[row.doseCaution ? "용량주의" : "", row.doseCheck ? "용량확인" : ""].filter(Boolean).join(" · ")}</em>}</button>
           </label>)}
         </div>
       </aside>

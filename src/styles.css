@@ -4764,6 +4764,19 @@ button {
   font-family: var(--pharmacy-label-font-family, "Malgun Gothic", "Segoe UI", sans-serif);
 }
 
+.pharmacy-list-dose-warning {
+  display: inline-flex;
+  width: fit-content;
+  margin-top: 3px;
+  padding: 2px 5px;
+  border-radius: 4px;
+  color: #fff;
+  background: #d92d20;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 900;
+}
+
 .pharmacy-label-top-banner {
   grid-column: 1;
   min-height: 8mm;
