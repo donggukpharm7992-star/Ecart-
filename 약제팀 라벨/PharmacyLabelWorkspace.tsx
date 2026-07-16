@@ -231,7 +231,7 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
             <div className="pharmacy-side-label-meta">
               <strong>{draft.atc ? `${draft.atc}번` : "-"}</strong>
               <span>유효기간</span>
-              <b>{formatPharmacyExpiry(activeRow?.expiry || draft.expiry || draft.printable.footer.text) || "/    /"}</b>
+              <b>{formatPharmacyExpiry(activeRow?.expiry || draft.expiry || draft.printable.footer.text) || "YYYY-MM-DD"}</b>
             </div>
           </div> : family === "cabinet" ? <div className={`pharmacy-cabinet-list-row ${category === "냉장주사" ? "with-storage-column" : ""}`}>
             <div><strong>{draft.printable.title}</strong>{draft.printable.koreanName && <span>{draft.printable.koreanName}</span>}</div>

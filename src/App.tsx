@@ -3122,7 +3122,7 @@ export function App() {
           <div className="pharmacy-side-label-meta">
             <strong>{draft.atc ? `${draft.atc}번` : "-"}</strong>
             <span>유효기간</span>
-            <b>{formatPharmacyExpiry(draft.expiry) || "/    /"}</b>
+            <b>{formatPharmacyExpiry(draft.expiry) || "YYYY-MM-DD"}</b>
           </div>
         </div> : draft.labelFamily === "cabinet" ? <div className={`pharmacy-cabinet-list-row ${draft.category === "냉장주사" ? "with-storage-column" : ""}`}>
           <div><strong>{draft.printable.title}</strong>{draft.printable.koreanName ? <span>{draft.printable.koreanName}</span> : null}</div>
