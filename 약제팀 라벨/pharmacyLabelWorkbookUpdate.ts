@@ -46,5 +46,22 @@ export async function savePharmacyLabelDraftToWorkbook(draft: PharmacyLabelDraft
     const address = XLSX.utils.encode_cell({ r: rowIndex, c: columnIndex });
     sheet[address] = { t: "s", v: String(value ?? "") };
   }
+  const picker = (window as unknown as {
+    showSaveFilePicker?: (options: {
+      suggestedName: string;
+      types: { description: string; accept: Record<string, string[]> }[];
+    }) => Promise<{ createWritable: () => Promise<{ write: (data: ArrayBuffer) => Promise<void>; close: () => Promise<void> }> }>;
+  }).showSaveFilePicker;
+  if (picker) {
+    const handle = await picker({
+      suggestedName: "원내보유의약품리스트.xlsx",
+      types: [{ description: "Excel 통합 문서", accept: { "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"] } }],
+    });
+    const writable = await handle.createWritable();
+    await writable.write(XLSX.write(workbook, { type: "array", bookType: "xlsx", compression: true }));
+    await writable.close();
+    return "file" as const;
+  }
   XLSX.writeFile(workbook, "원내보유의약품리스트.xlsx", { compression: true });
+  return "download" as const;
 }

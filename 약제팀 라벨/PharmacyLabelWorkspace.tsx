@@ -244,7 +244,7 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
       removedWarnings.length ? `주의 조건 해제: ${removedWarnings.join(", ")}` : "",
       `테두리: ${draft.style.outerBorderPx}mm / ${draft.style.outerBorderColor}`,
     ].filter(Boolean);
-    if (!window.confirm(`${draft.printable.title} 수정 내용을 저장하시겠습니까?\n\n${changes.join("\n")}\n\n확인을 누르면 최종 라벨과 엑셀 갱신본이 저장됩니다.`)) return;
+    if (!window.confirm(`${draft.printable.title} 수정 내용을 저장하시겠습니까?\n\n${changes.join("\n")}\n\n확인을 누르면 최종 라벨을 저장하고 원내보유의약품리스트.xlsx 저장 위치를 확인합니다.`)) return;
     try {
       setSaveStatus("저장 중...");
       setSaveStatus(await onSaveLabel(draft));

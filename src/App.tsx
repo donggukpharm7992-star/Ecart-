@@ -2668,7 +2668,7 @@ export function App() {
 
   async function savePharmacyStudioLabel(draft: PharmacyLabelDraft) {
     if (typeof window === "undefined") return "";
-    await savePharmacyLabelDraftToWorkbook(draft, hospitalDrugWorkbookUrl);
+    const workbookSaveMode = await savePharmacyLabelDraftToWorkbook(draft, hospitalDrugWorkbookUrl);
     const saved = savePharmacyLabelToStorage(window.localStorage, draft);
     setSavedPharmacyLabels((previous) => [...previous.filter((label) => label.id !== saved.id), saved]);
     setHospitalDrugLabelRows((previous) => previous.map((row) => row.code === draft.code ? {
@@ -2688,7 +2688,9 @@ export function App() {
       border: draft.style.outerBorderPx > 0,
       borderColor: draft.style.outerBorderColor,
     } : row));
-    return "수정 내용이 최종 라벨로 저장되었으며, 갱신된 원내보유의약품리스트.xlsx가 저장되었습니다.";
+    return workbookSaveMode === "file"
+      ? "수정 내용이 최종 라벨과 선택한 원내보유의약품리스트.xlsx에 저장되었습니다."
+      : "수정 내용이 최종 라벨로 저장되었으며, 갱신된 원내보유의약품리스트.xlsx가 다운로드되었습니다. 기존 파일을 이 파일로 교체해 주십시오.";
   }
 
   function printPharmacyStudioLabels(labels: PharmacyLabelDraft[], paperKey: "A4" | "A3") {

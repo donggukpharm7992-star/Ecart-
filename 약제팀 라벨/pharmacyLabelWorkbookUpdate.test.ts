@@ -9,6 +9,8 @@ describe("pharmacy label workbook update", () => {
     expect(source).toContain('이름주의: "이름주의"');
     expect(source).toContain('"테두리 색기호": draft.style.outerBorderColor');
     expect(source).toContain('draft.style.outerBorderPx >= 5 ? "Y" : "N"');
+    expect(source).toContain("showSaveFilePicker");
+    expect(source).toContain("createWritable");
     expect(source).toContain('XLSX.writeFile(workbook, "원내보유의약품리스트.xlsx"');
   });
 
