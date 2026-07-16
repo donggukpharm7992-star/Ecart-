@@ -51,6 +51,17 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
   const allSelected = categoryRows.length > 0 && categoryRows.every((row) => selectedCodes.includes(row.code));
   const categoryGroups = family === "drug" ? DRUG_CATEGORIES : CABINET_CATEGORIES;
   const sizeOptions = sizesForCategory(category, activeRow);
+  const hasDoseHighlight = draft?.warnings.some((warning) => warning === "용량주의" || warning === "용량확인") ?? false;
+  const hasCautionWarning = draft?.warnings.some((warning) => ["용량주의", "용량확인", "유사발음", "유사모양", "이름주의", "고위험의약품"].includes(warning)) ?? false;
+  const hasColdWarning = draft?.warnings.includes("냉장") ?? false;
+  const hasLightWarning = draft?.warnings.includes("차광") ?? false;
+  const storageOnlyClass = !hasCautionWarning && hasColdWarning && hasLightWarning
+    ? "storage-both"
+    : !hasCautionWarning && hasColdWarning
+      ? "storage-cold"
+      : !hasCautionWarning && hasLightWarning
+        ? "storage-light"
+        : "";
 
   function patch(patchValue: Partial<PharmacyLabelDraft>) {
     setDraft((current) => current ? { ...current, ...patchValue } : current);
@@ -129,11 +140,13 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
           <input placeholder="한글약품명" value={draft.printable.koreanName} onChange={(e) => patch({ printable: {...draft.printable, koreanName: e.target.value} })}/>
           <input placeholder="약품코드" value={draft.code} onChange={(e) => patch({ code: e.target.value })}/><input placeholder="물품코드" value={draft.itemCode} onChange={(e) => patch({ itemCode: e.target.value })}/>
         </div>}
-        <div className="pharmacy-label-canvas">{draft ? <article className={`pharmacy-print-label ${category === "항암제" ? "anticancer" : ""} ${category === "고가약" ? "high-cost" : ""}`} style={labelStyle}>
+        <div className="pharmacy-label-canvas">{draft ? <article className={`pharmacy-print-label ${category === "항암제" ? "anticancer" : ""} ${category === "고가약" ? "high-cost" : ""} ${storageOnlyClass}`} style={labelStyle}>
           {(draft.printable.topBanner || (draft.printable.warning && category !== "항암제")) && <div className="pharmacy-label-top-banner">
-            {[draft.printable.topBanner, category !== "항암제" ? draft.printable.warning : ""].filter(Boolean).join(" · ")}
+            <span>{[draft.printable.topBanner, category !== "항암제" ? draft.warnings.filter((warning) => !["냉장", "차광"].includes(warning)).join(" · ") : ""].filter(Boolean).join(" · ")}</span>
+            {hasLightWarning && <b className="pharmacy-storage-badge light">차광</b>}
+            {hasColdWarning && <b className="pharmacy-storage-badge cold">냉장</b>}
           </div>}
-          <div className="pharmacy-label-main"><strong>{draft.printable.title}</strong><span>{draft.printable.koreanName}</span><b>{draft.printable.strength}</b>
+          <div className="pharmacy-label-main"><strong>{draft.printable.title}</strong><span>{draft.printable.koreanName}</span><b className={hasDoseHighlight ? "dose-highlight" : ""}>{draft.printable.strength}</b>
             {draft.printable.reconstitution && <em>{draft.printable.reconstitution}</em>}</div>
           {draft.printable.footer.enabled && <footer>{draft.printable.footer.text}</footer>}
         </article> : <span className="empty">표시할 라벨이 없습니다.</span>}</div>

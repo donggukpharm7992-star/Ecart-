@@ -19,4 +19,11 @@ describe("pharmacy label workspace UI", () => {
     expect(workspaceSource).toContain("새 라벨 만들기");
     expect(workspaceSource).toContain("원내보유약품 업데이트");
   });
+
+  it("applies dose and storage conditions to the label canvas", () => {
+    expect(workspaceSource).toContain("dose-highlight");
+    expect(workspaceSource).toContain("pharmacy-storage-badge light");
+    expect(workspaceSource).toContain("pharmacy-storage-badge cold");
+    expect(workspaceSource).toContain("storageOnlyClass");
+  });
 });

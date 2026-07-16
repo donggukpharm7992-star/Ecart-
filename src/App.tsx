@@ -3071,6 +3071,19 @@ export function App() {
   }
 
   function renderPharmacyPrintDraftArticle(draft: PharmacyLabelDraft, key: string) {
+    const hasDoseHighlight = draft.warnings.some((warning) => warning === "용량주의" || warning === "용량확인");
+    const hasCautionWarning = draft.warnings.some((warning) =>
+      ["용량주의", "용량확인", "유사발음", "유사모양", "이름주의", "고위험의약품"].includes(warning),
+    );
+    const hasColdWarning = draft.warnings.includes("냉장");
+    const hasLightWarning = draft.warnings.includes("차광");
+    const storageOnlyClass = !hasCautionWarning && hasColdWarning && hasLightWarning
+      ? "storage-both"
+      : !hasCautionWarning && hasColdWarning
+        ? "storage-cold"
+        : !hasCautionWarning && hasLightWarning
+          ? "storage-light"
+          : "";
     const style = {
       "--pharmacy-label-width-mm": draft.size.widthMm,
       "--pharmacy-label-height-mm": draft.size.heightMm,
@@ -3084,9 +3097,17 @@ export function App() {
     } as CSSProperties;
 
     return (
-      <article className="pharmacy-print-label print-label" style={style} key={key}>
-        {draft.printable.warning ? <div className="pharmacy-label-warning">{draft.printable.warning}</div> : null}
-        <div className="pharmacy-label-main">{draft.printable.title}</div>
+      <article className={`pharmacy-print-label print-label ${draft.category === "고가약" ? "high-cost" : ""} ${storageOnlyClass}`} style={style} key={key}>
+        {(draft.printable.topBanner || draft.printable.warning) ? <div className="pharmacy-label-top-banner">
+          <span>{[draft.printable.topBanner, draft.warnings.filter((warning) => !["냉장", "차광"].includes(warning)).join(" · ")].filter(Boolean).join(" · ")}</span>
+          {hasLightWarning ? <b className="pharmacy-storage-badge light">차광</b> : null}
+          {hasColdWarning ? <b className="pharmacy-storage-badge cold">냉장</b> : null}
+        </div> : null}
+        <div className="pharmacy-label-main">
+          <strong>{draft.printable.title}</strong>
+          <span>{draft.printable.koreanName}</span>
+          <b className={hasDoseHighlight ? "dose-highlight" : ""}>{draft.printable.strength}</b>
+        </div>
         {draft.printable.footer.enabled ? <footer>{draft.printable.footer.text}</footer> : null}
       </article>
     );

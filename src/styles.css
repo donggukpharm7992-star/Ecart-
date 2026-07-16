@@ -4743,8 +4743,52 @@ button {
   text-align: center;
 }
 
+.pharmacy-label-top-banner {
+  gap: 1.5mm;
+}
+
+.pharmacy-storage-badge {
+  flex: 0 0 auto;
+  padding: .7mm 1.5mm;
+  border-radius: 999px;
+  color: #fff;
+  font-size: 11px;
+  line-height: 1;
+}
+
+.pharmacy-storage-badge.light {
+  background: #16803c;
+}
+
+.pharmacy-storage-badge.cold {
+  background: #155eef;
+}
+
 .pharmacy-print-label.high-cost .pharmacy-label-top-banner {
   background: #155eef;
+}
+
+.pharmacy-print-label.storage-light {
+  border-color: #16803c;
+  background: #ecfdf3;
+}
+
+.pharmacy-print-label.storage-light .pharmacy-label-top-banner {
+  background: #16803c;
+}
+
+.pharmacy-print-label.storage-cold {
+  border-color: #155eef;
+  background: #eff8ff;
+}
+
+.pharmacy-print-label.storage-cold .pharmacy-label-top-banner {
+  background: #155eef;
+}
+
+.pharmacy-print-label.storage-both {
+  border-color: #155eef;
+  background: linear-gradient(90deg, #ecfdf3 0 50%, #eff8ff 50% 100%);
 }
 
 .pharmacy-label-warning {
@@ -4782,6 +4826,13 @@ button {
 .pharmacy-label-main b {
   margin-top: .5mm;
   font-size: .7em;
+}
+
+.pharmacy-label-main b.dose-highlight {
+  padding: 0 .8mm;
+  color: #d92d20;
+  background: #fff200;
+  border-radius: 2px;
 }
 
 .pharmacy-label-main em {
