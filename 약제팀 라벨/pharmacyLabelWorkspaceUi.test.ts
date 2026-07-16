@@ -44,6 +44,8 @@ describe("pharmacy label workspace UI", () => {
     expect(workspaceSource).toContain('`${draft.style.outerBorderPx}mm solid');
     expect(workspaceSource).toContain('"--pharmacy-label-border-width"');
     expect(workspaceSource).toContain("}mm</b>");
+    expect(workspaceSource).toContain('min="0.5"');
+    expect(workspaceSource).toContain('step="0.5"');
   });
 
   it("renders the side-label template with photo, name, ATC, and expiry sections", () => {
@@ -66,7 +68,9 @@ describe("pharmacy label workspace UI", () => {
   });
 
   it("filters side and cap labels and places paper controls next to output", () => {
-    expect(workspaceSource).toContain("표시 약품 먼저 보기");
+    expect(workspaceSource).toContain("pharmacy-filter-dashboard");
+    expect(workspaceSource).toContain("라벨 유형");
+    expect(workspaceSource).toContain("정제 용량");
     expect(workspaceSource).toContain("sideLabelHalfT");
     expect(workspaceSource).toContain("coloredSideLabel");
     expect(workspaceSource).toContain("capLabel");

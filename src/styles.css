@@ -4542,6 +4542,11 @@ button {
   padding: 0 14px 12px;
 }
 
+.pharmacy-category-block {
+  display: grid;
+  gap: 8px;
+}
+
 .pharmacy-category-row,
 .pharmacy-high-cost-routes,
 .pharmacy-accessory-filters,
@@ -4588,6 +4593,48 @@ button {
 .pharmacy-accessory-filters strong {
   margin-right: 3px;
   font-size: 12px;
+}
+
+.pharmacy-filter-dashboard {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(260px, .65fr);
+  gap: 10px;
+  padding: 9px 10px;
+  border: 1px solid #eadfd8;
+  border-radius: 8px;
+  background: #fcfaf8;
+}
+
+.pharmacy-filter-group {
+  display: grid;
+  gap: 6px;
+}
+
+.pharmacy-filter-group strong {
+  color: var(--brand-header);
+  font-size: 12px;
+}
+
+.pharmacy-filter-group > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.pharmacy-filter-group button {
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--brand-header);
+  background: #fff;
+  font-weight: 900;
+}
+
+.pharmacy-filter-group button.active {
+  color: #fff;
+  border-color: var(--brand-orange);
+  background: var(--brand-orange);
 }
 
 .pharmacy-high-cost-routes strong {
