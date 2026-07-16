@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-13T16:56:38+09:00",
+  "generatedAt": "2026-07-16T12:30:06+09:00",
   "sourceFiles": {
     "stockWorkbook": "병동별비품현황 202606.xlsx",
     "ecartWorkbook": "20260302E-cart 약품목록_ cortisolu 삭제.xlsx",
@@ -359,7 +359,7 @@
       {
         "code": "BSSP-L",
         "genericName": "BSS plus*",
-        "productName": "BSS plus 500ml",
+        "productName": "BSS PLUS 500ml",
         "spec": "500ML/BTL",
         "storage": "2℃ - 25℃ 보관, 밀봉용기",
         "note": "",
@@ -2409,7 +2409,7 @@
       {
         "code": "THROM-W",
         "genericName": "Thrombin 500u vial",
-        "productName": "Thrombin FD powder이연",
+        "productName": "Thrombin FD powder",
         "spec": "1VIAL",
         "storage": "밀봉용기 2~8도씨",
         "note": "",

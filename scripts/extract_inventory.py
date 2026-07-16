@@ -12,7 +12,7 @@ import openpyxl
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "src" / "data" / "inventory.generated.json"
 NARCOTIC_INVENTORY_OUT = ROOT / "src" / "data" / "narcoticInventory.generated.json"
-HOSPITAL_DRUG_LIST_KEYWORD = "\uc6d0\ub0b4\ubcf4\uc720\uc758\uc57d\ud488\ub9ac\uc2a4\ud2b8"
+HOSPITAL_DRUG_LIST_PATH = ROOT / "\uc57d\uc81c\ud300 \ub77c\ubca8" / "\uc6d0\ub0b4\ubcf4\uc720\uc758\uc57d\ud488\ub9ac\uc2a4\ud2b8.xlsx"
 NARCOTIC_STATUS_KEYWORD = "\ube44\uce58\ud5a5\uc815,\ub9c8\uc57d\ud604\ud669"
 NARCOTIC_CHECK_SHEET_NAME = "\uc810\uac80"
 CONTROLLED_DRUG_PREFIX_RE = re.compile(r"^\[(?:\ub9c8\uc57d|\ud5a5\uc815)\]\s*")
@@ -205,10 +205,14 @@ def strip_controlled_drug_prefix(name: str) -> str:
 def load_hospital_common_names(hospital_path: Path) -> dict[str, str]:
     wb = openpyxl.load_workbook(hospital_path, read_only=True, data_only=True)
     ws = wb.worksheets[0]
+    headers = [clean(value) for value in next(ws.iter_rows(min_row=1, max_row=1, values_only=True))]
+    header_index = {header: index for index, header in enumerate(headers)}
+    code_index = header_index["약품코드"]
+    common_name_index = header_index["상용약품명"]
     common_names: dict[str, str] = {}
     for row in ws.iter_rows(min_row=2, values_only=True):
-        code = clean(row[0] if len(row) > 0 else "")
-        common_name = strip_controlled_drug_prefix(row[1] if len(row) > 1 else "")
+        code = clean(row[code_index] if len(row) > code_index else "")
+        common_name = strip_controlled_drug_prefix(row[common_name_index] if len(row) > common_name_index else "")
         if code and common_name and code not in common_names:
             common_names[code] = common_name
     return common_names
@@ -506,7 +510,9 @@ def main() -> None:
     stock_path = find_workbook("202606")
     ecart_path = find_workbook("E-cart")
     checklist_path = find_workbook("체크리스트")
-    hospital_path = find_workbook(HOSPITAL_DRUG_LIST_KEYWORD)
+    hospital_path = HOSPITAL_DRUG_LIST_PATH
+    if not hospital_path.exists():
+        raise FileNotFoundError(f"Cannot find hospital drug workbook: {hospital_path}")
     narcotic_path = find_workbook(NARCOTIC_STATUS_KEYWORD)
     hospital_common_names = load_hospital_common_names(hospital_path)
     stock = parse_stock(stock_path, hospital_common_names)
