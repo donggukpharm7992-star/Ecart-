@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-16T04:43:11.699Z",
+  "updatedAt": "2026-07-16T04:42:54.240Z",
   "clientId": "8fca6235-56b2-4861-8140-d0d51f2a8239",
   "state": {
     "stockDrugs": [
@@ -7108,8 +7108,7 @@
       "INJ::__NO_NARCOTIC_STOCK__": true,
       "DRL::XMIDA5": false,
       "121::XLZPAM4": true,
-      "121::XLZPAM2": true,
-      "121::XDDP": true
+      "121::XLZPAM2": true
     },
     "narcoticExpiry": {},
     "narcoticChecklistByRoom": {},
