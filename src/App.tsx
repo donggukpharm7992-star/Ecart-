@@ -108,6 +108,7 @@ import { PharmacyLabelWorkspace } from "../약제팀 라벨/PharmacyLabelWorkspa
 import { mergeHospitalDrugRowsIntoPharmacyLabelMatches } from "../약제팀 라벨/hospitalDrugWorkbookUpload";
 import hospitalDrugWorkbookUrl from "../약제팀 라벨/원내보유의약품리스트.xlsx?url";
 import { applyExpirationWorkbook } from "../약제팀 라벨/expirationWorkbookUpdate";
+import { savePharmacyLabelDraftToWorkbook } from "../약제팀 라벨/pharmacyLabelWorkbookUpdate";
 import { loadPharmacyLabelMatchRows, type PharmacyLabelMatchRow } from "../약제팀 라벨/pharmacyLabelMatches";
 import {
   loadSavedPharmacyLabelsFromStorage,
@@ -2665,10 +2666,29 @@ export function App() {
     setShowPrintPreview(true);
   }
 
-  function savePharmacyStudioLabel(draft: PharmacyLabelDraft) {
-    if (typeof window === "undefined") return;
+  async function savePharmacyStudioLabel(draft: PharmacyLabelDraft) {
+    if (typeof window === "undefined") return "";
+    await savePharmacyLabelDraftToWorkbook(draft, hospitalDrugWorkbookUrl);
     const saved = savePharmacyLabelToStorage(window.localStorage, draft);
     setSavedPharmacyLabels((previous) => [...previous.filter((label) => label.id !== saved.id), saved]);
+    setHospitalDrugLabelRows((previous) => previous.map((row) => row.code === draft.code ? {
+      ...row,
+      name: draft.printable.title,
+      koreanName: draft.printable.koreanName,
+      strength: draft.printable.strength,
+      location: draft.location,
+      atc: draft.atc,
+      drugType: draft.drugTypes[0] ?? row.drugType,
+      doseCaution: draft.warnings.includes("용량주의"),
+      doseCheck: draft.warnings.includes("용량확인"),
+      similarSound: draft.warnings.includes("유사발음"),
+      similarLook: draft.warnings.includes("유사모양"),
+      nameCaution: draft.warnings.includes("이름주의"),
+      highRisk: draft.warnings.includes("고위험의약품"),
+      border: draft.style.outerBorderPx > 0,
+      borderColor: draft.style.outerBorderColor,
+    } : row));
+    return "수정 내용이 최종 라벨로 저장되었으며, 갱신된 원내보유의약품리스트.xlsx가 저장되었습니다.";
   }
 
   function printPharmacyStudioLabels(labels: PharmacyLabelDraft[], paperKey: "A4" | "A3") {

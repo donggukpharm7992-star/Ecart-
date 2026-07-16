@@ -284,7 +284,9 @@ export function resolvePharmacyLabelDraft(
       : saved.backgroundColor,
     warnings,
     printable: { ...saved.printable, warning: warnings.join(" · ") },
-    style: hasWorkbookBorder || category === "고가약"
+    style: saved.sourceType === "manual"
+      ? saved.style
+      : hasWorkbookBorder || category === "고가약"
       ? { ...saved.style, outerBorderPx: 5, outerBorderColor: workbookBorderColor || saved.style.outerBorderColor }
       : { ...saved.style, outerBorderPx: saved.style.outerBorderPx === 5 ? 5 : 0.5 },
   };

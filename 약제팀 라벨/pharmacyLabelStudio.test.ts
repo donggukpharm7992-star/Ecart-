@@ -113,6 +113,18 @@ describe("pharmacy label studio rules", () => {
     expect(resolved.expiry).toBe("2027-12-31");
   });
 
+  it("keeps manually saved border colors as the final default", () => {
+    const saved = savePharmacyLabelDraft({
+      ...createPharmacyLabelDraft(row, "바이알", "drug"),
+      style: {
+        ...createPharmacyLabelDraft(row, "바이알", "drug").style,
+        outerBorderColor: "#22C55E",
+      },
+    });
+    const resolved = resolvePharmacyLabelDraft({ ...row, borderColor: "#D92D20" }, [saved], "바이알", "drug");
+    expect(resolved.style.outerBorderColor).toBe("#22C55E");
+  });
+
   it("creates high-risk warning and footer content", () => {
     const draft = createPharmacyLabelDraft(row, "바이알", "drug");
     expect(draft.printable.warning).toContain("고위험의약품");

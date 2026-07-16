@@ -18,6 +18,10 @@ describe("pharmacy label workspace UI", () => {
     expect(workspaceSource).toContain("수정라벨 저장");
     expect(workspaceSource).toContain("새 라벨 만들기");
     expect(workspaceSource).toContain("유효기간 파일 업데이트");
+    expect(workspaceSource).toContain("window.confirm");
+    expect(workspaceSource).toContain("confirmAndSave");
+    expect(workspaceSource).toContain("주의 조건 추가");
+    expect(workspaceSource).toContain("테두리:");
   });
 
   it("applies dose and storage conditions to the label canvas", () => {

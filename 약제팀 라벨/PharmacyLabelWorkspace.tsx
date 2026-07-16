@@ -20,7 +20,7 @@ type Props = {
   savedLabels: PharmacySavedLabel[];
   isLoading: boolean;
   onBack: () => void;
-  onSaveLabel: (draft: PharmacyLabelDraft) => void;
+  onSaveLabel: (draft: PharmacyLabelDraft) => Promise<string>;
   onPrint: (labels: PharmacyLabelDraft[], paperKey: "A4" | "A3") => void;
   onHospitalDrugWorkbookUpload: (file: File) => Promise<string>;
 };
@@ -39,6 +39,7 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
   const [paper, setPaper] = useState<"A4" | "A3">("A4");
   const [draft, setDraft] = useState<PharmacyLabelDraft>();
   const [uploadStatus, setUploadStatus] = useState("");
+  const [saveStatus, setSaveStatus] = useState("");
   const [editMode, setEditMode] = useState<"edit" | "new">("edit");
   const [highCostRoute, setHighCostRoute] = useState<PharmacyHighCostRoute>("주사");
   const [accessoryFilter, setAccessoryFilter] = useState<"" | "측면라벨" | "유색 측면라벨" | "병뚜껑" | "유색 병뚜껑">("");
@@ -220,6 +221,38 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
     patch(next);
   }
 
+  async function confirmAndSave() {
+    if (!draft || !activeRow) return;
+    const previousWarnings = new Set([
+      activeRow.doseCaution ? "용량주의" : "",
+      activeRow.doseCheck ? "용량확인" : "",
+      activeRow.similarSound ? "유사발음" : "",
+      activeRow.similarLook ? "유사모양" : "",
+      activeRow.nameCaution ? "이름주의" : "",
+      activeRow.highRisk ? "고위험의약품" : "",
+      activeRow.lightProtected ? "차광" : "",
+      activeRow.storage.includes("냉장") ? "냉장" : "",
+    ].filter(Boolean));
+    const addedWarnings = draft.warnings.filter((warning) => !previousWarnings.has(warning));
+    const removedWarnings = [...previousWarnings].filter((warning) => !draft.warnings.includes(warning));
+    const changes = [
+      activeRow.name !== draft.printable.title ? `상용약품명: ${activeRow.name} → ${draft.printable.title}` : "",
+      activeRow.koreanName !== draft.printable.koreanName ? `한글약품명: ${activeRow.koreanName} → ${draft.printable.koreanName}` : "",
+      activeRow.location !== draft.location ? `위치: ${activeRow.location || "-"} → ${draft.location || "-"}` : "",
+      activeRow.atc !== draft.atc ? `ATC: ${activeRow.atc || "-"} → ${draft.atc || "-"}` : "",
+      addedWarnings.length ? `주의 조건 추가: ${addedWarnings.join(", ")}` : "",
+      removedWarnings.length ? `주의 조건 해제: ${removedWarnings.join(", ")}` : "",
+      `테두리: ${draft.style.outerBorderPx}mm / ${draft.style.outerBorderColor}`,
+    ].filter(Boolean);
+    if (!window.confirm(`${draft.printable.title} 수정 내용을 저장하시겠습니까?\n\n${changes.join("\n")}\n\n확인을 누르면 최종 라벨과 엑셀 갱신본이 저장됩니다.`)) return;
+    try {
+      setSaveStatus("저장 중...");
+      setSaveStatus(await onSaveLabel(draft));
+    } catch (error) {
+      setSaveStatus(error instanceof Error ? error.message : "수정 라벨을 저장하지 못했습니다.");
+    }
+  }
+
   return <main className="pharmacy-label-studio">
     <header className="pharmacy-studio-topbar">
       <div><p>원내보유의약품리스트 기준</p><h1>약제팀 라벨 작업실</h1></div>
@@ -346,7 +379,8 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
           <div><h3>주의·보관 조건</h3><div className="pharmacy-warning-editor">{WARNING_OPTIONS.map((warning) => <label className={draft?.warnings.includes(warning) ? "checked" : ""} key={warning}><input type="checkbox" checked={draft?.warnings.includes(warning) ?? false} onChange={() => toggleWarning(warning)}/><span>{warning}</span></label>)}</div></div>
           {draft && <div><h3>약품유형</h3><div className="pharmacy-type-editor">{[...new Set(rows.map((row) => row.drugType).filter((type) => type && !["36", "99", "종료예정"].includes(type.trim())))].map((type) => <label className={draft.drugTypes.includes(type) ? "checked" : ""} key={type}><input type="checkbox" checked={draft.drugTypes.includes(type)} onChange={() => patch({ drugTypes: draft.drugTypes.includes(type) ? draft.drugTypes.filter((v) => v !== type) : [...draft.drugTypes, type] })}/><span>{type}</span></label>)}</div></div>}
         </section>
-        <div className="pharmacy-save-row"><span>{selectedDrafts.length ? `${pages.length}페이지 미리보기` : "출력할 약품을 선택하십시오."}</span><div className="pharmacy-paper-mini"><button type="button" className={paper === "A4" ? "active" : ""} onClick={() => setPaper("A4")}>A4</button><button type="button" className={paper === "A3" ? "active" : ""} onClick={() => setPaper("A3")}>A3</button></div><button type="button" className="secondary-button" disabled={!selectedDrafts.length} onClick={() => onPrint(selectedDrafts, paper)}><FileDown size={16}/>PDF 미리보기</button><button type="button" className="secondary-button" disabled={!selectedDrafts.length} onClick={() => onPrint(selectedDrafts, paper)}><Printer size={16}/>전체 출력</button><button type="button" className="print-button" disabled={!draft} onClick={() => draft && onSaveLabel(draft)}><Save size={16}/>수정라벨 저장</button></div>
+        {saveStatus && <div className="pharmacy-canvas-status">{saveStatus}</div>}
+        <div className="pharmacy-save-row"><span>{selectedDrafts.length ? `${pages.length}페이지 미리보기` : "출력할 약품을 선택하십시오."}</span><div className="pharmacy-paper-mini"><button type="button" className={paper === "A4" ? "active" : ""} onClick={() => setPaper("A4")}>A4</button><button type="button" className={paper === "A3" ? "active" : ""} onClick={() => setPaper("A3")}>A3</button></div><button type="button" className="secondary-button" disabled={!selectedDrafts.length} onClick={() => onPrint(selectedDrafts, paper)}><FileDown size={16}/>PDF 미리보기</button><button type="button" className="secondary-button" disabled={!selectedDrafts.length} onClick={() => onPrint(selectedDrafts, paper)}><Printer size={16}/>전체 출력</button><button type="button" className="print-button" disabled={!draft} onClick={() => void confirmAndSave()}><Save size={16}/>수정라벨 저장</button></div>
       </section>
 
       <aside className="pharmacy-tool-panel">
