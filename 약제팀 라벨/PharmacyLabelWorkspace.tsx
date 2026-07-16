@@ -120,6 +120,9 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
   } as CSSProperties) : undefined;
   const displayTitle = isCapLabel ? draft?.printable.title.replace(/\btab(?:let)?\b/gi, "").replace(/\s{2,}/g, " ").trim() ?? "" : draft?.printable.title ?? "";
   const titleParts = splitDoseText(displayTitle);
+  const imageUrl = draft?.imagePath
+    ? `${import.meta.env.BASE_URL}${draft.imagePath.replace(/^\.?\//, "")}`
+    : "";
 
   function chooseAccessory(value: PharmacyLabelDraft["accessory"]) {
     if (!draft || !value) return;
@@ -198,8 +201,8 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
         </div>}
         <div className="pharmacy-label-canvas">{draft ? <article className={`pharmacy-print-label ${category === "항암제" ? "anticancer" : ""} ${category === "고가약" ? "high-cost" : ""} ${storageOnlyClass} ${isCapLabel ? "cap-label" : ""} ${isSideLabel ? "side-label" : ""} ${!draft.printable.warning && !draft.printable.topBanner ? "no-warning" : ""}`} style={labelStyle}>
           {isSideLabel ? <div className="pharmacy-side-label-form">
-            <div className="pharmacy-side-label-photo">{draft.imagePath
-              ? <a href={draft.imageSourceUrl} target="_blank" rel="noreferrer" title="약학정보원 식별사진 검색"><img src={draft.imagePath} alt={`${draft.printable.koreanName} 식별사진`}/></a>
+            <div className="pharmacy-side-label-photo">{imageUrl
+              ? <a href={draft.imageSourceUrl} target="_blank" rel="noreferrer" title="약학정보원 식별사진 검색"><img src={imageUrl} alt={`${draft.printable.koreanName} 식별사진`}/></a>
               : <a href={draft.imageSourceUrl} target="_blank" rel="noreferrer">사진 확인</a>}</div>
             <div className="pharmacy-side-label-name">
               <strong>{draft.printable.title}</strong>

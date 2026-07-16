@@ -4,6 +4,8 @@ import {
   createPharmacyLabelDraft,
   groupPharmacyLabelsForPaper,
   rowMatchesCategory,
+  resolvePharmacyLabelDraft,
+  savePharmacyLabelDraft,
   sizesForCategory,
   splitDoseText,
 } from "./pharmacyLabelStudio";
@@ -63,6 +65,25 @@ describe("pharmacy label studio rules", () => {
       dose: "100",
       after: "mg/ml inj",
     });
+  });
+
+  it("refreshes image, ATC, and expiry values from the workbook over saved labels", () => {
+    const saved = savePharmacyLabelDraft({
+      ...createPharmacyLabelDraft(row, "바이알", "drug"),
+      imagePath: "old.png",
+      atc: "OLD",
+      expiry: "2025-01-01",
+    });
+    const resolved = resolvePharmacyLabelDraft({
+      ...row,
+      imagePath: "pharmacy-drug-images/new.png",
+      imageSourceUrl: "https://www.health.kr/new",
+      atc: "191",
+      expiry: "2027-12-31",
+    }, [saved], "바이알", "drug");
+    expect(resolved.imagePath).toBe("pharmacy-drug-images/new.png");
+    expect(resolved.atc).toBe("191");
+    expect(resolved.expiry).toBe("2027-12-31");
   });
 
   it("creates high-risk warning and footer content", () => {

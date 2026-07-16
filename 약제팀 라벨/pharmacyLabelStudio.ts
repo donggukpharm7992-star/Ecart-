@@ -228,6 +228,15 @@ export function resolvePharmacyLabelDraft(
   const warnings = [...new Set([...saved.warnings, ...workbookWarnings])];
   return {
     ...saved,
+    itemCode: row.itemCode ?? saved.itemCode,
+    location: row.location ?? saved.location,
+    atc: row.atc ?? "",
+    expiry: row.expiry ?? "",
+    imagePath: row.imagePath ?? "",
+    imageSourceUrl: row.imageSourceUrl ?? "",
+    backgroundColor: saved.accessory === "유색 측면라벨"
+      ? extractHex(row.coloredSideBackground) || saved.backgroundColor
+      : saved.backgroundColor,
     warnings,
     printable: { ...saved.printable, warning: warnings.join(" · ") },
     style: row.border

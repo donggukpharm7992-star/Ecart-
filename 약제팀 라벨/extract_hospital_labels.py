@@ -102,6 +102,9 @@ def main() -> None:
     def read(raw: tuple[object, ...], header: str) -> str:
         return clean(raw[index[header]])
 
+    def read_optional(raw: tuple[object, ...], header: str) -> str:
+        return clean(raw[index[header]]) if header in index else ""
+
     rows: list[dict[str, object]] = []
     for raw in worksheet.iter_rows(min_row=2, values_only=True):
         code = read(raw, "약품코드")
@@ -150,8 +153,8 @@ def main() -> None:
                 "cabinetNutrition": name.lower() in nutrition_names,
                 "cabinetExternal": code in external_codes,
                 "cabinetSyrup": code in syrup_codes,
-                "imagePath": match_image(image_by_name, name, read(raw, "한글약품명")),
-                "imageSourceUrl": f"https://www.health.kr/searchDrug/search_detail.asp?search_detail=Y&search_sunb1={quote(read(raw, '한글약품명'))}",
+                "imagePath": read_optional(raw, "식별사진경로") or match_image(image_by_name, name, read(raw, "한글약품명")),
+                "imageSourceUrl": read_optional(raw, "식별사진출처") or f"https://www.health.kr/searchDrug/search_detail.asp?search_detail=Y&search_sunb1={quote(read(raw, '한글약품명'))}",
             }
         )
 
