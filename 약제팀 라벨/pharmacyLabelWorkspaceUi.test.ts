@@ -76,5 +76,6 @@ describe("pharmacy label workspace UI", () => {
     expect(workspaceSource).toContain('setAccessoryFilter("유색 측면라벨")');
     expect(workspaceSource).toContain("activeRow?.imagePath || draft?.imagePath");
     expect(workspaceSource).toContain("사진 미등록");
+    expect(workspaceSource).toContain("sideCautionWarnings");
   });
 });

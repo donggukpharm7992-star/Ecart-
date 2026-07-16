@@ -3075,6 +3075,7 @@ export function App() {
     const hasColdWarning = draft.warnings.includes("냉장");
     const hasLightWarning = draft.warnings.includes("차광");
     const cautionWarnings = draft.warnings.filter((warning) => !["냉장", "차광"].includes(warning));
+    const sideCautionWarnings = draft.warnings.filter((warning) => ["용량주의", "유사발음", "유사모양", "이름주의", "용량확인"].includes(warning));
     const isInjectionLabel = ["앰플", "바이알", "냉장주사"].includes(draft.category);
     const showStorageBanner = isInjectionLabel && (hasLightWarning || hasColdWarning);
     const showTopBanner = Boolean(draft.printable.topBanner) || hasCautionWarning || showStorageBanner;
@@ -3123,7 +3124,7 @@ export function App() {
             <div className="pharmacy-side-label-name-core"><strong>{draft.printable.koreanName || draft.printable.title}</strong>
             <span>{hasDoseHighlight && titleParts.dose ? <>{titleParts.before}<mark className="dose-highlight">{titleParts.dose}</mark>{titleParts.after}</> : draft.printable.title}</span>
             {draft.doseUnit && draft.doseUnit !== "1T" ? <b>{draft.doseUnit}</b> : null}</div>
-            {cautionWarnings.length > 0 ? <small>{cautionWarnings.join(" · ")}</small> : null}
+            {sideCautionWarnings.length > 0 ? <small>{sideCautionWarnings.join(" · ")}</small> : null}
             {hasLightWarning ? <small className="side-storage-light">차광</small> : null}
           </div>
           <div className="pharmacy-side-label-meta">
