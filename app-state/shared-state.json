@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-16T06:00:29.213Z",
+  "updatedAt": "2026-07-16T06:00:43.138Z",
   "clientId": "8fca6235-56b2-4861-8140-d0d51f2a8239",
   "state": {
     "stockDrugs": [
@@ -7148,7 +7148,9 @@
       "DSR::__NO_NARCOTIC_STOCK__": true,
       "HBEF::XPROPO250": true,
       "HBEF::XETOM": true,
-      "HBEF::XMIDA15": true
+      "HBEF::XMIDA15": true,
+      "HBEF::XPETH50W": true,
+      "HBEF::XREMIF1W": true
     },
     "narcoticExpiry": {},
     "narcoticChecklistByRoom": {
