@@ -296,8 +296,7 @@ export function resolvePharmacyLabelDraft(
     .filter((label) => label.code === row.code && label.category === category && label.labelFamily === family)
     .sort((a, b) => b.savedAt.localeCompare(a.savedAt))[0];
   if (!saved) return createPharmacyLabelDraft(row, category, family);
-  const workbookWarnings = getPharmacyLabelWarnings(row);
-  const warnings = [...new Set([...saved.warnings, ...workbookWarnings])];
+  const warnings = [...saved.warnings];
   const workbookBorderColor = extractHex(row.borderColor);
   const hasWorkbookBorder = row.border || Boolean(workbookBorderColor);
   return {

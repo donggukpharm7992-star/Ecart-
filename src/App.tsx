@@ -2686,6 +2686,12 @@ export function App() {
       similarLook: draft.warnings.includes("유사모양"),
       nameCaution: draft.warnings.includes("이름주의"),
       highRisk: draft.warnings.includes("고위험의약품"),
+      lightProtected: draft.warnings.includes("차광"),
+      storage: draft.warnings.includes("냉동")
+        ? "냉동"
+        : draft.warnings.includes("냉장")
+          ? "냉장"
+          : row.storage.replace(/냉장|냉동/g, "").trim(),
       border: draft.style.outerBorderPx > 0,
       borderColor: draft.style.outerBorderColor,
     } : row));

@@ -20,6 +20,7 @@ describe("pharmacy label workspace UI", () => {
     expect(workspaceSource).toContain("유효기간 파일 업데이트");
     expect(workspaceSource).toContain("window.confirm");
     expect(workspaceSource).toContain("confirmAndSave");
+    expect(workspaceSource).toContain('sourceType: "manual"');
     expect(workspaceSource).toContain("주의 조건 추가");
     expect(workspaceSource).toContain("테두리:");
   });

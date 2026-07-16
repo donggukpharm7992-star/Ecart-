@@ -133,6 +133,16 @@ describe("pharmacy label studio rules", () => {
     expect(resolved.style.outerBorderColor).toBe("#22C55E");
   });
 
+  it("keeps manually saved warning selections as the next default", () => {
+    const saved = savePharmacyLabelDraft({
+      ...createPharmacyLabelDraft(row, "바이알", "drug"),
+      warnings: ["용량확인"],
+    });
+    const resolved = resolvePharmacyLabelDraft(row, [saved], "바이알", "drug");
+    expect(resolved.warnings).toEqual(["용량확인"]);
+    expect(resolved.printable.warning).toBe("용량확인");
+  });
+
   it("creates high-risk warning and footer content", () => {
     const draft = createPharmacyLabelDraft(row, "바이알", "drug");
     expect(draft.printable.warning).toContain("고위험의약품");

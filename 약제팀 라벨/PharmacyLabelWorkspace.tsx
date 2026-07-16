@@ -273,7 +273,9 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
     if (!window.confirm(`${draft.printable.title} 수정 내용을 저장하시겠습니까?\n\n${changes.join("\n")}\n\n확인을 누르면 최종 라벨을 저장하고 원내보유의약품리스트.xlsx 저장 위치를 확인합니다.`)) return;
     try {
       setSaveStatus("저장 중...");
-      setSaveStatus(await onSaveLabel(draft));
+      const message = await onSaveLabel(draft);
+      setDraft({ ...draft, sourceType: "manual", savedAt: new Date().toISOString() });
+      setSaveStatus(message);
     } catch (error) {
       setSaveStatus(error instanceof Error ? error.message : "수정 라벨을 저장하지 못했습니다.");
     }
