@@ -5078,9 +5078,9 @@ button {
 }
 
 .pharmacy-print-label.external-shelf-label {
-  grid-template-rows: 1fr;
+  display: block;
   border: .35mm solid #d92d20;
-  background: color-mix(in srgb, var(--pharmacy-external-tone, #111827) 12%, white);
+  background: #fff;
 }
 
 .pharmacy-print-label.external-shelf-label .pharmacy-label-main {
@@ -5102,6 +5102,93 @@ button {
 
 .pharmacy-print-label.external-shelf-label .pharmacy-label-main strong.long-name {
   font-size: 10pt;
+}
+
+.pharmacy-external-strip {
+  display: grid;
+  grid-template-columns: 15mm minmax(0, 1fr);
+  width: 100%;
+  height: 100%;
+  background: #fff;
+}
+
+.pharmacy-external-strip.with-two-flags {
+  grid-template-columns: 15mm minmax(0, 1fr) 15mm;
+}
+
+.pharmacy-external-strip > * {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: .5mm 1mm;
+  text-align: center;
+}
+
+.pharmacy-external-strip aside {
+  color: #fff;
+  font-size: 6.5pt;
+  font-style: normal;
+  font-weight: 1000;
+  line-height: 1.05;
+  word-break: keep-all;
+}
+
+.pharmacy-external-strip aside.caution {
+  background: #d92d20;
+}
+
+.pharmacy-external-strip aside.light {
+  color: #16803c;
+  background: #d9f99d;
+}
+
+.pharmacy-external-strip aside.cold {
+  color: #155eef;
+  background: #bae6fd;
+}
+
+.pharmacy-external-strip > strong {
+  overflow: hidden;
+  color: #111827;
+  background: #fff;
+  font-size: 15pt;
+  font-weight: 1000;
+  line-height: 1;
+  text-wrap: balance;
+  word-break: keep-all;
+}
+
+.pharmacy-external-strip.light-storage > strong {
+  background: #ecfdf3;
+}
+
+.pharmacy-external-strip.cold-storage:not(.light-storage) > strong {
+  background: #eff8ff;
+}
+
+.pharmacy-external-strip > strong.medium-name {
+  font-size: 12pt;
+}
+
+.pharmacy-external-strip > strong.long-name {
+  font-size: 10pt;
+}
+
+.pharmacy-external-strip > strong.very-long-name {
+  font-size: 8pt;
+}
+
+.pharmacy-external-strip strong.confusion-name,
+.pharmacy-label-main strong.confusion-name {
+  color: #d92d20;
+}
+
+.pharmacy-external-strip mark.dose-highlight {
+  padding: 0 .3mm;
+  color: #d92d20;
+  background: #fff200;
 }
 
 .pharmacy-side-label-meta {

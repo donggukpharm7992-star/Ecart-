@@ -55,6 +55,9 @@ describe("pharmacy label workspace UI", () => {
     expect(workspaceSource).toContain('!isExternalShelfLabel && <span>{draft.printable.koreanName}</span>');
     expect(workspaceSource).toContain('isColoredSideLabel || accessoryFilter === "유색 측면라벨"');
     expect(workspaceSource).toContain('"--pharmacy-external-tone": externalTone');
+    expect(workspaceSource).toContain("pharmacy-external-strip");
+    expect(workspaceSource).toContain("externalCautionWarnings");
+    expect(workspaceSource).toContain("confusion-name");
   });
 
   it("filters side and cap labels and places paper controls next to output", () => {
