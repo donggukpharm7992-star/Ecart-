@@ -25,6 +25,10 @@ type Props = {
   onHospitalDrugWorkbookUpload: (file: File) => Promise<string>;
 };
 
+function isLabelMarked(value?: string) {
+  return value?.trim().toUpperCase() === "Y";
+}
+
 export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, onSaveLabel, onPrint, onHospitalDrugWorkbookUpload }: Props) {
   const [family, setFamily] = useState<PharmacyLabelFamily>("drug");
   const [category, setCategory] = useState<PharmacyLabelCategory>("원병");
@@ -37,27 +41,37 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
   const [uploadStatus, setUploadStatus] = useState("");
   const [editMode, setEditMode] = useState<"edit" | "new">("edit");
   const [highCostRoute, setHighCostRoute] = useState<PharmacyHighCostRoute>("주사");
-  const [accessoryFilter, setAccessoryFilter] = useState<"" | "측면라벨" | "유색 측면라벨" | "병뚜껑">("");
+  const [accessoryFilter, setAccessoryFilter] = useState<"" | "측면라벨" | "유색 측면라벨" | "병뚜껑" | "유색 병뚜껑">("");
+  const [doseUnitFilter, setDoseUnitFilter] = useState<"" | "1T" | "0.5T" | "0.25T">("");
 
   const baseCategoryRows = useMemo(
     () => rows.filter((row) => rowMatchesCategory(row, category, highCostRoute, family) && matchesHospitalDrugLabel(row, query)),
     [category, family, highCostRoute, query, rows],
   );
   const categoryRows = useMemo(() => baseCategoryRows.filter((row) => {
-    if (accessoryFilter === "측면라벨") return category === "입원산제" ? Boolean(row.inpatientPowderPtp) : Boolean(row.sideLabel1T || row.sideLabelHalfT || row.sideLabelQuarterT);
-    if (accessoryFilter === "유색 측면라벨") return Boolean(row.coloredSideLabel);
-    if (accessoryFilter === "병뚜껑") return Boolean(row.capLabel);
+    const matchesDoseUnit = doseUnitFilter === "1T"
+      ? isLabelMarked(row.sideLabel1T)
+      : doseUnitFilter === "0.5T"
+        ? isLabelMarked(row.sideLabelHalfT)
+        : doseUnitFilter === "0.25T"
+          ? isLabelMarked(row.sideLabelQuarterT)
+          : true;
+    if (!matchesDoseUnit) return false;
+    if (accessoryFilter === "측면라벨") return category === "입원산제" ? Boolean(row.inpatientPowderPtp) : [row.sideLabel1T, row.sideLabelHalfT, row.sideLabelQuarterT].some(isLabelMarked);
+    if (accessoryFilter === "유색 측면라벨") return isLabelMarked(row.coloredSideLabel);
+    if (accessoryFilter === "병뚜껑") return isLabelMarked(row.capLabel);
+    if (accessoryFilter === "유색 병뚜껑") return isLabelMarked(row.capLabel) && Boolean(extractHex(row.capBackground));
     return true;
-  }), [accessoryFilter, baseCategoryRows, category]);
+  }), [accessoryFilter, baseCategoryRows, category, doseUnitFilter]);
   const activeRow = categoryRows.find((row) => row.code === activeCode) ?? categoryRows[0];
   useEffect(() => {
     if (!activeRow) { setDraft(undefined); return; }
     setActiveCode(activeRow.code);
     const next = resolvePharmacyLabelDraft(activeRow, savedLabels, category, family);
-    if (accessoryFilter === "병뚜껑") {
-      next.accessory = "병뚜껑";
+    if (accessoryFilter === "병뚜껑" || accessoryFilter === "유색 병뚜껑") {
+      next.accessory = accessoryFilter;
       next.size = sizesForCategory("원병", activeRow).find((size) => size.presetKey === "10x27") ?? next.size;
-      next.backgroundColor = extractHex(activeRow.capBackground) || "#ffffff";
+      next.backgroundColor = accessoryFilter === "유색 병뚜껑" ? extractHex(activeRow.capBackground) || "#ffffff" : "#ffffff";
     } else if (accessoryFilter === "유색 측면라벨") {
       next.accessory = "유색 측면라벨";
       next.size = sizesForCategory("원병", activeRow).find((size) => size.presetKey === "23x102") ?? next.size;
@@ -66,6 +80,7 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
       next.accessory = "측면라벨";
       next.size = sizesForCategory("원병", activeRow).find((size) => size.presetKey === "23x102") ?? next.size;
     }
+    if (doseUnitFilter) next.doseUnit = doseUnitFilter;
     setDraft((current) => {
       if (!current || current.category !== category || current.labelFamily !== family) return next;
       const preserveAccessory = !accessoryFilter || current.accessory === next.accessory;
@@ -76,7 +91,7 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
         style: { ...next.style, ...current.style },
       };
     });
-  }, [accessoryFilter, activeRow?.code, category, family, savedLabels]);
+  }, [accessoryFilter, activeRow?.code, category, doseUnitFilter, family, savedLabels]);
 
   const selectedDrafts = useMemo(
     () => categoryRows.filter((row) => selectedCodes.includes(row.code)).map((row) => {
@@ -85,18 +100,21 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
       if (!draft) return next;
       next.size = draft.size;
       next.accessory = draft.accessory;
+      next.doseUnit = draft.doseUnit;
       next.style = { ...next.style, ...draft.style };
       if (draft.accessory === "유색 측면라벨") {
         next.backgroundColor = extractHex(row.coloredSideBackground) || draft.backgroundColor;
+      } else if (accessoryFilter === "유색 병뚜껑") {
+        next.backgroundColor = extractHex(row.capBackground) || draft.backgroundColor;
       }
       return next;
     }),
-    [categoryRows, selectedCodes, draft, savedLabels, category, family],
+    [accessoryFilter, categoryRows, selectedCodes, draft, savedLabels, category, family],
   );
   const pages = groupPharmacyLabelsForPaper(selectedDrafts, paper === "A4" ? A4_PAPER : A3_PAPER);
   const allSelected = categoryRows.length > 0 && categoryRows.every((row) => selectedCodes.includes(row.code));
   const categoryGroups = family === "drug" ? DRUG_CATEGORIES : CABINET_CATEGORIES;
-  const isCapLabel = draft?.accessory === "병뚜껑";
+  const isCapLabel = draft?.accessory === "병뚜껑" || draft?.accessory === "유색 병뚜껑";
   const isColoredSideLabel = draft?.accessory === "유색 측면라벨";
   const isSideLabel = draft?.accessory === "측면라벨" || isColoredSideLabel;
   const isExternalShelfLabel = ["외용제", "외용점안제", "팩제", "시럽"].includes(category) && draft?.size.presetKey === "13.5x105";
@@ -131,7 +149,7 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
     setDraft((current) => current ? { ...current, ...patchValue } : current);
   }
   function setCategoryAndReset(next: PharmacyLabelCategory) {
-    setCategory(next); setSelectedCodes([]); setActiveCode(""); setAccessoryFilter("");
+    setCategory(next); setSelectedCodes([]); setActiveCode(""); setAccessoryFilter(""); setDoseUnitFilter("");
   }
   function toggleWarning(value: string) {
     if (!draft) return;
@@ -171,11 +189,11 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
   function chooseAccessory(value: PharmacyLabelDraft["accessory"]) {
     if (!draft || !value) return;
     const next: Partial<PharmacyLabelDraft> = { accessory: value };
-    if (value === "병뚜껑") {
+    if (value === "병뚜껑" || value === "유색 병뚜껑") {
       next.size = sizesForCategory("원병", activeRow).find((size) => size.presetKey === "10x27") ?? draft.size;
-      next.backgroundColor = isColoredSideLabel || accessoryFilter === "유색 측면라벨"
-        ? extractHex(activeRow?.coloredSideBackground) || draft.backgroundColor
-        : extractHex(activeRow?.capBackground) || "#ffffff";
+      next.backgroundColor = value === "유색 병뚜껑"
+        ? extractHex(activeRow?.capBackground) || "#ffffff"
+        : "#ffffff";
     } else if (value === "유색 측면라벨") {
       setAccessoryFilter("유색 측면라벨");
       next.size = sizesForCategory("원병", activeRow).find((size) => size.presetKey === "23x102") ?? draft.size;
@@ -192,7 +210,6 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
   return <main className="pharmacy-label-studio">
     <header className="pharmacy-studio-topbar">
       <div><p>원내보유의약품리스트 기준</p><h1>약제팀 라벨 작업실</h1></div>
-      <label className="pharmacy-studio-search"><Search size={18}/><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="약품코드, 물품코드, 약품명 검색"/></label>
       <div className="pharmacy-studio-actions">
         <label className="print-button pharmacy-upload-button" title="동국대학교일산병원_매출_날짜 엑셀 파일"><Upload size={16}/>유효기간 파일 업데이트<input className="hidden-file-input" type="file" accept=".xlsx,.xls,.xlsm" onChange={upload}/></label>
         <button className="secondary-button" onClick={onBack}><ArrowLeft size={16}/>비품관리로 돌아가기</button>
@@ -217,7 +234,9 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
         </div>}
         {["원병", "PTP", "입원산제"].includes(category) && <div className="pharmacy-accessory-filters" aria-label="부착 라벨 표시 약품">
           <strong>표시 약품 먼저 보기</strong>
-          {(["", "측면라벨", "유색 측면라벨", "병뚜껑"] as const).map((value) => <button key={value || "전체"} className={accessoryFilter === value ? "active" : ""} onClick={() => { setAccessoryFilter(value); setSelectedCodes([]); setActiveCode(""); }}>{value || "전체"}</button>)}
+          {(["", "측면라벨", "유색 측면라벨", "병뚜껑", "유색 병뚜껑"] as const).map((value) => <button key={value || "전체"} className={accessoryFilter === value ? "active" : ""} onClick={() => { setAccessoryFilter(value); setSelectedCodes([]); setActiveCode(""); }}>{value || "전체"}</button>)}
+          <span className="pharmacy-accessory-divider"/>
+          {(["", "1T", "0.5T", "0.25T"] as const).map((value) => <button key={value || "정제전체"} className={doseUnitFilter === value ? "active" : ""} onClick={() => { setDoseUnitFilter(value); setSelectedCodes([]); setActiveCode(""); }}>{value || "정제 전체"}</button>)}
         </div>}
       </div>}
     </section>
@@ -225,6 +244,7 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
     <section className="pharmacy-studio-workspace">
       <aside className="pharmacy-drug-list">
         <div className="pharmacy-panel-head"><div><h2>{category} 약품 리스트</h2><p>{categoryRows.length.toLocaleString("ko-KR")}개</p></div><span className="badge gray">선택 {selectedCodes.length}</span></div>
+        <label className="pharmacy-list-search"><Search size={16}/><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="현재 약품 리스트 검색"/></label>
         <label className="pharmacy-select-all"><input type="checkbox" checked={allSelected} onChange={() => setSelectedCodes(allSelected ? [] : categoryRows.map((row) => row.code))}/>전체 선택</label>
         <div className="pharmacy-drug-list-scroll">
           {isLoading && <span className="empty">약품 데이터를 불러오는 중입니다.</span>}
@@ -310,7 +330,7 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
 
       <aside className="pharmacy-tool-panel">
         <details open><summary>크기 설정</summary><div className="pharmacy-tool-body pharmacy-size-grid">{sizeOptions.map((size) => <button key={size.presetKey} className={`pharmacy-size-preset ${draft?.size.presetKey === size.presetKey ? "active" : ""}`} onClick={() => patch({ size })}>{size.heightMm} × {size.widthMm} mm</button>)}</div></details>
-        {["원병", "PTP", "입원산제"].includes(category) && <details open><summary>정제·부착 위치</summary><div className="pharmacy-tool-body pharmacy-choice-grid">{["0.25T", "0.5T", "1T"].map((value) => <button key={value} className={draft?.doseUnit === value ? "active" : ""} onClick={() => patch({ doseUnit: value as PharmacyLabelDraft["doseUnit"] })}>{value}</button>)}{["측면라벨", ...(activeRow?.coloredSideLabel ? ["유색 측면라벨"] : []), "병뚜껑", ...(family === "cabinet" ? ["선반라벨"] : [])].map((value) => <button key={value} className={draft?.accessory === value ? "active" : ""} onClick={() => chooseAccessory(value as PharmacyLabelDraft["accessory"])}>{value}</button>)}</div></details>}
+        {["원병", "PTP", "입원산제"].includes(category) && <details open><summary>정제·부착 위치</summary><div className="pharmacy-tool-body pharmacy-choice-grid">{["0.25T", "0.5T", "1T"].map((value) => <button key={value} className={draft?.doseUnit === value ? "active" : ""} onClick={() => patch({ doseUnit: value as PharmacyLabelDraft["doseUnit"] })}>{value}</button>)}{["측면라벨", ...(isLabelMarked(activeRow?.coloredSideLabel) ? ["유색 측면라벨"] : []), "병뚜껑", ...(isLabelMarked(activeRow?.capLabel) && extractHex(activeRow?.capBackground) ? ["유색 병뚜껑"] : []), ...(family === "cabinet" ? ["선반라벨"] : [])].map((value) => <button key={value} className={draft?.accessory === value ? "active" : ""} onClick={() => chooseAccessory(value as PharmacyLabelDraft["accessory"])}>{value}</button>)}</div></details>}
         <details open><summary>테두리 설정</summary><div className="pharmacy-tool-body"><label><input type="checkbox" checked={(draft?.style.outerBorderPx ?? 0) > 0} onChange={(e) => draft && patch({ style: {...draft.style, outerBorderPx: e.target.checked ? 5 : 0} })}/>테두리 있음</label><label>테두리 두께<input type="range" min="1" max="5" step="1" value={Math.max(1, draft?.style.outerBorderPx ?? 1)} disabled={(draft?.style.outerBorderPx ?? 0) <= 0} onChange={(e) => draft && patch({style:{...draft.style,outerBorderPx:Number(e.target.value)}})}/><b>{draft?.style.outerBorderPx ?? 0}mm</b></label><input type="color" value={draft?.style.outerBorderColor ?? "#111827"} onChange={(e) => draft && patch({style: {...draft.style, outerBorderColor: e.target.value}})}/></div></details>
         <details open><summary>표시 내용</summary><div className="pharmacy-tool-body"><label>상용약품명<textarea value={draft?.printable.title ?? ""} onChange={(e) => draft && patch({printable:{...draft.printable,title:e.target.value}})}/></label><label>한글약품명<input value={draft?.printable.koreanName ?? ""} onChange={(e) => draft && patch({printable:{...draft.printable,koreanName:e.target.value}})}/></label><label>용량<input value={draft?.printable.strength ?? ""} onChange={(e) => draft && patch({printable:{...draft.printable,strength:e.target.value}})}/></label><label>약품 위치<input value={draft?.location ?? ""} onChange={(e) => patch({location:e.target.value})}/></label><label>ATC 번호<input value={draft?.atc ?? ""} onChange={(e) => patch({atc:e.target.value})}/></label>{category === "항암제" && <label>재구성·용해액(WI/NS)<input value={draft?.printable.reconstitution ?? ""} onChange={(e) => draft && patch({printable:{...draft.printable,reconstitution:e.target.value}})}/></label>}</div></details>
       </aside>

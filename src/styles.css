@@ -4777,6 +4777,32 @@ button {
   font-weight: 900;
 }
 
+.pharmacy-list-search {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 10px 8px;
+  padding: 8px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  background: #fff;
+}
+
+.pharmacy-list-search input {
+  min-width: 0;
+  width: 100%;
+  border: 0;
+  outline: 0;
+  font: inherit;
+}
+
+.pharmacy-accessory-divider {
+  width: 1px;
+  align-self: stretch;
+  margin: 0 3px;
+  background: #cbd5e1;
+}
+
 .pharmacy-label-top-banner {
   grid-column: 1;
   min-height: 8mm;

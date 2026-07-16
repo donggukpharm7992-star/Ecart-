@@ -41,7 +41,7 @@ export type PharmacyLabelDraft = {
   labelFamily: PharmacyLabelFamily;
   category: PharmacyLabelCategory;
   doseUnit?: "0.25T" | "0.5T" | "1T";
-  accessory?: "측면라벨" | "유색 측면라벨" | "병뚜껑" | "선반라벨";
+  accessory?: "측면라벨" | "유색 측면라벨" | "병뚜껑" | "유색 병뚜껑" | "선반라벨";
   location: string;
   atc: string;
   expiry: string;

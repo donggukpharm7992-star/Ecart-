@@ -56,7 +56,7 @@ describe("pharmacy label workspace UI", () => {
   it("applies the compact external shelf rule and preserves colored side color on bottle caps", () => {
     expect(workspaceSource).toContain('isExternalShelfLabel ? "external-shelf-label"');
     expect(workspaceSource).toContain('!isExternalShelfLabel && <span>{draft.printable.koreanName}</span>');
-    expect(workspaceSource).toContain('isColoredSideLabel || accessoryFilter === "유색 측면라벨"');
+    expect(workspaceSource).toContain('value === "유색 병뚜껑"');
     expect(workspaceSource).toContain('"--pharmacy-external-tone": externalTone');
     expect(workspaceSource).toContain("pharmacy-external-strip");
     expect(workspaceSource).toContain("externalCautionWarnings");
@@ -68,6 +68,11 @@ describe("pharmacy label workspace UI", () => {
     expect(workspaceSource).toContain("sideLabelHalfT");
     expect(workspaceSource).toContain("coloredSideLabel");
     expect(workspaceSource).toContain("capLabel");
+    expect(workspaceSource).toContain("유색 병뚜껑");
+    expect(workspaceSource).toContain("doseUnitFilter");
+    expect(workspaceSource).toContain("sideLabelQuarterT");
+    expect(workspaceSource).toContain("pharmacy-list-search");
+    expect(workspaceSource).toContain("isLabelMarked");
     expect(workspaceSource).toContain("pharmacy-condition-dashboard");
   });
 
