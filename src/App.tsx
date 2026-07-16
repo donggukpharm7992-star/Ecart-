@@ -104,16 +104,15 @@ import {
   stripHospitalDrugControlledPrefix,
   type HospitalDrugLabelRow,
 } from "../약제팀 라벨/hospitalDrugLabels";
-import {
-  isHospitalDrugWorkbookFileName,
-  mergeHospitalDrugRowsIntoPharmacyLabelMatches,
-  parseHospitalDrugWorkbook,
-} from "../약제팀 라벨/hospitalDrugWorkbookUpload";
 import { PharmacyLabelWorkspace } from "../약제팀 라벨/PharmacyLabelWorkspace";
+import { mergeHospitalDrugRowsIntoPharmacyLabelMatches } from "../약제팀 라벨/hospitalDrugWorkbookUpload";
+import hospitalDrugWorkbookUrl from "../약제팀 라벨/원내보유의약품리스트.xlsx?url";
+import { applyExpirationWorkbook } from "../약제팀 라벨/expirationWorkbookUpdate";
 import { loadPharmacyLabelMatchRows, type PharmacyLabelMatchRow } from "../약제팀 라벨/pharmacyLabelMatches";
 import {
   loadSavedPharmacyLabelsFromStorage,
   savePharmacyLabelToStorage,
+  splitDoseText,
   type PharmacyLabelDraft,
   type PharmacySavedLabel,
 } from "../약제팀 라벨/pharmacyLabelStudio";
@@ -2676,18 +2675,9 @@ export function App() {
   }
 
   async function importHospitalDrugWorkbook(file: File) {
-    if (!isHospitalDrugWorkbookFileName(file.name)) {
-      throw new Error("원내보유의약품리스트.xlsx 파일만 업로드할 수 있습니다.");
-    }
-
-    const hospitalRows = await parseHospitalDrugWorkbook(await file.arrayBuffer());
-    const currentMatches = pharmacyLabelMatchRows.length > 0 ? pharmacyLabelMatchRows : await loadPharmacyLabelMatchRows();
-    const nextMatches = mergeHospitalDrugRowsIntoPharmacyLabelMatches(hospitalRows, currentMatches);
-    setHospitalDrugLabelRows(hospitalRows);
-    setPharmacyLabelMatchRows(nextMatches);
-    setIsHospitalDrugLabelsLoading(false);
-    setIsPharmacyLabelMatchesLoading(false);
-    return `${hospitalRows.length.toLocaleString("ko-KR")}개 약품 리스트를 업데이트했습니다.`;
+    const result = await applyExpirationWorkbook(file, hospitalDrugWorkbookUrl, hospitalDrugLabelRows);
+    setHospitalDrugLabelRows(result.updatedRows);
+    return `물품코드 ${result.sourceCount.toLocaleString("ko-KR")}건 중 ${result.updatedCount.toLocaleString("ko-KR")}개 약품의 가장 빠른 유효기간을 반영하고 원내보유의약품리스트.xlsx를 저장했습니다.`;
   }
 
   function openPrintPreview(mode: PrintPreviewMode = "single") {
@@ -3077,6 +3067,7 @@ export function App() {
     );
     const hasColdWarning = draft.warnings.includes("냉장");
     const hasLightWarning = draft.warnings.includes("차광");
+    const titleParts = splitDoseText(draft.printable.title);
     const storageOnlyClass = !hasCautionWarning && hasColdWarning && hasLightWarning
       ? "storage-both"
       : !hasCautionWarning && hasColdWarning
@@ -3094,19 +3085,25 @@ export function App() {
       "--pharmacy-label-font-family": draft.style.fontFamily,
       "--pharmacy-label-outline-color": draft.style.textOutlineColor,
       "--pharmacy-label-outline-px": `${draft.style.textOutlinePx}px`,
+      "--pharmacy-label-background": draft.accessory === "유색 측면라벨" || draft.accessory === "병뚜껑" ? draft.backgroundColor : "#ffffff",
     } as CSSProperties;
 
     return (
-      <article className={`pharmacy-print-label print-label ${draft.category === "고가약" ? "high-cost" : ""} ${storageOnlyClass}`} style={style} key={key}>
-        {(draft.printable.topBanner || draft.printable.warning) ? <div className="pharmacy-label-top-banner">
+      <article className={`pharmacy-print-label print-label ${draft.category === "고가약" ? "high-cost" : ""} ${storageOnlyClass} ${draft.accessory === "병뚜껑" ? "cap-label" : ""} ${!draft.printable.warning && !draft.printable.topBanner ? "no-warning" : ""}`} style={style} key={key}>
+        {draft.accessory !== "병뚜껑" && (draft.printable.topBanner || draft.printable.warning) ? <div className="pharmacy-label-top-banner">
           <span>{[draft.printable.topBanner, draft.warnings.filter((warning) => !["냉장", "차광"].includes(warning)).join(" · ")].filter(Boolean).join(" · ")}</span>
           {hasLightWarning ? <b className="pharmacy-storage-badge light">차광</b> : null}
           {hasColdWarning ? <b className="pharmacy-storage-badge cold">냉장</b> : null}
         </div> : null}
         <div className="pharmacy-label-main">
-          <strong>{draft.printable.title}</strong>
-          <span>{draft.printable.koreanName}</span>
-          <b className={hasDoseHighlight ? "dose-highlight" : ""}>{draft.printable.strength}</b>
+          <strong>{draft.accessory === "병뚜껑" && hasDoseHighlight && titleParts.dose
+            ? <>{titleParts.before}<mark className="dose-highlight">{titleParts.dose}</mark>{titleParts.after}</>
+            : draft.printable.title}</strong>
+          {draft.accessory !== "병뚜껑" ? <span>{draft.printable.koreanName}</span> : null}
+          {draft.accessory !== "병뚜껑" ? <b className={hasDoseHighlight ? "dose-highlight" : ""}>{draft.printable.strength}</b> : null}
+          {draft.accessory === "병뚜껑" && draft.doseUnit && draft.doseUnit !== "1T" ? <b>{draft.doseUnit}</b> : null}
+          {draft.accessory !== "병뚜껑" && draft.atc ? <small className="pharmacy-label-atc">ATC {draft.atc}</small> : null}
+          {draft.accessory !== "병뚜껑" && draft.location ? <small className="pharmacy-label-location">{draft.location}</small> : null}
         </div>
         {draft.printable.footer.enabled ? <footer>{draft.printable.footer.text}</footer> : null}
       </article>

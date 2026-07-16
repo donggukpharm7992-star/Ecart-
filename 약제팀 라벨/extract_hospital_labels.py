@@ -24,6 +24,21 @@ def is_yes(value: object) -> bool:
 def main() -> None:
     workbook = load_workbook(SOURCE, data_only=True, read_only=True)
     worksheet = workbook.worksheets[0]
+    oral_injection_names = {
+        clean(value).lower()
+        for row in workbook.worksheets[2].iter_rows(min_row=2, values_only=True)
+        for value in (row[1], row[5], row[9])
+        if clean(value)
+    }
+    nutrition_names = {
+        clean(row[0]).lower() for row in workbook.worksheets[3].iter_rows(min_row=2, values_only=True) if clean(row[0])
+    }
+    external_codes = {
+        clean(row[0]) for row in workbook.worksheets[4].iter_rows(min_row=2, values_only=True) if clean(row[0])
+    }
+    syrup_codes = {
+        clean(row[0]) for row in workbook.worksheets[5].iter_rows(min_row=2, values_only=True) if clean(row[0])
+    }
     headers = [clean(value).replace("\n", " ") for value in next(worksheet.iter_rows(min_row=1, max_row=1, values_only=True))]
     index = {header: position for position, header in enumerate(headers)}
 
@@ -74,6 +89,10 @@ def main() -> None:
                 "nameCaution": is_yes(raw[index["이름주의"]]),
                 "border": is_yes(raw[index["테두리"]]),
                 "borderColor": read(raw, "테두리 색기호"),
+                "cabinetOralInjection": name.lower() in oral_injection_names,
+                "cabinetNutrition": name.lower() in nutrition_names,
+                "cabinetExternal": code in external_codes,
+                "cabinetSyrup": code in syrup_codes,
             }
         )
 

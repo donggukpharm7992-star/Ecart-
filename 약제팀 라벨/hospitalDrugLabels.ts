@@ -35,6 +35,10 @@ export type HospitalDrugLabelRow = {
   nameCaution?: boolean;
   border?: boolean;
   borderColor?: string;
+  cabinetOralInjection?: boolean;
+  cabinetNutrition?: boolean;
+  cabinetExternal?: boolean;
+  cabinetSyrup?: boolean;
 };
 
 type HospitalDrugLabelsModule = { default: HospitalDrugLabelRow[] };

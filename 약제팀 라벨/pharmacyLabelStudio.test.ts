@@ -50,6 +50,12 @@ describe("pharmacy label studio rules", () => {
     expect(sizesForCategory("바이알", row).every((size) => size.heightMm > 40)).toBe(true);
   });
 
+  it("uses corrected side and cap dimensions", () => {
+    expect(sizesForCategory("원병", row).map((size) => size.presetKey)).toEqual(
+      expect.arrayContaining(["220x102", "10x27", "15x30"]),
+    );
+  });
+
   it("creates high-risk warning and footer content", () => {
     const draft = createPharmacyLabelDraft(row, "바이알", "drug");
     expect(draft.printable.warning).toContain("고위험의약품");

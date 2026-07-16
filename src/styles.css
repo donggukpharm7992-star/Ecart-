@@ -199,7 +199,7 @@ button {
 .viewer-links-panel {
   padding: 12px clamp(10px, 2vw, 22px);
   border-bottom: 1px solid #d7c7bc;
-  background: #fff;
+  background: var(--pharmacy-label-background, #fff);
 }
 
 .viewer-link-list {
@@ -4822,6 +4822,48 @@ button {
 
 .pharmacy-label-main {
   flex-direction: column;
+  position: relative;
+}
+
+.pharmacy-label-main strong {
+  max-width: 100%;
+  text-wrap: balance;
+  word-break: keep-all;
+}
+
+.pharmacy-label-main strong.medium-name {
+  font-size: .86em;
+}
+
+.pharmacy-label-main strong.long-name {
+  font-size: .68em;
+}
+
+.pharmacy-print-label.no-warning .pharmacy-label-main {
+  grid-row: 1 / -1;
+}
+
+.pharmacy-print-label.no-warning .pharmacy-label-main strong {
+  font-size: 1.18em;
+}
+
+.pharmacy-print-label.cap-label {
+  grid-template-rows: 1fr;
+}
+
+.pharmacy-print-label.cap-label .pharmacy-label-main {
+  grid-row: 1;
+  padding: .7mm 1mm;
+}
+
+.pharmacy-print-label.cap-label .pharmacy-label-main strong {
+  font-size: .72em;
+  line-height: 1;
+}
+
+.pharmacy-print-label.cap-label .pharmacy-label-main b {
+  margin-top: .4mm;
+  font-size: .48em;
 }
 
 .pharmacy-label-main span {
@@ -4841,10 +4883,33 @@ button {
   border-radius: 2px;
 }
 
+.pharmacy-label-main mark.dose-highlight {
+  padding: 0 .35mm;
+  color: #d92d20;
+  background: #fff200;
+  border-radius: 2px;
+}
+
 .pharmacy-label-main em {
   margin-top: 1mm;
   font-size: .5em;
   font-style: normal;
+}
+
+.pharmacy-label-atc,
+.pharmacy-label-location {
+  position: absolute;
+  right: 1mm;
+  font-size: 8px;
+  font-weight: 900;
+}
+
+.pharmacy-label-atc {
+  top: .5mm;
+}
+
+.pharmacy-label-location {
+  bottom: .5mm;
 }
 
 .pharmacy-print-label.anticancer {

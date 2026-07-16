@@ -17,7 +17,7 @@ describe("pharmacy label workspace UI", () => {
     expect(workspaceSource).toContain("PDF 미리보기");
     expect(workspaceSource).toContain("수정라벨 저장");
     expect(workspaceSource).toContain("새 라벨 만들기");
-    expect(workspaceSource).toContain("원내보유약품 업데이트");
+    expect(workspaceSource).toContain("유효기간 파일 업데이트");
   });
 
   it("applies dose and storage conditions to the label canvas", () => {
@@ -29,5 +29,11 @@ describe("pharmacy label workspace UI", () => {
 
   it("removes non-drug status values from the drug type selector", () => {
     expect(workspaceSource).toContain('!["36", "99", "종료예정"].includes(type.trim())');
+  });
+
+  it("provides colored side labels, location, and ATC editing", () => {
+    expect(workspaceSource).toContain("유색 측면라벨");
+    expect(workspaceSource).toContain("약품 위치");
+    expect(workspaceSource).toContain("ATC 번호");
   });
 });

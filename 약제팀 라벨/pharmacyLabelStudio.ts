@@ -41,7 +41,10 @@ export type PharmacyLabelDraft = {
   labelFamily: PharmacyLabelFamily;
   category: PharmacyLabelCategory;
   doseUnit?: "0.25T" | "0.5T" | "1T";
-  accessory?: "측면라벨" | "병뚜껑" | "선반라벨";
+  accessory?: "측면라벨" | "유색 측면라벨" | "병뚜껑" | "선반라벨";
+  location: string;
+  atc: string;
+  backgroundColor: string;
   size: PharmacyLabelSize;
   printable: PharmacyPrintableText;
   warnings: string[];
@@ -80,7 +83,7 @@ const SIZE_MAP: Record<string, PharmacyLabelSize[]> = {
   "마약/향정": sizes(["40*70"]),
   고가약: sizes(["40*80", "55*80"]),
   항암제: sizes(["46*80"]),
-  원병: sizes(["33*100", "220*1020", "27*10", "30*15"]),
+  원병: sizes(["33*100", "220*102", "10*27", "15*30"]),
 };
 
 function sizes(values: string[]) {
@@ -97,9 +100,22 @@ export function sizesForCategory(category: PharmacyLabelCategory, row?: Hospital
   return available;
 }
 
-export function rowMatchesCategory(row: HospitalDrugLabelRow, category: PharmacyLabelCategory, highCostRoute: PharmacyHighCostRoute = "주사") {
+export function rowMatchesCategory(
+  row: HospitalDrugLabelRow,
+  category: PharmacyLabelCategory,
+  highCostRoute: PharmacyHighCostRoute = "주사",
+  family: PharmacyLabelFamily = "drug",
+) {
   const type = row.drugType.replace(/\s+/g, "");
   if (!row.inHospital) return false;
+  if (family === "cabinet") {
+    if (category === "영양수액") return Boolean(row.cabinetNutrition);
+    if (["외용제", "외용점안제", "팩제"].includes(category)) return Boolean(row.cabinetExternal);
+    if (category === "시럽") return Boolean(row.cabinetSyrup);
+    if (["원병", "PTP", "ATC", "입원산제", "앰플", "바이알", "냉장주사"].includes(category)) {
+      return Boolean(row.cabinetOralInjection);
+    }
+  }
   if (category === "고가약") {
     if (!row.highCost) return false;
     const isInjection = ["앰플", "바이알", "냉장주사", "주사", "영양수액", "일반수액", "항암제"].some((value) => type.includes(value));
@@ -123,19 +139,34 @@ export function createPharmacyLabelDraft(
   labelFamily: PharmacyLabelFamily,
 ): PharmacyLabelDraft {
   const warnings = getHospitalDrugLabelWarnings(row);
-  const size = sizesForCategory(category, row)[0] ?? DEFAULT_PHARMACY_LABEL_SIZE;
+  const cabinetSize = labelFamily === "cabinet"
+    ? category === "원병"
+      ? sizes(["30*120"])[0]
+      : category === "PTP"
+        ? sizes(["25*125"])[0]
+        : category === "영양수액"
+          ? sizes([warnings.length > 0 ? "15*140" : "15*110"])[0]
+          : ["외용제", "외용점안제", "팩제", "시럽"].includes(category)
+            ? sizes(["33*100"])[0]
+            : undefined
+    : undefined;
+  const size = cabinetSize ?? sizesForCategory(category, row)[0] ?? DEFAULT_PHARMACY_LABEL_SIZE;
   const anticancer = category === "항암제";
+  const cabinetNameOnly = labelFamily === "cabinet" && ["원병", "PTP", "영양수액"].includes(category);
   return {
     id: `pharmacy-label-${row.code}-${labelFamily}-${category}`,
     code: row.code,
     itemCode: row.itemCode ?? "",
     labelFamily,
     category,
+    location: row.location ?? "",
+    atc: row.atc ?? "",
+    backgroundColor: extractHex(row.coloredSideBackground) || "#ffffff",
     size,
     printable: {
       title: row.name,
-      koreanName: row.koreanName,
-      strength: row.strength,
+      koreanName: cabinetNameOnly ? "" : row.koreanName,
+      strength: cabinetNameOnly ? "" : row.strength,
       warning: warnings.join(" · "),
       topBanner: anticancer ? "고위험의약품" : category === "고가약" ? "고가통계약" : row.oralAnticancer ? "경구항암제" : "",
       footer: {
@@ -148,9 +179,10 @@ export function createPharmacyLabelDraft(
     },
     warnings,
     drugTypes: row.drugType ? [row.drugType] : [],
+    accessory: labelFamily === "cabinet" && ["원병", "PTP"].includes(category) ? "선반라벨" : undefined,
     style: {
       outerBorderPx: row.border ? 5 : 2,
-      outerBorderColor: row.borderColor || "#111827",
+      outerBorderColor: extractHex(row.borderColor) || "#111827",
       textOutlinePx: 0,
       textOutlineColor: "#ffffff",
       fontFamily: "Malgun Gothic, Segoe UI, sans-serif",
@@ -159,6 +191,20 @@ export function createPharmacyLabelDraft(
       warningColor: "#d92d20",
     },
     sourceType: "workbook",
+  };
+}
+
+export function extractHex(value?: string) {
+  return /#[0-9a-f]{6}/i.exec(value ?? "")?.[0] ?? "";
+}
+
+export function splitDoseText(title: string) {
+  const match = /\d+(?:\.\d+)?\s*(?:mcg|mg|g|ml|mL|%|IU|unit)(?:\/\d+(?:\.\d+)?\s*(?:ml|mL))?/i.exec(title);
+  if (!match || match.index == null) return { before: title, dose: "", after: "" };
+  return {
+    before: title.slice(0, match.index),
+    dose: match[0],
+    after: title.slice(match.index + match[0].length),
   };
 }
 

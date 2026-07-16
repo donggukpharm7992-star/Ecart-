@@ -21,6 +21,8 @@ This app previews a pharmacist ward inventory workflow with real Excel data. The
   - Column B `상용약품명` overrides stock and E-cart display drug names by `약품코드`; leading `[마약]`/`[향정]` prefixes are stripped for inventory names.
   - `약품조회` rows are generated into `약제팀 라벨/data/hospitalDrugLabels.generated.json`.
   - Label data includes item code, drug type, high-cost/oral-anticancer flags, caution flags, high-risk category, ATC, opened-PTP/powder/three-tier fields, expiry/location, side/cap label values, name caution, and border settings.
+  - Cabinet membership is derived from `경구 주사 리스트`, `영양수액리스트`, `외용제리스트`, and `시럽리스트`.
+  - `동국대학교일산병원_매출_날짜*` uploads match item codes, choose the earliest expiry per item, and save an updated `원내보유의약품리스트.xlsx`.
   - The label studio derives its drug list and label defaults only from this generated source and the `라벨 생성규칙` sheet dimensions.
   - Label fields use workbook storage, light-protection, similar-look, similar-sound, dose-caution, dose-check, and workbook high-risk `Y` flags.
   - General drug labels show all in-hospital rows whose `drugType` is filled, excluding `일반수액`, `마약`, and `향정`; fluid labels show only `drugType=일반수액`, and narcotic/psychotropic labels show only `drugType=마약` or `drugType=향정`.
