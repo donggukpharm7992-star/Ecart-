@@ -3230,7 +3230,7 @@ export function App() {
   if (isPharmacyLabelWorkspaceOpen) {
     return (
       <PharmacyLabelWorkspace
-        rows={pharmacyLabelMatchRows}
+        rows={hospitalDrugLabelRows}
         savedLabels={savedPharmacyLabels}
         isLoading={isPharmacyLabelMatchesLoading}
         onBack={() => setIsPharmacyLabelWorkspaceOpen(false)}

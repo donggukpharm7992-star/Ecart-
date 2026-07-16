@@ -1,79 +1,49 @@
 export type HospitalDrugLabelRow = {
   code: string;
+  itemCode?: string;
   name: string;
   koreanName: string;
   strength: string;
   drugType: string;
+  highCost?: boolean;
   spec: string;
   package: string;
   storage: string;
   lightProtected: boolean;
-  highRisk: boolean;
   inHospital: boolean;
+  oralAnticancer?: boolean;
   similarLook: boolean;
   similarSound: boolean;
   doseCaution: boolean;
   doseCheck: boolean;
+  highRisk: boolean;
+  highRiskCategory?: string;
+  atc?: string;
+  ptpOpened?: boolean;
+  inpatientPowderPtp?: boolean;
+  threeTierHalf?: boolean;
+  expiry?: string;
+  location?: string;
+  ampouleHolder?: string;
+  sideLabel1T?: string;
+  sideLabelHalfT?: string;
+  sideLabelQuarterT?: string;
+  coloredSideLabel?: string;
+  coloredSideBackground?: string;
+  capLabel?: string;
+  capBackground?: string;
+  nameCaution?: boolean;
+  border?: boolean;
+  borderColor?: string;
 };
 
-type HospitalDrugLabelsModule = {
-  default: HospitalDrugLabelRow[];
-};
-
-export type HospitalDrugControlledCategory = "마약" | "향정";
+type HospitalDrugLabelsModule = { default: HospitalDrugLabelRow[] };
 
 let hospitalDrugLabelsPromise: Promise<HospitalDrugLabelRow[]> | null = null;
+export type HospitalDrugControlledCategory = "마약" | "향정";
 
 function compact(value: string) {
   return value.toLowerCase().replace(/\s+/g, "");
-}
-
-const CONTROLLED_DRUG_PREFIX_PATTERN = /^\s*\[(마약|향정)\]\s*/;
-const NUMERIC_COMMON_NAME_PATTERN = /^\d+(?:\.\d+)?$/;
-
-export function makeHospitalDrugLabelId(row: Pick<HospitalDrugLabelRow, "code">) {
-  return `pharmacy-${row.code}`;
-}
-
-export function makeHospitalControlledDrugLabelId(row: Pick<HospitalDrugLabelRow, "code">) {
-  return `narcotic-hospital-${row.code}`;
-}
-
-export function getHospitalDrugControlledCategory(
-  row: Pick<HospitalDrugLabelRow, "name" | "koreanName"> & Partial<Pick<HospitalDrugLabelRow, "drugType">>,
-): HospitalDrugControlledCategory | undefined {
-  if (isHospitalDrugType(row, "마약")) return "마약";
-  if (isHospitalDrugType(row, "향정")) return "향정";
-  const match = row.name.match(CONTROLLED_DRUG_PREFIX_PATTERN) ?? row.koreanName.match(CONTROLLED_DRUG_PREFIX_PATTERN);
-  return match?.[1] as HospitalDrugControlledCategory | undefined;
-}
-
-export function isHospitalDrugType(row: Partial<Pick<HospitalDrugLabelRow, "drugType">>, drugType: string) {
-  return compact(row.drugType ?? "") === compact(drugType);
-}
-
-export function isHospitalControlledDrugType(row: Partial<Pick<HospitalDrugLabelRow, "drugType">>) {
-  return isHospitalDrugType(row, "마약") || isHospitalDrugType(row, "향정");
-}
-
-export function isHospitalGeneralDrugLabelType(row: Partial<Pick<HospitalDrugLabelRow, "drugType">>) {
-  return (row.drugType ?? "").trim().length > 0 && !isHospitalDrugType(row, "일반수액") && !isHospitalControlledDrugType(row);
-}
-
-export function isSelectableHospitalDrugLabelRow(
-  row: Pick<HospitalDrugLabelRow, "name" | "inHospital"> & Partial<Pick<HospitalDrugLabelRow, "drugType">>,
-) {
-  const name = row.name.trim();
-  return row.inHospital && name.length > 0 && (row.drugType ?? "").trim().length > 0 && !NUMERIC_COMMON_NAME_PATTERN.test(name);
-}
-
-export function stripHospitalDrugControlledPrefix(name: string) {
-  return name.replace(CONTROLLED_DRUG_PREFIX_PATTERN, "").replace(/\s{2,}/g, " ").trim();
-}
-
-export function shouldExcludeHospitalControlledDrugLabel(row: Pick<HospitalDrugLabelRow, "name">) {
-  const name = stripHospitalDrugControlledPrefix(row.name);
-  return /^PCA-/i.test(name) || /\uac80\uc0ac\uc6a9/u.test(name) || /\uc18c\ud654\uae30\s*\ubcd1?\s*\uac80\uc0ac\uc2e4/u.test(name);
 }
 
 export function loadHospitalDrugLabelRows() {
@@ -83,13 +53,41 @@ export function loadHospitalDrugLabelRows() {
   return hospitalDrugLabelsPromise;
 }
 
+export function makeHospitalDrugLabelId(row: Pick<HospitalDrugLabelRow, "code">) {
+  return `pharmacy-${row.code}`;
+}
+export function makeHospitalControlledDrugLabelId(row: Pick<HospitalDrugLabelRow, "code">) {
+  return `narcotic-hospital-${row.code}`;
+}
+export function isHospitalDrugType(row: Partial<Pick<HospitalDrugLabelRow, "drugType">>, drugType: string) {
+  return compact(row.drugType ?? "") === compact(drugType);
+}
+export function isHospitalControlledDrugType(row: Partial<Pick<HospitalDrugLabelRow, "drugType">>) {
+  return isHospitalDrugType(row, "마약") || isHospitalDrugType(row, "향정");
+}
+export function isHospitalGeneralDrugLabelType(row: Partial<Pick<HospitalDrugLabelRow, "drugType">>) {
+  return Boolean(row.drugType?.trim()) && !isHospitalDrugType(row, "일반수액") && !isHospitalControlledDrugType(row);
+}
+export function isSelectableHospitalDrugLabelRow(row: Pick<HospitalDrugLabelRow, "name" | "inHospital"> & Partial<Pick<HospitalDrugLabelRow, "drugType">>) {
+  return row.inHospital && Boolean(row.name.trim()) && Boolean(row.drugType?.trim()) && !/^\d+(?:\.\d+)?$/.test(row.name.trim());
+}
+export function getHospitalDrugControlledCategory(row: Pick<HospitalDrugLabelRow, "name" | "koreanName"> & Partial<Pick<HospitalDrugLabelRow, "drugType">>) {
+  if (isHospitalDrugType(row, "마약")) return "마약";
+  if (isHospitalDrugType(row, "향정")) return "향정";
+  return /^\s*\[(마약|향정)\]/.exec(row.name)?.[1] as HospitalDrugControlledCategory | undefined;
+}
+export function stripHospitalDrugControlledPrefix(name: string) {
+  return name.replace(/^\s*\[(마약|향정)\]\s*/, "").trim();
+}
+export function shouldExcludeHospitalControlledDrugLabel(row: Pick<HospitalDrugLabelRow, "name">) {
+  const name = stripHospitalDrugControlledPrefix(row.name);
+  return /^PCA-/i.test(name) || /검사용/.test(name) || /소화기\s*병?\s*검사실/.test(name);
+}
+
 export function matchesHospitalDrugLabel(row: HospitalDrugLabelRow, query: string) {
-  const value = query.trim().toLowerCase();
+  const value = compact(query.trim());
   if (!value) return true;
-  const compactValue = compact(value);
-  const text = [row.code, row.name, row.koreanName, row.strength, row.spec, row.package, row.storage].join(" ").toLowerCase();
-  const compactText = compact(text);
-  return text.includes(value) || compactText.includes(compactValue);
+  return compact([row.code, row.itemCode, row.name, row.koreanName, row.strength, row.drugType, row.storage, row.location].join(" ")).includes(value);
 }
 
 export function isHospitalDrugLightProtected(row: HospitalDrugLabelRow) {
@@ -97,14 +95,12 @@ export function isHospitalDrugLightProtected(row: HospitalDrugLabelRow) {
 }
 
 export function isHospitalDrugFrozen(row: HospitalDrugLabelRow) {
-  const storage = compact(row.storage);
-  return storage.includes("냉동");
+  return compact(row.storage).includes("냉동");
 }
 
 export function isHospitalDrugRefrigerated(row: HospitalDrugLabelRow) {
   const storage = compact(row.storage);
-  if (storage.includes("냉장보관하지")) return false;
-  return storage.includes("냉장") || /2[-~∼～]8/.test(storage);
+  return !storage.includes("냉장보관하지") && (storage.includes("냉장") || /2[-~～]8/.test(storage));
 }
 
 export function isHospitalDrugHighRisk(row: HospitalDrugLabelRow) {
@@ -118,11 +114,14 @@ export function getHospitalDrugStorageLabel(row: HospitalDrugLabelRow) {
 }
 
 export function getHospitalDrugLabelWarnings(row: HospitalDrugLabelRow) {
-  const warnings: string[] = [];
-  if (isHospitalDrugLightProtected(row)) warnings.push("차광");
-  if (row.similarLook) warnings.push("유사모양");
-  if (row.similarSound) warnings.push("유사발음");
-  if (row.doseCaution) warnings.push("용량주의");
-  if (isHospitalDrugHighRisk(row)) warnings.push("고위험의약품");
-  return warnings;
+  return [
+    row.doseCaution ? "용량주의" : "",
+    row.similarSound ? "유사발음" : "",
+    row.similarLook ? "유사모양" : "",
+    row.highRisk ? "고위험의약품" : "",
+    row.nameCaution ? "이름주의" : "",
+    row.doseCheck ? "용량확인" : "",
+    isHospitalDrugRefrigerated(row) ? "냉장" : "",
+    isHospitalDrugLightProtected(row) ? "차광" : "",
+  ].filter(Boolean);
 }

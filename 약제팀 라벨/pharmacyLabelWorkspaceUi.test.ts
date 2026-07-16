@@ -2,20 +2,21 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const workspaceSource = readFileSync(new URL("./PharmacyLabelWorkspace.tsx", import.meta.url), "utf8");
-const cssSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
 
-describe("pharmacy label workspace upload UI", () => {
-  it("shows the Excel upload control as a visible primary button next to drug list management", () => {
-    expect(workspaceSource).toContain("약품리스트 관리");
-    expect(workspaceSource).toContain('className="print-button pharmacy-upload-button"');
-    expect(workspaceSource).toContain('aria-label="원내보유의약품리스트 엑셀 업로드"');
-    expect(workspaceSource).toContain('accept=".xlsx,.xlsm"');
-    expect(workspaceSource).toContain('"엑셀 업로드"');
+describe("pharmacy label workspace UI", () => {
+  it("provides two collapsible label families and detailed categories", () => {
+    expect(workspaceSource).toContain("약품 라벨");
+    expect(workspaceSource).toContain("약품장 라벨");
+    expect(workspaceSource).toContain("상세 선택");
+    expect(workspaceSource).toContain("DRUG_CATEGORIES");
+    expect(workspaceSource).toContain("CABINET_CATEGORIES");
   });
 
-  it("allows the topbar action buttons to wrap instead of being pushed off screen", () => {
-    expect(cssSource).toMatch(/\.pharmacy-studio-topbar\s*\{[\s\S]*grid-template-columns:\s*minmax\(180px,\s*0\.55fr\) minmax\(220px,\s*1fr\) minmax\(260px,\s*0\.9fr\)/);
-    expect(cssSource).toMatch(/\.pharmacy-studio-actions\s*\{[\s\S]*min-width:\s*0;/);
-    expect(cssSource).toMatch(/\.pharmacy-studio-actions\s*\{[\s\S]*justify-content:\s*flex-end;/);
+  it("provides selection, PDF preview, editing, and workbook upload controls", () => {
+    expect(workspaceSource).toContain("전체 선택");
+    expect(workspaceSource).toContain("PDF 미리보기");
+    expect(workspaceSource).toContain("수정라벨 저장");
+    expect(workspaceSource).toContain("새 라벨 만들기");
+    expect(workspaceSource).toContain("원내보유약품 업데이트");
   });
 });
