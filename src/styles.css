@@ -4174,6 +4174,16 @@ button {
     margin: 0;
   }
 
+  body.printing-preview:has(.pdf-full-label-source) > .app-page .print-preview-report {
+    display: none !important;
+  }
+
+  body.printing-preview .pdf-full-label-source {
+    position: static;
+    display: block;
+    width: auto;
+  }
+
   body.printing-preview .bulk-report-stack {
     display: block;
   }
@@ -4778,6 +4788,16 @@ button {
   gap: 1.5mm;
 }
 
+.pharmacy-label-top-banner.light-only {
+  color: #16803c;
+  background: #d9f99d;
+}
+
+.pharmacy-label-top-banner.cold-only {
+  color: #155eef;
+  background: #bae6fd;
+}
+
 .pharmacy-storage-badge {
   flex: 0 0 auto;
   padding: .7mm 1.5mm;
@@ -4820,6 +4840,14 @@ button {
 .pharmacy-print-label.storage-light-cold {
   border-color: #16803c;
   background: #ecfdf3;
+}
+
+.pharmacy-print-label.storage-tone-light .pharmacy-label-main {
+  background: #ecfdf3;
+}
+
+.pharmacy-print-label.storage-tone-cold:not(.storage-tone-light) .pharmacy-label-main {
+  background: #eff8ff;
 }
 
 .pharmacy-storage-circle {
@@ -4927,8 +4955,10 @@ button {
 }
 
 .pharmacy-print-label.cap-label .pharmacy-label-main strong {
-  font-size: .72em;
+  font-size: .58em;
   line-height: 1;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
 }
 
 .pharmacy-print-label.cap-label .pharmacy-label-main b {
@@ -5034,9 +5064,22 @@ button {
   line-height: 1;
 }
 
+.pharmacy-side-label-name small.side-storage-light {
+  position: static;
+  margin-top: .5mm;
+  color: #16803c;
+  font-size: 7pt;
+}
+
+.pharmacy-side-label-name mark.dose-highlight {
+  padding: 0 .25mm;
+  color: #d92d20;
+  background: #fff200;
+}
+
 .pharmacy-print-label.external-shelf-label {
   grid-template-rows: 1fr;
-  border: 1.2mm solid var(--pharmacy-external-tone, #111827);
+  border: .35mm solid #d92d20;
   background: color-mix(in srgb, var(--pharmacy-external-tone, #111827) 12%, white);
 }
 
@@ -5241,7 +5284,7 @@ button {
   grid-template-columns: 12mm minmax(0, 1fr) 12mm;
   width: 100%;
   height: 100%;
-  border: 1.2mm solid #d92d20;
+  border: .35mm solid #d92d20;
   background: #fff;
 }
 
@@ -5273,6 +5316,11 @@ button {
   background: #d92d20;
 }
 
+.pharmacy-nutrition-label aside.light-condition {
+  color: #16803c;
+  background: #d9f99d;
+}
+
 .pharmacy-nutrition-label strong {
   overflow: hidden;
   font-size: 12pt;
@@ -5295,7 +5343,7 @@ button {
 }
 
 .pharmacy-print-label.storage-tone-light .pharmacy-nutrition-label {
-  border-color: #16803c;
+  border-color: #d92d20;
 }
 
 .pharmacy-print-label.storage-tone-light .pharmacy-nutrition-label > strong {
@@ -5339,11 +5387,38 @@ button {
 }
 
 .pharmacy-print-label.syrup-label.label-size-15x90 {
-  border: 1.2mm solid #d92d20 !important;
+  border: .35mm solid #d92d20 !important;
 }
 
 .pharmacy-print-label.syrup-label.label-size-48x94 {
-  border: 1.2mm solid #111827 !important;
+  border: .35mm solid #111827 !important;
+}
+
+.pharmacy-print-label.syrup-label.label-size-15x90.storage-tone-light {
+  border-color: #16803c !important;
+}
+
+.pharmacy-print-label.syrup-label.label-size-15x90.storage-tone-light::after {
+  content: "차광";
+  position: absolute;
+  right: 1mm;
+  top: 50%;
+  display: flex;
+  width: 8mm;
+  height: 8mm;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  color: #16803c;
+  background: #d9f99d;
+  font-size: 6pt;
+  font-weight: 1000;
+}
+
+.pharmacy-print-label:is(.label-size-50x93, .label-size-55x93, .label-size-50x160) .pharmacy-label-main strong {
+  font-size: 1.15em;
+  font-weight: 1000;
 }
 
 .pharmacy-inline-border-choice {
@@ -5351,6 +5426,14 @@ button {
   align-items: center;
   gap: 5px;
   margin-left: auto;
+}
+
+.pdf-full-label-source {
+  position: fixed;
+  left: -100000px;
+  top: 0;
+  width: max-content;
+  pointer-events: none;
 }
 
 .pharmacy-inline-border-choice span {

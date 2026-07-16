@@ -2524,7 +2524,9 @@ export function App() {
   }
 
   async function downloadReport() {
-    const reportElement = printPreviewRef.current ?? reportRef.current;
+    const reportElement = printPreviewMode === "drug-labels"
+      ? reportRef.current
+      : printPreviewRef.current ?? reportRef.current;
     if (!reportElement) return;
     const reportCategory = mainCategory === "ecart" ? "ecart" : mainCategory === "narcotic" ? "narcotic" : "stock";
     const reportTargetName =
@@ -3072,6 +3074,10 @@ export function App() {
     );
     const hasColdWarning = draft.warnings.includes("냉장");
     const hasLightWarning = draft.warnings.includes("차광");
+    const cautionWarnings = draft.warnings.filter((warning) => !["냉장", "차광"].includes(warning));
+    const isInjectionLabel = ["앰플", "바이알", "냉장주사"].includes(draft.category);
+    const showStorageBanner = isInjectionLabel && (hasLightWarning || hasColdWarning);
+    const showTopBanner = Boolean(draft.printable.topBanner) || hasCautionWarning || showStorageBanner;
     const displayTitle = draft.accessory === "병뚜껑"
       ? draft.printable.title.replace(/\btab(?:let)?\b/gi, "").replace(/\s{2,}/g, " ").trim()
       : draft.printable.title;
@@ -3115,9 +3121,10 @@ export function App() {
             : <span>사진 미등록</span>}</div>
           <div className="pharmacy-side-label-name">
             <div className="pharmacy-side-label-name-core"><strong>{draft.printable.koreanName || draft.printable.title}</strong>
-            <span>{draft.printable.title}</span>
+            <span>{hasDoseHighlight && titleParts.dose ? <>{titleParts.before}<mark className="dose-highlight">{titleParts.dose}</mark>{titleParts.after}</> : draft.printable.title}</span>
             {draft.doseUnit && draft.doseUnit !== "1T" ? <b>{draft.doseUnit}</b> : null}</div>
-            {draft.warnings.length > 0 ? <small>{draft.warnings.join(" · ")}</small> : null}
+            {cautionWarnings.length > 0 ? <small>{cautionWarnings.join(" · ")}</small> : null}
+            {hasLightWarning ? <small className="side-storage-light">차광</small> : null}
           </div>
           <div className="pharmacy-side-label-meta">
             <strong>{draft.atc ? `${draft.atc}번` : "-"}</strong>
@@ -3129,14 +3136,14 @@ export function App() {
           <b>{draft.warnings.filter((warning) => !["냉장", "차광"].includes(warning)).join(" · ") || "-"}</b>
           {draft.category === "냉장주사" ? <em>{draft.location || "-"}</em> : null}
         </div> : draft.category === "영양수액" ? <div className="pharmacy-nutrition-label">
-          <aside>{draft.warnings.filter((warning) => !["냉장", "차광"].includes(warning)).join(" · ")}{hasLightWarning ? <b className="nutrition-storage-dot light">차광</b> : !hasLightWarning && hasColdWarning ? <b className="nutrition-storage-dot cold">냉장</b> : null}</aside>
+          <aside className={hasLightWarning ? "light-condition" : ""}>{hasLightWarning ? "차광" : cautionWarnings[0] ?? ""}</aside>
           <strong className={titleSizeClass}>{hasDoseHighlight && titleParts.dose ? <>{titleParts.before}<mark className="dose-highlight">{titleParts.dose}</mark>{titleParts.after}</> : draft.printable.title}</strong>
-          <aside>{draft.warnings.filter((warning) => !["냉장", "차광"].includes(warning)).join(" · ")}</aside>
+          <aside>{hasLightWarning ? cautionWarnings.join(" · ") : cautionWarnings.slice(1).join(" · ")}</aside>
         </div> : <>
-        {draft.accessory !== "병뚜껑" && !isExternalShelfLabel && (draft.printable.topBanner || hasCautionWarning) ? <div className="pharmacy-label-top-banner">
-          <span>{[draft.printable.topBanner, draft.warnings.filter((warning) => !["냉장", "차광"].includes(warning)).join(" · ")].filter(Boolean).join(" · ")}</span>
-          {hasLightWarning ? <b className="pharmacy-storage-badge light">차광</b> : null}
-          {hasColdWarning ? <b className="pharmacy-storage-badge cold">냉장</b> : null}
+        {draft.accessory !== "병뚜껑" && !isExternalShelfLabel && showTopBanner ? <div className={`pharmacy-label-top-banner ${!hasCautionWarning && hasLightWarning ? "light-only" : !hasCautionWarning && hasColdWarning ? "cold-only" : ""}`}>
+          <span>{[draft.printable.topBanner, draft.category !== "항암제" ? cautionWarnings.join(" · ") : "", !hasCautionWarning && hasLightWarning ? "차광" : "", !hasCautionWarning && !hasLightWarning && hasColdWarning ? "냉장 보관" : ""].filter(Boolean).join(" · ")}</span>
+          {hasCautionWarning && hasLightWarning ? <b className="pharmacy-storage-badge light">차광</b> : null}
+          {hasCautionWarning && hasColdWarning ? <b className="pharmacy-storage-badge cold">냉장</b> : null}
         </div> : null}
         {!hasCautionWarning && hasColdWarning && hasLightWarning ? <b className="pharmacy-storage-circle cold">냉장</b> : null}
         <div className="pharmacy-label-main">
@@ -3154,7 +3161,7 @@ export function App() {
     );
   }
 
-  function renderDrugLabelSheet(targetRef?: RefObject<HTMLDivElement | null>, className = "drug-label-sheet") {
+  function renderDrugLabelSheet(targetRef?: RefObject<HTMLDivElement | null>, className = "drug-label-sheet", previewLimit?: number) {
     return (
       <section ref={targetRef} className={`${className} mixed-label-sheet ${pharmacyPrintDrafts.length > 0 ? `pharmacy-paper-${pharmacyPrintPaper.toLowerCase()}` : ""}`}>
         <div className="drug-label-sheet-head">
@@ -3166,7 +3173,7 @@ export function App() {
         </div>
         <div className="drug-label-print-grid mixed-label-grid">
           {pharmacyPrintDrafts.length > 0
-            ? pharmacyPrintDrafts.map((draft, index) => renderPharmacyPrintDraftArticle(draft, `${draft.id}-${draft.savedAt ?? "draft"}-${index}`))
+            ? pharmacyPrintDrafts.slice(0, previewLimit).map((draft, index) => renderPharmacyPrintDraftArticle(draft, `${draft.id}-${draft.savedAt ?? "draft"}-${index}`))
             : labelPrintRows.map((entry, index) => renderDrugLabelArticle(entry, `${entry.id}-${entry.sizeKey}-${entry.copyIndex}-${index}`))}
         </div>
       </section>
@@ -4242,7 +4249,7 @@ export function App() {
                         : printPreviewMode === "all-narcotic"
                           ? `${currentNarcoticRooms.length.toLocaleString("ko-KR")}개 비치마약류 보유실`
                           : printPreviewMode === "drug-labels"
-                            ? `${labelPrintRows.length.toLocaleString("ko-KR")}장`
+                            ? `${pharmacyPrintDrafts.length.toLocaleString("ko-KR")}장 · 화면은 최대 6장 표시`
                             : mainCategory === "stock"
                               ? displayRoomName(activeRoomInfo?.label ?? activeRoom)
                               : mainCategory === "narcotic"
@@ -4280,7 +4287,7 @@ export function App() {
                   : printPreviewMode === "all-ecart"
                     ? renderBulkEcartReports()
                     : printPreviewMode === "drug-labels"
-                      ? renderDrugLabelSheet(printPreviewRef, "drug-label-sheet print-preview-report")
+                      ? <>{renderDrugLabelSheet(printPreviewRef, "drug-label-sheet print-preview-report", 6)}<div className="pdf-full-label-source">{renderDrugLabelSheet(reportRef, "drug-label-sheet")}</div></>
                       : renderReportCard(printPreviewRef, "report-card print-preview-report")}
             </div>
           </div>
