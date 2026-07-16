@@ -4958,6 +4958,73 @@ button {
   font-size: 1.18em;
 }
 
+.pharmacy-print-label.controlled-drug-label {
+  display: block;
+  border: 1px solid #111;
+  border-radius: 0;
+  background: #fff;
+}
+
+.pharmacy-controlled-label-form {
+  display: grid;
+  grid-template-rows: 7mm minmax(0, 1fr) 7mm;
+  width: 100%;
+  height: 100%;
+}
+
+.pharmacy-controlled-label-top,
+.pharmacy-controlled-label-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: 0 1mm;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 1000;
+  line-height: 1;
+  text-align: center;
+}
+
+.pharmacy-controlled-label-top {
+  background: #d92d20;
+}
+
+.pharmacy-controlled-label-footer {
+  background: #6f1d1b;
+}
+
+.pharmacy-controlled-label-form > strong {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 1mm 2.2mm;
+  overflow: hidden;
+  color: #050505;
+  font-size: 20px;
+  font-weight: 1000;
+  line-height: 1.08;
+  text-align: center;
+  text-wrap: balance;
+  word-break: keep-all;
+}
+
+.pharmacy-controlled-label-form > strong.medium-name {
+  font-size: 18.5px;
+}
+
+.pharmacy-controlled-label-form > strong.long-name,
+.pharmacy-controlled-label-form > strong.very-long-name {
+  font-size: 16.5px;
+}
+
+.pharmacy-controlled-label-form mark.dose-highlight {
+  padding: 0 .3mm;
+  color: #ef1d19;
+  background: #fff200;
+}
+
 .pharmacy-print-label.cap-label {
   grid-template-rows: 1fr;
 }
@@ -5056,6 +5123,12 @@ button {
   font-size: 11pt;
   font-weight: 1000;
   line-height: 1.05;
+}
+
+.pharmacy-side-label-name strong mark.dose-highlight {
+  padding: 0 .25mm;
+  color: #d92d20;
+  background: #fff200;
 }
 
 .pharmacy-side-label-name span,

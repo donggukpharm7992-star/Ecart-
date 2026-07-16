@@ -26,6 +26,8 @@ describe("pharmacy label workspace UI", () => {
     expect(workspaceSource).toContain("pharmacy-storage-badge cold");
     expect(workspaceSource).toContain("storageOnlyClass");
     expect(workspaceSource).toContain("no-top-banner");
+    expect(workspaceSource).toContain('!showTopBanner ? "no-top-banner no-warning"');
+    expect(workspaceSource).toContain('"냉장보관"');
   });
 
   it("removes non-drug status values from the drug type selector", () => {
@@ -82,5 +84,13 @@ describe("pharmacy label workspace UI", () => {
     expect(workspaceSource).toContain("activeRow?.imagePath || draft?.imagePath");
     expect(workspaceSource).toContain("사진 미등록");
     expect(workspaceSource).toContain("sideCautionWarnings");
+    expect(workspaceSource).toContain("koreanTitleParts");
+  });
+
+  it("uses the stock-management 40x70 structure for controlled-drug labels", () => {
+    expect(workspaceSource).toContain("pharmacy-controlled-label-form");
+    expect(workspaceSource).toContain("고위험의약품");
+    expect(workspaceSource).toContain("용량확인");
+    expect(workspaceSource).toContain("controlledCategory");
   });
 });

@@ -1,6 +1,11 @@
 import { ArrowLeft, ChevronDown, FileDown, Printer, Save, Search, Upload } from "lucide-react";
 import { useEffect, useMemo, useState, type ChangeEvent, type CSSProperties } from "react";
-import { matchesHospitalDrugLabel, type HospitalDrugLabelRow } from "./hospitalDrugLabels";
+import {
+  getHospitalDrugControlledCategory,
+  matchesHospitalDrugLabel,
+  stripHospitalDrugControlledPrefix,
+  type HospitalDrugLabelRow,
+} from "./hospitalDrugLabels";
 import {
   A3_PAPER, A4_PAPER, CABINET_CATEGORIES, DRUG_CATEGORIES, WARNING_OPTIONS,
   groupPharmacyLabelsForPaper, resolvePharmacyLabelDraft, rowMatchesCategory, sizesForCategory,
@@ -152,6 +157,10 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
   const displayTitle = isCapLabel ? draft?.printable.title.replace(/\btab(?:let)?\b/gi, "").replace(/\s{2,}/g, " ").trim() ?? "" : draft?.printable.title ?? "";
   const titleSizeClass = displayTitle.length > 34 ? "very-long-name" : displayTitle.length > 25 ? "long-name" : displayTitle.length > 16 ? "medium-name" : "";
   const titleParts = splitDoseText(displayTitle);
+  const koreanTitleParts = splitDoseText(draft?.printable.koreanName ?? "");
+  const controlledCategory = activeRow ? getHospitalDrugControlledCategory(activeRow) : undefined;
+  const controlledTitle = stripHospitalDrugControlledPrefix(displayTitle);
+  const controlledTitleParts = splitDoseText(controlledTitle);
   const currentImagePath = activeRow?.imagePath || draft?.imagePath || "";
   const imageUrl = currentImagePath
     ? `${import.meta.env.BASE_URL}${currentImagePath.replace(/^\.?\//, "")}`
@@ -235,13 +244,15 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
           <input placeholder="약품 위치" value={draft.location} onChange={(e) => patch({ location: e.target.value })}/>
           <input placeholder="ATC 번호" value={draft.atc} onChange={(e) => patch({ atc: e.target.value })}/>
         </div>}
-        <div className="pharmacy-label-canvas">{draft ? <article className={`pharmacy-print-label label-size-${draft.size.presetKey} ${category === "항암제" ? "anticancer" : ""} ${category === "고가약" ? "high-cost" : ""} ${storageOnlyClass} ${storageToneClass} ${isCapLabel ? "cap-label" : ""} ${isSideLabel ? "side-label" : ""} ${isExternalShelfLabel ? "external-shelf-label" : ""} ${category === "시럽" ? "syrup-label" : ""} ${category === "영양수액" ? "nutrition-fluid-label" : ""} ${!draft.printable.topBanner && !hasCautionWarning ? "no-top-banner" : ""} ${!draft.printable.warning && !draft.printable.topBanner ? "no-warning" : ""}`} style={labelStyle}>
+        <div className="pharmacy-label-canvas">{draft ? <article className={`pharmacy-print-label label-size-${draft.size.presetKey} ${category === "항암제" ? "anticancer" : ""} ${category === "마약/향정" ? "controlled-drug-label" : ""} ${category === "고가약" ? "high-cost" : ""} ${storageOnlyClass} ${storageToneClass} ${isCapLabel ? "cap-label" : ""} ${isSideLabel ? "side-label" : ""} ${isExternalShelfLabel ? "external-shelf-label" : ""} ${category === "시럽" ? "syrup-label" : ""} ${category === "영양수액" ? "nutrition-fluid-label" : ""} ${!showTopBanner ? "no-top-banner no-warning" : ""}`} style={labelStyle}>
           {isSideLabel ? <div className="pharmacy-side-label-form">
             <div className="pharmacy-side-label-photo">{imageUrl
               ? <a href={draft.imageSourceUrl} target="_blank" rel="noreferrer" title="약학정보원 식별사진 검색"><img src={imageUrl} alt={`${draft.printable.koreanName} 식별사진`}/></a>
               : <a href={activeRow?.imageSourceUrl || draft.imageSourceUrl} target="_blank" rel="noreferrer">사진 미등록<br/>식별정보 확인</a>}</div>
             <div className="pharmacy-side-label-name">
-              <div className="pharmacy-side-label-name-core"><strong>{draft.printable.koreanName || draft.printable.title}</strong>
+              <div className="pharmacy-side-label-name-core"><strong>{hasDoseHighlight && koreanTitleParts.dose
+                ? <>{koreanTitleParts.before}<mark className="dose-highlight">{koreanTitleParts.dose}</mark>{koreanTitleParts.after}</>
+                : draft.printable.koreanName || draft.printable.title}</strong>
               <span>{hasDoseHighlight && titleParts.dose ? <>{titleParts.before}<mark className="dose-highlight">{titleParts.dose}</mark>{titleParts.after}</> : draft.printable.title}</span>
               {draft.doseUnit && draft.doseUnit !== "1T" && <b>{draft.doseUnit}</b>}</div>
               {sideCautionWarnings.length > 0 && <small>{sideCautionWarnings.join(" · ")}</small>}
@@ -256,6 +267,12 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
             <div><strong>{draft.printable.title}</strong>{draft.printable.koreanName && <span>{draft.printable.koreanName}</span>}</div>
             <b>{draft.warnings.filter((warning) => !["냉장", "차광"].includes(warning)).join(" · ") || "-"}</b>
             {category === "냉장주사" && <em>{draft.location || "-"}</em>}
+          </div> : category === "마약/향정" ? <div className="pharmacy-controlled-label-form">
+            <div className="pharmacy-controlled-label-top">고위험의약품{hasDoseHighlight ? " / 용량확인" : ""}</div>
+            <strong className={titleSizeClass}>{hasDoseHighlight && controlledTitleParts.dose
+              ? <>{controlledTitleParts.before}<mark className="dose-highlight">{controlledTitleParts.dose}</mark>{controlledTitleParts.after}</>
+              : controlledTitle}</strong>
+            <div className="pharmacy-controlled-label-footer">{controlledCategory ?? "마약/향정"}{hasColdWarning ? " / 냉장" : ""}</div>
           </div> : category === "영양수액" ? <div className="pharmacy-nutrition-label">
             <aside className={hasLightWarning ? "light-condition" : ""}>{hasLightWarning ? "차광" : cautionWarnings[0] ?? ""}</aside>
             <strong className={titleSizeClass}>{hasDoseHighlight && titleParts.dose ? <>{titleParts.before}<mark className="dose-highlight">{titleParts.dose}</mark>{titleParts.after}</> : draft.printable.title}</strong>
@@ -266,7 +283,7 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
             {externalCautionWarnings.length > 0 && externalStorageText && <aside className={hasLightWarning ? "light" : "cold"}>{externalStorageText}</aside>}
           </div> : <>
           {!isCapLabel && !isExternalShelfLabel && showTopBanner && <div className={`pharmacy-label-top-banner ${!hasCautionWarning && hasLightWarning ? "light-only" : !hasCautionWarning && hasColdWarning ? "cold-only" : ""}`}>
-            <span>{[draft.printable.topBanner, category !== "항암제" ? cautionWarnings.join(" · ") : "", !hasCautionWarning && hasLightWarning ? "차광" : "", !hasCautionWarning && !hasLightWarning && hasColdWarning ? "냉장 보관" : ""].filter(Boolean).join(" · ")}</span>
+            <span>{[draft.printable.topBanner, category !== "항암제" ? cautionWarnings.join(" · ") : "", !hasCautionWarning && hasLightWarning ? "차광" : "", !hasCautionWarning && !hasLightWarning && hasColdWarning ? "냉장보관" : ""].filter(Boolean).join(" · ")}</span>
             {hasCautionWarning && hasLightWarning && <b className="pharmacy-storage-badge light">차광</b>}
             {hasCautionWarning && hasColdWarning && <b className="pharmacy-storage-badge cold">냉장</b>}
           </div>}
