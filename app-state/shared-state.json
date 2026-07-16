@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-16T06:05:09.512Z",
+  "updatedAt": "2026-07-16T06:09:16.614Z",
   "clientId": "8fca6235-56b2-4861-8140-d0d51f2a8239",
   "state": {
     "stockDrugs": [
@@ -7157,7 +7157,9 @@
       "HBEF::XPROPO115W": true,
       "MICU::XETOM": true,
       "MICU::XMIDA5": true,
-      "MICU::XMIDA15": true
+      "MICU::XMIDA15": true,
+      "MICU::XKETA5": true,
+      "MICU::XLZPAM2": true
     },
     "narcoticExpiry": {},
     "narcoticChecklistByRoom": {
