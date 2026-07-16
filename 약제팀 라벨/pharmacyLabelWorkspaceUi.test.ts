@@ -42,6 +42,13 @@ describe("pharmacy label workspace UI", () => {
     expect(workspaceSource).toContain('"5mm"');
   });
 
+  it("renders the side-label template with photo, name, ATC, and expiry sections", () => {
+    expect(workspaceSource).toContain("pharmacy-side-label-form");
+    expect(workspaceSource).toContain("식별사진");
+    expect(workspaceSource).toContain("유효기간");
+    expect(workspaceSource).toContain("23x102");
+  });
+
   it("filters side and cap labels and places paper controls next to output", () => {
     expect(workspaceSource).toContain("표시 약품 먼저 보기");
     expect(workspaceSource).toContain("sideLabelHalfT");
