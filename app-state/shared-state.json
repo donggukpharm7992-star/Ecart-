@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-16T06:11:04.823Z",
+  "updatedAt": "2026-07-16T06:20:33.610Z",
   "clientId": "8fca6235-56b2-4861-8140-d0d51f2a8239",
   "state": {
     "stockDrugs": [
@@ -7457,7 +7457,206 @@
         }
       ]
     },
-    "narcoticRoundSummaryDraft": null,
+    "narcoticRoundSummaryDraft": {
+      "title": "비치마약류 순회점검표",
+      "inspectionPeriod": "2026년 7월 16일",
+      "rows": [
+        {
+          "id": "narcotic:INJ",
+          "roomName": "INJ",
+          "result": "적합",
+          "details": "적합"
+        },
+        {
+          "id": "narcotic:DREMM",
+          "roomName": "DREMM",
+          "result": "적합",
+          "details": "적합"
+        },
+        {
+          "id": "narcotic:ER",
+          "roomName": "ER (응급실)",
+          "result": "적합",
+          "details": "적합"
+        },
+        {
+          "id": "narcotic:GICLA",
+          "roomName": "GICLA",
+          "result": "적합",
+          "details": "적합"
+        },
+        {
+          "id": "narcotic:HBEF",
+          "roomName": "HBEF",
+          "result": "적합",
+          "details": "적합"
+        },
+        {
+          "id": "narcotic:MICU",
+          "roomName": "MICU (내과중환자실)",
+          "result": "적합",
+          "details": "적합"
+        },
+        {
+          "id": "narcotic:DSR",
+          "roomName": "DSR",
+          "result": "적합",
+          "details": "적합"
+        },
+        {
+          "id": "narcotic:AN",
+          "roomName": "AN (마취통증의학과)",
+          "result": "적합",
+          "details": "적합"
+        },
+        {
+          "id": "narcotic:OR",
+          "roomName": "OR (수술실)",
+          "result": "적합",
+          "details": "적합"
+        },
+        {
+          "id": "narcotic:SICU",
+          "roomName": "SICU (외과중환자실)",
+          "result": "적합",
+          "details": "적합"
+        },
+        {
+          "id": "narcotic:ADR",
+          "roomName": "ADR",
+          "result": "적합",
+          "details": "적합"
+        },
+        {
+          "id": "narcotic:HPC",
+          "roomName": "HPC",
+          "result": "적합",
+          "details": "적합"
+        },
+        {
+          "id": "narcotic:난임",
+          "roomName": "난임",
+          "result": "적합",
+          "details": "적합"
+        },
+        {
+          "id": "narcotic:DRL",
+          "roomName": "DRL",
+          "result": "적합",
+          "details": "적합"
+        },
+        {
+          "id": "narcotic:NICU",
+          "roomName": "NICU (신생아중환자실)",
+          "result": "적합",
+          "details": "적합"
+        },
+        {
+          "id": "narcotic:42",
+          "roomName": "42병동",
+          "result": "적합",
+          "details": "적합"
+        },
+        {
+          "id": "narcotic:51",
+          "roomName": "51병동",
+          "result": "적합",
+          "details": "적합"
+        },
+        {
+          "id": "narcotic:52",
+          "roomName": "52병동",
+          "result": "적합",
+          "details": "적합"
+        },
+        {
+          "id": "narcotic:61",
+          "roomName": "61병동",
+          "result": "적합",
+          "details": "적합"
+        },
+        {
+          "id": "narcotic:62",
+          "roomName": "62병동",
+          "result": "적합",
+          "details": "적합"
+        },
+        {
+          "id": "narcotic:71",
+          "roomName": "71병동",
+          "result": "적합",
+          "details": "적합"
+        },
+        {
+          "id": "narcotic:72",
+          "roomName": "72병동",
+          "result": "적합",
+          "details": "적합"
+        },
+        {
+          "id": "narcotic:81",
+          "roomName": "81병동",
+          "result": "적합",
+          "details": "적합"
+        },
+        {
+          "id": "narcotic:82",
+          "roomName": "82병동",
+          "result": "적합",
+          "details": "적합"
+        },
+        {
+          "id": "narcotic:91",
+          "roomName": "91병동",
+          "result": "적합",
+          "details": "적합"
+        },
+        {
+          "id": "narcotic:92",
+          "roomName": "92병동",
+          "result": "적합",
+          "details": "적합"
+        },
+        {
+          "id": "narcotic:101",
+          "roomName": "101병동",
+          "result": "적합",
+          "details": "적합"
+        },
+        {
+          "id": "narcotic:102",
+          "roomName": "102병동",
+          "result": "적합",
+          "details": "적합"
+        },
+        {
+          "id": "narcotic:RRT",
+          "roomName": "RRT",
+          "result": "적합",
+          "details": "적합"
+        },
+        {
+          "id": "narcotic:111",
+          "roomName": "111병동",
+          "result": "적합",
+          "details": "적합"
+        },
+        {
+          "id": "narcotic:112",
+          "roomName": "112병동",
+          "result": "적합",
+          "details": "적합"
+        },
+        {
+          "id": "narcotic:121",
+          "roomName": "121병동",
+          "result": "적합",
+          "details": "적합"
+        }
+      ],
+      "commonGuidance": "1. 병동으로 올라온 마약류는 인계 시 수량과 이상 유무를 확인해 주세요.\n2. 마약 타실 때는 반드시 마약 이송함을 지참해 주세요.\n3. 약제팀에서 마약류(경구 향정 제외) 인계 시 불출장 인수인계 전산 등록을 반드시 해 주시고\n   이송 직원에게 교육 해 주세요.\n4. 비치 마약류는 선입 선출이 되도록 관리 해 주세요.\n5. 마약류는 절대 자체 폐기 하지 않도록 주의 바랍니다.\n   (미사용, 트약 중지 폐기 마약 등은 마약 담당에게 알려 처리 바랍니다.)\n6. 잔여 마약 및 폐기대상 마약도 마약류 저장 시설에 보관하시다가 약제팀에 내려 주세요.\n7. 마약류 파손 사고 및 분실 사고가 일어나지 않도록 규정에 따라 마약류를 관리 해 주세요.\n8. 마약 저장시설 점검부 기록이 누락되지 않도록 1주일에 한 번 반드시 이상 유무 점검 후 서명해서\n   법정 보관 기간까지 보관해 주세요. 보건소 감사 시 증빙 자료입니다.",
+      "closingNote": "간호부의 지속적이고 적극적인 협조 항상 감사드립니다."
+    },
     "uninspectedNarcoticRoomIds": [],
     "checkedStock": {
       "재활의학과::XXHYAL60": true
