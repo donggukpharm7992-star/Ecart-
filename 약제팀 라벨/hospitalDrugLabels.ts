@@ -39,6 +39,8 @@ export type HospitalDrugLabelRow = {
   cabinetNutrition?: boolean;
   cabinetExternal?: boolean;
   cabinetSyrup?: boolean;
+  imagePath?: string;
+  imageSourceUrl?: string;
 };
 
 type HospitalDrugLabelsModule = { default: HospitalDrugLabelRow[] };

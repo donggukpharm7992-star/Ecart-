@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import json
+import hashlib
+import re
 from pathlib import Path
+from urllib.parse import quote
 
 from openpyxl import load_workbook
 
@@ -9,6 +12,8 @@ from openpyxl import load_workbook
 LABEL_DIR = Path(__file__).resolve().parent
 SOURCE = LABEL_DIR / "원내보유의약품리스트.xlsx"
 OUTPUT = LABEL_DIR / "data" / "hospitalDrugLabels.generated.json"
+SIDE_LABEL_TEMPLATE = LABEL_DIR / "뺑뺑이 PTP통, 병_측면라벨_양식.xlsx"
+IMAGE_OUTPUT_DIR = LABEL_DIR.parent / "public" / "pharmacy-drug-images"
 
 
 def clean(value: object) -> str:
@@ -21,7 +26,59 @@ def is_yes(value: object) -> bool:
     return clean(value).upper() == "Y"
 
 
+def normalized_name(value: object) -> str:
+    return re.sub(r"[^0-9a-z가-힣]", "", clean(value).lower())
+
+
+def extract_side_label_images() -> dict[str, str]:
+    if not SIDE_LABEL_TEMPLATE.exists():
+        return {}
+    workbook = load_workbook(SIDE_LABEL_TEMPLATE, data_only=True)
+    IMAGE_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    image_by_name: dict[str, str] = {}
+    for worksheet in workbook.worksheets:
+        for image in worksheet._images:
+            anchor_row = image.anchor._from.row + 1
+            name_column = image.anchor._from.col + 2
+            label_text = ""
+            for row_number in range(max(1, anchor_row - 2), min(worksheet.max_row, anchor_row + 3) + 1):
+                candidate = clean(worksheet.cell(row_number, name_column).value)
+                if candidate:
+                    label_text = candidate
+                    break
+            if not label_text:
+                continue
+            names = [part.strip("() ") for part in label_text.splitlines()[:2] if part.strip()]
+            if not names:
+                continue
+            data = image._data()
+            extension = image.format.lower() if image.format else "png"
+            digest = hashlib.sha1(data).hexdigest()[:16]
+            file_name = f"{digest}.{extension}"
+            target = IMAGE_OUTPUT_DIR / file_name
+            if not target.exists():
+                target.write_bytes(data)
+            public_path = f"/pharmacy-drug-images/{file_name}"
+            for name in names:
+                image_by_name[normalized_name(name)] = public_path
+    return image_by_name
+
+
+def match_image(image_by_name: dict[str, str], *names: str) -> str:
+    normalized = [normalized_name(name) for name in names if clean(name)]
+    for name in normalized:
+        if name in image_by_name:
+            return image_by_name[name]
+    candidates = [
+        (len(image_name), image_path)
+        for image_name, image_path in image_by_name.items()
+        if len(image_name) >= 4 and any(image_name in name or name in image_name for name in normalized)
+    ]
+    return max(candidates, default=(0, ""))[1]
+
+
 def main() -> None:
+    image_by_name = extract_side_label_images()
     workbook = load_workbook(SOURCE, data_only=True, read_only=True)
     worksheet = workbook.worksheets[0]
     oral_injection_names = {
@@ -93,6 +150,8 @@ def main() -> None:
                 "cabinetNutrition": name.lower() in nutrition_names,
                 "cabinetExternal": code in external_codes,
                 "cabinetSyrup": code in syrup_codes,
+                "imagePath": match_image(image_by_name, name, read(raw, "한글약품명")),
+                "imageSourceUrl": f"https://www.health.kr/searchDrug/search_detail.asp?search_detail=Y&search_sunb1={quote(read(raw, '한글약품명'))}",
             }
         )
 

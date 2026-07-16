@@ -45,6 +45,8 @@ export type PharmacyLabelDraft = {
   location: string;
   atc: string;
   expiry: string;
+  imagePath: string;
+  imageSourceUrl: string;
   backgroundColor: string;
   size: PharmacyLabelSize;
   printable: PharmacyPrintableText;
@@ -163,6 +165,8 @@ export function createPharmacyLabelDraft(
     location: row.location ?? "",
     atc: row.atc ?? "",
     expiry: row.expiry ?? "",
+    imagePath: row.imagePath ?? "",
+    imageSourceUrl: row.imageSourceUrl ?? "",
     backgroundColor: extractHex(row.coloredSideBackground) || "#ffffff",
     size,
     printable: {

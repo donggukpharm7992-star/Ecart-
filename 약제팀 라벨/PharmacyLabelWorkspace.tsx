@@ -198,7 +198,9 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
         </div>}
         <div className="pharmacy-label-canvas">{draft ? <article className={`pharmacy-print-label ${category === "항암제" ? "anticancer" : ""} ${category === "고가약" ? "high-cost" : ""} ${storageOnlyClass} ${isCapLabel ? "cap-label" : ""} ${isSideLabel ? "side-label" : ""} ${!draft.printable.warning && !draft.printable.topBanner ? "no-warning" : ""}`} style={labelStyle}>
           {isSideLabel ? <div className="pharmacy-side-label-form">
-            <div className="pharmacy-side-label-photo">식별사진</div>
+            <div className="pharmacy-side-label-photo">{draft.imagePath
+              ? <a href={draft.imageSourceUrl} target="_blank" rel="noreferrer" title="약학정보원 식별사진 검색"><img src={draft.imagePath} alt={`${draft.printable.koreanName} 식별사진`}/></a>
+              : <a href={draft.imageSourceUrl} target="_blank" rel="noreferrer">사진 확인</a>}</div>
             <div className="pharmacy-side-label-name">
               <strong>{draft.printable.title}</strong>
               <span>({draft.printable.koreanName})</span>

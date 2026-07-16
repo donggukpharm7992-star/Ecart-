@@ -3099,7 +3099,9 @@ export function App() {
     return (
       <article className={`pharmacy-print-label print-label ${draft.category === "고가약" ? "high-cost" : ""} ${storageOnlyClass} ${draft.accessory === "병뚜껑" ? "cap-label" : ""} ${isSideLabel ? "side-label" : ""} ${!draft.printable.warning && !draft.printable.topBanner ? "no-warning" : ""}`} style={style} key={key}>
         {isSideLabel ? <div className="pharmacy-side-label-form">
-          <div className="pharmacy-side-label-photo">식별사진</div>
+          <div className="pharmacy-side-label-photo">{draft.imagePath
+            ? <img src={draft.imagePath} alt={`${draft.printable.koreanName} 식별사진`}/>
+            : <span>사진 확인</span>}</div>
           <div className="pharmacy-side-label-name">
             <strong>{draft.printable.title}</strong>
             <span>({draft.printable.koreanName})</span>
