@@ -143,7 +143,7 @@ export function createPharmacyLabelDraft(
   category: PharmacyLabelCategory,
   labelFamily: PharmacyLabelFamily,
 ): PharmacyLabelDraft {
-  const warnings = getHospitalDrugLabelWarnings(row);
+  const warnings = getPharmacyLabelWarnings(row);
   const cabinetSize = labelFamily === "cabinet"
     ? category === "원병"
       ? sizes(["30*120"])[0]
@@ -216,6 +216,25 @@ export function splitDoseText(title: string) {
   };
 }
 
+export function splitNutritionDoseText(title: string) {
+  const matches = [...title.matchAll(/\d+(?:\.\d+)?(?=\s*(?:mcg|mg|g|ml|mL|IU|unit))/gi)];
+  const match = matches.at(-1);
+  if (!match || match.index == null) return splitDoseText(title);
+  return {
+    before: title.slice(0, match.index),
+    dose: match[0],
+    after: title.slice(match.index + match[0].length),
+  };
+}
+
+function getPharmacyLabelWarnings(row: HospitalDrugLabelRow) {
+  const warnings = getHospitalDrugLabelWarnings(row);
+  if (/^Ntense\s+(?:central\s+1518|EF\s+506)\s*mL/i.test(row.name) && !warnings.includes("용량확인")) {
+    warnings.push("용량확인");
+  }
+  return warnings;
+}
+
 export function formatPharmacyExpiry(value: string) {
   return value.replace(/\s+00:00:00$/, "").trim();
 }
@@ -230,7 +249,7 @@ export function resolvePharmacyLabelDraft(
     .filter((label) => label.code === row.code && label.category === category && label.labelFamily === family)
     .sort((a, b) => b.savedAt.localeCompare(a.savedAt))[0];
   if (!saved) return createPharmacyLabelDraft(row, category, family);
-  const workbookWarnings = getHospitalDrugLabelWarnings(row);
+  const workbookWarnings = getPharmacyLabelWarnings(row);
   const warnings = [...new Set([...saved.warnings, ...workbookWarnings])];
   return {
     ...saved,

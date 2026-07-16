@@ -41,8 +41,9 @@ describe("pharmacy label workspace UI", () => {
   });
 
   it("renders designated thick borders in millimeters", () => {
-    expect(workspaceSource).toContain('draft.style.outerBorderPx >= 5');
-    expect(workspaceSource).toContain('"5mm"');
+    expect(workspaceSource).toContain('`${draft.style.outerBorderPx}mm solid');
+    expect(workspaceSource).toContain('"--pharmacy-label-border-width"');
+    expect(workspaceSource).toContain("}mm</b>");
   });
 
   it("renders the side-label template with photo, name, ATC, and expiry sections", () => {

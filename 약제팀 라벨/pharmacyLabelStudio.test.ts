@@ -8,6 +8,7 @@ import {
   savePharmacyLabelDraft,
   sizesForCategory,
   splitDoseText,
+  splitNutritionDoseText,
 } from "./pharmacyLabelStudio";
 import type { HospitalDrugLabelRow } from "./hospitalDrugLabels";
 
@@ -69,6 +70,22 @@ describe("pharmacy label studio rules", () => {
       dose: "100",
       after: "mg/ml inj",
     });
+  });
+
+  it("highlights the final nutrition-fluid volume and adds the designated Ntense dose check", () => {
+    expect(splitNutritionDoseText("SMOFlipid 20% 500ml inj")).toEqual({
+      before: "SMOFlipid 20% ",
+      dose: "500",
+      after: "ml inj",
+    });
+    const ntense = createPharmacyLabelDraft({
+      ...row,
+      name: "Ntense central 1518mL inj",
+      drugType: "영양수액",
+      doseCaution: false,
+      doseCheck: false,
+    }, "영양수액", "drug");
+    expect(ntense.warnings).toContain("용량확인");
   });
 
   it("refreshes image, ATC, and expiry values from the workbook over saved labels", () => {
