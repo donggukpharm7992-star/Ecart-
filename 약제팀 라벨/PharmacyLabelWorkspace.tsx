@@ -135,8 +135,9 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
   const displayTitle = isCapLabel ? draft?.printable.title.replace(/\btab(?:let)?\b/gi, "").replace(/\s{2,}/g, " ").trim() ?? "" : draft?.printable.title ?? "";
   const titleSizeClass = displayTitle.length > 34 ? "very-long-name" : displayTitle.length > 25 ? "long-name" : displayTitle.length > 16 ? "medium-name" : "";
   const titleParts = splitDoseText(displayTitle);
-  const imageUrl = draft?.imagePath
-    ? `${import.meta.env.BASE_URL}${draft.imagePath.replace(/^\.?\//, "")}`
+  const currentImagePath = activeRow?.imagePath || draft?.imagePath || "";
+  const imageUrl = currentImagePath
+    ? `${import.meta.env.BASE_URL}${currentImagePath.replace(/^\.?\//, "")}`
     : "";
 
   function chooseAccessory(value: PharmacyLabelDraft["accessory"]) {
@@ -221,10 +222,10 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
           {isSideLabel ? <div className="pharmacy-side-label-form">
             <div className="pharmacy-side-label-photo">{imageUrl
               ? <a href={draft.imageSourceUrl} target="_blank" rel="noreferrer" title="약학정보원 식별사진 검색"><img src={imageUrl} alt={`${draft.printable.koreanName} 식별사진`}/></a>
-              : <a href={draft.imageSourceUrl} target="_blank" rel="noreferrer">사진 확인</a>}</div>
+              : <a href={activeRow?.imageSourceUrl || draft.imageSourceUrl} target="_blank" rel="noreferrer">사진 미등록<br/>식별정보 확인</a>}</div>
             <div className="pharmacy-side-label-name">
-              <div className="pharmacy-side-label-name-core"><strong>{draft.printable.title}</strong>
-              <span>({draft.printable.koreanName})</span>
+              <div className="pharmacy-side-label-name-core"><strong>{draft.printable.koreanName || draft.printable.title}</strong>
+              <span>{draft.printable.title}</span>
               {draft.doseUnit && draft.doseUnit !== "1T" && <b>{draft.doseUnit}</b>}</div>
               {draft.warnings.length > 0 && <small>{draft.warnings.join(" · ")}</small>}
             </div>

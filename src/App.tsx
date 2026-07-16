@@ -3112,10 +3112,10 @@ export function App() {
         {isSideLabel ? <div className="pharmacy-side-label-form">
           <div className="pharmacy-side-label-photo">{imageUrl
             ? <img src={imageUrl} alt={`${draft.printable.koreanName} 식별사진`}/>
-            : <span>사진 확인</span>}</div>
+            : <span>사진 미등록</span>}</div>
           <div className="pharmacy-side-label-name">
-            <div className="pharmacy-side-label-name-core"><strong>{draft.printable.title}</strong>
-            <span>({draft.printable.koreanName})</span>
+            <div className="pharmacy-side-label-name-core"><strong>{draft.printable.koreanName || draft.printable.title}</strong>
+            <span>{draft.printable.title}</span>
             {draft.doseUnit && draft.doseUnit !== "1T" ? <b>{draft.doseUnit}</b> : null}</div>
             {draft.warnings.length > 0 ? <small>{draft.warnings.join(" · ")}</small> : null}
           </div>
