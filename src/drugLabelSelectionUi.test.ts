@@ -57,6 +57,10 @@ describe("drug label selection UI", () => {
     expect(appSource).toContain('return getEcartLabelItemsForMode("ecart-nicu", inventory.ecart).map((item, index) => {');
   });
 
+  it("uses the matched general-fluid color for E-cart label drug names", () => {
+    expect(appSource).toContain('fluidTone: fluidLabelTone({ code: item.code, genericName: item.name, productName: item.name, spec: item.dosage })');
+  });
+
   it("uses dose confirmation wording on 40x70 narcotic labels", () => {
     expect(appSource).toContain('const FORTY_NARCOTIC_DOSE_CONFIRM_LABEL = "\\uc6a9\\ub7c9\\ud655\\uc778";');
     expect(appSource).toContain("FORTY_NARCOTIC_DOSE_CONFIRM_LABEL");
