@@ -165,16 +165,26 @@ function gitAuthEnv(token) {
   };
 }
 
-function syncDistWithRemote(token) {
+function syncDistWithRemote(token, remote = "origin") {
   const env = gitAuthEnv(token);
-  run("git", distGitAuthArgs(["fetch", "origin", "gh-pages"]), { cwd: distDir, env });
-  run("git", distGitAuthArgs(["pull", "--rebase", "origin", "gh-pages"]), { cwd: distDir, env });
+  run("git", distGitAuthArgs(["fetch", remote, "gh-pages"]), { cwd: distDir, env });
+  run("git", distGitAuthArgs(["pull", "--rebase", remote, "gh-pages"]), { cwd: distDir, env });
+}
+
+function hasDistRemote(name) {
+  return run("git", distGitArgs(["remote"]), { cwd: distDir, capture: true })
+    .split(/\r?\n/)
+    .includes(name);
 }
 
 function pushWithToken(token) {
   const env = gitAuthEnv(token);
   syncDistWithRemote(token);
   run("git", distGitAuthArgs(["push", "origin", "gh-pages"]), { cwd: distDir, env });
+  const backupUrl = run("git", ["remote", "get-url", "backup"], { capture: true });
+  if (!hasDistRemote("backup")) run("git", distGitArgs(["remote", "add", "backup", backupUrl]), { cwd: distDir });
+  run("git", distGitAuthArgs(["fetch", "backup", "gh-pages"]), { cwd: distDir, env });
+  run("git", distGitAuthArgs(["push", "--force-with-lease", "backup", "gh-pages"]), { cwd: distDir, env });
 }
 
 async function main() {
