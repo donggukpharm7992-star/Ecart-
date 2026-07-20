@@ -15,6 +15,12 @@ const PAPER_SIZES = {
 const PAGE_MARGIN = 24;
 
 export type PdfPaper = keyof typeof PAPER_SIZES;
+export type PdfOrientation = "portrait" | "landscape";
+
+function paperSize(paper: PdfPaper, orientation: PdfOrientation) {
+  const size = PAPER_SIZES[paper];
+  return orientation === "portrait" ? size : { width: size.height, height: size.width };
+}
 
 const encoder = new TextEncoder();
 
@@ -65,9 +71,9 @@ async function renderElementToCanvas(element: HTMLElement) {
   });
 }
 
-function canvasToPdfPages(canvas: HTMLCanvasElement, paper: PdfPaper): PdfImagePage[] {
+function canvasToPdfPages(canvas: HTMLCanvasElement, paper: PdfPaper, orientation: PdfOrientation): PdfImagePage[] {
   const pages: PdfImagePage[] = [];
-  const { width: paperWidth, height: paperHeight } = PAPER_SIZES[paper];
+  const { width: paperWidth, height: paperHeight } = paperSize(paper, orientation);
   const printableWidth = paperWidth - PAGE_MARGIN * 2;
   const printableHeight = paperHeight - PAGE_MARGIN * 2;
   const sliceHeight = Math.floor((printableHeight / printableWidth) * canvas.width);
@@ -96,8 +102,8 @@ function canvasToPdfPages(canvas: HTMLCanvasElement, paper: PdfPaper): PdfImageP
   return pages;
 }
 
-function buildPdf(pages: PdfImagePage[], paper: PdfPaper) {
-  const { width: paperWidth, height: paperHeight } = PAPER_SIZES[paper];
+function buildPdf(pages: PdfImagePage[], paper: PdfPaper, orientation: PdfOrientation) {
+  const { width: paperWidth, height: paperHeight } = paperSize(paper, orientation);
   const chunks: Uint8Array[] = [];
   const offsets: number[] = [0];
   let byteLength = 0;
@@ -178,23 +184,24 @@ export type PdfDownloadResult = {
   url: string;
 };
 
-export async function downloadElementAsPdf(element: HTMLElement, fileName: string, options: { paper?: PdfPaper } = {}): Promise<PdfDownloadResult> {
+export async function downloadElementAsPdf(element: HTMLElement, fileName: string, options: { paper?: PdfPaper; orientation?: PdfOrientation } = {}): Promise<PdfDownloadResult> {
   const paper = options.paper ?? "A4";
+  const orientation = options.orientation ?? "portrait";
   let pages: PdfImagePage[] = [];
 
   const childPages = Array.from(element.querySelectorAll(".bulk-report-page")) as HTMLElement[];
   if (childPages.length > 0) {
     for (const child of childPages) {
       const canvas = await renderElementToCanvas(child);
-      const canvasPages = canvasToPdfPages(canvas, paper);
+      const canvasPages = canvasToPdfPages(canvas, paper, orientation);
       pages.push(...canvasPages);
     }
   } else {
     const canvas = await renderElementToCanvas(element);
-    pages = canvasToPdfPages(canvas, paper);
+    pages = canvasToPdfPages(canvas, paper, orientation);
   }
 
-  const pdf = buildPdf(pages, paper);
+  const pdf = buildPdf(pages, paper, orientation);
   const url = URL.createObjectURL(pdf);
   const link = document.createElement("a");
   link.href = url;

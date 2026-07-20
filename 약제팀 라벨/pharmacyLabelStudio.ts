@@ -14,6 +14,7 @@ export type PharmacyLabelCategory =
 export type PharmacyHighCostRoute = "주사" | "경구";
 export type PharmacyLabelSizePresetKey = string;
 export type PharmacyLabelPaper = { key: "A4" | "A3"; widthMm: number; heightMm: number; marginMm: number };
+export type PharmacyLabelPaperOrientation = "portrait" | "landscape";
 export type PharmacyLabelSize = { presetKey: PharmacyLabelSizePresetKey; widthMm: number; heightMm: number };
 export type PharmacyLabelStyle = {
   outerBorderPx: number;
@@ -325,7 +326,7 @@ export function savePharmacyLabelDraft(draft: PharmacyLabelDraft, now = new Date
   return { ...draft, sourceType: "manual", savedAt: now.toISOString() };
 }
 
-export function groupPharmacyLabelsForPaper(labels: PharmacyLabelDraft[], paper: PharmacyLabelPaper) {
+function packPharmacyLabelsForPaper(labels: PharmacyLabelDraft[], paper: PharmacyLabelPaper) {
   const pages: PharmacyLabelDraft[][] = [];
   let page: PharmacyLabelDraft[] = [];
   let x = 0, y = 0, rowHeight = 0;
@@ -338,6 +339,31 @@ export function groupPharmacyLabelsForPaper(labels: PharmacyLabelDraft[], paper:
   }
   if (page.length) pages.push(page);
   return pages;
+}
+
+function orientedPaper(paper: PharmacyLabelPaper, orientation: PharmacyLabelPaperOrientation): PharmacyLabelPaper {
+  return orientation === "portrait" ? paper : { ...paper, widthMm: paper.heightMm, heightMm: paper.widthMm };
+}
+
+function labelsPerRow(labels: PharmacyLabelDraft[], paper: PharmacyLabelPaper) {
+  const printableWidth = paper.widthMm - paper.marginMm * 2;
+  return labels.reduce((total, label) => total + Math.floor(printableWidth / label.size.widthMm), 0);
+}
+
+export function planPharmacyLabelsForPaper(labels: PharmacyLabelDraft[], paper: PharmacyLabelPaper) {
+  const portraitPaper = orientedPaper(paper, "portrait");
+  const landscapePaper = orientedPaper(paper, "landscape");
+  const portraitPages = packPharmacyLabelsForPaper(labels, portraitPaper);
+  const landscapePages = packPharmacyLabelsForPaper(labels, landscapePaper);
+  const useLandscape = landscapePages.length < portraitPages.length
+    || (landscapePages.length === portraitPages.length && labelsPerRow(labels, landscapePaper) > labelsPerRow(labels, portraitPaper));
+  return useLandscape
+    ? { orientation: "landscape" as const, paper: landscapePaper, pages: landscapePages }
+    : { orientation: "portrait" as const, paper: portraitPaper, pages: portraitPages };
+}
+
+export function groupPharmacyLabelsForPaper(labels: PharmacyLabelDraft[], paper: PharmacyLabelPaper) {
+  return planPharmacyLabelsForPaper(labels, paper).pages;
 }
 
 export function loadSavedPharmacyLabelsFromStorage(storage: Pick<Storage, "getItem">): PharmacySavedLabel[] {

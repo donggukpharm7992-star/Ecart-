@@ -113,7 +113,7 @@ import { loadPharmacyLabelMatchRows, type PharmacyLabelMatchRow } from "../ì•½ì 
 import {
   A3_PAPER,
   A4_PAPER,
-  groupPharmacyLabelsForPaper,
+  planPharmacyLabelsForPaper,
   loadSavedPharmacyLabelsFromStorage,
   savePharmacyLabelToStorage,
   formatPharmacyExpiry,
@@ -2556,10 +2556,13 @@ export function App() {
     setPdfStatus("generating");
     setPdfDownload(null);
     try {
+      const pharmacyPrintLayout = printPreviewMode === "drug-labels" && pharmacyPrintDrafts.length > 0
+        ? planPharmacyLabelsForPaper(pharmacyPrintDrafts, pharmacyPrintPaper === "A3" ? A3_PAPER : A4_PAPER)
+        : undefined;
       const result = await downloadElementAsPdf(
         reportElement,
         fileName,
-        printPreviewMode === "drug-labels" && pharmacyPrintDrafts.length > 0 ? { paper: pharmacyPrintPaper } : undefined,
+        pharmacyPrintLayout ? { paper: pharmacyPrintPaper, orientation: pharmacyPrintLayout.orientation } : undefined,
       );
       setPdfDownload(result);
       setPdfStatus("ready");
@@ -3257,8 +3260,8 @@ export function App() {
   function renderDrugLabelSheet(targetRef?: RefObject<HTMLDivElement | null>, className = "drug-label-sheet", previewLimit?: number) {
     const pharmacyDrafts = previewLimit ? pharmacyPrintDrafts.slice(0, previewLimit) : pharmacyPrintDrafts;
     if (pharmacyDrafts.length > 0) {
-      const paper = pharmacyPrintPaper === "A3" ? A3_PAPER : A4_PAPER;
-      const pages = groupPharmacyLabelsForPaper(pharmacyDrafts, paper);
+      const layout = planPharmacyLabelsForPaper(pharmacyDrafts, pharmacyPrintPaper === "A3" ? A3_PAPER : A4_PAPER);
+      const { paper, pages } = layout;
       return (
         <section ref={targetRef} className={`${className} pharmacy-print-pages`}>
           {pages.map((page, pageIndex) => (
