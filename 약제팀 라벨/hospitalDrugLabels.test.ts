@@ -32,6 +32,8 @@ describe("hospital drug label source", () => {
     const controlled = rows.filter((row) => isHospitalControlledDrugType(row) && isSelectableHospitalDrugLabelRow(row));
 
     expect(rows.find((row) => row.code === "XAQD")?.drugType).toBe("일반수액");
+    expect(rows.find((row) => row.code === "XAQD")?.fluidColor).toBe("green");
+    expect(rows.find((row) => row.code === "XDNK1")?.fluidColor).toBe("purple");
     expect(fluids.length).toBeGreaterThanOrEqual(30);
     expect(controlled.length).toBeGreaterThanOrEqual(70);
     expect(controlled.every((row) => row.drugType === "마약" || row.drugType === "향정")).toBe(true);

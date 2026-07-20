@@ -130,6 +130,7 @@ def main() -> None:
                 "koreanName": read(raw, "한글약품명"),
                 "strength": read(raw, "함량"),
                 "drugType": read(raw, "약품유형"),
+                "fluidColor": read_optional(raw, "일반수액 색기호"),
                 "highCost": is_yes(raw[index["고가약"]]),
                 "spec": read(raw, "규격"),
                 "package": read(raw, "포장"),

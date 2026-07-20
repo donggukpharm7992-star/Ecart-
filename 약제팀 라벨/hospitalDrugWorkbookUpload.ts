@@ -198,6 +198,7 @@ function rowsToHospitalDrugLabels(rows: string[][]): HospitalDrugLabelRow[] {
   requireHeaders(headers);
   const index = new Map(headers.map((header, position) => [header, position]));
   const read = (row: string[], header: string) => clean(row[index.get(header) ?? -1]);
+  const readOptional = (row: string[], header: string) => index.has(header) ? read(row, header) : "";
   const readAny = (row: string[], possibleHeaders: readonly string[]) => {
     const header = possibleHeaders.find((candidate) => index.has(candidate));
     return header ? read(row, header) : "";
@@ -205,7 +206,7 @@ function rowsToHospitalDrugLabels(rows: string[][]): HospitalDrugLabelRow[] {
 
   return rows
     .slice(1)
-    .map((row) => {
+    .map((row): HospitalDrugLabelRow | undefined => {
       const code = read(row, "약품코드");
       const name = read(row, "상용약품명");
       if (!code || !name) return undefined;
@@ -215,6 +216,7 @@ function rowsToHospitalDrugLabels(rows: string[][]): HospitalDrugLabelRow[] {
         koreanName: read(row, "한글약품명"),
         strength: read(row, "함량"),
         drugType: readAny(row, HOSPITAL_DRUG_TYPE_HEADERS),
+        fluidColor: readOptional(row, "일반수액 색기호"),
         spec: read(row, "규격"),
         package: read(row, "포장"),
         storage: readAny(row, HOSPITAL_DRUG_STORAGE_HEADERS),

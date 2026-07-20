@@ -713,7 +713,7 @@ function buildHospitalDrugLabelData(
     highRisk,
     doseCaution: row.doseCaution,
     doseCheck: row.doseCheck,
-    fluidTone: mode === "fluid" ? fluidLabelTone({ code: row.code, genericName: row.koreanName, productName: row.name, spec }) : undefined,
+    fluidTone: mode === "fluid" ? row.fluidColor || fluidLabelTone({ code: row.code, genericName: row.koreanName, productName: row.name, spec }) : undefined,
   };
 }
 
@@ -742,6 +742,7 @@ function buildEcartLabelData(
   totalQuantity: number,
   suffix: string,
   kind: Extract<DrugLabelMode, "ecart" | "ecart-nicu"> = "ecart",
+  fluidTone?: string,
 ): DrugLabelData {
   const fields = drugRuleFieldsFromEcartItem(item);
   return {
@@ -757,7 +758,7 @@ function buildEcartLabelData(
     quantityLabel: "수량",
     cautionLabels: getPolicyCautionLabels(fields),
     highRisk: isHighRiskDrug(fields),
-    fluidTone: fluidLabelTone({ code: item.code, genericName: item.name, productName: item.name, spec: item.dosage }),
+    fluidTone: fluidTone || fluidLabelTone({ code: item.code, genericName: item.name, productName: item.name, spec: item.dosage }),
   };
 }
 
@@ -1761,9 +1762,9 @@ export function App() {
             return getEcartLabelQuantity(state, item);
           })
           .find((quantity) => quantity > 0) ?? normalizeEcartItem(item).quantity;
-      return buildEcartLabelData(item, setQuantity, `general-${index}`);
+      return buildEcartLabelData(item, setQuantity, `general-${index}`, "ecart", hospitalDrugRowsByCode.get(item.code.toUpperCase())?.fluidColor);
     });
-  }, [ecartByTarget]);
+  }, [ecartByTarget, hospitalDrugRowsByCode]);
   const ecartNicuLabelRows = useMemo(() => {
     const allTargets = getAllEcartPrintTargets(ecartTargets);
     const nicuTargets = allTargets.filter((entry) => entry.tab === "nicu");
@@ -1775,9 +1776,9 @@ export function App() {
             return getEcartLabelQuantity(state, item);
           })
           .find((quantity) => quantity > 0) ?? normalizeEcartItem(item).quantity;
-      return buildEcartLabelData(item, setQuantity, `nicu-${index}`, "ecart-nicu");
+      return buildEcartLabelData(item, setQuantity, `nicu-${index}`, "ecart-nicu", hospitalDrugRowsByCode.get(item.code.toUpperCase())?.fluidColor);
     });
-  }, [ecartByTarget]);
+  }, [ecartByTarget, hospitalDrugRowsByCode]);
   const ecartLabelBaseRows = useMemo(() => {
     return [...ecartGeneralLabelRows, ...ecartNicuLabelRows];
   }, [ecartGeneralLabelRows, ecartNicuLabelRows]);

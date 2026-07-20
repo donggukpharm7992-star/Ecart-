@@ -58,7 +58,7 @@ describe("drug label selection UI", () => {
   });
 
   it("uses the matched general-fluid color for E-cart label drug names", () => {
-    expect(appSource).toContain('fluidTone: fluidLabelTone({ code: item.code, genericName: item.name, productName: item.name, spec: item.dosage })');
+    expect(appSource).toContain('hospitalDrugRowsByCode.get(item.code.toUpperCase())?.fluidColor');
   });
 
   it("uses dose confirmation wording on 40x70 narcotic labels", () => {

@@ -5,6 +5,7 @@ export type HospitalDrugLabelRow = {
   koreanName: string;
   strength: string;
   drugType: string;
+  fluidColor?: string;
   highCost?: boolean;
   spec: string;
   package: string;

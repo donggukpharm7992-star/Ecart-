@@ -199,7 +199,7 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
   const displayTitle = isCapLabel ? draft?.printable.title.replace(/\btab(?:let)?\b/gi, "").replace(/\s{2,}/g, " ").trim() ?? "" : draft?.printable.title ?? "";
   const renderedDisplayTitle = isGeneralFluidLabel ? formatFluidLabelName(displayTitle) : displayTitle;
   const generalFluidTone = isGeneralFluidLabel && activeRow
-    ? fluidLabelTone({ code: activeRow.code, genericName: activeRow.koreanName, productName: activeRow.name, spec: activeRow.strength })
+    ? activeRow.fluidColor || fluidLabelTone({ code: activeRow.code, genericName: activeRow.koreanName, productName: activeRow.name, spec: activeRow.strength })
     : undefined;
   const titleSizeClass = displayTitle.length > 34 ? "very-long-name" : displayTitle.length > 25 ? "long-name" : displayTitle.length > 16 ? "medium-name" : "";
   const titleParts = category === "영양수액" ? splitNutritionDoseText(displayTitle) : splitDoseText(displayTitle);
