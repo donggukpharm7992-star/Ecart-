@@ -2871,6 +2871,32 @@ button {
   min-height: 420mm;
 }
 
+.pharmacy-print-pages {
+  display: grid;
+  gap: 16px;
+}
+
+.pharmacy-print-page {
+  box-sizing: border-box;
+  width: calc(var(--pharmacy-paper-width-mm) * 1mm);
+  min-height: calc(var(--pharmacy-paper-height-mm) * 1mm);
+  margin: 0 auto;
+  padding: calc(var(--pharmacy-paper-margin-mm) * 1mm);
+  background: #fff;
+  break-after: page;
+  page-break-after: always;
+}
+
+.pharmacy-print-page:last-child {
+  break-after: auto;
+  page-break-after: auto;
+}
+
+.pharmacy-paper-label-grid {
+  gap: 0;
+  align-content: flex-start;
+}
+
 .drug-label-item.label-size-10x70.label-kind-stock .drug-label-code-stack .label-code-storage.cold {
   color: #0b5c88;
   background: #dff3ff;

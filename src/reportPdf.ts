@@ -8,9 +8,13 @@ type PdfImagePage = {
   drawHeight: number;
 };
 
-const A4_WIDTH = 595.28;
-const A4_HEIGHT = 841.89;
+const PAPER_SIZES = {
+  A4: { width: 595.28, height: 841.89 },
+  A3: { width: 841.89, height: 1190.55 },
+} as const;
 const PAGE_MARGIN = 24;
+
+export type PdfPaper = keyof typeof PAPER_SIZES;
 
 const encoder = new TextEncoder();
 
@@ -61,10 +65,11 @@ async function renderElementToCanvas(element: HTMLElement) {
   });
 }
 
-function canvasToPdfPages(canvas: HTMLCanvasElement): PdfImagePage[] {
+function canvasToPdfPages(canvas: HTMLCanvasElement, paper: PdfPaper): PdfImagePage[] {
   const pages: PdfImagePage[] = [];
-  const printableWidth = A4_WIDTH - PAGE_MARGIN * 2;
-  const printableHeight = A4_HEIGHT - PAGE_MARGIN * 2;
+  const { width: paperWidth, height: paperHeight } = PAPER_SIZES[paper];
+  const printableWidth = paperWidth - PAGE_MARGIN * 2;
+  const printableHeight = paperHeight - PAGE_MARGIN * 2;
   const sliceHeight = Math.floor((printableHeight / printableWidth) * canvas.width);
 
   for (let top = 0; top < canvas.height; top += sliceHeight) {
@@ -91,7 +96,8 @@ function canvasToPdfPages(canvas: HTMLCanvasElement): PdfImagePage[] {
   return pages;
 }
 
-function buildPdf(pages: PdfImagePage[]) {
+function buildPdf(pages: PdfImagePage[], paper: PdfPaper) {
+  const { width: paperWidth, height: paperHeight } = PAPER_SIZES[paper];
   const chunks: Uint8Array[] = [];
   const offsets: number[] = [0];
   let byteLength = 0;
@@ -140,7 +146,7 @@ function buildPdf(pages: PdfImagePage[]) {
     addText("\nendstream\nendobj\n");
 
     const x = PAGE_MARGIN;
-    const y = A4_HEIGHT - PAGE_MARGIN - page.drawHeight;
+    const y = paperHeight - PAGE_MARGIN - page.drawHeight;
     const commands = `q\n${page.drawWidth.toFixed(2)} 0 0 ${page.drawHeight.toFixed(2)} ${x.toFixed(2)} ${y.toFixed(2)} cm\n/${page.name} Do\nQ\n`;
 
     beginObject(page.contentObjectId);
@@ -148,7 +154,7 @@ function buildPdf(pages: PdfImagePage[]) {
 
     beginObject(page.pageObjectId);
     addText(
-      `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${A4_WIDTH} ${A4_HEIGHT}] /Resources << /XObject << /${page.name} ${page.imageObjectId} 0 R >> >> /Contents ${page.contentObjectId} 0 R >>\nendobj\n`,
+      `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${paperWidth} ${paperHeight}] /Resources << /XObject << /${page.name} ${page.imageObjectId} 0 R >> >> /Contents ${page.contentObjectId} 0 R >>\nendobj\n`,
     );
   }
 
@@ -172,22 +178,23 @@ export type PdfDownloadResult = {
   url: string;
 };
 
-export async function downloadElementAsPdf(element: HTMLElement, fileName: string): Promise<PdfDownloadResult> {
+export async function downloadElementAsPdf(element: HTMLElement, fileName: string, options: { paper?: PdfPaper } = {}): Promise<PdfDownloadResult> {
+  const paper = options.paper ?? "A4";
   let pages: PdfImagePage[] = [];
 
   const childPages = Array.from(element.querySelectorAll(".bulk-report-page")) as HTMLElement[];
   if (childPages.length > 0) {
     for (const child of childPages) {
       const canvas = await renderElementToCanvas(child);
-      const canvasPages = canvasToPdfPages(canvas);
+      const canvasPages = canvasToPdfPages(canvas, paper);
       pages.push(...canvasPages);
     }
   } else {
     const canvas = await renderElementToCanvas(element);
-    pages = canvasToPdfPages(canvas);
+    pages = canvasToPdfPages(canvas, paper);
   }
 
-  const pdf = buildPdf(pages);
+  const pdf = buildPdf(pages, paper);
   const url = URL.createObjectURL(pdf);
   const link = document.createElement("a");
   link.href = url;

@@ -111,6 +111,9 @@ import { applyExpirationWorkbook } from "../약제팀 라벨/expirationWorkbookU
 import { savePharmacyLabelDraftToWorkbook } from "../약제팀 라벨/pharmacyLabelWorkbookUpdate";
 import { loadPharmacyLabelMatchRows, type PharmacyLabelMatchRow } from "../약제팀 라벨/pharmacyLabelMatches";
 import {
+  A3_PAPER,
+  A4_PAPER,
+  groupPharmacyLabelsForPaper,
   loadSavedPharmacyLabelsFromStorage,
   savePharmacyLabelToStorage,
   formatPharmacyExpiry,
@@ -952,7 +955,7 @@ export function App() {
   const [labelPrintSelections, setLabelPrintSelections] = useState<LabelPrintSelection[]>([]);
   const [labelCopies, setLabelCopies] = useState(1);
   const [labelMode, setLabelMode] = useState<DrugLabelMode>("stock");
-  const [labelSize, setLabelSize] = useState<DrugLabelSizeKey>("35x100");
+  const [labelSize, setLabelSize] = useState<DrugLabelSizeKey>("10x70");
   const [isDrugLabelPanelOpen, setIsDrugLabelPanelOpen] = useState(false);
   const [isPharmacyLabelWorkspaceOpen, setIsPharmacyLabelWorkspaceOpen] = useState(appMode === "pharmacy-viewer");
   const [hospitalDrugLabelRows, setHospitalDrugLabelRows] = useState<HospitalDrugLabelRow[]>([]);
@@ -2553,7 +2556,11 @@ export function App() {
     setPdfStatus("generating");
     setPdfDownload(null);
     try {
-      const result = await downloadElementAsPdf(reportElement, fileName);
+      const result = await downloadElementAsPdf(
+        reportElement,
+        fileName,
+        printPreviewMode === "drug-labels" && pharmacyPrintDrafts.length > 0 ? { paper: pharmacyPrintPaper } : undefined,
+      );
       setPdfDownload(result);
       setPdfStatus("ready");
     } catch (error) {
@@ -3248,8 +3255,32 @@ export function App() {
   }
 
   function renderDrugLabelSheet(targetRef?: RefObject<HTMLDivElement | null>, className = "drug-label-sheet", previewLimit?: number) {
+    const pharmacyDrafts = previewLimit ? pharmacyPrintDrafts.slice(0, previewLimit) : pharmacyPrintDrafts;
+    if (pharmacyDrafts.length > 0) {
+      const paper = pharmacyPrintPaper === "A3" ? A3_PAPER : A4_PAPER;
+      const pages = groupPharmacyLabelsForPaper(pharmacyDrafts, paper);
+      return (
+        <section ref={targetRef} className={`${className} pharmacy-print-pages`}>
+          {pages.map((page, pageIndex) => (
+            <div
+              className="bulk-report-page pharmacy-print-page"
+              key={`${paper.key}-${pageIndex}`}
+              style={{
+                "--pharmacy-paper-width-mm": paper.widthMm,
+                "--pharmacy-paper-height-mm": paper.heightMm,
+                "--pharmacy-paper-margin-mm": paper.marginMm,
+              } as CSSProperties}
+            >
+              <div className="drug-label-print-grid mixed-label-grid pharmacy-paper-label-grid">
+                {page.map((draft, index) => renderPharmacyPrintDraftArticle(draft, `${draft.id}-${draft.savedAt ?? "draft"}-${index}`))}
+              </div>
+            </div>
+          ))}
+        </section>
+      );
+    }
     return (
-      <section ref={targetRef} className={`${className} mixed-label-sheet ${pharmacyPrintDrafts.length > 0 ? `pharmacy-paper-${pharmacyPrintPaper.toLowerCase()}` : ""}`}>
+      <section ref={targetRef} className={`${className} mixed-label-sheet`}>
         <div className="drug-label-sheet-head">
           <div>
             <h2>약품 라벨 출력</h2>
@@ -3258,9 +3289,7 @@ export function App() {
           <span>출력 일자: {new Date().toLocaleDateString("ko-KR")}</span>
         </div>
         <div className="drug-label-print-grid mixed-label-grid">
-          {pharmacyPrintDrafts.length > 0
-            ? pharmacyPrintDrafts.slice(0, previewLimit).map((draft, index) => renderPharmacyPrintDraftArticle(draft, `${draft.id}-${draft.savedAt ?? "draft"}-${index}`))
-            : labelPrintRows.map((entry, index) => renderDrugLabelArticle(entry, `${entry.id}-${entry.sizeKey}-${entry.copyIndex}-${index}`))}
+          {labelPrintRows.map((entry, index) => renderDrugLabelArticle(entry, `${entry.id}-${entry.sizeKey}-${entry.copyIndex}-${index}`))}
         </div>
       </section>
     );
@@ -3748,7 +3777,14 @@ export function App() {
                   type="button"
                   className="secondary-button label-panel-toggle"
                   aria-expanded={isDrugLabelPanelOpen}
-                  onClick={() => setIsDrugLabelPanelOpen((prev) => !prev)}
+                  onClick={() => setIsDrugLabelPanelOpen((prev) => {
+                    const next = !prev;
+                    if (next) {
+                      setLabelMode("stock");
+                      setLabelSize("10x70");
+                    }
+                    return next;
+                  })}
                 >
                   <Printer size={16} />
                   {isDrugLabelPanelOpen ? "라벨 출력 접기" : "라벨 출력 열기"}
