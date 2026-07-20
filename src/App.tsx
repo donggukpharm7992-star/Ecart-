@@ -3069,6 +3069,9 @@ export function App() {
     const isLightProtected = isLightProtectedLabel(row);
     const hasRedPriority = hasRedPriorityLabel(row);
     const renderedKind = isEcartLabelKind(row.kind) ? "ecart" : row.kind;
+    const fluidTone = row.fluidTone || (isEcartLabelKind(row.kind)
+      ? fluidLabelTone({ code: row.code, genericName: row.name, productName: row.name, spec: row.spec })
+      : undefined);
     const nameClass = getDrugLabelNameClass(row.name, renderedKind, sizeKey);
     const isNarcoticFortyLabel = renderedKind === "narcotic" && sizeKey === "40x70";
     const hasDoseWarningLabel = shouldHighlightDoseInLabel(row);
@@ -3078,8 +3081,8 @@ export function App() {
       `label-size-${sizeKey}`,
       `label-kind-${renderedKind}`,
       nameClass,
-      row.fluidTone ? "fluid-label" : "",
-      row.fluidTone ? `fluid-tone-${row.fluidTone}` : "",
+      fluidTone ? "fluid-label" : "",
+      fluidTone ? `fluid-tone-${fluidTone}` : "",
       row.highRisk ? "high-risk-label" : "",
       isLightProtected ? "light-protected-label" : "",
       hasRedPriority ? "has-red-priority-label" : "",
@@ -3093,7 +3096,7 @@ export function App() {
     return (
       <article className={className} style={labelSizeCssVars(sizeKey)} key={key}>
         {isNarcoticFortyLabel ? renderNarcoticFortyTopline(row) : renderLabelTopline(row, sizeKey)}
-        <h3 className={row.fluidTone ? `fluid-name ${row.fluidTone}` : undefined}>
+        <h3 className={fluidTone ? `fluid-name ${fluidTone}` : undefined}>
           {isNarcoticFortyLabel ? renderNarcoticFortyLabelName(row) : renderDrugLabelName(row, renderedKind, sizeKey)}
         </h3>
         {isNarcoticFortyLabel ? renderNarcoticFortyFooter(row) : renderLabelSpec(row)}
