@@ -767,7 +767,7 @@ function isEcartLabelKind(kind: DrugLabelMode) {
 }
 
 function usesHospitalDrugListForMode(mode: DrugLabelMode) {
-  return mode === "stock" || mode === "fluid" || mode === "narcotic" || mode === "pharmacy";
+  return isEcartLabelKind(mode) || mode === "stock" || mode === "fluid" || mode === "narcotic" || mode === "pharmacy";
 }
 
 function getEcartLabelQuantity(state: EcartInspectionState, item: EcartItem) {
@@ -1841,7 +1841,9 @@ export function App() {
                 return hospitalRow ? buildHospitalDrugLabelData(hospitalRow) : undefined;
               })()
             : undefined);
-        const printableRow = resolveDrugLabelPrintRow(selection, fallbackRow);
+        const printableRow = isEcartLabelKind(selection.mode) && fallbackRow
+          ? resolveDrugLabelPrintRow({ ...selection, labelRow: fallbackRow }, fallbackRow)
+          : resolveDrugLabelPrintRow(selection, fallbackRow);
         if (!printableRow) return [];
         return Array.from({ length: labelCopies }, (_, copyIndex) => ({ ...selection, row: printableRow, copyIndex }));
       }),

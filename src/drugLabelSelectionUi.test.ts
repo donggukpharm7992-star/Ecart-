@@ -59,6 +59,7 @@ describe("drug label selection UI", () => {
 
   it("uses the matched general-fluid color for E-cart label drug names", () => {
     expect(appSource).toContain('hospitalDrugRowsByCode.get(item.code.toUpperCase())?.fluidColor');
+    expect(appSource).toContain('isEcartLabelKind(selection.mode) && fallbackRow');
   });
 
   it("uses dose confirmation wording on 40x70 narcotic labels", () => {
