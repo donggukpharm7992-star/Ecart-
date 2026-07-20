@@ -58,9 +58,9 @@ describe("drug label selection UI", () => {
   });
 
   it("uses the matched general-fluid color for E-cart label drug names", () => {
-    expect(appSource).toContain('hospitalDrugRowsByCode.get(item.code.toUpperCase())?.fluidColor');
+    expect(appSource).toContain('hospitalRow?.drugType === "일반수액" ? hospitalRow.fluidColor : undefined');
     expect(appSource).toContain('isEcartLabelKind(selection.mode) && fallbackRow');
-    expect(appSource).toContain('fluidLabelTone({ code: row.code, genericName: row.name, productName: row.name, spec: row.spec })');
+    expect(appSource).toContain('const fluidTone = row.fluidTone;');
   });
 
   it("uses dose confirmation wording on 40x70 narcotic labels", () => {

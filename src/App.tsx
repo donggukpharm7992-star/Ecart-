@@ -1762,7 +1762,8 @@ export function App() {
             return getEcartLabelQuantity(state, item);
           })
           .find((quantity) => quantity > 0) ?? normalizeEcartItem(item).quantity;
-      return buildEcartLabelData(item, setQuantity, `general-${index}`, "ecart", hospitalDrugRowsByCode.get(item.code.toUpperCase())?.fluidColor);
+      const hospitalRow = hospitalDrugRowsByCode.get(item.code.toUpperCase());
+      return buildEcartLabelData(item, setQuantity, `general-${index}`, "ecart", hospitalRow?.drugType === "일반수액" ? hospitalRow.fluidColor : undefined);
     });
   }, [ecartByTarget, hospitalDrugRowsByCode]);
   const ecartNicuLabelRows = useMemo(() => {
@@ -1776,7 +1777,8 @@ export function App() {
             return getEcartLabelQuantity(state, item);
           })
           .find((quantity) => quantity > 0) ?? normalizeEcartItem(item).quantity;
-      return buildEcartLabelData(item, setQuantity, `nicu-${index}`, "ecart-nicu", hospitalDrugRowsByCode.get(item.code.toUpperCase())?.fluidColor);
+      const hospitalRow = hospitalDrugRowsByCode.get(item.code.toUpperCase());
+      return buildEcartLabelData(item, setQuantity, `nicu-${index}`, "ecart-nicu", hospitalRow?.drugType === "일반수액" ? hospitalRow.fluidColor : undefined);
     });
   }, [ecartByTarget, hospitalDrugRowsByCode]);
   const ecartLabelBaseRows = useMemo(() => {
@@ -3069,9 +3071,7 @@ export function App() {
     const isLightProtected = isLightProtectedLabel(row);
     const hasRedPriority = hasRedPriorityLabel(row);
     const renderedKind = isEcartLabelKind(row.kind) ? "ecart" : row.kind;
-    const fluidTone = row.fluidTone || (isEcartLabelKind(row.kind)
-      ? fluidLabelTone({ code: row.code, genericName: row.name, productName: row.name, spec: row.spec })
-      : undefined);
+    const fluidTone = row.fluidTone;
     const nameClass = getDrugLabelNameClass(row.name, renderedKind, sizeKey);
     const isNarcoticFortyLabel = renderedKind === "narcotic" && sizeKey === "40x70";
     const hasDoseWarningLabel = shouldHighlightDoseInLabel(row);
