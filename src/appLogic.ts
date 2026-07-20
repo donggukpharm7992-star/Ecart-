@@ -609,7 +609,7 @@ export function fluidLabelTone(drug: Pick<StockDrug, "genericName" | "productNam
     return "black";
   }
   if (/0\.45|half|하프|염화나트륨/.test(text)) return "green";
-  return "blue";
+  return undefined;
 }
 
 export function labelStorageTone(label: string): DrugLabelData["storageTone"] {

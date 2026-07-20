@@ -758,7 +758,7 @@ function buildEcartLabelData(
     quantityLabel: "수량",
     cautionLabels: getPolicyCautionLabels(fields),
     highRisk: isHighRiskDrug(fields),
-    fluidTone: fluidTone || fluidLabelTone({ code: item.code, genericName: item.name, productName: item.name, spec: item.dosage }),
+    fluidTone,
   };
 }
 
