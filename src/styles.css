@@ -2185,7 +2185,7 @@ button {
   justify-self: center;
   min-height: 0;
   color: #111827;
-  font-family: Arial, "Segoe UI", "Malgun Gothic", sans-serif;
+  font-family: Verdana, "Segoe UI", "Malgun Gothic", sans-serif;
   font-size: 16px;
   line-height: 1.25;
   overflow-wrap: anywhere;
@@ -3210,7 +3210,7 @@ button {
 .drug-label-item:is(.label-size-10x70, .label-size-15x95) .drug-label-warning-flag,
 .drug-label-item:is(.label-size-10x70, .label-size-15x95) .label-code-storage,
 .drug-label-item:is(.label-size-10x70, .label-size-15x95) .label-storage-badge {
-  font-family: Arial, "Segoe UI", "Malgun Gothic", sans-serif;
+  font-family: Verdana, "Segoe UI", "Malgun Gothic", sans-serif;
   line-height: 1.2;
 }
 
@@ -3224,6 +3224,37 @@ button {
 .drug-label-item.label-size-15x95 .label-code-storage,
 .drug-label-item.label-size-15x95 .label-storage-badge {
   font-size: 13.7px;
+}
+
+/* Safety text must remain prominent even where a label-specific rule is present. */
+.drug-label-item.label-size-10x70 :is(.drug-label-warning-flag, .label-code-storage, .label-storage-badge) {
+  font-size: 13px !important;
+  line-height: 1.25 !important;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: keep-all;
+}
+
+.drug-label-item.label-size-15x95 :is(.drug-label-warning-flag, .label-code-storage, .label-storage-badge) {
+  font-size: 16px !important;
+  line-height: 1.25 !important;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: keep-all;
+}
+
+.drug-label-item.label-size-10x70 .label-quantity-circle {
+  width: 6.5mm;
+  height: 6.5mm;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.drug-label-item.label-size-15x95 .label-quantity-circle {
+  width: 8mm;
+  height: 8mm;
+  font-size: 16px;
+  line-height: 1;
 }
 
 .drug-label-item:is(.label-size-10x70, .label-size-15x95):not(:has(.drug-label-code-stack)):not(.has-caution-label) h3 {
