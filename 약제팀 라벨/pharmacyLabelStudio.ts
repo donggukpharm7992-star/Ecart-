@@ -2,6 +2,7 @@ import {
   getHospitalDrugLabelWarnings,
   isHospitalDrugLightProtected,
   isHospitalDrugRefrigerated,
+  type HospitalDrugCabinetInfo,
   type HospitalDrugLabelRow,
 } from "./hospitalDrugLabels";
 
@@ -153,7 +154,8 @@ export function createPharmacyLabelDraft(
   category: PharmacyLabelCategory,
   labelFamily: PharmacyLabelFamily,
 ): PharmacyLabelDraft {
-  const warnings = getPharmacyLabelWarnings(row);
+  const cabinetInfo = labelFamily === "cabinet" ? getCabinetInfoForCategory(row, category) : undefined;
+  const warnings = getPharmacyLabelWarnings(row, cabinetInfo);
   const cabinetSize = labelFamily === "cabinet"
     ? category === "원병"
       ? sizes(["30*120"])[0]
@@ -176,9 +178,9 @@ export function createPharmacyLabelDraft(
     itemCode: row.itemCode ?? "",
     labelFamily,
     category,
-    location: row.location ?? "",
-    atc: row.atc ?? "",
-    expiry: row.expiry ?? "",
+    location: cabinetInfo?.location || row.location || "",
+    atc: cabinetInfo?.atc || row.atc || "",
+    expiry: cabinetInfo?.expiry || row.expiry || "",
     imagePath: row.imagePath ?? "",
     imageSourceUrl: row.imageSourceUrl ?? "",
     backgroundColor: extractHex(row.coloredSideBackground) || "#ffffff",
@@ -276,12 +278,29 @@ export function splitStyledPharmacyTitle(title: string, styles: PharmacyTitleSty
   });
 }
 
-function getPharmacyLabelWarnings(row: HospitalDrugLabelRow) {
-  const warnings = getHospitalDrugLabelWarnings(row);
+function getCabinetInfoForCategory(row: HospitalDrugLabelRow, category: PharmacyLabelCategory) {
+  if (category === "영양수액") return row.cabinetNutritionInfo ?? undefined;
+  if (["외용제", "외용점안제", "팩제"].includes(category)) return row.cabinetExternalInfo ?? undefined;
+  if (category === "시럽") return row.cabinetSyrupInfo ?? undefined;
+  if (["원병", "PTP", "ATC", "입원산제", "앰플", "바이알", "냉장주사"].includes(category)) {
+    return row.cabinetOralInjectionInfo ?? undefined;
+  }
+  return undefined;
+}
+
+function splitCabinetWarnings(info?: HospitalDrugCabinetInfo) {
+  return (info?.warning ?? "")
+    .split(/[,\n/·]+/)
+    .map((warning) => warning.trim())
+    .filter(Boolean);
+}
+
+function getPharmacyLabelWarnings(row: HospitalDrugLabelRow, cabinetInfo?: HospitalDrugCabinetInfo) {
+  const warnings = [...splitCabinetWarnings(cabinetInfo), ...getHospitalDrugLabelWarnings(row)];
   if (/^Ntense\s+(?:central\s+1518|EF\s+506)\s*mL/i.test(row.name) && !warnings.includes("용량확인")) {
     warnings.push("용량확인");
   }
-  return warnings;
+  return [...new Set(warnings)];
 }
 
 export function formatPharmacyExpiry(value: string) {
@@ -298,15 +317,16 @@ export function resolvePharmacyLabelDraft(
     .filter((label) => label.code === row.code && label.category === category && label.labelFamily === family)
     .sort((a, b) => b.savedAt.localeCompare(a.savedAt))[0];
   if (!saved) return createPharmacyLabelDraft(row, category, family);
+  const cabinetInfo = family === "cabinet" ? getCabinetInfoForCategory(row, category) : undefined;
   const warnings = [...saved.warnings];
   const workbookBorderColor = extractHex(row.borderColor);
   const hasWorkbookBorder = row.border || Boolean(workbookBorderColor);
   return {
     ...saved,
     itemCode: row.itemCode ?? saved.itemCode,
-    location: row.location ?? saved.location,
-    atc: row.atc ?? "",
-    expiry: row.expiry ?? "",
+    location: cabinetInfo?.location || row.location || saved.location,
+    atc: cabinetInfo?.atc || row.atc || "",
+    expiry: cabinetInfo?.expiry || row.expiry || "",
     imagePath: row.imagePath ?? "",
     imageSourceUrl: row.imageSourceUrl ?? "",
     backgroundColor: saved.accessory === "유색 측면라벨"

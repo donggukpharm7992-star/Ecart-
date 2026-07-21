@@ -30,7 +30,9 @@ describe("release workflow", () => {
   it("preserves the deployed sync server config before rebuilding GitHub Pages", () => {
     const publishMain = publishScript.slice(publishScript.indexOf("async function main()"));
     expect(publishScript).toContain('for (const fileName of [".nojekyll", "sync-config.json"])');
+    expect(publishScript).toContain("function commitDistChanges");
     expect(publishScript).toContain('const syncConfigFallbackPath = join(deployDir, "sync-config.json")');
+    expect(publishMain.indexOf("commitDistChanges(message);")).toBeLessThan(publishMain.indexOf("const localKeep = captureDistKeepFiles();"));
     expect(publishMain.indexOf("const localKeep = captureDistKeepFiles();")).toBeLessThan(publishMain.indexOf("syncDistWithRemote(token);"));
     expect(publishMain.indexOf("syncDistWithRemote(token);")).toBeLessThan(publishMain.indexOf("const remoteKeep = captureDistKeepFiles();"));
     expect(publishMain).toContain("const keep = new Map([...localKeep, ...remoteKeep])");

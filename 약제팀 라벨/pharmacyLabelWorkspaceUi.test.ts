@@ -107,6 +107,8 @@ describe("pharmacy label workspace UI", () => {
 
   it("supports list, nutrition, multi-selection, expiry, and border editing rules", () => {
     expect(workspaceSource).toContain("pharmacy-cabinet-list-row");
+    expect(workspaceSource).toContain("with-location-column");
+    expect(workspaceSource).toContain("{draft.location && <em>{draft.location}</em>}");
     expect(workspaceSource).toContain("pharmacy-nutrition-label");
     expect(workspaceSource).toContain("next.size = draft.size");
     expect(workspaceSource).toContain("formatPharmacyExpiry");

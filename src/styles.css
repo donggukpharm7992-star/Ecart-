@@ -2458,6 +2458,11 @@ button {
   line-height: 1;
 }
 
+/* Small ward labels reserve the end panel for safety information, not the drug code. */
+.drug-label-item:is(.label-size-10x70, .label-size-15x95) .drug-label-code-stack strong {
+  display: none;
+}
+
 .label-size-15x95 .drug-label-item .drug-label-top-caution,
 .drug-label-item.label-size-15x95 .drug-label-top-caution {
   display: block;
@@ -2699,8 +2704,8 @@ button {
   grid-row: 1;
   min-width: 17mm;
   padding: 0 1mm;
-  font-size: 8px;
-  line-height: 1.05;
+  font-size: 9.2px;
+  line-height: 1.1;
   overflow-wrap: anywhere;
   word-break: keep-all;
 }
@@ -2708,14 +2713,14 @@ button {
 .drug-label-item.label-size-10x70.label-kind-ecart h3 {
   grid-column: 2;
   grid-row: 1;
-  font-size: 12px;
+  font-size: 13.4px;
   font-weight: 1000;
 }
 
 .drug-label-item.label-size-10x70.label-kind-ecart .drug-label-code-stack {
   grid-column: 3;
   grid-row: 1;
-  min-width: 14mm;
+  min-width: 12mm;
   padding: 0.3mm 1mm;
   gap: 0.15mm;
 }
@@ -2725,8 +2730,8 @@ button {
 }
 
 .drug-label-item.label-size-10x70.label-kind-ecart .label-storage-badge.ecart {
-  font-size: 6.5px;
-  line-height: 1;
+  font-size: 7.6px;
+  line-height: 1.05;
 }
 
 .drug-label-item.label-size-10x70 .label-quantity-circle {
@@ -2752,20 +2757,21 @@ button {
   grid-row: 1;
   min-width: 22mm;
   padding: 0 1.5mm;
-  font-size: 9px;
+  font-size: 11px;
+  line-height: 1.1;
 }
 
 .drug-label-item.label-size-15x95.label-kind-ecart h3 {
   grid-column: 2;
   grid-row: 1;
-  font-size: 19px;
+  font-size: 22px;
   font-weight: 1000;
 }
 
 .drug-label-item.label-size-15x95.label-kind-ecart .drug-label-code-stack {
   grid-column: 3;
   grid-row: 1;
-  min-width: 17mm;
+  min-width: 14mm;
   padding: 0 4px;
   align-content: center;
   gap: 0.25mm;
@@ -2816,8 +2822,8 @@ button {
   padding: 0 1mm;
   border-radius: 0;
   justify-content: center;
-  font-size: 8px;
-  line-height: 1.05;
+  font-size: 9.2px;
+  line-height: 1.1;
   overflow-wrap: anywhere;
   text-align: center;
   word-break: keep-all;
@@ -2828,7 +2834,7 @@ button {
   grid-column: 2;
   grid-row: 1;
   align-self: center;
-  font-size: 12px;
+  font-size: 13.4px;
   font-weight: 1000;
 }
 
@@ -2839,7 +2845,7 @@ button {
   align-self: stretch;
   align-content: center;
   justify-items: center;
-  min-width: 14mm;
+  min-width: 12mm;
   padding: 0.3mm 1mm;
   gap: 0.15mm;
   background: #101010;
@@ -2857,8 +2863,8 @@ button {
   display: inline-flex;
   padding: 1px 3px;
   border-radius: 4px;
-  font-size: 6.4px;
-  line-height: 1;
+  font-size: 7.4px;
+  line-height: 1.05;
 }
 
 .drug-label-sheet.pharmacy-paper-a4 {
@@ -2959,8 +2965,8 @@ button {
   padding: 0 1.5mm;
   border-radius: 0;
   justify-content: center;
-  font-size: 9px;
-  line-height: 1.05;
+  font-size: 11px;
+  line-height: 1.1;
   overflow-wrap: anywhere;
   text-align: center;
   word-break: keep-all;
@@ -2971,7 +2977,7 @@ button {
   grid-column: 2;
   grid-row: 1;
   align-self: center;
-  font-size: 19px;
+  font-size: 22px;
   font-weight: 1000;
 }
 
@@ -2982,7 +2988,7 @@ button {
   align-self: stretch;
   align-content: center;
   justify-items: center;
-  min-width: 17mm;
+  min-width: 14mm;
   padding: 0.3mm 1.2mm;
   gap: 0.25mm;
   background: #101010;
@@ -3000,8 +3006,8 @@ button {
   display: inline-flex;
   padding: 2px 5px;
   border-radius: 5px;
-  font-size: 7.5px;
-  line-height: 1;
+  font-size: 8.6px;
+  line-height: 1.05;
 }
 
 .drug-label-item.label-size-15x95.label-kind-stock .drug-label-code-stack .label-code-storage.cold {
@@ -3045,14 +3051,14 @@ button {
   gap: 0;
   color: #111827;
   text-align: center;
-  font-size: 17px;
-  line-height: 1;
+  font-size: 19px;
+  line-height: 1.05;
 }
 
 .drug-label-item.label-size-15x95:is(.label-kind-stock, .label-kind-pharmacy) .drug-label-name-lines-3,
 .drug-label-item.label-size-15x95:is(.label-kind-stock, .label-kind-pharmacy) .drug-label-name-lines-4,
 .drug-label-item.label-size-15x95:is(.label-kind-stock, .label-kind-pharmacy) .drug-label-name-lines-5 {
-  font-size: 13.4px;
+  font-size: 14.6px;
 }
 
 .drug-label-item.label-size-15x95:is(.label-kind-stock, .label-kind-pharmacy) .drug-label-name-line {
@@ -3238,22 +3244,22 @@ button {
   gap: 0;
   color: #111827;
   text-align: center;
-  font-size: 10.4px;
-  line-height: 1;
+  font-size: 11.8px;
+  line-height: 1.05;
 }
 
 .drug-label-item.label-size-10x70:is(.label-kind-stock, .label-kind-pharmacy).name-long .drug-label-name-lines {
-  font-size: 9.4px;
+  font-size: 10.4px;
 }
 
 .drug-label-item.label-size-10x70:is(.label-kind-stock, .label-kind-pharmacy).name-extra-long .drug-label-name-lines {
-  font-size: 8.2px;
+  font-size: 8.8px;
 }
 
 .drug-label-item.label-size-10x70:is(.label-kind-stock, .label-kind-pharmacy) .drug-label-name-lines-3,
 .drug-label-item.label-size-10x70:is(.label-kind-stock, .label-kind-pharmacy) .drug-label-name-lines-4,
 .drug-label-item.label-size-10x70:is(.label-kind-stock, .label-kind-pharmacy) .drug-label-name-lines-5 {
-  font-size: 8.2px;
+  font-size: 7.6px;
 }
 
 .drug-label-item.label-size-10x70:is(.label-kind-stock, .label-kind-pharmacy) .drug-label-name-line {
@@ -5642,7 +5648,8 @@ button {
   background: #fff;
 }
 
-.pharmacy-cabinet-list-row.with-storage-column {
+.pharmacy-cabinet-list-row.with-storage-column,
+.pharmacy-cabinet-list-row.with-location-column {
   grid-template-columns: minmax(0, 2fr) minmax(22mm, 1fr) 16mm;
 }
 

@@ -25,6 +25,7 @@ Build a TypeScript app for pharmacist-led ward inventory checks using the Excel 
 - Create room inventory from non-zero room quantities only.
 - E-cart data comes from `20260302E-cart 약품목록_ cortisolu 삭제.xlsx`.
 - Checklist text comes from `비품점검체크리스트.xlsx`.
+- Before changing pharmacy label creation or edit rules, read `약제팀 라벨/원내보유의약품리스트 마크다운/*.md` and reflect those workbook-derived rules.
 
 ## Invariants
 - Drug identity is `약품코드`.

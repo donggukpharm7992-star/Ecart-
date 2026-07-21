@@ -149,6 +149,25 @@ describe("pharmacy label studio rules", () => {
     expect(draft.printable.footer.text).toBe("고농도 전해질");
   });
 
+  it("applies cabinet-list sheet details to cabinet label drafts", () => {
+    const draft = createPharmacyLabelDraft({
+      ...row,
+      cabinetOralInjection: true,
+      cabinetOralInjectionInfo: {
+        source: "경구 주사 리스트",
+        atc: "88",
+        warning: "PTP",
+        expiry: "2027-05-31",
+        location: "A",
+      },
+    }, "원병", "cabinet");
+
+    expect(draft.atc).toBe("88");
+    expect(draft.expiry).toBe("2027-05-31");
+    expect(draft.location).toBe("A");
+    expect(draft.warnings).toContain("PTP");
+  });
+
   it("uses a 0.5mm default border while preserving designated and high-cost 5mm borders", () => {
     expect(createPharmacyLabelDraft({ ...row, border: false, borderColor: "" }, "원병", "drug").style.outerBorderPx).toBe(0.5);
     expect(createPharmacyLabelDraft(row, "바이알", "drug").style.outerBorderPx).toBe(5);

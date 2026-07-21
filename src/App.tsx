@@ -3215,10 +3215,10 @@ export function App() {
             <span>유효기간</span>
             <b>{formatPharmacyExpiry(draft.expiry) || "YYYY-MM-DD"}</b>
           </div>
-        </div> : draft.labelFamily === "cabinet" ? <div className={`pharmacy-cabinet-list-row ${draft.category === "냉장주사" ? "with-storage-column" : ""}`}>
+        </div> : draft.labelFamily === "cabinet" ? <div className={`pharmacy-cabinet-list-row ${draft.location ? "with-location-column" : ""}`}>
           <div><strong>{draft.printable.title}</strong>{draft.printable.koreanName ? <span>{draft.printable.koreanName}</span> : null}</div>
           <b>{draft.warnings.filter((warning) => !["냉장", "냉동", "차광"].includes(warning)).join(" · ") || "-"}</b>
-          {draft.category === "냉장주사" ? <em>{draft.location || "-"}</em> : null}
+          {draft.location ? <em>{draft.location}</em> : null}
         </div> : draft.category === "마약/향정" ? <div className="pharmacy-controlled-label-form">
           <div className="pharmacy-controlled-label-top">고위험의약품{hasDoseHighlight ? " / 용량확인" : ""}</div>
           <strong className={titleSizeClass}>{hasDoseHighlight && controlledTitleParts.dose

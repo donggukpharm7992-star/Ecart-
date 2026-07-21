@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
   getHospitalDrugControlledCategory,
@@ -14,6 +15,8 @@ import {
   shouldExcludeHospitalControlledDrugLabel,
   stripHospitalDrugControlledPrefix,
 } from "./hospitalDrugLabels";
+
+const extractHospitalLabelsSource = readFileSync(new URL("./extract_hospital_labels.py", import.meta.url), "utf8");
 
 describe("hospital drug label source", () => {
   it("loads all drug label candidates from the hospital drug workbook", async () => {
@@ -153,6 +156,23 @@ describe("hospital drug label source", () => {
     const alpram = rows.filter((row) => row.name.startsWith("[향정]Alpram"));
     expect(alpram).toHaveLength(2);
     expect(alpram.every((row) => row.doseCheck)).toBe(true);
+  });
+
+  it("keeps colored side-label drugs backed by a local health.kr or workbook image", async () => {
+    const rows = await loadHospitalDrugLabelRows();
+    const coloredSideLabels = rows.filter((row) => row.coloredSideLabel?.trim().toUpperCase() === "Y");
+    const missingImages = coloredSideLabels.filter((row) => !row.imagePath);
+
+    expect(coloredSideLabels.length).toBeGreaterThan(30);
+    expect(missingImages).toHaveLength(0);
+    expect(coloredSideLabels.some((row) => row.imageSourceUrl?.includes("health.kr/searchDrug/result_drug.asp"))).toBe(true);
+  });
+
+  it("generates markdown rule files and fetches missing side-label images through health.kr APIs", () => {
+    expect(extractHospitalLabelsSource).toContain("MARKDOWN_OUTPUT_DIR");
+    expect(extractHospitalLabelsSource).toContain("RULE_SHEET_NAMES");
+    expect(extractHospitalLabelsSource).toContain("ajax_result_pop.asp");
+    expect(extractHospitalLabelsSource).toContain("input_drug_nm");
   });
 
   it("excludes PCA and test-use controlled drug names from the 40x70 list", () => {

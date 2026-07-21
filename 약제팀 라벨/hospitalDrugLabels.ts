@@ -1,3 +1,11 @@
+export type HospitalDrugCabinetInfo = {
+  source: "경구 주사 리스트" | "영양수액리스트" | "외용제리스트" | "시럽리스트";
+  atc?: string;
+  warning?: string;
+  expiry?: string;
+  location?: string;
+};
+
 export type HospitalDrugLabelRow = {
   code: string;
   itemCode?: string;
@@ -40,6 +48,10 @@ export type HospitalDrugLabelRow = {
   cabinetNutrition?: boolean;
   cabinetExternal?: boolean;
   cabinetSyrup?: boolean;
+  cabinetOralInjectionInfo?: HospitalDrugCabinetInfo | null;
+  cabinetNutritionInfo?: HospitalDrugCabinetInfo | null;
+  cabinetExternalInfo?: HospitalDrugCabinetInfo | null;
+  cabinetSyrupInfo?: HospitalDrugCabinetInfo | null;
   imagePath?: string;
   imageSourceUrl?: string;
 };

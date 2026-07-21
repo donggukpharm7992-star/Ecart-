@@ -171,6 +171,13 @@ function syncDistWithRemote(token, remote = "origin") {
   run("git", distGitAuthArgs(["pull", "--rebase", remote, "gh-pages"]), { cwd: distDir, env });
 }
 
+function commitDistChanges(message) {
+  run("git", distGitArgs(["add", "-A"]), { cwd: distDir });
+  const status = run("git", distGitArgs(["status", "--porcelain"]), { cwd: distDir, capture: true });
+  if (status) run("git", distGitArgs(["commit", "-m", message]), { cwd: distDir });
+  return Boolean(status);
+}
+
 function hasDistRemote(name) {
   return run("git", distGitArgs(["remote"]), { cwd: distDir, capture: true })
     .split(/\r?\n/)
@@ -194,6 +201,8 @@ async function main() {
   }
 
   const token = readToken();
+  const message = process.env.PUBLISH_MESSAGE?.trim() || "Deploy app update";
+  commitDistChanges(message);
   const localKeep = captureDistKeepFiles();
   syncDistWithRemote(token);
   const remoteKeep = captureDistKeepFiles();
@@ -214,8 +223,7 @@ async function main() {
     return;
   }
 
-  const message = process.env.PUBLISH_MESSAGE?.trim() || "Deploy app update";
-  run("git", distGitArgs(["commit", "-m", message]), { cwd: distDir });
+  commitDistChanges(message);
   pushWithToken(token);
 }
 
