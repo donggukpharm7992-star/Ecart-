@@ -2185,7 +2185,7 @@ button {
   justify-self: center;
   min-height: 0;
   color: #111827;
-  font-family: Verdana, "Segoe UI", "Malgun Gothic", sans-serif;
+  font-family: Arial, "Segoe UI", "Malgun Gothic", sans-serif;
   font-size: 16px;
   line-height: 1.25;
   overflow-wrap: anywhere;
@@ -3204,6 +3204,31 @@ button {
   color: #0b5c88;
   background: #dff3ff;
   font-size: 7.5px;
+}
+
+/* Keep descenders visible and give every safety marker two additional points. */
+.drug-label-item:is(.label-size-10x70, .label-size-15x95) .drug-label-warning-flag,
+.drug-label-item:is(.label-size-10x70, .label-size-15x95) .label-code-storage,
+.drug-label-item:is(.label-size-10x70, .label-size-15x95) .label-storage-badge {
+  font-family: Arial, "Segoe UI", "Malgun Gothic", sans-serif;
+  line-height: 1.2;
+}
+
+.drug-label-item.label-size-10x70 .drug-label-warning-flag,
+.drug-label-item.label-size-10x70 .label-code-storage,
+.drug-label-item.label-size-10x70 .label-storage-badge {
+  font-size: 11.9px;
+}
+
+.drug-label-item.label-size-15x95 .drug-label-warning-flag,
+.drug-label-item.label-size-15x95 .label-code-storage,
+.drug-label-item.label-size-15x95 .label-storage-badge {
+  font-size: 13.7px;
+}
+
+.drug-label-item:is(.label-size-10x70, .label-size-15x95):not(:has(.drug-label-code-stack)):not(.has-caution-label) h3 {
+  grid-column: 1 / -1;
+  padding-inline: 2mm;
 }
 
 .drug-label-item.label-size-10x70.has-caution-label:is(.label-kind-stock, .label-kind-pharmacy, .label-kind-ecart, .label-kind-narcotic) h3,

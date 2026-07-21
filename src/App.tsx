@@ -853,21 +853,24 @@ function renderToplineCaution(row: DrugLabelData, sizeKey?: DrugLabelSizeKey) {
 
 function renderLabelTopline(row: DrugLabelData, sizeKey?: DrugLabelSizeKey) {
   const codeStorageBadges = labelCodeStorageBadges(row, sizeKey);
+  const showEndPanel = codeStorageBadges.length > 0 || isEcartLabelKind(row.kind) || row.totalQuantity !== undefined;
   return (
     <div className="drug-label-topline">
       {renderToplineCaution(row, sizeKey)}
-      <div className="drug-label-code-stack">
-        <div className="drug-label-code-line">
-          {codeStorageBadges.map((badge) => (
-            <small className={`label-code-storage ${badge.tone}`} key={`${badge.label}-${badge.tone}`}>
-              {badge.label}
-            </small>
-          ))}
-          <strong>{row.code}</strong>
+      {showEndPanel ? (
+        <div className="drug-label-code-stack">
+          <div className="drug-label-code-line">
+            {codeStorageBadges.map((badge) => (
+              <small className={`label-code-storage ${badge.tone}`} key={`${badge.label}-${badge.tone}`}>
+                {badge.label}
+              </small>
+            ))}
+            <strong>{row.code}</strong>
+          </div>
+          {isEcartLabelKind(row.kind) ? <span className="label-storage-badge ecart">E-cart</span> : null}
+          {row.totalQuantity !== undefined ? <small className="label-quantity-circle">{row.totalQuantity}</small> : null}
         </div>
-        {isEcartLabelKind(row.kind) ? <span className="label-storage-badge ecart">E-cart</span> : null}
-        {row.totalQuantity !== undefined ? <small className="label-quantity-circle">{row.totalQuantity}</small> : null}
-      </div>
+      ) : null}
     </div>
   );
 }
