@@ -344,6 +344,7 @@ type PersistedAppState = {
   narcoticLotAssignments: Record<string, NarcoticLotValue>;
   narcoticLotFileName: string;
   pharmacyLabels: PharmacySavedLabel[];
+  pharmacyAdditionalRows: HospitalDrugLabelRow[];
 };
 
 type InspectionCycleResetState = Pick<
@@ -555,6 +556,7 @@ function normalizePersistedState(state: Partial<PersistedAppState>): Partial<Per
     uninspectedNarcoticRoomIds: Array.isArray(state.uninspectedNarcoticRoomIds) ? state.uninspectedNarcoticRoomIds : undefined,
     narcoticLotAssignments: remapStockKeyRecord(state.narcoticLotAssignments, normalizeNarcoticDrugCode),
     pharmacyLabels: Array.isArray(state.pharmacyLabels) ? state.pharmacyLabels : undefined,
+    pharmacyAdditionalRows: Array.isArray(state.pharmacyAdditionalRows) ? state.pharmacyAdditionalRows : undefined,
   };
 }
 
@@ -799,6 +801,49 @@ function isLightProtectedLabel(row: DrugLabelData) {
   return labelFlagLabels(row).some((label) => label.includes("차광"));
 }
 
+function pharmacyRowFromDraft(draft: PharmacyLabelDraft): HospitalDrugLabelRow {
+  const warnings = new Set(draft.warnings);
+  return {
+    code: draft.code.trim(),
+    itemCode: draft.itemCode.trim(),
+    name: draft.printable.title,
+    koreanName: draft.printable.koreanName,
+    strength: draft.printable.strength,
+    drugType: draft.drugTypes[0] ?? draft.category,
+    spec: draft.printable.strength,
+    package: "",
+    storage: warnings.has("냉동") ? "냉동" : warnings.has("냉장") ? "냉장" : "",
+    lightProtected: warnings.has("차광"),
+    inHospital: true,
+    similarLook: warnings.has("유사모양"),
+    similarSound: warnings.has("유사발음"),
+    doseCaution: warnings.has("용량주의"),
+    doseCheck: warnings.has("용량확인"),
+    highRisk: warnings.has("고위험의약품"),
+    highRiskCategory: warnings.has("고위험의약품") ? "고위험의약품" : "",
+    atc: draft.atc,
+    expiry: draft.expiry,
+    location: draft.location,
+    nameCaution: warnings.has("이름주의"),
+    border: draft.style.outerBorderPx > 0,
+    borderColor: draft.style.outerBorderColor,
+    oralAnticancer: draft.category === "항암제",
+  };
+}
+
+function mergePharmacyRows(base: HospitalDrugLabelRow[], additional: HospitalDrugLabelRow[]) {
+  const byCode = new Map(base.map((row) => [row.code, row]));
+  for (const row of additional) byCode.set(row.code, row);
+  return [...byCode.values()];
+}
+
+function pharmacyRowsFromSavedLabels(labels: PharmacySavedLabel[]) {
+  return labels
+    .filter((label) => label.code.trim())
+    .sort((left, right) => (left.savedAt ?? "").localeCompare(right.savedAt ?? ""))
+    .map(pharmacyRowFromDraft);
+}
+
 function usesCompactGeneralLabelStoragePanel(row: DrugLabelData, sizeKey?: DrugLabelSizeKey) {
   return (sizeKey === "10x70" || sizeKey === "15x95") && (row.kind === "stock" || row.kind === "pharmacy");
 }
@@ -996,6 +1041,7 @@ export function App() {
   const [hospitalDrugLabelRows, setHospitalDrugLabelRows] = useState<HospitalDrugLabelRow[]>([]);
   const [isHospitalDrugLabelsLoading, setIsHospitalDrugLabelsLoading] = useState(false);
   const [pharmacyHospitalDrugLabelRows, setPharmacyHospitalDrugLabelRows] = useState<HospitalDrugLabelRow[]>([]);
+  const [pharmacyAdditionalRows, setPharmacyAdditionalRows] = useState<HospitalDrugLabelRow[]>(persistedState.pharmacyAdditionalRows ?? []);
   const [pharmacyLabelMatchRows, setPharmacyLabelMatchRows] = useState<PharmacyLabelMatchRow[]>([]);
   const [isPharmacyLabelMatchesLoading, setIsPharmacyLabelMatchesLoading] = useState(false);
   const [savedPharmacyLabels, setSavedPharmacyLabels] = useState<PharmacySavedLabel[]>(() =>
@@ -1078,6 +1124,7 @@ export function App() {
       narcoticLotAssignments,
       narcoticLotFileName: narcoticExcelFileName,
       pharmacyLabels: savedPharmacyLabels,
+      pharmacyAdditionalRows,
     }),
     [
       checkedStock,
@@ -1102,6 +1149,7 @@ export function App() {
       uninspectedNarcoticRoomIds,
       uninspectedRoomIds,
       savedPharmacyLabels,
+      pharmacyAdditionalRows,
     ],
   );
 
@@ -1136,6 +1184,11 @@ export function App() {
     if (normalized.pharmacyLabels) {
       setSavedPharmacyLabels(normalized.pharmacyLabels);
       writeSavedPharmacyLabelsToStorage(window.localStorage, normalized.pharmacyLabels);
+      setPharmacyHospitalDrugLabelRows((previous) => mergePharmacyRows(previous, pharmacyRowsFromSavedLabels(normalized.pharmacyLabels ?? [])));
+    }
+    if (normalized.pharmacyAdditionalRows) {
+      setPharmacyAdditionalRows(normalized.pharmacyAdditionalRows);
+      setPharmacyHospitalDrugLabelRows((previous) => mergePharmacyRows(previous, normalized.pharmacyAdditionalRows ?? []));
     }
   }
 
@@ -1475,7 +1528,11 @@ export function App() {
     const loadRows = labelMode === "pharmacy" ? loadPharmacyHospitalDrugLabelRows : loadWardHospitalDrugLabelRows;
     void loadRows()
       .then((rows) => {
-        if (labelMode === "pharmacy") setPharmacyHospitalDrugLabelRows(rows);
+        if (labelMode === "pharmacy") {
+          setPharmacyHospitalDrugLabelRows(
+            mergePharmacyRows(mergePharmacyRows(rows, pharmacyRowsFromSavedLabels(savedPharmacyLabels)), pharmacyAdditionalRows),
+          );
+        }
         else setHospitalDrugLabelRows(rows);
       })
       .catch((error) => {
@@ -1484,14 +1541,16 @@ export function App() {
       .finally(() => {
         setIsHospitalDrugLabelsLoading(false);
       });
-  }, [hospitalDrugLabelRows.length, isDrugLabelPanelOpen, labelMode, pharmacyHospitalDrugLabelRows.length]);
+  }, [hospitalDrugLabelRows.length, isDrugLabelPanelOpen, labelMode, pharmacyAdditionalRows, pharmacyHospitalDrugLabelRows.length, savedPharmacyLabels]);
 
   useEffect(() => {
     if (!isPharmacyLabelWorkspaceOpen || pharmacyLabelMatchRows.length > 0 || isPharmacyLabelMatchesLoading) return;
     setIsPharmacyLabelMatchesLoading(true);
     void Promise.all([loadPharmacyLabelMatchRows(), loadPharmacyHospitalDrugLabelRows()])
       .then(([matchRows, hospitalRows]) => {
-        setPharmacyHospitalDrugLabelRows(hospitalRows);
+        setPharmacyHospitalDrugLabelRows(
+          mergePharmacyRows(mergePharmacyRows(hospitalRows, pharmacyRowsFromSavedLabels(savedPharmacyLabels)), pharmacyAdditionalRows),
+        );
         setPharmacyLabelMatchRows(mergeHospitalDrugRowsIntoPharmacyLabelMatches(hospitalRows, matchRows));
       })
       .catch((error) => {
@@ -1500,7 +1559,7 @@ export function App() {
       .finally(() => {
         setIsPharmacyLabelMatchesLoading(false);
       });
-  }, [isPharmacyLabelMatchesLoading, isPharmacyLabelWorkspaceOpen, pharmacyLabelMatchRows.length]);
+  }, [isPharmacyLabelMatchesLoading, isPharmacyLabelWorkspaceOpen, pharmacyAdditionalRows, pharmacyLabelMatchRows.length, savedPharmacyLabels]);
 
   const syncStatusText = useMemo(() => {
     if (syncStatus.lastSyncedAt) {
@@ -2740,6 +2799,7 @@ export function App() {
 
   async function savePharmacyStudioLabel(draft: PharmacyLabelDraft) {
     if (typeof window === "undefined") return "";
+    if (!draft.code.trim()) throw new Error("새 라벨은 약품코드를 입력해야 저장할 수 있습니다.");
     const workbookSaveMode = await savePharmacyLabelDraftToWorkbook(draft, hospitalDrugWorkbookUrl);
     const saved = savePharmacyLabelToStorage(window.localStorage, draft);
     setSavedPharmacyLabels((previous) => [...previous.filter((label) => label.id !== saved.id), saved]);
@@ -2766,7 +2826,16 @@ export function App() {
       border: draft.style.outerBorderPx > 0,
       borderColor: draft.style.outerBorderColor,
     } : row));
-    return workbookSaveMode === "file"
+    const nextRow = pharmacyRowFromDraft(draft);
+    const isAdditionalRow = pharmacyAdditionalRows.some((row) => row.code === nextRow.code)
+      || !pharmacyHospitalDrugLabelRows.some((row) => row.code === nextRow.code);
+    setPharmacyHospitalDrugLabelRows((previous) => mergePharmacyRows(previous.filter((row) => row.code !== nextRow.code), [nextRow]));
+    if (isAdditionalRow) {
+      setPharmacyAdditionalRows((previous) => mergePharmacyRows(previous.filter((row) => row.code !== nextRow.code), [nextRow]));
+    }
+    return workbookSaveMode === "server"
+      ? "수정 내용이 약제팀 라벨 원본과 공유 서버에 자동 저장되었습니다."
+      : workbookSaveMode === "file"
       ? "수정 내용이 최종 라벨과 선택한 원내보유의약품리스트.xlsx에 저장되었습니다."
       : "수정 내용이 최종 라벨로 저장되었으며, 갱신된 원내보유의약품리스트.xlsx가 다운로드되었습니다. 기존 파일을 이 파일로 교체해 주십시오.";
   }

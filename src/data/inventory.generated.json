@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-20T10:59:03+09:00",
+  "generatedAt": "2026-07-22T16:20:07+09:00",
   "sourceFiles": {
     "stockWorkbook": "병동별비품현황 202606.xlsx",
     "ecartWorkbook": "20260302E-cart 약품목록_ cortisolu 삭제.xlsx",
@@ -174,7 +174,7 @@
         "storage": "기밀용기, 실온(25℃이하)보관",
         "note": "",
         "warning": "",
-        "storageType": "REFRIGERATED"
+        "storageType": "ROOM"
       },
       {
         "code": "XATRO",
@@ -504,7 +504,7 @@
         "storage": "밀봉용기, 25도씨에서 차광보관",
         "note": "",
         "warning": "",
-        "storageType": "LIGHT_PROTECTED"
+        "storageType": "ROOM"
       },
       {
         "code": "XICGR25W",
@@ -594,7 +594,7 @@
         "storage": "차광밀봉용기, 1~25℃보관",
         "note": "",
         "warning": "",
-        "storageType": "LIGHT_PROTECTED"
+        "storageType": "ROOM"
       },
       {
         "code": "XADENO90",
@@ -644,7 +644,7 @@
         "storage": "밀봉용기,25℃이하 보관",
         "note": "",
         "warning": "",
-        "storageType": "REFRIGERATED"
+        "storageType": "ROOM"
       },
       {
         "code": "XTRIPTO11",
@@ -654,7 +654,7 @@
         "storage": "밀봉용기, 25℃이하 보관",
         "note": "",
         "warning": "",
-        "storageType": "REFRIGERATED"
+        "storageType": "ROOM"
       },
       {
         "code": "XHUR16C40",
@@ -684,7 +684,7 @@
         "storage": "밀봉용기, 25℃이하에서 보관",
         "note": "유사발음",
         "warning": "유사발음",
-        "storageType": "REFRIGERATED"
+        "storageType": "ROOM"
       },
       {
         "code": "XDOPA4D2",
@@ -714,7 +714,7 @@
         "storage": "기밀용기, 25℃이하 보관",
         "note": "",
         "warning": "",
-        "storageType": "REFRIGERATED"
+        "storageType": "ROOM"
       },
       {
         "code": "XXDUPIL3P",
@@ -874,7 +874,7 @@
         "storage": "밀봉용기, 차광하여 25℃이하 실온보관",
         "note": "고위험의약품",
         "warning": "고위험의약품",
-        "storageType": "REFRIGERATED"
+        "storageType": "ROOM"
       },
       {
         "code": "XHINFB5",
@@ -1204,7 +1204,7 @@
         "storage": "밀봉용기, 실온(25℃ 이하)보관",
         "note": "",
         "warning": "",
-        "storageType": "REFRIGERATED"
+        "storageType": "ROOM"
       },
       {
         "code": "XPALP100L",
@@ -1864,7 +1864,7 @@
         "storage": "밀봉용기, 25℃이하 보관",
         "note": "",
         "warning": "",
-        "storageType": "REFRIGERATED"
+        "storageType": "ROOM"
       },
       {
         "code": "XNTPRUS",
@@ -1874,7 +1874,7 @@
         "storage": "20～25℃, 차광보관",
         "note": "",
         "warning": "",
-        "storageType": "LIGHT_PROTECTED"
+        "storageType": "ROOM"
       },
       {
         "code": "XNORE10",
@@ -1964,7 +1964,7 @@
         "storage": "차광밀봉용기, 25℃ 이하",
         "note": "",
         "warning": "",
-        "storageType": "REFRIGERATED"
+        "storageType": "ROOM"
       },
       {
         "code": "XPAPA",
@@ -1984,7 +1984,7 @@
         "storage": "밀봉용기, 실온(25℃이하 보관)",
         "note": "",
         "warning": "",
-        "storageType": "REFRIGERATED"
+        "storageType": "ROOM"
       },
       {
         "code": "XAMP5",
@@ -2064,7 +2064,7 @@
         "storage": "밀봉용기, 동결하지 않고 25℃이하에서 보관",
         "note": "유사모양",
         "warning": "유사모양",
-        "storageType": "REFRIGERATED"
+        "storageType": "ROOM"
       },
       {
         "code": "X2PHY2",
@@ -2074,7 +2074,7 @@
         "storage": "밀봉용기, 동결하지 않고 25℃이하에서 보관",
         "note": "유사모양",
         "warning": "유사모양",
-        "storageType": "REFRIGERATED"
+        "storageType": "ROOM"
       },
       {
         "code": "CLOPID",
@@ -2244,7 +2244,7 @@
         "storage": "밀봉용기, 15~25℃ 차광·건소보관",
         "note": "",
         "warning": "",
-        "storageType": "LIGHT_PROTECTED"
+        "storageType": "ROOM"
       },
       {
         "code": "XNICORA",
@@ -2394,7 +2394,7 @@
         "storage": "차광밀봉용기, 25℃ 미만 실온 보관",
         "note": "",
         "warning": "",
-        "storageType": "LIGHT_PROTECTED"
+        "storageType": "ROOM"
       },
       {
         "code": "XB1",
@@ -2644,7 +2644,7 @@
         "storage": "밀봉용기 25℃ 이하에서 보관",
         "note": "",
         "warning": "",
-        "storageType": "REFRIGERATED"
+        "storageType": "ROOM"
       },
       {
         "code": "XIRONSU",
@@ -2654,7 +2654,7 @@
         "storage": "밀봉용기, 25℃이하 암소보관.",
         "note": "",
         "warning": "",
-        "storageType": "REFRIGERATED"
+        "storageType": "ROOM"
       },
       {
         "code": "SALB-NB",
@@ -2694,7 +2694,7 @@
         "storage": "밀봉용기, 차광하여 1~ 25℃에서 보관",
         "note": "",
         "warning": "",
-        "storageType": "LIGHT_PROTECTED"
+        "storageType": "ROOM"
       },
       {
         "code": "XHES6MPS5",
@@ -2704,7 +2704,7 @@
         "storage": "밀봉용기, 25℃ 이하",
         "note": "",
         "warning": "",
-        "storageType": "REFRIGERATED"
+        "storageType": "ROOM"
       },
       {
         "code": "XDENOS12W",
@@ -2734,7 +2734,7 @@
         "storage": "밀봉용기, 25℃이하 실온보관",
         "note": "",
         "warning": "",
-        "storageType": "REFRIGERATED"
+        "storageType": "ROOM"
       }
     ],
     "rooms": [

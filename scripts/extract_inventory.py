@@ -172,6 +172,8 @@ def storage_type(storage: str) -> str:
     text = storage.replace(" ", "")
     if "냉장보관하지" in text:
         return "ROOM"
+    if "25℃" in text or "25도" in text:
+        return "ROOM"
     if any(token in text for token in ["냉장", "2~8", "2-8", "2∼8", "5±3", "5℃이하", "10℃이하"]):
         return "REFRIGERATED"
     if "차광" in text:

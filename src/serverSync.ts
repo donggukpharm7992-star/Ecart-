@@ -28,6 +28,11 @@ export function buildStaticAppStateUrl(baseUrl = configuredBaseUrl) {
   return `${normalizedBase}app-state/shared-state.json`;
 }
 
+export function buildPharmacyLabelWorkbookApiUrl(baseUrl = configuredBaseUrl) {
+  const normalizedBase = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
+  return `${normalizedBase}api/pharmacy-label-workbook`;
+}
+
 async function fetchServerState(url: string, init: RequestInit, timeoutMs = DEFAULT_SERVER_TIMEOUT_MS) {
   const controller = new AbortController();
   const timer = globalThis.setTimeout(() => controller.abort(), timeoutMs);

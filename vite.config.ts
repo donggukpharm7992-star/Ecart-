@@ -14,6 +14,8 @@ const execFileAsync = promisify(execFile);
 const rootDir = fileURLToPath(new URL(".", import.meta.url));
 const appStateRelativePath = path.join("app-state", "shared-state.json");
 const appStatePath = path.join(rootDir, appStateRelativePath);
+const pharmacyWorkbookRelativePath = path.join("약제팀 라벨", "원내보유의약품리스트.xlsx");
+const pharmacyWorkbookPath = path.join(rootDir, pharmacyWorkbookRelativePath);
 
 async function readRequestBody(request: IncomingMessage) {
   const chunks: Buffer[] = [];
@@ -21,6 +23,14 @@ async function readRequestBody(request: IncomingMessage) {
     chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
   }
   return Buffer.concat(chunks).toString("utf8");
+}
+
+async function readRequestBuffer(request: IncomingMessage) {
+  const chunks: Buffer[] = [];
+  for await (const chunk of request) {
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+  }
+  return Buffer.concat(chunks);
 }
 
 async function runGit(args: string[]) {
@@ -120,9 +130,22 @@ async function saveStateAndPush(body: string) {
   return { sha: stateSha(saved) };
 }
 
+async function savePharmacyWorkbookAndPush(content: Buffer) {
+  const temporaryPath = `${pharmacyWorkbookPath}.tmp-${Date.now()}`;
+  await fs.writeFile(temporaryPath, content);
+  await fs.rename(temporaryPath, pharmacyWorkbookPath);
+  await runGitWithRetry(["add", "--", pharmacyWorkbookRelativePath]);
+  const status = await runGitWithRetry(["status", "--porcelain", "--", pharmacyWorkbookRelativePath]);
+  if (status.stdout.trim()) {
+    await runGitWithRetry(["commit", "-m", "Sync pharmacy label workbook", "--", pharmacyWorkbookRelativePath]);
+    await runGitWithRetry(["push", "origin", "main"]);
+  }
+  return { saved: true };
+}
+
 function appStateSyncPlugin(): Plugin {
-  let writeQueue: Promise<unknown> = Promise.resolve();
-  const apiPaths = new Set(["/api/app-state", "/Ecart-/api/app-state"]);
+  let writeQueue: Promise<void> = Promise.resolve();
+  const apiPaths = new Set(["/api/app-state", "/Ecart-/api/app-state", "/api/pharmacy-label-workbook", "/Ecart-/api/pharmacy-label-workbook"]);
 
   return {
     name: "app-state-sync",
@@ -149,6 +172,22 @@ function appStateSyncPlugin(): Plugin {
           }
 
           if (request.method === "GET") {
+            if (requestPath.endsWith("/pharmacy-label-workbook")) {
+              try {
+                const content = await fs.readFile(pharmacyWorkbookPath);
+                response.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                response.setHeader("Content-Length", content.byteLength);
+                response.end(content);
+              } catch (error) {
+                if (typeof error === "object" && error && "code" in error && error.code === "ENOENT") {
+                  response.statusCode = 404;
+                  response.end(JSON.stringify({ error: "Pharmacy workbook not found" }));
+                  return;
+                }
+                throw error;
+              }
+              return;
+            }
             try {
               const content = await fs.readFile(appStatePath, "utf8");
               response.end(JSON.stringify({ envelope: JSON.parse(content), sha: stateSha(content) }));
@@ -164,8 +203,12 @@ function appStateSyncPlugin(): Plugin {
           }
 
           if (request.method === "PUT") {
-            const body = await readRequestBody(request);
-            const resultPromise = writeQueue.then(() => saveStateAndPush(body));
+            const isPharmacyWorkbook = requestPath.endsWith("/pharmacy-label-workbook");
+            const body = isPharmacyWorkbook ? await readRequestBuffer(request) : await readRequestBody(request);
+            const resultPromise = writeQueue.then(async () => {
+              if (isPharmacyWorkbook) return savePharmacyWorkbookAndPush(body as Buffer);
+              return saveStateAndPush(body as string);
+            });
             writeQueue = resultPromise.then(
               () => undefined,
               () => undefined,

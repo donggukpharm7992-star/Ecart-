@@ -12,9 +12,15 @@ export function isRefrigeratedStorage(storage: string) {
   return normalized.includes("냉장") || /2(?:-|~)8/.test(normalized);
 }
 
+function isRoomTemperatureStorage(storage: string) {
+  const value = storage.replace(/\s+/g, "");
+  return value.includes("25℃") || value.includes("25도");
+}
+
 export function isRefrigeratedDrug(drug: StorageDisplayDrug) {
   if (FORCE_ROOM_STORAGE_CODES.has(drug.code)) return false;
   if (isForcedRefrigeratedDrug(drug)) return true;
+  if (isRoomTemperatureStorage(drug.storage)) return false;
   return drug.storageType === "REFRIGERATED" || isRefrigeratedStorage(drug.storage);
 }
 

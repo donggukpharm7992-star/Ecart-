@@ -251,6 +251,38 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
     patch(next);
   }
 
+  function startNewLabel() {
+    const seedRow = activeRow ?? categoryRows[0];
+    if (!seedRow) {
+      setSaveStatus("새 라벨의 기본 서식으로 사용할 약품이 없습니다. 먼저 약품 목록을 불러와 주세요.");
+      return;
+    }
+    const seed = resolvePharmacyLabelDraft(seedRow, savedLabels, category, family);
+    setDraft({
+      ...seed,
+      id: `pharmacy-label-new-${Date.now()}`,
+      code: "",
+      itemCode: "",
+      location: "",
+      atc: "",
+      expiry: "",
+      printable: {
+        ...seed.printable,
+        title: "",
+        koreanName: "",
+        strength: "",
+        warning: "",
+        topBanner: "",
+        footer: { enabled: false, text: "" },
+        reconstitution: "",
+      },
+      sourceType: "new",
+      savedAt: undefined,
+    });
+    setEditMode("new");
+    setSaveStatus("");
+  }
+
   async function confirmAndSave() {
     if (!draft || !activeRow) return;
     const previousWarnings = new Set([
@@ -342,7 +374,7 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
 
       <section className="pharmacy-label-canvas-panel">
         <div className="pharmacy-panel-head"><div><h2>라벨 편집 캔버스</h2><p>선택한 라벨을 편집한 뒤 최종본으로 저장합니다.</p></div></div>
-        <div className="pharmacy-edit-modes"><button className={editMode === "edit" ? "active" : ""} onClick={() => setEditMode("edit")}>선택 라벨 수정</button><button className={editMode === "new" ? "active" : ""} onClick={() => setEditMode("new")}>새 라벨 만들기</button>{draft && <div className="pharmacy-inline-border-choice"><span>테두리</span><button className={draft.style.outerBorderPx > 0 ? "active" : ""} onClick={() => patch({ style: {...draft.style, outerBorderPx: category === "고가약" || activeRow?.border ? 5 : 0.5} })}>있음</button><button className={draft.style.outerBorderPx <= 0 ? "active" : ""} onClick={() => patch({ style: {...draft.style, outerBorderPx: 0} })}>없음</button></div>}</div>
+        <div className="pharmacy-edit-modes"><button className={editMode === "edit" ? "active" : ""} onClick={() => setEditMode("edit")}>선택 라벨 수정</button><button className={editMode === "new" ? "active" : ""} onClick={startNewLabel}>새 라벨 만들기</button>{draft && <div className="pharmacy-inline-border-choice"><span>테두리</span><button className={draft.style.outerBorderPx > 0 ? "active" : ""} onClick={() => patch({ style: {...draft.style, outerBorderPx: category === "고가약" || activeRow?.border ? 5 : 0.5} })}>있음</button><button className={draft.style.outerBorderPx <= 0 ? "active" : ""} onClick={() => patch({ style: {...draft.style, outerBorderPx: 0} })}>없음</button></div>}</div>
         {editMode === "new" && draft && <div className="pharmacy-new-label-fields">
           <input placeholder="상용약품명" value={draft.printable.title} onChange={(e) => patch({ printable: {...draft.printable, title: e.target.value} })}/>
           <input placeholder="한글약품명" value={draft.printable.koreanName} onChange={(e) => patch({ printable: {...draft.printable, koreanName: e.target.value} })}/>
