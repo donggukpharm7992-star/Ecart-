@@ -687,6 +687,12 @@ export function getDrugLabelNameClass(name: string, kind: DrugLabelMode = "stock
     return "";
   }
 
+  if (kind === "ecart" || kind === "ecart-nicu") {
+    if (meaningfulLength >= 24 || tokenCount >= 4) return "name-extra-long";
+    if (meaningfulLength >= 16 || tokenCount >= 3) return "name-long";
+    return "";
+  }
+
   if (meaningfulLength >= 34 || tokenCount >= 6) return "name-extra-long";
   if (meaningfulLength >= 20 || tokenCount >= 4) return "name-long";
   return "";

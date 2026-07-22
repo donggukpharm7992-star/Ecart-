@@ -3466,8 +3466,8 @@ button {
 }
 
 .drug-label-item.label-size-15x95.label-kind-ecart.name-extra-long h3 {
-  font-size: 15px;
-  line-height: 1.08;
+  font-size: 12px;
+  line-height: 1;
 }
 
 /* Keep red safety cautions prominent while giving compact storage badges less space. */
