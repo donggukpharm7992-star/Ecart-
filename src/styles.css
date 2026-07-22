@@ -3499,6 +3499,79 @@ button {
   line-height: 1.08;
 }
 
+/* Reserve a readable name area before allowing long caution text to grow. */
+.drug-label-item.label-size-10x70.has-caution-label:is(.label-kind-stock, .label-kind-pharmacy, .label-kind-narcotic) {
+  grid-template-columns: 16mm minmax(27mm, 1fr) 15mm;
+}
+
+.drug-label-item.label-size-15x95.has-caution-label:is(.label-kind-stock, .label-kind-pharmacy, .label-kind-narcotic) {
+  grid-template-columns: 23mm minmax(38mm, 1fr) 18mm;
+}
+
+.drug-label-item.label-size-10x70.has-caution-label:is(.label-kind-stock, .label-kind-pharmacy, .label-kind-narcotic) .drug-label-warning-flag {
+  min-width: 0;
+  max-width: 16mm;
+  padding-inline: 0.7mm;
+  font-size: 9px !important;
+  line-height: 1.08 !important;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.drug-label-item.label-size-15x95.has-caution-label:is(.label-kind-stock, .label-kind-pharmacy, .label-kind-narcotic) .drug-label-warning-flag {
+  min-width: 0;
+  max-width: 23mm;
+  padding-inline: 1mm;
+  font-size: 11.5px !important;
+  line-height: 1.1 !important;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.drug-label-item.label-size-10x70.has-caution-label:is(.label-kind-stock, .label-kind-pharmacy, .label-kind-narcotic) .drug-label-name-lines {
+  font-size: 10px;
+  line-height: 1.05;
+}
+
+.drug-label-item.label-size-10x70.has-caution-label:is(.label-kind-stock, .label-kind-pharmacy, .label-kind-narcotic).name-long .drug-label-name-lines {
+  font-size: 9px;
+}
+
+.drug-label-item.label-size-10x70.has-caution-label:is(.label-kind-stock, .label-kind-pharmacy, .label-kind-narcotic).name-extra-long .drug-label-name-lines {
+  font-size: 8px;
+}
+
+.drug-label-item.label-size-15x95.has-caution-label:is(.label-kind-stock, .label-kind-pharmacy, .label-kind-narcotic) .drug-label-name-lines {
+  font-size: 17px;
+  line-height: 1.08;
+}
+
+.drug-label-item.label-size-15x95.has-caution-label:is(.label-kind-stock, .label-kind-pharmacy, .label-kind-narcotic).name-long .drug-label-name-lines {
+  font-size: 14px;
+}
+
+.drug-label-item.label-size-15x95.has-caution-label:is(.label-kind-stock, .label-kind-pharmacy, .label-kind-narcotic).name-extra-long .drug-label-name-lines {
+  font-size: 12px;
+}
+
+.drug-label-item.label-size-10x70.has-caution-label.label-kind-narcotic h3 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  line-height: 1.05;
+  -webkit-line-clamp: unset;
+}
+
+.drug-label-item.label-size-15x95.has-caution-label.label-kind-narcotic h3 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 1.08;
+  -webkit-line-clamp: unset;
+}
+
 /* Keep red safety cautions prominent while giving compact storage badges less space. */
 .drug-label-item.label-size-10x70:is(.label-kind-stock, .label-kind-pharmacy) .label-code-storage {
   font-size: 9px !important;
