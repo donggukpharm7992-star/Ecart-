@@ -3470,6 +3470,35 @@ button {
   line-height: 1;
 }
 
+/* Checked master labels: controlled status stays red while light protection remains at the right. */
+.drug-label-item.checked-master-label.light-protected-label.has-controlled-caution-label .drug-label-warning-flag {
+  color: #fff;
+  background: #ef1d19;
+}
+
+.drug-label-item.checked-master-label.light-protected-label.has-controlled-caution-label h3 {
+  background: #e0f7e8;
+}
+
+/* Checked master 15×95 labels reserve enough vertical space for three name lines. */
+.drug-label-item.checked-master-label.label-size-15x95.label-kind-stock h3 {
+  align-self: stretch;
+  min-height: 0;
+  padding: 0.5mm 1mm;
+  overflow: hidden;
+}
+
+.drug-label-item.checked-master-label.label-size-15x95.label-kind-stock .drug-label-name-lines {
+  line-height: 1.08;
+}
+
+.drug-label-item.checked-master-label.label-size-15x95.label-kind-stock .drug-label-name-lines-3,
+.drug-label-item.checked-master-label.label-size-15x95.label-kind-stock .drug-label-name-lines-4,
+.drug-label-item.checked-master-label.label-size-15x95.label-kind-stock .drug-label-name-lines-5 {
+  font-size: 12.6px;
+  line-height: 1.08;
+}
+
 /* Keep red safety cautions prominent while giving compact storage badges less space. */
 .drug-label-item.label-size-10x70:is(.label-kind-stock, .label-kind-pharmacy) .label-code-storage {
   font-size: 9px !important;

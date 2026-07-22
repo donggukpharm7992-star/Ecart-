@@ -3095,6 +3095,7 @@ export function App() {
     const flagLabels = labelFlagLabels(row);
     const isLightProtected = isLightProtectedLabel(row);
     const hasRedPriority = hasRedPriorityLabel(row);
+    const hasControlledCaution = flagLabels.some((label) => label.includes("마약") || label.includes("향정"));
     const renderedKind = isEcartLabelKind(row.kind) ? "ecart" : row.kind;
     const fluidTone = row.fluidTone;
     const nameClass = getDrugLabelNameClass(row.name, renderedKind, sizeKey);
@@ -3112,6 +3113,7 @@ export function App() {
       row.highRisk ? "high-risk-label" : "",
       isLightProtected ? "light-protected-label" : "",
       hasRedPriority ? "has-red-priority-label" : "",
+      hasControlledCaution ? "has-controlled-caution-label" : "",
       flagLabels.length > 0 ? "has-caution-label" : "",
       row.doseCaution ? "has-dose-caution" : "",
       hasDoseWarningLabel ? "has-dose-warning-label" : "",
