@@ -6542,3 +6542,13 @@ button {
   width: 100%;
   max-width: 100%;
 }
+
+/* E-cart labels: change typography only; preserve their existing layout and sizing. */
+.drug-label-item.label-kind-ecart,
+.drug-label-item.label-kind-ecart h3,
+.drug-label-item.label-kind-ecart .drug-label-warning-flag,
+.drug-label-item.label-kind-ecart .label-storage-badge,
+.drug-label-item.label-kind-ecart .label-code-storage,
+.drug-label-item.label-kind-ecart .drug-label-code-stack strong {
+  font-family: "Segoe UI", "Malgun Gothic", Arial, sans-serif;
+}
