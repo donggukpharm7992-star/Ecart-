@@ -6552,3 +6552,10 @@ button {
 .drug-label-item.label-kind-ecart .drug-label-code-stack strong {
   font-family: "Segoe UI", "Malgun Gothic", Arial, sans-serif;
 }
+
+/* Keep 15×95 general drug names intact by wrapping at spaces, not individual letters. */
+.drug-label-item.label-size-15x95:is(.label-kind-stock, .label-kind-pharmacy) h3,
+.drug-label-item.label-size-15x95:is(.label-kind-stock, .label-kind-pharmacy) .drug-label-name-line {
+  overflow-wrap: normal;
+  word-break: keep-all;
+}
