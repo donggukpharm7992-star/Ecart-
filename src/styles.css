@@ -3446,6 +3446,30 @@ button {
   justify-self: center;
 }
 
+/* 15×95 E-cart labels keep every drug name inside the center cell. */
+.drug-label-item.label-size-15x95.label-kind-ecart h3 {
+  display: flex !important;
+  align-self: stretch;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: 0.6mm 1mm;
+  overflow: hidden;
+  font-size: 21px;
+  line-height: 1.06;
+  -webkit-line-clamp: unset;
+}
+
+.drug-label-item.label-size-15x95.label-kind-ecart.name-long h3 {
+  font-size: 18px;
+  line-height: 1.08;
+}
+
+.drug-label-item.label-size-15x95.label-kind-ecart.name-extra-long h3 {
+  font-size: 15px;
+  line-height: 1.08;
+}
+
 .drug-label-item:is(.label-size-10x70, .label-size-15x95):not(:has(.drug-label-code-stack)):not(.has-caution-label) h3 {
   grid-column: 1 / -1;
   padding-inline: 2mm;
