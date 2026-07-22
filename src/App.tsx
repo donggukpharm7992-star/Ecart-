@@ -245,6 +245,7 @@ type LabelPrintSelection = {
   id: string;
   mode: DrugLabelMode;
   sizeKey: DrugLabelSizeKey;
+  isCheckedMasterPrint?: boolean;
   roomId?: string;
   quantityOverride?: number;
   labelRow?: DrugLabelData;
@@ -2683,6 +2684,7 @@ export function App() {
           id: labelRow.id,
           mode: labelRow.kind,
           sizeKey: labelSize,
+          isCheckedMasterPrint: true,
           roomId: labelRow.roomId,
           quantityOverride: labelRow.totalQuantity,
           labelRow,
@@ -3103,6 +3105,7 @@ export function App() {
       "print-label",
       `label-size-${sizeKey}`,
       `label-kind-${renderedKind}`,
+      entry.isCheckedMasterPrint ? "checked-master-label" : "",
       nameClass,
       fluidTone ? "fluid-label" : "",
       fluidTone ? `fluid-tone-${fluidTone}` : "",

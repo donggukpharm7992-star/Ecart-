@@ -3400,6 +3400,52 @@ button {
   display: none;
 }
 
+/* Only labels opened by the master-screen "checked drug label print" use this compact end panel. */
+.drug-label-item.checked-master-label:is(.label-size-10x70, .label-size-15x95) .drug-label-code-stack {
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr);
+  align-items: center;
+  align-content: stretch;
+  column-gap: 1mm;
+  padding-block: 0;
+}
+
+.drug-label-item.checked-master-label.label-size-10x70 .drug-label-code-stack {
+  min-width: 20mm;
+  padding-inline: 1mm;
+}
+
+.drug-label-item.checked-master-label.label-size-15x95 .drug-label-code-stack {
+  min-width: 25mm;
+  padding-inline: 1.4mm;
+}
+
+.drug-label-item.checked-master-label:is(.label-size-10x70, .label-size-15x95) .drug-label-code-line,
+.drug-label-item.checked-master-label:is(.label-size-10x70, .label-size-15x95) .label-quantity-circle {
+  grid-row: 1;
+  align-self: center;
+}
+
+.drug-label-item.checked-master-label:is(.label-size-10x70, .label-size-15x95) .drug-label-code-line {
+  grid-column: 1;
+  justify-content: center;
+  flex-wrap: nowrap;
+}
+
+.drug-label-item.checked-master-label:is(.label-size-10x70, .label-size-15x95) .label-quantity-circle {
+  grid-column: 2;
+  justify-self: end;
+}
+
+.drug-label-item.checked-master-label:is(.label-size-10x70, .label-size-15x95) .drug-label-code-line:not(:has(.label-code-storage)) {
+  display: none;
+}
+
+.drug-label-item.checked-master-label:is(.label-size-10x70, .label-size-15x95):not(:has(.label-code-storage)) .label-quantity-circle {
+  grid-column: 1 / -1;
+  justify-self: center;
+}
+
 .drug-label-item:is(.label-size-10x70, .label-size-15x95):not(:has(.drug-label-code-stack)):not(.has-caution-label) h3 {
   grid-column: 1 / -1;
   padding-inline: 2mm;
