@@ -6521,3 +6521,24 @@ button {
     grid-template-columns: 1fr;
   }
 }
+
+/* Final override for checked-master 15×95: keep every name vertically centered after caution rules. */
+.drug-label-item.checked-master-label.label-size-15x95:is(.label-kind-stock, .label-kind-pharmacy) h3 {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  height: 100%;
+  min-height: 0;
+  padding-block: 0 !important;
+  overflow: hidden;
+  -webkit-line-clamp: unset;
+}
+
+.drug-label-item.checked-master-label.label-size-15x95:is(.label-kind-stock, .label-kind-pharmacy) .drug-label-name-lines {
+  display: grid !important;
+  align-content: center;
+  justify-items: center;
+  width: 100%;
+  max-width: 100%;
+}
