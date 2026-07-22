@@ -2803,7 +2803,7 @@ export function App() {
     const workbookSaveMode = await savePharmacyLabelDraftToWorkbook(draft, hospitalDrugWorkbookUrl);
     const saved = savePharmacyLabelToStorage(window.localStorage, draft);
     setSavedPharmacyLabels((previous) => [...previous.filter((label) => label.id !== saved.id), saved]);
-    setPharmacyHospitalDrugLabelRows((previous) => previous.map((row) => row.code === draft.code ? {
+    setPharmacyHospitalDrugLabelRows((previous) => previous.map((row) => row.code.trim() === draft.code.trim() ? {
       ...row,
       name: draft.printable.title,
       koreanName: draft.printable.koreanName,
