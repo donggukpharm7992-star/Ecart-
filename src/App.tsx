@@ -3548,6 +3548,12 @@ export function App() {
               </a>
               <code>https://donggukpharm7992-star.github.io/Ecart-/pharmacy-viewer/</code>
             </div>
+            <div className="viewer-link-item">
+              <a href="https://donggukpharm7992-star.github.io/Ecart-/pharmacy-label-editor/" target="_blank" rel="noreferrer">
+                약제팀 라벨 편집 전용
+              </a>
+              <code>https://donggukpharm7992-star.github.io/Ecart-/pharmacy-label-editor/</code>
+            </div>
           </div>
           <div className="viewer-link-help">
             <strong>외부 링크 반영 준비</strong>
