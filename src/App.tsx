@@ -3473,13 +3473,15 @@ export function App() {
     );
   }
 
-  if (isPharmacyLabelWorkspaceOpen) {
+  if (isPharmacyEditor || isPharmacyLabelWorkspaceOpen) {
     return (
       <PharmacyLabelWorkspace
         rows={pharmacyHospitalDrugLabelRows}
         savedLabels={savedPharmacyLabels}
         isLoading={isPharmacyLabelMatchesLoading}
-        onBack={() => setIsPharmacyLabelWorkspaceOpen(false)}
+        onBack={() => {
+          if (!isPharmacyEditor) setIsPharmacyLabelWorkspaceOpen(false);
+        }}
         onSaveLabel={savePharmacyStudioLabel}
         onPrint={printPharmacyStudioLabels}
         onHospitalDrugWorkbookUpload={importHospitalDrugWorkbook}
