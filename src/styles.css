@@ -3572,6 +3572,33 @@ button {
   -webkit-line-clamp: unset;
 }
 
+/* General 15×95 labels scale each name line-count to keep the full name visible. */
+.drug-label-item.label-size-15x95:is(.label-kind-stock, .label-kind-pharmacy) h3 {
+  min-height: 0;
+  padding-block: 0.4mm;
+  overflow: hidden;
+}
+
+.drug-label-item.label-size-15x95:is(.label-kind-stock, .label-kind-pharmacy) .drug-label-name-lines {
+  font-size: 18px;
+  line-height: 1.04;
+}
+
+.drug-label-item.label-size-15x95:is(.label-kind-stock, .label-kind-pharmacy) .drug-label-name-lines-3 {
+  font-size: 12.5px;
+  line-height: 1.04;
+}
+
+.drug-label-item.label-size-15x95:is(.label-kind-stock, .label-kind-pharmacy) .drug-label-name-lines-4 {
+  font-size: 11px;
+  line-height: 1.03;
+}
+
+.drug-label-item.label-size-15x95:is(.label-kind-stock, .label-kind-pharmacy) .drug-label-name-lines-5 {
+  font-size: 9.5px;
+  line-height: 1.02;
+}
+
 /* Keep red safety cautions prominent while giving compact storage badges less space. */
 .drug-label-item.label-size-10x70:is(.label-kind-stock, .label-kind-pharmacy) .label-code-storage {
   font-size: 9px !important;
