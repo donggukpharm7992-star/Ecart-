@@ -3485,6 +3485,7 @@ export function App() {
         onSaveLabel={savePharmacyStudioLabel}
         onPrint={printPharmacyStudioLabels}
         onHospitalDrugWorkbookUpload={importHospitalDrugWorkbook}
+        standalone={isPharmacyEditor}
       />
     );
   }

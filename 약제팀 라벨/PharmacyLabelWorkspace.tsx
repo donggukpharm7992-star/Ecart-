@@ -24,13 +24,14 @@ type Props = {
   onSaveLabel: (draft: PharmacyLabelDraft) => Promise<string>;
   onPrint: (labels: PharmacyLabelDraft[], paperKey: "A4" | "A3") => void;
   onHospitalDrugWorkbookUpload: (file: File) => Promise<string>;
+  standalone?: boolean;
 };
 
 function isLabelMarked(value?: string) {
   return value?.trim().toUpperCase() === "Y";
 }
 
-export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, onSaveLabel, onPrint, onHospitalDrugWorkbookUpload }: Props) {
+export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, onSaveLabel, onPrint, onHospitalDrugWorkbookUpload, standalone = false }: Props) {
   const [family, setFamily] = useState<PharmacyLabelFamily>("drug");
   const [category, setCategory] = useState<PharmacyLabelCategory>("원병");
   const [detailsOpen, setDetailsOpen] = useState(true);
@@ -290,7 +291,7 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
       <div><p>원내보유의약품리스트 기준</p><h1>약제팀 라벨 작업실</h1></div>
       <div className="pharmacy-studio-actions">
         <label className="print-button pharmacy-upload-button" title="동국대학교일산병원_매출_날짜 엑셀 파일"><Upload size={16}/>유효기간 파일 업데이트<input className="hidden-file-input" type="file" accept=".xlsx,.xls,.xlsm" onChange={upload}/></label>
-        <button className="secondary-button" onClick={onBack}><ArrowLeft size={16}/>비품관리로 돌아가기</button>
+        {!standalone && <button className="secondary-button" onClick={onBack}><ArrowLeft size={16}/>비품관리로 돌아가기</button>}
         {uploadStatus && <span className="pharmacy-upload-status">{uploadStatus}</span>}
       </div>
     </header>
@@ -298,7 +299,7 @@ export function PharmacyLabelWorkspace({ rows, savedLabels, isLoading, onBack, o
     <section className="pharmacy-category-panel">
       <div className="pharmacy-label-tabs">
         <button className={family === "drug" ? "active" : ""} onClick={() => setFamily("drug")}>약품 라벨</button>
-        <button className={family === "cabinet" ? "active" : ""} onClick={() => setFamily("cabinet")}>약품장 라벨</button>
+        {!standalone && <button className={family === "cabinet" ? "active" : ""} onClick={() => setFamily("cabinet")}>약품장 라벨</button>}
         <button className="pharmacy-collapse-button" onClick={() => setDetailsOpen((value) => !value)}>상세 선택 <ChevronDown size={16}/></button>
       </div>
       {detailsOpen && <div className="pharmacy-category-groups">{categoryGroups.map((group, index) =>
