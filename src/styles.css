@@ -3509,6 +3509,21 @@ button {
   line-height: 1.08;
 }
 
+/* Center checked-master 15×95 names vertically in the reserved name column. */
+.drug-label-item.checked-master-label.label-size-15x95:is(.label-kind-stock, .label-kind-pharmacy) h3 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.drug-label-item.checked-master-label.label-size-15x95:is(.label-kind-stock, .label-kind-pharmacy) .drug-label-name-lines {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  width: 100%;
+  max-width: 100%;
+}
+
 /* Reserve a readable name area before allowing long caution text to grow. */
 .drug-label-item.label-size-10x70.has-caution-label:is(.label-kind-stock, .label-kind-pharmacy, .label-kind-narcotic) {
   grid-template-columns: 16mm minmax(27mm, 1fr) 15mm;
