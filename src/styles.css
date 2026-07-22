@@ -3382,6 +3382,24 @@ button {
   font-size: 20px;
 }
 
+/* Compact general labels place cold/light storage only in the black end panel. */
+.drug-label-item.label-size-10x70:is(.label-kind-stock, .label-kind-pharmacy) .drug-label-code-stack {
+  min-width: 18mm;
+}
+
+.drug-label-item.label-size-15x95:is(.label-kind-stock, .label-kind-pharmacy) .drug-label-code-stack {
+  min-width: 22mm;
+}
+
+.drug-label-item:is(.label-size-10x70, .label-size-15x95):is(.label-kind-stock, .label-kind-pharmacy) .drug-label-code-line {
+  flex-wrap: nowrap;
+}
+
+/* The E-cart dosage line is not printed on the small horizontal label formats. */
+.drug-label-item.label-kind-ecart:is(.label-size-10x70, .label-size-15x95) p {
+  display: none;
+}
+
 .drug-label-item:is(.label-size-10x70, .label-size-15x95):not(:has(.drug-label-code-stack)):not(.has-caution-label) h3 {
   grid-column: 1 / -1;
   padding-inline: 2mm;

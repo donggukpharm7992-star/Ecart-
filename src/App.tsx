@@ -794,8 +794,17 @@ function isLightProtectedLabel(row: DrugLabelData) {
   return labelFlagLabels(row).some((label) => label.includes("차광"));
 }
 
+function usesCompactGeneralLabelStoragePanel(row: DrugLabelData, sizeKey?: DrugLabelSizeKey) {
+  return (sizeKey === "10x70" || sizeKey === "15x95") && (row.kind === "stock" || row.kind === "pharmacy");
+}
+
+function isStorageLabel(label: string) {
+  return label.includes("차광") || label.includes("냉장") || label.includes("냉동");
+}
+
 function labelToplineFlagLabels(row: DrugLabelData, sizeKey?: DrugLabelSizeKey) {
   const labels = labelFlagLabels(row);
+  if (usesCompactGeneralLabelStoragePanel(row, sizeKey)) return labels.filter((label) => !isStorageLabel(label));
   if (!shouldMoveLightProtectionToCodeBadge(row, sizeKey)) return labels;
   return labels.filter((label) => !label.includes("차광"));
 }
@@ -805,7 +814,7 @@ function isRoundToplineCaution(label: string) {
 }
 
 function isRedPriorityCaution(label: string) {
-  return label.includes("고위험") || isRoundToplineCaution(label);
+  return label.includes("고위험") || label.includes("용량확인") || label.includes("이름주의") || isRoundToplineCaution(label);
 }
 
 function hasRedPriorityLabel(row: DrugLabelData) {
@@ -814,6 +823,7 @@ function hasRedPriorityLabel(row: DrugLabelData) {
 
 function shouldMoveLightProtectionToCodeBadge(row: DrugLabelData, sizeKey?: DrugLabelSizeKey) {
   if (!isLightProtectedLabel(row)) return false;
+  if (usesCompactGeneralLabelStoragePanel(row, sizeKey)) return true;
   if (row.highRisk) return true;
   return (sizeKey === "10x70" || sizeKey === "15x95") && hasRedPriorityLabel(row);
 }
