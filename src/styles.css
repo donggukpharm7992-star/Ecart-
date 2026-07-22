@@ -3524,6 +3524,12 @@ button {
   max-width: 100%;
 }
 
+/* Split multiple caution conditions into readable lines on 15×95 general labels. */
+.drug-label-item.label-size-15x95:is(.label-kind-stock, .label-kind-pharmacy) .drug-label-warning-flag {
+  white-space: pre-line;
+  line-height: 1.02 !important;
+}
+
 /* Reserve a readable name area before allowing long caution text to grow. */
 .drug-label-item.label-size-10x70.has-caution-label:is(.label-kind-stock, .label-kind-pharmacy, .label-kind-narcotic) {
   grid-template-columns: 16mm minmax(27mm, 1fr) 15mm;

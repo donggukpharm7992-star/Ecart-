@@ -855,13 +855,20 @@ function labelCautionBadgeClass(label: string) {
   return "amber";
 }
 
+function shouldBreakCompactCautions(row: DrugLabelData, sizeKey?: DrugLabelSizeKey) {
+  return sizeKey === "15x95" && (row.kind === "stock" || row.kind === "pharmacy");
+}
+
 function renderToplineCaution(row: DrugLabelData, sizeKey?: DrugLabelSizeKey) {
   const { textLabels, roundLabels } = splitLabelToplineFlags(row, sizeKey);
   if (textLabels.length === 0 && roundLabels.length === 0) return <span className="drug-label-warning-spacer" />;
-  if (roundLabels.length === 0) return <span className="drug-label-warning-flag">{textLabels.join(" / ")}</span>;
+  const text = shouldBreakCompactCautions(row, sizeKey) && textLabels.length > 1
+    ? textLabels.join("\n")
+    : textLabels.join(" / ");
+  if (roundLabels.length === 0) return <span className="drug-label-warning-flag">{text}</span>;
   return (
     <span className="drug-label-warning-group">
-      {textLabels.length > 0 ? <span className="drug-label-warning-flag">{textLabels.join(" / ")}</span> : null}
+      {textLabels.length > 0 ? <span className="drug-label-warning-flag">{text}</span> : null}
       {roundLabels.map((label) => (
         <span className="drug-label-warning-chip" key={label}>
           {label}
