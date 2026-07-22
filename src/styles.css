@@ -3257,6 +3257,50 @@ button {
   line-height: 1;
 }
 
+/* Keep the red caution and black E-cart panels full-height when their text grows. */
+.drug-label-item.label-kind-ecart:is(.label-size-10x70, .label-size-15x95) .drug-label-warning-flag,
+.drug-label-item.label-kind-ecart:is(.label-size-10x70, .label-size-15x95) .drug-label-code-stack {
+  min-height: 0;
+  height: 100%;
+  overflow: visible;
+}
+
+.drug-label-item.label-kind-ecart.label-size-10x70 .drug-label-code-stack {
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: 1fr;
+  min-width: 19mm;
+  padding: 0 0.8mm;
+  column-gap: 0.8mm;
+}
+
+.drug-label-item.label-kind-ecart.label-size-15x95 .drug-label-code-stack {
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: 1fr;
+  min-width: 23mm;
+  padding: 0 1.2mm;
+  column-gap: 1.2mm;
+}
+
+.drug-label-item.label-kind-ecart:is(.label-size-10x70, .label-size-15x95) .drug-label-code-line {
+  display: none;
+}
+
+.drug-label-item.label-kind-ecart:is(.label-size-10x70, .label-size-15x95) .label-storage-badge.ecart,
+.drug-label-item.label-kind-ecart:is(.label-size-10x70, .label-size-15x95) .label-quantity-circle {
+  grid-row: 1;
+  align-self: center;
+}
+
+.drug-label-item.label-kind-ecart:is(.label-size-10x70, .label-size-15x95) .label-storage-badge.ecart {
+  grid-column: 1;
+  justify-self: center;
+}
+
+.drug-label-item.label-kind-ecart:is(.label-size-10x70, .label-size-15x95) .label-quantity-circle {
+  grid-column: 2;
+  justify-self: end;
+}
+
 .drug-label-item:is(.label-size-10x70, .label-size-15x95):not(:has(.drug-label-code-stack)):not(.has-caution-label) h3 {
   grid-column: 1 / -1;
   padding-inline: 2mm;
