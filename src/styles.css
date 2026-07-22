@@ -3348,6 +3348,40 @@ button {
   padding-inline: 1.2mm;
 }
 
+/* Use the selected label typeface consistently for drug names at every size. */
+.drug-label-item h3,
+.drug-label-item .drug-label-name-lines,
+.drug-label-item .drug-label-name-line {
+  font-family: Verdana, "Segoe UI", "Malgun Gothic", sans-serif;
+}
+
+/* Prevent descenders from being clipped on larger controlled-drug labels. */
+.drug-label-item.label-kind-narcotic:is(.label-size-55x95, .label-size-35x100) h3 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  padding-block: 0.08em;
+  line-height: 1.12;
+  -webkit-line-clamp: unset;
+}
+
+.drug-label-item.label-kind-narcotic.label-size-55x95.name-long h3 {
+  font-size: 32px;
+}
+
+.drug-label-item.label-kind-narcotic.label-size-55x95.name-extra-long h3 {
+  font-size: 27px;
+}
+
+.drug-label-item.label-kind-narcotic.label-size-35x100.name-long h3 {
+  font-size: 24px;
+}
+
+.drug-label-item.label-kind-narcotic.label-size-35x100.name-extra-long h3 {
+  font-size: 20px;
+}
+
 .drug-label-item:is(.label-size-10x70, .label-size-15x95):not(:has(.drug-label-code-stack)):not(.has-caution-label) h3 {
   grid-column: 1 / -1;
   padding-inline: 2mm;
