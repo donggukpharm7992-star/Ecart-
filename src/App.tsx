@@ -96,14 +96,15 @@ import {
   isHospitalGeneralDrugLabelType,
   isHospitalDrugType,
   isSelectableHospitalDrugLabelRow,
-  loadHospitalDrugLabelRows,
+  loadHospitalDrugLabelRows as loadWardHospitalDrugLabelRows,
   makeHospitalControlledDrugLabelId,
   makeHospitalDrugLabelId,
   matchesHospitalDrugLabel,
   shouldExcludeHospitalControlledDrugLabel,
   stripHospitalDrugControlledPrefix,
   type HospitalDrugLabelRow,
-} from "../약제팀 라벨/hospitalDrugLabels";
+} from "../병동라벨/hospitalDrugLabels";
+import { loadHospitalDrugLabelRows as loadPharmacyHospitalDrugLabelRows } from "../약제팀 라벨/hospitalDrugLabels";
 import { PharmacyLabelWorkspace } from "../약제팀 라벨/PharmacyLabelWorkspace";
 import { mergeHospitalDrugRowsIntoPharmacyLabelMatches } from "../약제팀 라벨/hospitalDrugWorkbookUpload";
 import hospitalDrugWorkbookUrl from "../약제팀 라벨/원내보유의약품리스트.xlsx?url";
@@ -994,6 +995,7 @@ export function App() {
   const [isPharmacyLabelWorkspaceOpen, setIsPharmacyLabelWorkspaceOpen] = useState(appMode === "pharmacy-viewer" || appMode === "pharmacy-editor");
   const [hospitalDrugLabelRows, setHospitalDrugLabelRows] = useState<HospitalDrugLabelRow[]>([]);
   const [isHospitalDrugLabelsLoading, setIsHospitalDrugLabelsLoading] = useState(false);
+  const [pharmacyHospitalDrugLabelRows, setPharmacyHospitalDrugLabelRows] = useState<HospitalDrugLabelRow[]>([]);
   const [pharmacyLabelMatchRows, setPharmacyLabelMatchRows] = useState<PharmacyLabelMatchRow[]>([]);
   const [isPharmacyLabelMatchesLoading, setIsPharmacyLabelMatchesLoading] = useState(false);
   const [savedPharmacyLabels, setSavedPharmacyLabels] = useState<PharmacySavedLabel[]>(() =>
@@ -1467,11 +1469,14 @@ export function App() {
 
   useEffect(() => {
     const needsHospitalDrugLabels = usesHospitalDrugListForMode(labelMode);
-    if (!isDrugLabelPanelOpen || !needsHospitalDrugLabels || hospitalDrugLabelRows.length > 0) return;
+    const loadedRows = labelMode === "pharmacy" ? pharmacyHospitalDrugLabelRows : hospitalDrugLabelRows;
+    if (!isDrugLabelPanelOpen || !needsHospitalDrugLabels || loadedRows.length > 0) return;
     setIsHospitalDrugLabelsLoading(true);
-    void loadHospitalDrugLabelRows()
+    const loadRows = labelMode === "pharmacy" ? loadPharmacyHospitalDrugLabelRows : loadWardHospitalDrugLabelRows;
+    void loadRows()
       .then((rows) => {
-        setHospitalDrugLabelRows(rows);
+        if (labelMode === "pharmacy") setPharmacyHospitalDrugLabelRows(rows);
+        else setHospitalDrugLabelRows(rows);
       })
       .catch((error) => {
         console.error(error);
@@ -1479,14 +1484,14 @@ export function App() {
       .finally(() => {
         setIsHospitalDrugLabelsLoading(false);
       });
-  }, [hospitalDrugLabelRows.length, isDrugLabelPanelOpen, labelMode]);
+  }, [hospitalDrugLabelRows.length, isDrugLabelPanelOpen, labelMode, pharmacyHospitalDrugLabelRows.length]);
 
   useEffect(() => {
     if (!isPharmacyLabelWorkspaceOpen || pharmacyLabelMatchRows.length > 0 || isPharmacyLabelMatchesLoading) return;
     setIsPharmacyLabelMatchesLoading(true);
-    void Promise.all([loadPharmacyLabelMatchRows(), loadHospitalDrugLabelRows()])
+    void Promise.all([loadPharmacyLabelMatchRows(), loadPharmacyHospitalDrugLabelRows()])
       .then(([matchRows, hospitalRows]) => {
-        setHospitalDrugLabelRows((current) => (current.length > 0 ? current : hospitalRows));
+        setPharmacyHospitalDrugLabelRows(hospitalRows);
         setPharmacyLabelMatchRows(mergeHospitalDrugRowsIntoPharmacyLabelMatches(hospitalRows, matchRows));
       })
       .catch((error) => {
@@ -1723,13 +1728,17 @@ export function App() {
     () => hospitalDrugLabelRows.filter(isSelectableHospitalDrugLabelRow),
     [hospitalDrugLabelRows],
   );
-  const hospitalDrugRowsByLabelId = useMemo(
-    () => new Map(hospitalDrugSelectableRows.map((row) => [makeHospitalDrugLabelId(row), row])),
-    [hospitalDrugSelectableRows],
-  );
   const hospitalDrugRowsByCode = useMemo(
     () => new Map(hospitalDrugSelectableRows.map((row) => [row.code.toUpperCase(), row])),
     [hospitalDrugSelectableRows],
+  );
+  const pharmacyHospitalDrugRowsByCode = useMemo(
+    () => new Map(pharmacyHospitalDrugLabelRows.filter(isSelectableHospitalDrugLabelRow).map((row) => [row.code.toUpperCase(), row])),
+    [pharmacyHospitalDrugLabelRows],
+  );
+  const pharmacyHospitalDrugRowsByLabelId = useMemo(
+    () => new Map([...pharmacyHospitalDrugRowsByCode.values()].map((row) => [makeHospitalDrugLabelId(row), row])),
+    [pharmacyHospitalDrugRowsByCode],
   );
   const hospitalDrugSearchRows = useMemo(() => {
     if (hospitalDrugSelectableRows.length === 0) return [];
@@ -1762,8 +1771,11 @@ export function App() {
     [hospitalFluidDrugRows],
   );
   const pharmacyLabelBaseRows = useMemo(() => {
-    return hospitalDrugSearchRows.map((row) => buildHospitalDrugLabelData(row, "pharmacy"));
-  }, [hospitalDrugSearchRows]);
+    const selectableRows = pharmacyHospitalDrugLabelRows.filter(isSelectableHospitalDrugLabelRow);
+    const trimmed = labelQuery.trim().toLowerCase();
+    const rows = trimmed ? selectableRows.filter((row) => matchesHospitalDrugLabel(row, trimmed)) : selectableRows;
+    return rows.slice(0, 80).map((row) => buildHospitalDrugLabelData(row, "pharmacy"));
+  }, [labelQuery, pharmacyHospitalDrugLabelRows]);
   const hospitalControlledDrugRows = useMemo(
     () => hospitalDrugSelectableRows.filter((row) => isHospitalControlledDrugType(row) && !shouldExcludeHospitalControlledDrugLabel(row)),
     [hospitalDrugSelectableRows],
@@ -1856,7 +1868,9 @@ export function App() {
   }, [allHospitalControlledLabelRows, allHospitalFluidLabelRows, allHospitalStockLabelRows, ecartLabelBaseRows]);
   function buildMasterDrugLabelData(row: MasterRow, mode: DrugLabelMode, roomId?: string) {
     const masterLabel = buildStockLabelData(row, mode, roomId);
-    const hospitalRow = hospitalDrugRowsByCode.get(row.code.toUpperCase());
+    const hospitalRow = mode === "pharmacy"
+      ? pharmacyHospitalDrugRowsByCode.get(row.code.toUpperCase())
+      : hospitalDrugRowsByCode.get(row.code.toUpperCase());
     if (!hospitalRow) return masterLabel;
 
     const hospitalLabel = buildHospitalDrugLabelData(hospitalRow, masterLabel.kind === "pharmacy" ? "pharmacy" : "stock");
@@ -1882,7 +1896,7 @@ export function App() {
           labelRowsById.get(selection.id) ??
           (selection.mode === "pharmacy"
             ? (() => {
-                const hospitalRow = hospitalDrugRowsByLabelId.get(selection.id);
+                const hospitalRow = pharmacyHospitalDrugRowsByLabelId.get(selection.id);
                 return hospitalRow ? buildHospitalDrugLabelData(hospitalRow) : undefined;
               })()
             : undefined);
@@ -1892,7 +1906,7 @@ export function App() {
         if (!printableRow) return [];
         return Array.from({ length: labelCopies }, (_, copyIndex) => ({ ...selection, row: printableRow, copyIndex }));
       }),
-    [hospitalDrugRowsByLabelId, labelCopies, labelPrintSelections, labelRowsById],
+    [labelCopies, labelPrintSelections, labelRowsById, pharmacyHospitalDrugRowsByLabelId],
   );
   const currentModeLabelPrintRows = useMemo(
     () => labelPrintRows.filter((entry) => entry.mode === labelMode),
@@ -2729,7 +2743,7 @@ export function App() {
     const workbookSaveMode = await savePharmacyLabelDraftToWorkbook(draft, hospitalDrugWorkbookUrl);
     const saved = savePharmacyLabelToStorage(window.localStorage, draft);
     setSavedPharmacyLabels((previous) => [...previous.filter((label) => label.id !== saved.id), saved]);
-    setHospitalDrugLabelRows((previous) => previous.map((row) => row.code === draft.code ? {
+    setPharmacyHospitalDrugLabelRows((previous) => previous.map((row) => row.code === draft.code ? {
       ...row,
       name: draft.printable.title,
       koreanName: draft.printable.koreanName,
@@ -2769,8 +2783,8 @@ export function App() {
   }
 
   async function importHospitalDrugWorkbook(file: File) {
-    const result = await applyExpirationWorkbook(file, hospitalDrugWorkbookUrl, hospitalDrugLabelRows);
-    setHospitalDrugLabelRows(result.updatedRows);
+    const result = await applyExpirationWorkbook(file, hospitalDrugWorkbookUrl, pharmacyHospitalDrugLabelRows);
+    setPharmacyHospitalDrugLabelRows(result.updatedRows);
     return `물품코드 ${result.sourceCount.toLocaleString("ko-KR")}건 중 ${result.updatedCount.toLocaleString("ko-KR")}개 약품의 가장 빠른 유효기간을 반영하고 원내보유의약품리스트.xlsx를 저장했습니다.`;
   }
 
@@ -3462,7 +3476,7 @@ export function App() {
   if (isPharmacyLabelWorkspaceOpen) {
     return (
       <PharmacyLabelWorkspace
-        rows={hospitalDrugLabelRows}
+        rows={pharmacyHospitalDrugLabelRows}
         savedLabels={savedPharmacyLabels}
         isLoading={isPharmacyLabelMatchesLoading}
         onBack={() => setIsPharmacyLabelWorkspaceOpen(false)}

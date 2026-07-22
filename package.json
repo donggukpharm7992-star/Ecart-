@@ -6,10 +6,13 @@
   "scripts": {
     "generate:data": "node scripts/run_python.mjs scripts/extract_inventory.py",
     "generate:labels": "node scripts/run_python.mjs \"약제팀 라벨/extract_hospital_labels.py\"",
+    "generate:ward-labels": "node scripts/run_python.mjs \"병동라벨/extract_hospital_labels.py\"",
     "generate:label-matches": "node scripts/run_python.mjs \"약제팀 라벨/extract_pharmacy_label_matches.py\"",
     "generate:narcotic-labels": "node scripts/run_python.mjs scripts/extract_narcotic_labels.py",
     "autosync:hospital-drugs": "node scripts/watch_hospital_drug_list.mjs",
     "autosync:hospital-drugs:install": "node scripts/watch_hospital_drug_list.mjs --install",
+    "autosync:ward-labels": "node scripts/watch_ward_drug_list.mjs",
+    "autosync:ward-labels:install": "node scripts/watch_ward_drug_list.mjs --install",
     "validate:data": "node scripts/run_python.mjs scripts/validate_inventory.py",
     "test": "vitest run --no-watch --reporter=basic --testTimeout=10000 --config vitest.config.ts",
     "dev": "vite --host 0.0.0.0",
