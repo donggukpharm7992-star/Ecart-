@@ -3480,6 +3480,16 @@ button {
   background: #e0f7e8;
 }
 
+/* Compact general labels: controlled status is red, while light protection stays behind the name. */
+.drug-label-item.compact-controlled-caution-label.light-protected-label:is(.label-size-10x70, .label-size-15x95):is(.label-kind-stock, .label-kind-pharmacy) .drug-label-warning-flag {
+  color: #fff;
+  background: #ef1d19;
+}
+
+.drug-label-item.compact-controlled-caution-label.light-protected-label:is(.label-size-10x70, .label-size-15x95):is(.label-kind-stock, .label-kind-pharmacy) h3 {
+  background: #e0f7e8;
+}
+
 /* Checked master 15×95 labels reserve enough vertical space for three name lines. */
 .drug-label-item.checked-master-label.label-size-15x95.label-kind-stock h3 {
   align-self: stretch;

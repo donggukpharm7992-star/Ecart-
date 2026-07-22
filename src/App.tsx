@@ -803,9 +803,18 @@ function isStorageLabel(label: string) {
   return label.includes("차광") || label.includes("냉장") || label.includes("냉동");
 }
 
+function hasControlledCautionLabel(labels: string[]) {
+  return labels.some((label) => label.includes("마약") || label.includes("향정"));
+}
+
 function labelToplineFlagLabels(row: DrugLabelData, sizeKey?: DrugLabelSizeKey) {
   const labels = labelFlagLabels(row);
-  if (usesCompactGeneralLabelStoragePanel(row, sizeKey)) return labels.filter((label) => !isStorageLabel(label));
+  if (usesCompactGeneralLabelStoragePanel(row, sizeKey)) {
+    const compactLabels = labels.filter((label) => !isStorageLabel(label));
+    return hasControlledCautionLabel(compactLabels)
+      ? compactLabels.filter((label) => !label.includes("고위험"))
+      : compactLabels;
+  }
   if (!shouldMoveLightProtectionToCodeBadge(row, sizeKey)) return labels;
   return labels.filter((label) => !label.includes("차광"));
 }
@@ -3095,7 +3104,7 @@ export function App() {
     const flagLabels = labelFlagLabels(row);
     const isLightProtected = isLightProtectedLabel(row);
     const hasRedPriority = hasRedPriorityLabel(row);
-    const hasControlledCaution = flagLabels.some((label) => label.includes("마약") || label.includes("향정"));
+    const hasControlledCaution = hasControlledCautionLabel(flagLabels);
     const renderedKind = isEcartLabelKind(row.kind) ? "ecart" : row.kind;
     const fluidTone = row.fluidTone;
     const nameClass = getDrugLabelNameClass(row.name, renderedKind, sizeKey);
@@ -3114,6 +3123,7 @@ export function App() {
       isLightProtected ? "light-protected-label" : "",
       hasRedPriority ? "has-red-priority-label" : "",
       hasControlledCaution ? "has-controlled-caution-label" : "",
+      hasControlledCaution && usesCompactGeneralLabelStoragePanel(row, sizeKey) ? "compact-controlled-caution-label" : "",
       flagLabels.length > 0 ? "has-caution-label" : "",
       row.doseCaution ? "has-dose-caution" : "",
       hasDoseWarningLabel ? "has-dose-warning-label" : "",
