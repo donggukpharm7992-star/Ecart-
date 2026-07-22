@@ -26,6 +26,16 @@ export function getPwaMetadata(pathname = "/"): PwaMetadata {
   }
 
   const isPharmacyViewer = normalizedPath.endsWith("/pharmacy-viewer");
+  const isPharmacyEditor = normalizedPath.endsWith("/pharmacy-label-editor");
+  if (isPharmacyEditor) {
+    return {
+      manifestPath: "pharmacy-viewer.webmanifest",
+      iconPath: "icons/app-icon-192.png",
+      documentTitle: "약제팀 라벨 편집",
+      appleTitle: "약제팀 라벨 편집",
+      themeColor: "#f97316",
+    };
+  }
   if (isPharmacyViewer) {
     return {
       manifestPath: "pharmacy-viewer.webmanifest",

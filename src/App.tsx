@@ -116,6 +116,7 @@ import {
   planPharmacyLabelsForPaper,
   loadSavedPharmacyLabelsFromStorage,
   savePharmacyLabelToStorage,
+  writeSavedPharmacyLabelsToStorage,
   formatPharmacyExpiry,
   splitDoseText,
   splitNutritionDoseParts,
@@ -206,7 +207,7 @@ type EcartTab = "general" | "nicu";
 type CheckStatus = "" | "good" | "bad";
 type PrintPreviewMode = "single" | "all-stock" | "all-ecart" | "all-narcotic" | "round-summary" | "drug-labels";
 type RoundSummaryMode = "ward" | "narcotic";
-type AppMode = "admin" | "master-viewer" | "pharmacy-viewer" | "narcotic-viewer";
+type AppMode = "admin" | "master-viewer" | "pharmacy-viewer" | "pharmacy-editor" | "narcotic-viewer";
 type DrugLabelMode = "stock" | "ecart" | "ecart-nicu" | "fluid" | "narcotic" | "pharmacy";
 type DrugLabelSizeKey = "10x70" | "15x95" | "40x70" | "55x95" | "35x100";
 
@@ -341,6 +342,7 @@ type PersistedAppState = {
   uninspectedRoomIds: string[];
   narcoticLotAssignments: Record<string, NarcoticLotValue>;
   narcoticLotFileName: string;
+  pharmacyLabels: PharmacySavedLabel[];
 };
 
 type InspectionCycleResetState = Pick<
@@ -551,6 +553,7 @@ function normalizePersistedState(state: Partial<PersistedAppState>): Partial<Per
     uninspectedRoomIds: Array.isArray(state.uninspectedRoomIds) ? state.uninspectedRoomIds : undefined,
     uninspectedNarcoticRoomIds: Array.isArray(state.uninspectedNarcoticRoomIds) ? state.uninspectedNarcoticRoomIds : undefined,
     narcoticLotAssignments: remapStockKeyRecord(state.narcoticLotAssignments, normalizeNarcoticDrugCode),
+    pharmacyLabels: Array.isArray(state.pharmacyLabels) ? state.pharmacyLabels : undefined,
   };
 }
 
@@ -926,6 +929,7 @@ export function App() {
   const isViewerMode = appMode !== "admin";
   const isReadOnlyViewer = appMode === "master-viewer" || appMode === "pharmacy-viewer";
   const isPharmacyViewer = appMode === "pharmacy-viewer";
+  const isPharmacyEditor = appMode === "pharmacy-editor";
   const isNarcoticViewer = appMode === "narcotic-viewer";
   const canEditMaster = appMode === "admin" || isNarcoticViewer;
   const defaultNewDrugCategory: NewDrugForm["category"] = isNarcoticViewer ? "향정" : "stock";
@@ -987,13 +991,13 @@ export function App() {
   const [labelMode, setLabelMode] = useState<DrugLabelMode>("stock");
   const [labelSize, setLabelSize] = useState<DrugLabelSizeKey>("10x70");
   const [isDrugLabelPanelOpen, setIsDrugLabelPanelOpen] = useState(false);
-  const [isPharmacyLabelWorkspaceOpen, setIsPharmacyLabelWorkspaceOpen] = useState(appMode === "pharmacy-viewer");
+  const [isPharmacyLabelWorkspaceOpen, setIsPharmacyLabelWorkspaceOpen] = useState(appMode === "pharmacy-viewer" || appMode === "pharmacy-editor");
   const [hospitalDrugLabelRows, setHospitalDrugLabelRows] = useState<HospitalDrugLabelRow[]>([]);
   const [isHospitalDrugLabelsLoading, setIsHospitalDrugLabelsLoading] = useState(false);
   const [pharmacyLabelMatchRows, setPharmacyLabelMatchRows] = useState<PharmacyLabelMatchRow[]>([]);
   const [isPharmacyLabelMatchesLoading, setIsPharmacyLabelMatchesLoading] = useState(false);
   const [savedPharmacyLabels, setSavedPharmacyLabels] = useState<PharmacySavedLabel[]>(() =>
-    typeof window === "undefined" ? [] : loadSavedPharmacyLabelsFromStorage(window.localStorage),
+    persistedState.pharmacyLabels ?? (typeof window === "undefined" ? [] : loadSavedPharmacyLabelsFromStorage(window.localStorage)),
   );
   const [pharmacyPrintDrafts, setPharmacyPrintDrafts] = useState<PharmacyLabelDraft[]>([]);
   const [pharmacyPrintPaper, setPharmacyPrintPaper] = useState<"A4" | "A3">("A4");
@@ -1071,6 +1075,7 @@ export function App() {
       uninspectedRoomIds,
       narcoticLotAssignments,
       narcoticLotFileName: narcoticExcelFileName,
+      pharmacyLabels: savedPharmacyLabels,
     }),
     [
       checkedStock,
@@ -1094,6 +1099,7 @@ export function App() {
       stockRooms,
       uninspectedNarcoticRoomIds,
       uninspectedRoomIds,
+      savedPharmacyLabels,
     ],
   );
 
@@ -1125,6 +1131,10 @@ export function App() {
     if (normalized.uninspectedRoomIds) setUninspectedRoomIds(normalized.uninspectedRoomIds);
     if (normalized.narcoticLotAssignments) setNarcoticLotAssignments(normalized.narcoticLotAssignments);
     if (typeof normalized.narcoticLotFileName === "string") setNarcoticExcelFileName(normalized.narcoticLotFileName);
+    if (normalized.pharmacyLabels) {
+      setSavedPharmacyLabels(normalized.pharmacyLabels);
+      writeSavedPharmacyLabelsToStorage(window.localStorage, normalized.pharmacyLabels);
+    }
   }
 
   async function refreshRuntimeSyncBaseUrl() {
@@ -1397,7 +1407,7 @@ export function App() {
       localUpdatedAtRef.current = updatedAt;
       hasUnsavedLocalChangesRef.current = true;
       window.localStorage.setItem(LOCAL_UPDATED_AT_KEY, updatedAt);
-      if (appMode === "admin") {
+      if (appMode === "admin" || appMode === "pharmacy-editor") {
         scheduleRemotePush();
       } else {
         setSyncStatus({ mode: "idle", message: "수정 내용은 모바일 점검 내용 PC로 올리기 버튼을 눌러 저장하세요." });

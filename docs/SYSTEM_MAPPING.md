@@ -65,6 +65,7 @@ This app previews a pharmacist ward inventory workflow with real Excel data. The
   - Apply hospital common-name corrections for stock/E-cart labels, plus warning labels and storage grouping overrides.
 - `약제팀 라벨/data/hospitalDrugLabels.generated.json`: all hospital drug label candidates with storage/caution fields and `drugType` for label-button filtering.
 - `약제팀 라벨/data/pharmacyLabelMatches.generated.json`: matched pharmacy label text, match status, source file, source location, and caution/storage flags; runtime pharmacy-label rows are rebuilt from hospital drug rows while preserving match details by drug code.
+- 약제팀 라벨 편집 전용 주소 `/pharmacy-label-editor/`는 약제팀 라벨 작업공간만 열며, 저장된 라벨 편집본(`pharmacyLabels`)을 공용 서버 동기화 상태에 포함합니다. 따라서 편집 PC와 관리자 PC가 동일한 서버 상태를 읽고 변경 내용을 자동 반영합니다.
 - `narcoticLabels.generated.json`: legacy narcotic/psychotropic label text, category, source file, and source cell retained for generated-data coverage.
 - `narcoticDrugCodeMap.generated.json`: narcotic drug-name/code conversion rows used before fuzzy LOT name matching.
 - `narcoticInventory.generated.json`: placed narcotic/psychotropic drugs, rooms, allocations, and categories generated only from `비치향정,마약현황.xlsx` `점검`.
