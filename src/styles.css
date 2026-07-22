@@ -3301,6 +3301,53 @@ button {
   justify-self: end;
 }
 
+/* Use the full 15 mm height for every E-cart column and center its contents. */
+.drug-label-item.label-size-15x95.label-kind-ecart {
+  grid-template-rows: minmax(0, 1fr);
+  align-items: stretch;
+}
+
+.drug-label-item.label-size-15x95.label-kind-ecart :is(.drug-label-warning-flag, .drug-label-code-stack) {
+  align-self: stretch;
+  block-size: auto;
+  box-sizing: border-box;
+}
+
+.drug-label-item.label-size-15x95.label-kind-ecart h3 {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-line-clamp: unset;
+}
+
+/* Controlled-drug labels have their own layout, so enlarge their caution and storage text explicitly. */
+.drug-label-item.label-size-10x70.label-kind-narcotic .drug-label-warning-flag,
+.drug-label-item.label-size-10x70.label-kind-narcotic .label-code-storage {
+  font-size: 13px !important;
+  line-height: 1.25 !important;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.drug-label-item.label-size-15x95.label-kind-narcotic .drug-label-warning-flag,
+.drug-label-item.label-size-15x95.label-kind-narcotic .label-code-storage {
+  font-size: 16px !important;
+  line-height: 1.25 !important;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.drug-label-item.label-size-10x70.label-kind-narcotic .drug-label-code-stack {
+  min-width: 19mm;
+  padding-inline: 0.8mm;
+}
+
+.drug-label-item.label-size-15x95.label-kind-narcotic .drug-label-code-stack {
+  min-width: 23mm;
+  padding-inline: 1.2mm;
+}
+
 .drug-label-item:is(.label-size-10x70, .label-size-15x95):not(:has(.drug-label-code-stack)):not(.has-caution-label) h3 {
   grid-column: 1 / -1;
   padding-inline: 2mm;
