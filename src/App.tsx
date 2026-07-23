@@ -2798,14 +2798,18 @@ export function App() {
         const selectionSizeKey = row.masterKind === "stock"
           ? labelSize
           : ["10x70", "15x95"].includes(labelSize) ? labelSize : "40x70";
-        const labelRow = buildMasterDrugLabelData(row, selectionMode, masterLabelRoomIdForRow(row));
+        const roomId = masterLabelRoomIdForRow(row);
+        const roomQuantity = roomId
+          ? row.roomDetails.find((detail) => detail.roomId === roomId)?.requiredQty
+          : undefined;
+        const labelRow = buildMasterDrugLabelData(row, selectionMode, roomId);
         return {
           id: labelRow.id,
           mode: labelRow.kind,
           sizeKey: selectionSizeKey,
           isCheckedMasterPrint: true,
-          roomId: labelRow.roomId,
-          quantityOverride: labelRow.totalQuantity,
+          roomId: roomId ?? labelRow.roomId,
+          quantityOverride: roomQuantity ?? labelRow.totalQuantity,
           labelRow,
         };
       }),
