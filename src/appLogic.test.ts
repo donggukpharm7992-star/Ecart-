@@ -213,6 +213,20 @@ describe("app label logic", () => {
       "Ulistin",
       "100,000 iu/2ml Inj",
     ]);
+    expect(getGeneralDrugLabelNameLines("Sodium bicarbonate 8.4% 1.68g/20ml inj.", "55x95")).toEqual([
+      "Sodium bicarbonate",
+      "8.4%",
+      "1.68g/20ml inj.",
+    ]);
+    expect(getGeneralDrugLabelNameLines("Norepinephrine bitartrate 4mg/4ml inj", "55x95")).toEqual([
+      "Norepinephrine",
+      "bitartrate",
+      "4mg/4ml inj",
+    ]);
+    expect(getGeneralDrugLabelNameLines("Sugammadex sodium (2ml)/200mg inj", "55x95")).toEqual([
+      "Sugammadex sodium",
+      "(2ml)/200mg inj",
+    ]);
     expect(getDrugLabelNameClass("1% Lidocaine HCl 20ml inj", "stock", "10x70")).toBe("name-extra-long");
   });
 

@@ -729,6 +729,35 @@ function splitGeneralDrugLabelSegment(segment: string, maxLength: number) {
   return lines;
 }
 
+const GENERAL_DRUG_LABEL_DOSE_TOKEN_PATTERN = new RegExp(
+  String.raw`${GENERAL_DRUG_LABEL_DOSE_NUMBER}\s*${GENERAL_DRUG_LABEL_DOSE_UNIT}`,
+  "gi",
+);
+
+function splitGeneralDrugLabelDoseSegment(segment: string, maxLength: number) {
+  const normalized = segment.replace(/\s{2,}/g, " ").trim();
+  const matches = [...normalized.matchAll(GENERAL_DRUG_LABEL_DOSE_TOKEN_PATTERN)];
+  if (matches.length < 2) return splitGeneralDrugLabelSegment(normalized, maxLength);
+
+  const lines: string[] = [];
+  let currentStart = 0;
+  for (let index = 1; index < matches.length; index += 1) {
+    const previous = matches[index - 1];
+    const current = matches[index];
+    const previousEnd = (previous.index ?? 0) + previous[0].length;
+    const separator = normalized.slice(previousEnd, current.index ?? previousEnd);
+    if (/\s/.test(separator) && !separator.includes("/")) {
+      const unit = normalized.slice(currentStart, current.index).trim();
+      if (unit) lines.push(unit);
+      currentStart = current.index ?? currentStart;
+    }
+  }
+
+  const lastUnit = normalized.slice(currentStart).trim();
+  if (lastUnit) lines.push(lastUnit);
+  return lines.flatMap((line) => splitGeneralDrugLabelSegment(line, maxLength));
+}
+
 export function getGeneralDrugLabelNameLines(name: string, sizeKey: DrugLabelSizeKey) {
   const cleaned = name.replace(/\s{2,}/g, " ").trim();
   if (!cleaned) return [];
@@ -746,7 +775,10 @@ export function getGeneralDrugLabelNameLines(name: string, sizeKey: DrugLabelSiz
     ? [...splitGeneralDrugLabelSegment(parenthetical[1], nameMaxLength), parenthetical[2]]
     : splitGeneralDrugLabelSegment(namePart, nameMaxLength);
 
-  return [...nameLines, ...splitGeneralDrugLabelSegment(dosePart, doseMaxLength)].filter(Boolean);
+  const doseLines = sizeKey === "55x95"
+    ? splitGeneralDrugLabelDoseSegment(dosePart, doseMaxLength)
+    : splitGeneralDrugLabelSegment(dosePart, doseMaxLength);
+  return [...nameLines, ...doseLines].filter(Boolean);
 }
 
 export function stripControlledDrugLabelPrefix(name: string) {

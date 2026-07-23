@@ -4164,22 +4164,22 @@ button {
 
 .drug-label-item.label-size-55x95.label-kind-stock .drug-label-name-lines {
   gap: 0.7mm;
-  font-size: 34px;
+  font-size: 30px;
 }
 
 .drug-label-item.label-size-55x95.label-kind-stock .drug-label-name-lines-3 {
   gap: 0.45mm;
-  font-size: 28px;
+  font-size: 25px;
 }
 
 .drug-label-item.label-size-55x95.label-kind-stock .drug-label-name-lines-4 {
   gap: 0.35mm;
-  font-size: 24px;
+  font-size: 21px;
 }
 
 .drug-label-item.label-size-55x95.label-kind-stock .drug-label-name-lines-5 {
   gap: 0.2mm;
-  font-size: 20px;
+  font-size: 18px;
 }
 
 .drug-label-item.label-size-35x100.label-kind-stock .drug-label-name-lines {
@@ -4200,6 +4200,11 @@ button {
 .drug-label-item.label-size-35x100.label-kind-stock .drug-label-name-lines-5 {
   gap: 0;
   font-size: 13px;
+}
+
+/* Keep 55×95 stock names on semantic lines instead of breaking words inside a line. */
+.drug-label-item.label-size-55x95.label-kind-stock .drug-label-name-line {
+  overflow-wrap: normal;
 }
 
 .print-label dl {
