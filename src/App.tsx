@@ -914,13 +914,15 @@ function shouldBreakCompactCautions(row: DrugLabelData, sizeKey?: DrugLabelSizeK
 function renderToplineCaution(row: DrugLabelData, sizeKey?: DrugLabelSizeKey) {
   const { textLabels, roundLabels } = splitLabelToplineFlags(row, sizeKey);
   if (textLabels.length === 0 && roundLabels.length === 0) return <span className="drug-label-warning-spacer" />;
-  const text = shouldBreakCompactCautions(row, sizeKey) && textLabels.length > 1
-    ? textLabels.join("\n")
-    : textLabels.join(" / ");
-  if (roundLabels.length === 0) return <span className="drug-label-warning-flag">{text}</span>;
+  const shouldBreak = shouldBreakCompactCautions(row, sizeKey) && textLabels.length > 1;
+  const text = textLabels.join(" / ");
+  const renderedText = shouldBreak
+    ? textLabels.map((label, index) => <Fragment key={`${label}-${index}`}>{index > 0 ? <br /> : null}{label}</Fragment>)
+    : text;
+  if (roundLabels.length === 0) return <span className="drug-label-warning-flag">{renderedText}</span>;
   return (
     <span className="drug-label-warning-group">
-      {textLabels.length > 0 ? <span className="drug-label-warning-flag">{text}</span> : null}
+      {textLabels.length > 0 ? <span className="drug-label-warning-flag">{renderedText}</span> : null}
       {roundLabels.map((label) => (
         <span className="drug-label-warning-chip" key={label}>
           {label}
