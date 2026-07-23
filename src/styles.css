@@ -3753,6 +3753,7 @@ button {
 }
 
 .drug-label-item.label-size-40x70.label-kind-narcotic {
+  position: relative;
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: 7mm minmax(0, 1fr) 7mm;
   gap: 0;
@@ -3785,6 +3786,13 @@ button {
   overflow-wrap: anywhere;
   text-align: center;
   word-break: keep-all;
+}
+
+.drug-label-item.label-size-40x70.label-kind-narcotic .drug-label-narcotic-forty-quantity {
+  position: absolute;
+  top: 1mm;
+  right: 1.5mm;
+  z-index: 1;
 }
 
 .drug-label-item.label-size-40x70.label-kind-narcotic h3 {

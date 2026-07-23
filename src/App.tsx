@@ -37,6 +37,7 @@ import {
   EMPTY_NARCOTIC_STOCK_LABEL,
   ROUND_SUMMARY_COMMON_GUIDANCE,
   buildReportFileName,
+  buildNarcoticMasterLabelData,
   buildStockLabelData,
   cleanDrugLabelName,
   clearUninspectedRoomId,
@@ -691,6 +692,7 @@ function renderNarcoticFortyTopline(row: DrugLabelData) {
   return (
     <div className="drug-label-topline drug-label-narcotic-forty-topline">
       <span className="drug-label-warning-flag">{label}</span>
+      {row.totalQuantity !== undefined ? <small className="label-quantity-circle drug-label-narcotic-forty-quantity">{row.totalQuantity}</small> : null}
     </div>
   );
 }
@@ -1926,7 +1928,9 @@ export function App() {
     return new Map(rows.map((row) => [row.id, row]));
   }, [allHospitalControlledLabelRows, allHospitalFluidLabelRows, allHospitalStockLabelRows, ecartLabelBaseRows]);
   function buildMasterDrugLabelData(row: MasterRow, mode: DrugLabelMode, roomId?: string) {
-    const masterLabel = buildStockLabelData(row, mode, roomId);
+    const masterLabel = mode === "narcotic"
+      ? buildNarcoticMasterLabelData(row, row.masterKind === "narcotic" ? "마약" : "향정", roomId)
+      : buildStockLabelData(row, mode, roomId);
     const hospitalRow = mode === "pharmacy"
       ? pharmacyHospitalDrugRowsByCode.get(row.code.toUpperCase())
       : hospitalDrugRowsByCode.get(row.code.toUpperCase());
@@ -2774,15 +2778,20 @@ export function App() {
 
   function openSelectedMasterLabelPreview(mode: DrugLabelMode = "stock") {
     if (selectedLabelRows.length === 0) return;
+    const hasControlledRows = selectedLabelRows.some((row) => row.masterKind !== "stock");
     setPharmacyPrintDrafts([]);
-    setLabelMode(mode);
+    setLabelMode(hasControlledRows ? "narcotic" : mode);
     setLabelPrintSelections(
       selectedLabelRows.map((row) => {
-        const labelRow = buildMasterDrugLabelData(row, mode, masterLabelRoomIdForRow(row));
+        const selectionMode = row.masterKind === "stock" ? mode : "narcotic";
+        const selectionSizeKey = row.masterKind === "stock"
+          ? labelSize
+          : ["10x70", "15x95"].includes(labelSize) ? labelSize : "40x70";
+        const labelRow = buildMasterDrugLabelData(row, selectionMode, masterLabelRoomIdForRow(row));
         return {
           id: labelRow.id,
           mode: labelRow.kind,
-          sizeKey: labelSize,
+          sizeKey: selectionSizeKey,
           isCheckedMasterPrint: true,
           roomId: labelRow.roomId,
           quantityOverride: labelRow.totalQuantity,
