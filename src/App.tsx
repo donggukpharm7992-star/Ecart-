@@ -907,7 +907,8 @@ function labelCautionBadgeClass(label: string) {
 }
 
 function shouldBreakCompactCautions(row: DrugLabelData, sizeKey?: DrugLabelSizeKey) {
-  return sizeKey === "15x95" && (row.kind === "stock" || row.kind === "pharmacy");
+  return (sizeKey === "10x70" || sizeKey === "15x95")
+    && (row.kind === "stock" || row.kind === "pharmacy" || row.kind === "narcotic");
 }
 
 function renderToplineCaution(row: DrugLabelData, sizeKey?: DrugLabelSizeKey) {

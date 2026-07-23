@@ -6599,3 +6599,9 @@ button {
   overflow-wrap: normal;
   word-break: keep-all;
 }
+
+/* Compact 10×70/15×95 caution flags wrap each condition as a semantic line. */
+.drug-label-item:is(.label-size-10x70, .label-size-15x95):is(.label-kind-stock, .label-kind-pharmacy, .label-kind-narcotic) .drug-label-warning-flag {
+  white-space: pre-line !important;
+  line-height: 1.02 !important;
+}
