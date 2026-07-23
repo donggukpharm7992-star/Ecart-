@@ -2809,7 +2809,7 @@ export function App() {
           sizeKey: selectionSizeKey,
           isCheckedMasterPrint: true,
           roomId: roomId ?? labelRow.roomId,
-          quantityOverride: roomQuantity ?? labelRow.totalQuantity,
+          quantityOverride: roomQuantity ?? labelRow.totalQuantity ?? row.totalQuantity,
           labelRow,
         };
       }),
