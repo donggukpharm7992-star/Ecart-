@@ -96,6 +96,7 @@ export type InspectionCycleResetState = Pick<
 >;
 
 const STANDARD_ROOM_NAMES = [
+  { display: "ER", aliases: ["ER", "응급실", "응급실(ER)"] },
   {
     display: "DREMM",
     aliases: ["DREMM", "DREMM혈관조영실", "DREMM 혈관조영실", "DREMM영상의학과", "DREMM 영상의학과", "혈관조영실", "영상의학과"],

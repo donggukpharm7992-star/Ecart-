@@ -2799,9 +2799,9 @@ export function App() {
           ? labelSize
           : ["10x70", "15x95"].includes(labelSize) ? labelSize : "40x70";
         const roomId = masterLabelRoomIdForRow(row);
-        const roomQuantity = roomId
-          ? row.roomDetails.find((detail) => detail.roomId === roomId)?.requiredQty
-          : undefined;
+        const roomQuantity = activeMasterLabelRoomIds
+          .flatMap((roomId) => row.roomDetails.filter((detail) => detail.roomId === roomId).map((detail) => detail.requiredQty))
+          .find((quantity) => quantity !== undefined);
         const labelRow = buildMasterDrugLabelData(row, selectionMode, roomId);
         return {
           id: labelRow.id,

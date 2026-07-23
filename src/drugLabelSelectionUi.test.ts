@@ -90,7 +90,7 @@ describe("drug label selection UI", () => {
     expect(appSource).toContain("hospitalControlledDoseCautionCodes.has(hospitalRow.code)");
     expect(appSource).toContain("const selectionMode = row.masterKind === \"stock\" ? mode : \"narcotic\";");
     expect(appSource).toContain("[\"10x70\", \"15x95\"].includes(labelSize) ? labelSize : \"40x70\"");
-    expect(appSource).toContain("const roomQuantity = roomId");
+    expect(appSource).toContain("const roomQuantity = activeMasterLabelRoomIds");
     expect(appSource).toContain("quantityOverride: roomQuantity ?? labelRow.totalQuantity");
     expect(appSource).toContain('renderedKind === "stock" && (sizeKey === "10x70" || sizeKey === "15x95"');
     expect(cssSource).toContain(
