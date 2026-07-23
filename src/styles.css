@@ -6721,3 +6721,117 @@ button {
   align-self: center;
   overflow: visible;
 }
+
+/* Master narcotic labels keep the room quantity visible in the compact end panel. */
+.drug-label-item.checked-master-label:is(.label-size-10x70, .label-size-15x95).label-kind-narcotic .drug-label-code-stack {
+  min-width: 0;
+  overflow: visible;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 0.5mm;
+  padding-inline: 0.5mm;
+}
+
+.drug-label-item.checked-master-label.label-size-10x70.label-kind-narcotic .drug-label-code-stack {
+  min-width: 18mm;
+}
+
+.drug-label-item.checked-master-label.label-size-15x95.label-kind-narcotic .drug-label-code-stack {
+  min-width: 22mm;
+}
+
+.drug-label-item.checked-master-label:is(.label-size-10x70, .label-size-15x95).label-kind-narcotic .drug-label-code-line {
+  min-width: 0;
+  overflow: hidden;
+  gap: 0.25mm;
+}
+
+.drug-label-item.checked-master-label.label-size-10x70.label-kind-narcotic .drug-label-code-line strong {
+  max-width: 8mm;
+  overflow: hidden;
+  font-size: 7.5px;
+}
+
+.drug-label-item.checked-master-label.label-size-15x95.label-kind-narcotic .drug-label-code-line strong {
+  max-width: 10mm;
+  overflow: hidden;
+  font-size: 9px;
+}
+
+.drug-label-item.checked-master-label:is(.label-size-10x70, .label-size-15x95).label-kind-narcotic .label-code-storage {
+  width: 4mm;
+  min-width: 4mm;
+  height: 5.5mm;
+  padding: 0;
+  border-radius: 999px;
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.drug-label-item.checked-master-label.label-size-15x95.label-kind-narcotic .label-code-storage {
+  width: 4.5mm;
+  min-width: 4.5mm;
+  height: 6.5mm;
+}
+
+.drug-label-item.checked-master-label:is(.label-size-10x70, .label-size-15x95).label-kind-narcotic .label-quantity-circle {
+  width: auto;
+  min-width: 4.5mm;
+  height: 5.5mm;
+  padding-inline: 0.45mm;
+  border-radius: 999px;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.drug-label-item.checked-master-label.label-size-15x95.label-kind-narcotic .label-quantity-circle {
+  min-width: 5.5mm;
+  height: 6.5mm;
+  font-size: 12px;
+}
+
+/* If the compact right panel is crowded, preserve drug-name meaning by wrapping at spaces first. */
+.drug-label-item.checked-master-label:is(.label-size-10x70, .label-size-15x95).label-kind-narcotic h3,
+.drug-label-item.checked-master-label:is(.label-size-10x70, .label-size-15x95).label-kind-narcotic .drug-label-name-lines {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  padding-inline: 0.5mm;
+}
+
+.drug-label-item.checked-master-label:is(.label-size-10x70, .label-size-15x95).label-kind-narcotic .drug-label-name-lines {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  width: 100%;
+}
+
+.drug-label-item.checked-master-label:is(.label-size-10x70, .label-size-15x95).label-kind-narcotic .drug-label-name-line {
+  display: block;
+  max-width: 100%;
+  white-space: normal;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  line-height: 1.02;
+}
+
+.drug-label-item.checked-master-label.label-size-10x70.label-kind-narcotic.name-long h3,
+.drug-label-item.checked-master-label.label-size-10x70.label-kind-narcotic.name-long .drug-label-name-line {
+  font-size: 10.5px;
+}
+
+.drug-label-item.checked-master-label.label-size-10x70.label-kind-narcotic.name-extra-long h3,
+.drug-label-item.checked-master-label.label-size-10x70.label-kind-narcotic.name-extra-long .drug-label-name-line {
+  font-size: 8.5px;
+}
+
+.drug-label-item.checked-master-label.label-size-15x95.label-kind-narcotic.name-long h3,
+.drug-label-item.checked-master-label.label-size-15x95.label-kind-narcotic.name-long .drug-label-name-line {
+  font-size: 16px;
+}
+
+.drug-label-item.checked-master-label.label-size-15x95.label-kind-narcotic.name-extra-long h3,
+.drug-label-item.checked-master-label.label-size-15x95.label-kind-narcotic.name-extra-long .drug-label-name-line {
+  font-size: 13px;
+}

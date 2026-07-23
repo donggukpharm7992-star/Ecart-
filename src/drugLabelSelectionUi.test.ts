@@ -101,6 +101,17 @@ describe("drug label selection UI", () => {
     );
   });
 
+  it("keeps quantities and readable names on compact checked-master narcotic labels", () => {
+    expect(appSource).toContain("renderedKind === \"narcotic\" && isCheckedMasterPrint");
+    expect(appSource).toContain("renderDrugLabelName(row, renderedKind, sizeKey, entry.isCheckedMasterPrint)");
+    expect(cssSource).toContain(
+      ".drug-label-item.checked-master-label:is(.label-size-10x70, .label-size-15x95).label-kind-narcotic .label-quantity-circle",
+    );
+    expect(cssSource).toContain(
+      ".drug-label-item.checked-master-label:is(.label-size-10x70, .label-size-15x95).label-kind-narcotic .label-code-storage",
+    );
+  });
+
   it("prints light protection in the 40x70 controlled-drug footer", () => {
     expect(appSource).toContain('isLightProtectedLabel(row) ? "차광" : ""');
     expect(appSource).toContain("function renderNarcoticFortyFooter(row: DrugLabelData)");

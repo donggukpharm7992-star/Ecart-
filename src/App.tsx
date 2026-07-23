@@ -658,11 +658,17 @@ function renderGeneralDrugLabelName(row: DrugLabelData, sizeKey: DrugLabelSizeKe
   );
 }
 
-function renderDrugLabelName(row: DrugLabelData, renderedKind: DrugLabelMode, sizeKey: DrugLabelSizeKey) {
+function renderDrugLabelName(
+  row: DrugLabelData,
+  renderedKind: DrugLabelMode,
+  sizeKey: DrugLabelSizeKey,
+  isCheckedMasterPrint = false,
+) {
   const highlightDose = shouldHighlightDoseInLabel(row);
   if (
     (renderedKind === "stock" && (sizeKey === "10x70" || sizeKey === "15x95" || sizeKey === "55x95" || sizeKey === "35x100")) ||
-    (renderedKind === "pharmacy" && (sizeKey === "10x70" || sizeKey === "15x95"))
+    (renderedKind === "pharmacy" && (sizeKey === "10x70" || sizeKey === "15x95")) ||
+    (renderedKind === "narcotic" && isCheckedMasterPrint && (sizeKey === "10x70" || sizeKey === "15x95"))
   ) {
     return renderGeneralDrugLabelName(row, sizeKey, highlightDose);
   }
@@ -3259,7 +3265,9 @@ export function App() {
       <article className={className} style={labelSizeCssVars(sizeKey)} key={key}>
         {isNarcoticFortyLabel ? renderNarcoticFortyTopline(row) : renderLabelTopline(row, sizeKey)}
         <h3 className={fluidTone ? `fluid-name ${fluidTone}` : undefined}>
-          {isNarcoticFortyLabel ? renderNarcoticFortyLabelName(row) : renderDrugLabelName(row, renderedKind, sizeKey)}
+          {isNarcoticFortyLabel
+            ? renderNarcoticFortyLabelName(row)
+            : renderDrugLabelName(row, renderedKind, sizeKey, entry.isCheckedMasterPrint)}
         </h3>
         {isNarcoticFortyLabel ? renderNarcoticFortyFooter(row) : renderLabelSpec(row)}
       </article>
