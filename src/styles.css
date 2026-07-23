@@ -6649,3 +6649,47 @@ button {
   align-self: center;
   overflow: visible;
 }
+
+/* Stock labels carrying controlled-drug cautions use the same compact storage panel. */
+.drug-label-item:is(.label-size-10x70, .label-size-15x95).has-controlled-caution-label:is(.label-kind-stock, .label-kind-pharmacy) .drug-label-code-stack {
+  overflow: visible;
+  min-width: 24mm;
+}
+
+.drug-label-item.label-size-15x95.has-controlled-caution-label:is(.label-kind-stock, .label-kind-pharmacy) .drug-label-code-stack {
+  min-width: 30mm;
+}
+
+.drug-label-item:is(.label-size-10x70, .label-size-15x95).has-controlled-caution-label:is(.label-kind-stock, .label-kind-pharmacy) .drug-label-code-line {
+  overflow: visible;
+  gap: 0.5mm;
+}
+
+.drug-label-item.label-size-10x70.has-controlled-caution-label:is(.label-kind-stock, .label-kind-pharmacy) .label-code-storage {
+  font-size: 6px !important;
+}
+
+.drug-label-item.label-size-15x95.has-controlled-caution-label:is(.label-kind-stock, .label-kind-pharmacy) .label-code-storage {
+  font-size: 7px !important;
+}
+
+.drug-label-item:is(.label-size-10x70, .label-size-15x95).has-controlled-caution-label:is(.label-kind-stock, .label-kind-pharmacy) .label-code-storage {
+  box-sizing: border-box;
+  width: 5.5mm;
+  min-width: 5.5mm;
+  height: 5.5mm;
+  padding: 0;
+  border-radius: 50%;
+  line-height: 1 !important;
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.drug-label-item:is(.label-size-10x70, .label-size-15x95).has-controlled-caution-label:is(.label-kind-stock, .label-kind-pharmacy) .label-quantity-circle {
+  flex: 0 0 auto;
+  justify-self: center;
+  align-self: center;
+  overflow: visible;
+}

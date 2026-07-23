@@ -98,4 +98,9 @@ describe("drug label selection UI", () => {
       ".drug-label-item.label-size-15x95:is(.label-kind-stock, .label-kind-pharmacy) .drug-label-name-lines",
     );
   });
+
+  it("prints light protection in the 40x70 controlled-drug footer", () => {
+    expect(appSource).toContain('isLightProtectedLabel(row) ? "차광" : ""');
+    expect(appSource).toContain("function renderNarcoticFortyFooter(row: DrugLabelData)");
+  });
 });

@@ -698,8 +698,11 @@ function renderNarcoticFortyTopline(row: DrugLabelData) {
 
 function renderNarcoticFortyFooter(row: DrugLabelData) {
   const category = row.categoryLabel ?? "";
-  const storageLabel = labelCodeStorageBadges(row).find((badge) => badge.tone === "cold")?.label ?? "";
-  const label = [category, storageLabel].filter(Boolean).join(" / ");
+  const storageLabels = [
+    labelCodeStorageBadges(row).find((badge) => badge.tone === "cold")?.label,
+    isLightProtectedLabel(row) ? "차광" : "",
+  ].filter(Boolean);
+  const label = [category, ...storageLabels].filter(Boolean).join(" / ");
   return <div className="drug-label-narcotic-footer">{label}</div>;
 }
 
