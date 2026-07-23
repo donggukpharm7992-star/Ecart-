@@ -6835,3 +6835,26 @@ button {
 .drug-label-item.checked-master-label.label-size-15x95.label-kind-narcotic.name-extra-long .drug-label-name-line {
   font-size: 13px;
 }
+
+/* Keep the compact quantity panel inside the label; the name column absorbs any remaining squeeze. */
+.drug-label-item.checked-master-label.label-size-10x70.label-kind-narcotic {
+  grid-template-columns: 17mm minmax(0, 1fr) 18mm;
+}
+
+.drug-label-item.checked-master-label.label-size-15x95.label-kind-narcotic {
+  grid-template-columns: 22mm minmax(0, 1fr) 22mm;
+}
+
+.drug-label-item.checked-master-label:is(.label-size-10x70, .label-size-15x95).label-kind-narcotic .drug-label-code-stack {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.drug-label-item.checked-master-label:is(.label-size-10x70, .label-size-15x95).label-kind-narcotic .label-quantity-circle {
+  grid-column: 2;
+  justify-self: end;
+  max-width: 100%;
+  box-sizing: border-box;
+}

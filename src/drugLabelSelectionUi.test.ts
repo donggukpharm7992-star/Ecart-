@@ -110,6 +110,8 @@ describe("drug label selection UI", () => {
     expect(cssSource).toContain(
       ".drug-label-item.checked-master-label:is(.label-size-10x70, .label-size-15x95).label-kind-narcotic .label-code-storage",
     );
+    expect(cssSource).toContain("grid-template-columns: 17mm minmax(0, 1fr) 18mm;");
+    expect(cssSource).toContain("grid-template-columns: 22mm minmax(0, 1fr) 22mm;");
   });
 
   it("prints light protection in the 40x70 controlled-drug footer", () => {
