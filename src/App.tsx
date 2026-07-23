@@ -862,7 +862,9 @@ function hasControlledCautionLabel(labels: string[]) {
 
 function labelToplineFlagLabels(row: DrugLabelData, sizeKey?: DrugLabelSizeKey) {
   const labels = labelFlagLabels(row);
-  if (usesCompactGeneralLabelStoragePanel(row, sizeKey)) {
+  const usesCompactStoragePanel = usesCompactGeneralLabelStoragePanel(row, sizeKey)
+    || ((sizeKey === "10x70" || sizeKey === "15x95") && row.kind === "narcotic");
+  if (usesCompactStoragePanel) {
     const compactLabels = labels.filter((label) => !isStorageLabel(label));
     return hasControlledCautionLabel(compactLabels)
       ? compactLabels.filter((label) => !label.includes("고위험"))

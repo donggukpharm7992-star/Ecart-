@@ -6651,12 +6651,12 @@ button {
 }
 
 /* Stock labels carrying controlled-drug cautions use the same compact storage panel. */
-.drug-label-item:is(.label-size-10x70, .label-size-15x95).has-controlled-caution-label:is(.label-kind-stock, .label-kind-pharmacy) .drug-label-code-stack {
+.drug-label-item:is(.label-size-10x70, .label-size-15x95).has-controlled-caution-label:is(.label-kind-stock, .label-kind-pharmacy, .label-kind-narcotic) .drug-label-code-stack {
   overflow: visible;
   min-width: 24mm;
 }
 
-.drug-label-item.label-size-15x95.has-controlled-caution-label:is(.label-kind-stock, .label-kind-pharmacy) .drug-label-code-stack {
+.drug-label-item.label-size-15x95.has-controlled-caution-label:is(.label-kind-stock, .label-kind-pharmacy, .label-kind-narcotic) .drug-label-code-stack {
   min-width: 30mm;
 }
 
@@ -6667,7 +6667,7 @@ button {
   align-items: center;
 }
 
-.drug-label-item:is(.label-size-10x70, .label-size-15x95).has-controlled-caution-label:is(.label-kind-stock, .label-kind-pharmacy) .drug-label-code-line {
+.drug-label-item:is(.label-size-10x70, .label-size-15x95).has-controlled-caution-label:is(.label-kind-stock, .label-kind-pharmacy, .label-kind-narcotic) .drug-label-code-line {
   grid-column: 1;
   grid-row: 1;
   justify-content: center;
@@ -6683,15 +6683,15 @@ button {
   gap: 0.5mm;
 }
 
-.drug-label-item.label-size-10x70.has-controlled-caution-label:is(.label-kind-stock, .label-kind-pharmacy) .label-code-storage {
+.drug-label-item.label-size-10x70.has-controlled-caution-label:is(.label-kind-stock, .label-kind-pharmacy, .label-kind-narcotic) .label-code-storage {
   font-size: 6px !important;
 }
 
-.drug-label-item.label-size-15x95.has-controlled-caution-label:is(.label-kind-stock, .label-kind-pharmacy) .label-code-storage {
+.drug-label-item.label-size-15x95.has-controlled-caution-label:is(.label-kind-stock, .label-kind-pharmacy, .label-kind-narcotic) .label-code-storage {
   font-size: 7px !important;
 }
 
-.drug-label-item:is(.label-size-10x70, .label-size-15x95).has-controlled-caution-label:is(.label-kind-stock, .label-kind-pharmacy) .label-code-storage {
+.drug-label-item:is(.label-size-10x70, .label-size-15x95).has-controlled-caution-label:is(.label-kind-stock, .label-kind-pharmacy, .label-kind-narcotic) .label-code-storage {
   box-sizing: border-box;
   width: 5.5mm;
   min-width: 5.5mm;
@@ -6715,7 +6715,7 @@ button {
   background: #d8f7df;
 }
 
-.drug-label-item:is(.label-size-10x70, .label-size-15x95).has-controlled-caution-label:is(.label-kind-stock, .label-kind-pharmacy) .label-quantity-circle {
+.drug-label-item:is(.label-size-10x70, .label-size-15x95).has-controlled-caution-label:is(.label-kind-stock, .label-kind-pharmacy, .label-kind-narcotic) .label-quantity-circle {
   flex: 0 0 auto;
   justify-self: center;
   align-self: center;

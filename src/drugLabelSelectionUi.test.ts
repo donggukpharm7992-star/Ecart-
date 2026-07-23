@@ -102,5 +102,6 @@ describe("drug label selection UI", () => {
   it("prints light protection in the 40x70 controlled-drug footer", () => {
     expect(appSource).toContain('isLightProtectedLabel(row) ? "차광" : ""');
     expect(appSource).toContain("function renderNarcoticFortyFooter(row: DrugLabelData)");
+    expect(cssSource).toContain(".label-kind-stock, .label-kind-pharmacy, .label-kind-narcotic");
   });
 });
