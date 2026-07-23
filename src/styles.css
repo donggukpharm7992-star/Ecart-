@@ -3339,13 +3339,45 @@ button {
 }
 
 .drug-label-item.label-size-10x70.label-kind-narcotic .drug-label-code-stack {
-  min-width: 19mm;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr);
+  column-gap: 1mm;
+  min-width: 21mm;
   padding-inline: 0.8mm;
+  overflow: hidden;
 }
 
 .drug-label-item.label-size-15x95.label-kind-narcotic .drug-label-code-stack {
-  min-width: 23mm;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr);
+  column-gap: 1mm;
+  min-width: 27mm;
   padding-inline: 1.2mm;
+  overflow: hidden;
+}
+
+.drug-label-item.label-size-10x70.label-kind-narcotic .drug-label-code-line,
+.drug-label-item.label-size-15x95.label-kind-narcotic .drug-label-code-line {
+  min-width: 0;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.drug-label-item.label-size-10x70.label-kind-narcotic .label-code-storage,
+.drug-label-item.label-size-15x95.label-kind-narcotic .label-code-storage {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+.drug-label-item.label-size-10x70.label-kind-narcotic .label-code-storage {
+  font-size: 9px !important;
+  line-height: 1.1 !important;
+}
+
+.drug-label-item.label-size-15x95.label-kind-narcotic .label-code-storage {
+  font-size: 12px !important;
+  line-height: 1.1 !important;
 }
 
 /* Use the selected label typeface consistently for drug names at every size. */

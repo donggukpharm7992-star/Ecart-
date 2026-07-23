@@ -594,7 +594,6 @@ function drugRuleFieldsFromEcartItem(item: EcartItem): DrugRuleFields {
   };
 }
 
-const FORTY_NARCOTIC_HIGH_RISK_LABEL = "\uace0\uc704\ud5d8\uc758\uc57d\ud488";
 const FORTY_NARCOTIC_DOSE_CONFIRM_LABEL = "\uc6a9\ub7c9\ud655\uc778";
 
 function renderDoseHighlightedText(text: string) {
@@ -686,7 +685,7 @@ function renderNarcoticFortyLabelName(row: DrugLabelData) {
 }
 
 function renderNarcoticFortyTopline(row: DrugLabelData) {
-  const label = [FORTY_NARCOTIC_HIGH_RISK_LABEL, row.doseCaution || row.doseCheck ? FORTY_NARCOTIC_DOSE_CONFIRM_LABEL : ""]
+  const label = [row.categoryLabel ?? "\ub9c8\uc57d/\ud5a5\uc815", row.doseCaution || row.doseCheck ? FORTY_NARCOTIC_DOSE_CONFIRM_LABEL : ""]
     .filter(Boolean)
     .join(" / ");
   return (
@@ -884,6 +883,7 @@ function hasRedPriorityLabel(row: DrugLabelData) {
 
 function shouldMoveLightProtectionToCodeBadge(row: DrugLabelData, sizeKey?: DrugLabelSizeKey) {
   if (!isLightProtectedLabel(row)) return false;
+  if (row.kind === "narcotic" && (sizeKey === "10x70" || sizeKey === "15x95")) return true;
   if (usesCompactGeneralLabelStoragePanel(row, sizeKey)) return true;
   if (row.highRisk) return true;
   return (sizeKey === "10x70" || sizeKey === "15x95") && hasRedPriorityLabel(row);
@@ -1938,7 +1938,8 @@ export function App() {
 
     const hospitalLabel = buildHospitalDrugLabelData(hospitalRow, masterLabel.kind === "pharmacy" ? "pharmacy" : "stock");
     const doseCheck = masterLabel.doseCheck || hospitalLabel.doseCheck || hospitalControlledDoseCautionCodes.has(hospitalRow.code);
-    const highRisk = masterLabel.highRisk || hospitalLabel.highRisk;
+    const isControlledLabel = mode === "narcotic";
+    const highRisk = isControlledLabel ? false : masterLabel.highRisk || hospitalLabel.highRisk;
     return {
       ...masterLabel,
       name: cleanDrugLabelName(masterLabel.name, highRisk),
@@ -1946,7 +1947,9 @@ export function App() {
       storageLabel: hospitalLabel.storageLabel || masterLabel.storageLabel,
       storageTone: hospitalLabel.storageLabel ? hospitalLabel.storageTone : masterLabel.storageTone,
       storage: hospitalLabel.storage || masterLabel.storage,
-      cautionLabels: [...new Set([...hospitalLabel.cautionLabels, ...masterLabel.cautionLabels])],
+      cautionLabels: [...new Set([...hospitalLabel.cautionLabels, ...masterLabel.cautionLabels])].filter(
+        (label) => !isControlledLabel || !label.includes("고위험"),
+      ),
       highRisk,
       doseCaution: masterLabel.doseCaution || hospitalLabel.doseCaution,
       doseCheck,
