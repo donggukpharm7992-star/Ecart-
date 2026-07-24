@@ -1667,9 +1667,18 @@ export function App() {
     const groupedRoomIds = new Set(NARCOTIC_FLOORS.flatMap((floorGroup) => floorGroup.rooms.map((room) => room.id)));
     const floors = NARCOTIC_FLOORS.map((floorGroup) => ({
       ...floorGroup,
-      rooms: floorGroup.rooms.flatMap((room) => roomById.get(room.id) ?? []),
+      rooms: [
+        ...floorGroup.rooms.flatMap((room) => roomById.get(room.id) ?? []),
+        ...currentNarcoticRooms.filter(
+          (room) => !groupedRoomIds.has(room.id) && room.floor === floorGroup.floor,
+        ),
+      ],
     }));
-    const extraRooms = currentNarcoticRooms.filter((room) => !groupedRoomIds.has(room.id));
+    const extraRooms = currentNarcoticRooms.filter(
+      (room) =>
+        !groupedRoomIds.has(room.id) &&
+        !NARCOTIC_FLOORS.some((floorGroup) => floorGroup.floor === room.floor),
+    );
     return extraRooms.length > 0 ? [...floors, { floor: "추가 보유실", rooms: extraRooms }] : floors;
   }, [currentNarcoticRooms]);
 
@@ -2533,7 +2542,19 @@ export function App() {
       setNarcoticRooms((prev) =>
         prev.some((room) => room.id === id)
           ? prev
-          : [...prev, { id, label: id, sourceColumn: id, sourceSheet: id, sourceUpdatedAt: formatRoomUpdatedAt(), allocationCount: 0, totalQuantity: 0 }],
+          : [
+              ...prev,
+              {
+                id,
+                label: id,
+                floor: newRoomFloor,
+                sourceColumn: id,
+                sourceSheet: id,
+                sourceUpdatedAt: formatRoomUpdatedAt(),
+                allocationCount: 0,
+                totalQuantity: 0,
+              },
+            ],
       );
       setTargetRooms((prev) => (prev.includes(id) ? prev : [...prev, id]));
       setNarcoticActiveRoom(id);
@@ -3971,24 +3992,22 @@ export function App() {
                     보유실명
                     <input value={newRoomName} onChange={(event) => setNewRoomName(event.target.value)} />
                   </label>
-                  {!isNarcoticViewer && (
-                    <fieldset className="room-floor-field">
-                      <legend>위치</legend>
-                      <div className="segmented-buttons">
-                        {STOCK_FLOOR_OPTIONS.map((floor) => (
-                          <button
-                            key={floor}
-                            type="button"
-                            className={newRoomFloor === floor ? "active" : ""}
-                            aria-pressed={newRoomFloor === floor}
-                            onClick={() => setNewRoomFloor(floor)}
-                          >
-                            {floor}
-                          </button>
-                        ))}
-                      </div>
-                    </fieldset>
-                  )}
+                  <fieldset className="room-floor-field">
+                    <legend>위치</legend>
+                    <div className="segmented-buttons">
+                      {STOCK_FLOOR_OPTIONS.map((floor) => (
+                        <button
+                          key={floor}
+                          type="button"
+                          className={newRoomFloor === floor ? "active" : ""}
+                          aria-pressed={newRoomFloor === floor}
+                          onClick={() => setNewRoomFloor(floor)}
+                        >
+                          {floor}
+                        </button>
+                      ))}
+                    </div>
+                  </fieldset>
                   <button className="secondary-button" type="submit">
                     <Plus size={16} />
                     보유실 추가
