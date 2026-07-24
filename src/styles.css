@@ -1764,6 +1764,22 @@ button {
   font-weight: 900;
 }
 
+.room-floor-field {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.room-floor-field legend {
+  margin-bottom: 6px;
+  padding: 0;
+  color: #475467;
+  font-size: 12px;
+  font-weight: 900;
+}
+
 .drug-label-tools {
   display: grid;
   gap: 14px;

@@ -389,6 +389,9 @@ type StockGuideSection = {
   rows: StockGuideEntry[][];
 };
 
+const STOCK_FLOOR_OPTIONS = ["지하 1층", "1층", "2층", "3층", "4층", "5층 ~ 12층"] as const;
+type StockFloor = (typeof STOCK_FLOOR_OPTIONS)[number];
+
 const hiddenStockRooms = new Set(["체외순환실"]);
 const initialStockRooms = inventory.stock.rooms.filter((room) => !hiddenStockRooms.has(room.id));
 const initialStockAllocations = inventory.stock.allocations.filter((allocation) => !hiddenStockRooms.has(allocation.roomId));
@@ -490,7 +493,9 @@ function normalizeRooms(rooms: StockRoom[], generatedRooms: readonly StockRoom[]
 }
 
 function normalizeStockRooms(rooms: StockRoom[]) {
-  return normalizeRooms(rooms, initialStockRooms);
+  return normalizeRooms(rooms, initialStockRooms).map((room) =>
+    room.id === "IMJ" && !room.floor ? { ...room, floor: "1층" } : room,
+  );
 }
 
 function normalizeNarcoticRooms(rooms: StockRoom[]) {
@@ -1078,6 +1083,7 @@ export function App() {
     category: defaultNewDrugCategory,
   });
   const [newRoomName, setNewRoomName] = useState("");
+  const [newRoomFloor, setNewRoomFloor] = useState<StockFloor>("1층");
   const [renameDrugForm, setRenameDrugForm] = useState({ oldCode: "", newCode: "" });
   const [isMobileMode, setIsMobileMode] = useState(false);
   const [narcoticActiveRoom, setNarcoticActiveRoom] = useState(FIRST_NARCOTIC_ROOM);
@@ -1619,6 +1625,29 @@ export function App() {
     return stockRooms.map((room) => ({ ...room, ...(stats.get(room.id) ?? { allocationCount: 0, totalQuantity: 0 }) }));
   }, [stockAllocations, stockRooms]);
 
+  const currentStockGuideSections = useMemo(() => {
+    const registeredRoomIds = new Set(
+      stockGuideSections.flatMap((section) =>
+        section.rows.flatMap((row) => row.flatMap((item) => (item.stockRoomId ? [item.stockRoomId] : []))),
+      ),
+    );
+    const extraRoomsByFloor = new Map<StockFloor, StockGuideEntry[]>();
+
+    for (const room of currentStockRooms) {
+      if (registeredRoomIds.has(room.id)) continue;
+      const floor = room.floor as StockFloor | undefined;
+      if (!floor || !STOCK_FLOOR_OPTIONS.includes(floor)) continue;
+      const entries = extraRoomsByFloor.get(floor) ?? [];
+      entries.push({ label: displayRoomName(room.label), stockRoomId: room.id });
+      extraRoomsByFloor.set(floor, entries);
+    }
+
+    return stockGuideSections.map((section) => {
+      const extraRooms = extraRoomsByFloor.get(section.floor as StockFloor);
+      return extraRooms?.length ? { ...section, rows: [...section.rows, extraRooms] } : section;
+    });
+  }, [currentStockRooms]);
+
   const currentNarcoticRooms = useMemo(() => {
     const stats = new Map<string, { allocationCount: number; totalQuantity: number }>();
     for (const room of narcoticRooms) {
@@ -2039,7 +2068,7 @@ export function App() {
     });
 
     const ecartOnlyEntries = new Map<string, { id: string; label: string; tab: EcartTab }>();
-    for (const section of stockGuideSections) {
+    for (const section of currentStockGuideSections) {
       for (const row of section.rows) {
         for (const item of row) {
           if (!item.ecartOnly || !item.ecartTargetId) continue;
@@ -2077,7 +2106,7 @@ export function App() {
         })),
       commonGuidance: ROUND_SUMMARY_COMMON_GUIDANCE,
     });
-  }, [currentStockRooms, ecartByTarget, stockChecklistByRoom]);
+  }, [currentStockGuideSections, currentStockRooms, ecartByTarget, stockChecklistByRoom]);
   const generatedNarcoticRoundSummaryDraft = useMemo(() => {
     return buildNarcoticRoundSummaryDraft({
       inspectionPeriod: defaultRoundInspectionPeriod(),
@@ -2514,7 +2543,19 @@ export function App() {
     setStockRooms((prev) =>
       prev.some((room) => room.id === id)
         ? prev
-        : [...prev, { id, label: id, sourceColumn: id, sourceSheet: id, sourceUpdatedAt: formatRoomUpdatedAt(), allocationCount: 0, totalQuantity: 0 }],
+        : [
+            ...prev,
+            {
+              id,
+              label: id,
+              floor: newRoomFloor,
+              sourceColumn: id,
+              sourceSheet: id,
+              sourceUpdatedAt: formatRoomUpdatedAt(),
+              allocationCount: 0,
+              totalQuantity: 0,
+            },
+          ],
     );
     markStockRoomsEdited([id]);
     setTargetRooms((prev) => (prev.includes(id) ? prev : [...prev, id]));
@@ -3930,6 +3971,24 @@ export function App() {
                     보유실명
                     <input value={newRoomName} onChange={(event) => setNewRoomName(event.target.value)} />
                   </label>
+                  {!isNarcoticViewer && (
+                    <fieldset className="room-floor-field">
+                      <legend>위치</legend>
+                      <div className="segmented-buttons">
+                        {STOCK_FLOOR_OPTIONS.map((floor) => (
+                          <button
+                            key={floor}
+                            type="button"
+                            className={newRoomFloor === floor ? "active" : ""}
+                            aria-pressed={newRoomFloor === floor}
+                            onClick={() => setNewRoomFloor(floor)}
+                          >
+                            {floor}
+                          </button>
+                        ))}
+                      </div>
+                    </fieldset>
+                  )}
                   <button className="secondary-button" type="submit">
                     <Plus size={16} />
                     보유실 추가
@@ -4328,7 +4387,7 @@ export function App() {
           <section className="inspection-stack">
             {mainCategory === "stock" && (
               <StockRoomGuide
-                sections={stockGuideSections}
+                sections={currentStockGuideSections}
                 activeRoom={activeRoom}
                 uninspectedIds={uninspectedRoomIds}
                 inspectedIds={inspectedStockRoomIds}

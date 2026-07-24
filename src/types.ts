@@ -12,6 +12,7 @@ export type StockDrug = {
 export type StockRoom = {
   id: string;
   label: string;
+  floor?: string;
   sourceColumn: string;
   sourceSheet: string;
   sourceUpdatedAt: string;
