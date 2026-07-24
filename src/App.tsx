@@ -998,7 +998,7 @@ export function App() {
   const isPharmacyViewer = appMode === "pharmacy-viewer";
   const isPharmacyEditor = appMode === "pharmacy-editor";
   const isNarcoticViewer = appMode === "narcotic-viewer";
-  const canEditMaster = appMode === "admin" || isNarcoticViewer;
+  const canEditMaster = appMode === "admin" || appMode === "master-viewer" || isNarcoticViewer;
   const defaultNewDrugCategory: NewDrugForm["category"] = isNarcoticViewer ? "향정" : "stock";
   const persistedState = useMemo(loadPersistedState, []);
   const [mainCategory, setMainCategory] = useState<MainCategory>(isNarcoticViewer ? "narcotic" : "stock");
@@ -1484,7 +1484,7 @@ export function App() {
       localUpdatedAtRef.current = updatedAt;
       hasUnsavedLocalChangesRef.current = true;
       window.localStorage.setItem(LOCAL_UPDATED_AT_KEY, updatedAt);
-      if (appMode === "admin" || appMode === "pharmacy-editor") {
+      if (appMode === "admin" || appMode === "master-viewer" || appMode === "pharmacy-editor") {
         scheduleRemotePush();
       } else {
         setSyncStatus({ mode: "idle", message: "수정 내용은 모바일 점검 내용 PC로 올리기 버튼을 눌러 저장하세요." });
